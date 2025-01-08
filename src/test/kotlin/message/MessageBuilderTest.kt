@@ -1,6 +1,9 @@
+package message
+
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.Message
+import org.danceofvalkyries.message.goodJobMessage
+import org.danceofvalkyries.message.revisingIsNeededMessage
 import org.danceofvalkyries.notion.domain.models.FlashCard
 import org.danceofvalkyries.notion.domain.models.SpacedRepetitionDataBase
 import org.danceofvalkyries.notion.domain.models.SpacedRepetitionDataBaseGroup
@@ -8,8 +11,12 @@ import org.danceofvalkyries.notion.domain.models.SpacedRepetitionDataBaseGroup
 class MessageBuilderTest : FunSpec() {
 
     init {
-        test("Should build message") {
-            val englishVocabId = "1"
+
+        test("Should build good job message") {
+            goodJobMessage.invoke() shouldBe "Good Job! \uD83D\uDE0E Everything is revised! ✅"
+        }
+
+        test("Should build revising needed message") {
             val spacedRepetitionDataBaseGroup = SpacedRepetitionDataBaseGroup(
                 listOf(
                     SpacedRepetitionDataBase(
@@ -34,9 +41,9 @@ class MessageBuilderTest : FunSpec() {
                     )
                 )
             )
-            Message(
+            revisingIsNeededMessage(
                 spacedRepetitionDataBaseGroup
-            ).toString() shouldBe """
+            ) shouldBe """
                     Total count: 3
                     
                     English vocabulary: 1

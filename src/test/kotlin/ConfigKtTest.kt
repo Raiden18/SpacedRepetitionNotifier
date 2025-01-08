@@ -30,8 +30,6 @@ class ConfigKtTest : FunSpec() {
 
             val jsonString = Gson().toJson(jsonObject)
 
-            println(jsonString)
-
             Config(
                 Gson(),
                 jsonString,

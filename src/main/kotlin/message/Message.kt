@@ -1,23 +1,22 @@
-package org.danceofvalkyries
+package org.danceofvalkyries.message
 
 import org.danceofvalkyries.notion.domain.models.SpacedRepetitionDataBaseGroup
 
-data class Message(
-    private val spacedRepetitionDataBaseGroup: SpacedRepetitionDataBaseGroup
-) {
-
-    override fun toString(): String {
-        val messageBuilder = MessageBuilder()
-            .totalCount(spacedRepetitionDataBaseGroup.totalFlashCardsNeedRevising)
+val revisingIsNeededMessage: (SpacedRepetitionDataBaseGroup) -> String = {
+    val messageBuilder = MessageBuilder()
+        .totalCount(it.totalFlashCardsNeedRevising)
+        .emptyLine()
+    it.group.forEach { db ->
+        messageBuilder
+            .dataBase(title = db.name, count = db.flashCardsNeedRevising)
+            .deepLink(db.id)
             .emptyLine()
-        spacedRepetitionDataBaseGroup.group.forEach { db ->
-            messageBuilder
-                .dataBase(title = db.name, count = db.flashCardsNeedRevising)
-                .deepLink(db.id)
-                .emptyLine()
-        }
-        return messageBuilder.build()
     }
+    messageBuilder.build()
+}
+
+val goodJobMessage: () -> String = {
+    "Good Job! \uD83D\uDE0E Everything is revised! ✅"
 }
 
 private class MessageBuilder {
@@ -48,3 +47,4 @@ private class MessageBuilder {
         return stringBuilder.toString()
     }
 }
+

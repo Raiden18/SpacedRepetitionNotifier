@@ -7,7 +7,7 @@ import org.danceofvalkyries.json.`object`
 fun SpacedRepetitionRequestBody(
     gson: Gson,
 ): String {
-    val bodyMap = `object` {
+    return `object` {
         "filter" to `object` {
             "and" to arrayOf(
                 `object` {
@@ -20,8 +20,7 @@ fun SpacedRepetitionRequestBody(
                 }
             )
         }
-    }
-    return gson.toJson(bodyMap)
+    }.let(gson::toJson)
 }
 
 private fun JsonObject.property(name: String) {
@@ -29,5 +28,7 @@ private fun JsonObject.property(name: String) {
 }
 
 private fun JsonObject.checkBox(isChecked: Boolean) {
-    "checkbox" to mapOf(Pair("equals", isChecked))
+    "checkbox" to `object` {
+        "equals" to isChecked
+    }
 }

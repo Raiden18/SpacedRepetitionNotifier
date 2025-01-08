@@ -17,6 +17,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.google.code.gson:gson:2.11.0")
+    implementation("org.xerial:sqlite-jdbc:3.39.2.0")
 
     val kotest = "6.0.0.M1"
     testImplementation("io.kotest:kotest-runner-junit5:$kotest")

@@ -15,10 +15,10 @@ fun Header(
     }
 }
 
-fun ContentTypeApplicationJson(): Header {
+fun ContentType(contentTypes: ContentTypes): Header {
     return Header(
         name = "ContentType",
-        value = "application/json",
+        value = contentTypes.value,
     )
 }
 
@@ -27,4 +27,8 @@ fun AuthorizationBearerHeader(token: String): Header {
         name = "Authorization",
         value = token,
     )
+}
+
+enum class ContentTypes(val value: String) {
+    ApplicationJson("application/json")
 }

@@ -3,16 +3,11 @@ package org.danceofvalkyries.notion.api
 import com.google.gson.Gson
 import notion.api.rest.response.FlashCardResponse
 import notion.api.rest.response.NotionDbResponse
-import okhttp3.Headers
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import org.danceofvalkyries.json.AuthorizationBearerHeader
-import org.danceofvalkyries.json.ContentTypeApplicationJson
-import org.danceofvalkyries.json.parse
-import org.danceofvalkyries.json.toRequestBody
-import org.danceofvalkyries.notion.api.rest.request.DbUrl
+import org.danceofvalkyries.json.*
+import org.danceofvalkyries.notion.api.rest.DatabaseUrl
 import org.danceofvalkyries.notion.api.rest.request.NotionApiVersionHeader
-import org.danceofvalkyries.notion.api.rest.request.Query
 import org.danceofvalkyries.notion.api.rest.request.SpacedRepetitionRequestBody
 
 class NotionDataBaseApiImpl(
@@ -23,40 +18,35 @@ class NotionDataBaseApiImpl(
     private val apiKey: String,
 ) : NotionDataBaseApi {
 
-    private val headers: Headers = listOf(
+    private val headers = listOf(
         AuthorizationBearerHeader(apiKey),
         NotionApiVersionHeader(apiVersion),
-        ContentTypeApplicationJson(),
-    ).let {
-        val headersBuilder = Headers.Builder()
-        it.forEach { headersBuilder.add(it.name, it.value) }
-        headersBuilder.build()
-    }
+        ContentType(ContentTypes.ApplicationJson),
+    )
+
+    private val urls: DatabaseUrl
+        get() = DatabaseUrl(databaseId)
 
     override suspend fun getDescription(): NotionDbResponse {
-        val url = DbUrl(databaseId)
-        val request = Request.Builder()
-            .url(url)
+        return Request.Builder()
+            .url(urls.dataBases())
             .headers(headers)
             .get()
             .build()
-        val response = client.newCall(request).execute()
-        return response.parse<NotionDbResponse>(gson)
+            .request(client)
+            .parse<NotionDbResponse>(gson)
             .copy(id = databaseId)
     }
 
     override suspend fun getContent(): List<FlashCardResponse> {
-        val url = Query(
-            DbUrl(databaseId)
-        )
-        val body = SpacedRepetitionRequestBody(gson).toRequestBody()
-        val request = Request.Builder()
-            .url(url)
+        return Request.Builder()
+            .url(urls.databasesQuery())
             .headers(headers)
-            .post(body)
+            .post(SpacedRepetitionRequestBody(gson))
             .build()
-        val response = client.newCall(request).execute()
-        return response.parse<FlashCardResponseWrapper>(gson).results
+            .request(client)
+            .parse<FlashCardResponseWrapper>(gson)
+            .results
     }
 
     private data class FlashCardResponseWrapper(

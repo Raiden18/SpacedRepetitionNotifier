@@ -6,8 +6,8 @@ import org.danceofvalkyries.notion.domain.repositories.SpacedRepetitionDataBaseR
 class SpaceRepetitionTelegramReminderApp(
     private val spacedRepetitionDataBaseRepository: SpacedRepetitionDataBaseRepository,
     private val flashCardsThreshold: Int,
-    private val buildMessage: (SpacedRepetitionDataBaseGroup) -> String,
-    private val sendMessage: suspend (String) -> Unit,
+    private val sendRevisingMessage: suspend (SpacedRepetitionDataBaseGroup) -> Unit,
+    private val sendGoodJobMessage: suspend () -> Unit,
 ) {
 
     suspend fun run() {
@@ -15,17 +15,15 @@ class SpaceRepetitionTelegramReminderApp(
     }
 
     private suspend fun tryToCheckSpaceRepetitionDatabasesAndSendNotificationIfNeeded() {
-        try {
-            checkSpaceRepetitionDatabasesAndSendNotificationIfNeeded()
-        } catch (throwable: Throwable) {
-            sendMessage.invoke(throwable.stackTraceToString())
-        }
+        checkSpaceRepetitionDatabasesAndSendNotificationIfNeeded()
     }
 
     private suspend fun checkSpaceRepetitionDatabasesAndSendNotificationIfNeeded() {
         val spacedRepetitionDbs = spacedRepetitionDataBaseRepository.getAll()
         if (spacedRepetitionDbs.totalFlashCardsNeedRevising >= flashCardsThreshold) {
-            sendMessage(buildMessage(spacedRepetitionDbs))
+            sendRevisingMessage(spacedRepetitionDbs)
+        } else {
+            sendGoodJobMessage.invoke()
         }
     }
 }
