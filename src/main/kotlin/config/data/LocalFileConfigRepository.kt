@@ -14,7 +14,7 @@ class LocalFileConfigRepository(
     }
 
     override fun getConfig(): Config {
-        return Config(
+        return ConfigData(
             gson,
             getConfigJson()
         )

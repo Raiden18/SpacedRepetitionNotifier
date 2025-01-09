@@ -3,9 +3,9 @@ package config
 import com.google.gson.Gson
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.config.domain.Config
-import org.danceofvalkyries.config.domain.Notion
-import org.danceofvalkyries.config.domain.Telegram
+import org.danceofvalkyries.config.data.ConfigData
+import org.danceofvalkyries.config.data.NotionData
+import org.danceofvalkyries.config.data.TelegramData
 import org.danceofvalkyries.json.`object`
 
 class ConfigKtTest : FunSpec() {
@@ -32,16 +32,16 @@ class ConfigKtTest : FunSpec() {
 
             val jsonString = Gson().toJson(jsonObject)
 
-            Config(
+            ConfigData(
                 Gson(),
                 jsonString,
-            ) shouldBe Config(
-                notion = Notion(
+            ) shouldBe ConfigData(
+                notion = NotionData(
                     apiKey = "1",
                     observedDatabases = listOf("2", "3", "4", "5"),
                     delayBetweenRequests = 500
                 ),
-                telegram = Telegram(
+                telegram = TelegramData(
                     apiKey = "6",
                     chatId = "7"
                 ),
