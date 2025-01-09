@@ -42,7 +42,7 @@ suspend fun main() {
     val gson = Gson()
     val httpClient = createOkHttpClient()
 
-    val config =LocalFileConfigRepository(gson).getConfig()
+    val config = LocalFileConfigRepository(gson).getConfig()
 
     val telegramChatApi = TelegramChatApiImpl(
         client = httpClient,
