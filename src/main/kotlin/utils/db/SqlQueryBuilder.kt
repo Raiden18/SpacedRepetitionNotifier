@@ -1,7 +1,5 @@
 package org.danceofvalkyries.utils.db
 
-import org.danceofvalkyries.telegram.domain.sendMessageToChatAndSaveToDb
-
 class SqlQueryBuilder {
 
     private val stringBuilder = mutableListOf<String>()

@@ -1,5 +1,7 @@
-package org.danceofvalkyries.telegram.domain
+package org.danceofvalkyries.app.domain
 
+import org.danceofvalkyries.notion.domain.models.SpacedRepetitionDataBaseGroup
+import org.danceofvalkyries.notion.domain.repositories.SpacedRepetitionDataBaseRepository
 import org.danceofvalkyries.telegram.data.api.TelegramChatApi
 import org.danceofvalkyries.telegram.data.db.TelegramMessagesDb
 
@@ -38,5 +40,19 @@ val updateNotificationMessage: suspend (
     db.getAll().forEach { message ->
         db.update(text, message.id)
         api.editMessageText(message.id, text)
+    }
+}
+
+val sendReviseOrDoneMessage: suspend (
+    SpacedRepetitionDataBaseRepository,
+    Int,
+    suspend (SpacedRepetitionDataBaseGroup) -> Unit,
+    suspend () -> Unit,
+) -> Unit = { notionDbs, threshold, sendNotification, sendDone ->
+    val spacedRepetitionDbs = notionDbs.getAll()
+    if (spacedRepetitionDbs.totalFlashCardsNeedRevising >= threshold) {
+        sendNotification(spacedRepetitionDbs)
+    } else {
+        sendDone.invoke()
     }
 }

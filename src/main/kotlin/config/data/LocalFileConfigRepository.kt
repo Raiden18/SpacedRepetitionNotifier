@@ -20,7 +20,6 @@ class LocalFileConfigRepository(
         )
     }
 
-
     private fun getConfigJson(): String {
         return SPACED_REPETITION_CONFIG_PATH
             .toPath()

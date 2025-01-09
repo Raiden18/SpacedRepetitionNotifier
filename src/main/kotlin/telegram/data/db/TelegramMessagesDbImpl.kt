@@ -1,8 +1,8 @@
 package org.danceofvalkyries.telegram.data.db
 
+import org.danceofvalkyries.telegram.domain.TelegramMessage
 import org.danceofvalkyries.utils.db.TableColumn
 import org.danceofvalkyries.utils.db.asSequence
-import org.danceofvalkyries.telegram.domain.TelegramMessage
 import java.sql.Connection
 import java.sql.Statement
 
