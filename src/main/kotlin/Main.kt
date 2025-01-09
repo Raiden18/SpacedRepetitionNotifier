@@ -1,34 +1,33 @@
 package org.danceofvalkyries
 
 import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
 import okhttp3.OkHttpClient
 import org.danceofvalkyries.app.AppImpl
 import org.danceofvalkyries.app.AppMeasurePerfomanceDecorator
+import org.danceofvalkyries.config.data.LocalFileConfigRepository
 import org.danceofvalkyries.config.data.TestConfigRepository
 import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.message.goodJobMessage
 import org.danceofvalkyries.message.revisingIsNeededMessage
 import org.danceofvalkyries.notion.api.NotionDataBaseApi
 import org.danceofvalkyries.notion.api.NotionDataBaseApiImpl
+import org.danceofvalkyries.notion.api.NotionDataBaseApiTelegramMessageErrorLoggerDecorator
 import org.danceofvalkyries.notion.api.NotionDataBaseApiTimeMeasurePerfomanceDecorator
 import org.danceofvalkyries.notion.data.repositories.SpacedRepetitionDataBaseRepositoryImpl
 import org.danceofvalkyries.notion.data.repositories.SpacedRepetitionDataBaseRepositoryMeasurePerfomanceDecorator
+import org.danceofvalkyries.telegram.data.api.TelegramChatApi
 import org.danceofvalkyries.telegram.data.api.TelegramChatApiImpl
 import org.danceofvalkyries.telegram.data.db.TelegramMessagesDbImpl
 import org.danceofvalkyries.telegram.domain.deleteOldMessages
 import org.danceofvalkyries.telegram.domain.replaceNotificationMessage
 import org.danceofvalkyries.telegram.domain.sendMessageToChatAndSaveToDb
 import org.danceofvalkyries.telegram.domain.updateNotificationMessage
+import org.danceofvalkyries.utils.DispatchersImpl
 import org.danceofvalkyries.utils.db.DataBasePaths
 import java.sql.DriverManager
 import java.util.concurrent.TimeUnit
 import kotlin.time.Duration.Companion.milliseconds
-
-// Before
-// 1 app time spent: 14.893309s
-// 2 app time spent: 17.852882300s
-// 3 app time spent: 21.232378700s
-
 
 suspend fun main() {
     val dbPaths = DataBasePaths(
@@ -39,12 +38,11 @@ suspend fun main() {
         connection
     )
 
+    val dispatchers = DispatchersImpl(Dispatchers.IO)
     val gson = Gson()
     val httpClient = createOkHttpClient()
 
-    val configRepository = TestConfigRepository(gson)
-
-    val config = configRepository.getConfig()
+    val config =LocalFileConfigRepository(gson).getConfig()
 
     val telegramChatApi = TelegramChatApiImpl(
         client = httpClient,
@@ -62,7 +60,9 @@ suspend fun main() {
                         gson,
                         httpClient,
                         config,
+                        telegramChatApi,
                     ),
+                    dispatchers,
                 )
             ),
             flashCardsThreshold = config.flashCardsThreshold,
@@ -94,6 +94,7 @@ private fun NotionDataBasesApis(
     gson: Gson,
     okHttpClient: OkHttpClient,
     config: Config,
+    telegramChatApi: TelegramChatApi,
 ): List<NotionDataBaseApi> {
     return config.notion.observedDatabases.map {
         NotionDataBaseApiImpl(
@@ -102,9 +103,8 @@ private fun NotionDataBasesApis(
             client = okHttpClient,
             apiKey = config.notion.apiKey,
         )
-    }.map {
-        NotionDataBaseApiTimeMeasurePerfomanceDecorator(it)
-    }
+    }.map { NotionDataBaseApiTimeMeasurePerfomanceDecorator(it) }
+        .map { NotionDataBaseApiTelegramMessageErrorLoggerDecorator(it, telegramChatApi) }
 }
 
 private fun createOkHttpClient(): OkHttpClient {
