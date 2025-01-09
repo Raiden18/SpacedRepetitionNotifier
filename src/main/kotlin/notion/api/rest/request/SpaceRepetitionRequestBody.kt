@@ -1,8 +1,8 @@
 package org.danceofvalkyries.notion.api.rest.request
 
 import com.google.gson.Gson
-import org.danceofvalkyries.json.JsonObject
-import org.danceofvalkyries.json.`object`
+import org.danceofvalkyries.utils.rest.JsonObject
+import org.danceofvalkyries.utils.rest.`object`
 
 fun SpacedRepetitionRequestBody(
     gson: Gson,

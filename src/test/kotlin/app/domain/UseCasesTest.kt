@@ -7,50 +7,57 @@ import org.danceofvalkyries.notion.domain.models.FlashCard
 import org.danceofvalkyries.notion.domain.models.SpacedRepetitionDataBase
 import org.danceofvalkyries.notion.domain.models.SpacedRepetitionDataBaseGroup
 import org.danceofvalkyries.telegram.data.api.TelegramChatApi
-import org.danceofvalkyries.telegram.data.db.TelegramMessagesDb
+import org.danceofvalkyries.telegram.data.db.TelegramNotificationMessageDb
 import org.danceofvalkyries.telegram.domain.TelegramMessage
+import org.danceofvalkyries.telegram.domain.TelegramMessageBody
 
 class UseCasesTest : FunSpec() {
     private val telegramChatApi: TelegramChatApi = mockk(relaxed = true)
-    private val telegramMessagesDb: TelegramMessagesDb = mockk(relaxed = true)
+    private val telegramNotificationMessageDb: TelegramNotificationMessageDb = mockk(relaxed = true)
     private val sendRevisingMessage: suspend (SpacedRepetitionDataBaseGroup) -> Unit = mockk(relaxed = true)
     private val sendGoodJobMessage: suspend () -> Unit = mockk(relaxed = true)
     private val text = "Message to telegram"
 
     private val newTelegramMessage = TelegramMessage(
-        text = text,
         id = 228,
+        body = TelegramMessageBody(
+            text = text,
+            buttons = emptyList()
+        )
     )
     private val oldTelegramMessage = TelegramMessage(
-        text = text,
         id = 322,
+        body = TelegramMessageBody(
+            text = text,
+            buttons = emptyList()
+        )
     )
 
     init {
         beforeTest {
             clearAllMocks()
-            coEvery { telegramChatApi.sendMessage(text) } returns newTelegramMessage
-            coEvery { telegramMessagesDb.getAll() } returns listOf(oldTelegramMessage)
+            coEvery { telegramChatApi.sendMessage(newTelegramMessage.body) } returns newTelegramMessage
+            coEvery { telegramNotificationMessageDb.getAll() } returns listOf(oldTelegramMessage)
         }
 
         test("Should send message and save to db") {
             sendMessageToChatAndSaveToDb(
                 telegramChatApi,
-                telegramMessagesDb,
-                text,
+                telegramNotificationMessageDb,
+                newTelegramMessage.body,
             )
 
-            coVerify(exactly = 1) { telegramMessagesDb.save(newTelegramMessage) }
+            coVerify(exactly = 1) { telegramNotificationMessageDb.save(newTelegramMessage) }
         }
 
         test("Should delete old messages in Telegram") {
             deleteOldMessages(
                 telegramChatApi,
-                telegramMessagesDb
+                telegramNotificationMessageDb
             )
 
             coVerify(exactly = 1) { telegramChatApi.deleteMessage(oldTelegramMessage.id) }
-            coVerify(exactly = 1) { telegramMessagesDb.delete(oldTelegramMessage) }
+            coVerify(exactly = 1) { telegramNotificationMessageDb.delete(oldTelegramMessage) }
         }
 
         test("Should update old message with new one") {
@@ -68,10 +75,10 @@ class UseCasesTest : FunSpec() {
         test("Should update message") {
             val newMessage = "Something new"
 
-            updateNotificationMessage.invoke(newMessage, telegramMessagesDb, telegramChatApi)
+            updateNotificationMessage.invoke(newMessage, telegramNotificationMessageDb, telegramChatApi)
 
             coVerifyOrder {
-                telegramMessagesDb.update(newMessage, oldTelegramMessage.id)
+                telegramNotificationMessageDb.update(newMessage, oldTelegramMessage.id)
                 telegramChatApi.editMessageText(oldTelegramMessage.id, newMessage)
             }
         }

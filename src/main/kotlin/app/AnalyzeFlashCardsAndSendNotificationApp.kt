@@ -4,12 +4,9 @@ import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import okhttp3.OkHttpClient
 import org.danceofvalkyries.app.domain.*
-import org.danceofvalkyries.config.data.LocalFileConfigRepository
 import org.danceofvalkyries.config.data.TestConfigRepository
 import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.environment.EnvironmentImpl
-import org.danceofvalkyries.message.goodJobMessage
-import org.danceofvalkyries.message.revisingIsNeededMessage
 import org.danceofvalkyries.notion.api.NotionDataBaseApi
 import org.danceofvalkyries.notion.api.NotionDataBaseApiImpl
 import org.danceofvalkyries.notion.api.NotionDataBaseApiTelegramMessageErrorLoggerDecorator
@@ -19,7 +16,8 @@ import org.danceofvalkyries.notion.data.repositories.SpacedRepetitionDataBaseRep
 import org.danceofvalkyries.notion.domain.models.SpacedRepetitionDataBaseGroup
 import org.danceofvalkyries.telegram.data.api.TelegramChatApi
 import org.danceofvalkyries.telegram.data.api.TelegramChatApiImpl
-import org.danceofvalkyries.telegram.data.db.TelegramMessagesDbImpl
+import org.danceofvalkyries.telegram.data.db.TelegramNotificationMessageDbImpl
+import org.danceofvalkyries.telegram.domain.TelegramMessageBody
 import org.danceofvalkyries.utils.DispatchersImpl
 import org.danceofvalkyries.utils.db.DataBasePaths
 import java.sql.DriverManager
@@ -43,11 +41,11 @@ class AnalyzeFlashCardsAndSendNotificationApp : App {
     private val telegramMessagesDb by lazy {
         val dbPaths = DataBasePaths(environment.homeDirectory)
         val connection = DriverManager.getConnection("jdbc:sqlite:${dbPaths.production()}")
-        TelegramMessagesDbImpl(connection)
+        TelegramNotificationMessageDbImpl(connection)
     }
 
     private val config: Config by lazy {
-        LocalFileConfigRepository(gson).getConfig()
+        TestConfigRepository(gson).getConfig()
     }
 
     private val telegramChatApi by lazy {
@@ -103,11 +101,11 @@ class AnalyzeFlashCardsAndSendNotificationApp : App {
     private suspend fun sendRevisingMessage(group: SpacedRepetitionDataBaseGroup) {
         replaceNotificationMessage(
             { deleteOldMessages(telegramChatApi, telegramMessagesDb) },
-            { sendMessageToChatAndSaveToDb(telegramChatApi, telegramMessagesDb, revisingIsNeededMessage(group)) }
+            { sendMessageToChatAndSaveToDb(telegramChatApi, telegramMessagesDb, TelegramMessageBody.revisingIsNeeded(group)) }
         )
     }
 
     private suspend fun sendGoodJobMessage() {
-        updateNotificationMessage(goodJobMessage(), telegramMessagesDb, telegramChatApi)
+        updateNotificationMessage(TelegramMessageBody.done().text, telegramMessagesDb, telegramChatApi)
     }
 }

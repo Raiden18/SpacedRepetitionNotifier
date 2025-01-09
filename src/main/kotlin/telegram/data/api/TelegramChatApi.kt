@@ -7,13 +7,13 @@ import org.danceofvalkyries.json.parse
 import org.danceofvalkyries.json.post
 import org.danceofvalkyries.json.request
 import org.danceofvalkyries.telegram.data.api.rest.TelegramChatUrls
-import org.danceofvalkyries.telegram.data.api.rest.request.bodies.EditMessageBody
-import org.danceofvalkyries.telegram.data.api.rest.request.bodies.SendMessageBody
+import org.danceofvalkyries.telegram.data.api.rest.request.bodies.*
 import org.danceofvalkyries.telegram.data.api.rest.response.TelegramMessageRootResponse
 import org.danceofvalkyries.telegram.domain.TelegramMessage
+import org.danceofvalkyries.telegram.domain.TelegramMessageBody
 
 interface TelegramChatApi {
-    suspend fun sendMessage(text: String): TelegramMessage
+    suspend fun sendMessage(textBody: TelegramMessageBody): TelegramMessage
     suspend fun deleteMessage(id: Long)
     suspend fun editMessageText(messageId: Long, text: String)
 }
@@ -31,17 +31,29 @@ class TelegramChatApiImpl(
             chatId = chatId,
         )
 
-    override suspend fun sendMessage(text: String): TelegramMessage {
+    override suspend fun sendMessage(textBody: TelegramMessageBody): TelegramMessage {
         val request = Request.Builder()
             .url(telegramChatUrls.sendMessage())
             .post(
-                SendMessageBody(
-                    gson = gson,
-                    chatId = chatId,
-                    text = text
+                gson.toJson(
+                    SendMessageRequest(
+                        chatId = chatId,
+                        text = textBody.text,
+                        parseMode = "Markdown",
+                        replyMarkup = ReplyMarkupResponse(
+                            textBody.buttons.map {
+                                it.map {
+                                    ButtonRequest(
+                                        text = it.text,
+                                        callbackData = "1",
+                                        url = it.url
+                                    )
+                                }
+                            }
+                        )
+                    )
                 )
-            )
-            .build()
+            ).build()
 
         val response = request.request(client)
             .parse<TelegramMessageRootResponse>(gson)
@@ -49,7 +61,10 @@ class TelegramChatApiImpl(
 
         return TelegramMessage(
             id = response.messageId,
-            text = response.text,
+            body = TelegramMessageBody(
+                text = response.text,
+                buttons = emptyList()
+            ),
         )
     }
 

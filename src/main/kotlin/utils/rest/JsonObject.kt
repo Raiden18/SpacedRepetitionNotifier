@@ -1,4 +1,4 @@
-package org.danceofvalkyries.json
+package org.danceofvalkyries.utils.rest
 
 fun `object`(
     block: JsonObject.() -> Unit

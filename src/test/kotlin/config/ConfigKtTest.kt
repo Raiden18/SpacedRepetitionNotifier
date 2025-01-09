@@ -6,7 +6,7 @@ import io.kotest.matchers.shouldBe
 import org.danceofvalkyries.config.data.ConfigData
 import org.danceofvalkyries.config.data.NotionData
 import org.danceofvalkyries.config.data.TelegramData
-import org.danceofvalkyries.json.`object`
+import org.danceofvalkyries.utils.rest.`object`
 
 class ConfigKtTest : FunSpec() {
 

@@ -1,14 +1,14 @@
 package org.danceofvalkyries.app.domain
 
 import org.danceofvalkyries.notion.domain.models.SpacedRepetitionDataBaseGroup
-import org.danceofvalkyries.notion.domain.repositories.SpacedRepetitionDataBaseRepository
 import org.danceofvalkyries.telegram.data.api.TelegramChatApi
-import org.danceofvalkyries.telegram.data.db.TelegramMessagesDb
+import org.danceofvalkyries.telegram.data.db.TelegramNotificationMessageDb
+import org.danceofvalkyries.telegram.domain.TelegramMessageBody
 
 val sendMessageToChatAndSaveToDb: suspend (
     TelegramChatApi,
-    TelegramMessagesDb,
-    text: String,
+    TelegramNotificationMessageDb,
+    textBody: TelegramMessageBody,
 ) -> Unit = { api, db, text ->
     val telegramMessage = api.sendMessage(text)
     db.save(telegramMessage)
@@ -16,7 +16,7 @@ val sendMessageToChatAndSaveToDb: suspend (
 
 val deleteOldMessages: suspend (
     telegramChatApi: TelegramChatApi,
-    telegramMessagesDb: TelegramMessagesDb,
+    telegramNotificationMessageDb: TelegramNotificationMessageDb,
 ) -> Unit = { api, db ->
     db.getAll().forEach { oldMessage ->
         api.deleteMessage(oldMessage.id)
@@ -34,7 +34,7 @@ val replaceNotificationMessage: suspend (
 
 val updateNotificationMessage: suspend (
     String,
-    telegramMessagesDb: TelegramMessagesDb,
+    telegramNotificationMessageDb: TelegramNotificationMessageDb,
     telegramChatApi: TelegramChatApi,
 ) -> Unit = { text, db, api ->
     db.getAll().forEach { message ->

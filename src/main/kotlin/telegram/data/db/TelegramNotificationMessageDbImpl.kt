@@ -1,14 +1,15 @@
 package org.danceofvalkyries.telegram.data.db
 
 import org.danceofvalkyries.telegram.domain.TelegramMessage
+import org.danceofvalkyries.telegram.domain.TelegramMessageBody
 import org.danceofvalkyries.utils.db.asSequence
 import org.danceofvalkyries.utils.db.tables.columns.*
 import java.sql.Connection
 import java.sql.Statement
 
-class TelegramMessagesDbImpl(
+class TelegramNotificationMessageDbImpl(
     private val connection: Connection,
-) : TelegramMessagesDb {
+) : TelegramNotificationMessageDb {
 
     private companion object {
         const val TABLE_NAME = "telegram_messages"
@@ -54,7 +55,10 @@ class TelegramMessagesDbImpl(
             .map {
                 TelegramMessage(
                     id = idTableColumn.getValue(it),
-                    text = textColumn.getValue(it)
+                    body = TelegramMessageBody(
+                        text = textColumn.getValue(it),
+                        buttons = emptyList()
+                    ),
                 )
             }.toList()
     }

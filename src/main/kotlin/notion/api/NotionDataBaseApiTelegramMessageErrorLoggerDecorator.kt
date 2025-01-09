@@ -3,6 +3,7 @@ package org.danceofvalkyries.notion.api
 import notion.api.rest.response.FlashCardResponse
 import notion.api.rest.response.NotionDbResponse
 import org.danceofvalkyries.telegram.data.api.TelegramChatApi
+import org.danceofvalkyries.telegram.domain.TelegramMessageBody
 
 class NotionDataBaseApiTelegramMessageErrorLoggerDecorator(
     private val notionDataBaseApi: NotionDataBaseApi,
@@ -15,10 +16,14 @@ class NotionDataBaseApiTelegramMessageErrorLoggerDecorator(
         } catch (throwable: Throwable) {
             val stackTrace = throwable.stackTraceToString()
             telegramApi.sendMessage(
-                StringBuilder()
-                    .appendLine("Error fetching description:")
-                    .appendLine(stackTrace)
-                    .toString()
+                TelegramMessageBody(
+                    text = StringBuilder()
+                        .appendLine("Error fetching description:")
+                        .appendLine(stackTrace)
+                        .toString(),
+                    buttons = emptyList()
+                )
+
             )
             throw throwable
         }
@@ -29,11 +34,15 @@ class NotionDataBaseApiTelegramMessageErrorLoggerDecorator(
             notionDataBaseApi.getContent()
         } catch (throwable: Throwable) {
             val stackTrace = throwable.stackTraceToString()
+
             telegramApi.sendMessage(
-                StringBuilder()
-                    .appendLine("Error fetching content:")
-                    .appendLine(stackTrace)
-                    .toString()
+                TelegramMessageBody(
+                    text = StringBuilder()
+                        .appendLine("Error fetching content:")
+                        .appendLine(stackTrace)
+                        .toString(),
+                    buttons = emptyList()
+                )
             )
             throw throwable
         }

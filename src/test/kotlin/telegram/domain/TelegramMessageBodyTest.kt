@@ -1,19 +1,21 @@
-package message
+package telegram.domain
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.message.goodJobMessage
-import org.danceofvalkyries.message.revisingIsNeededMessage
 import org.danceofvalkyries.notion.domain.models.FlashCard
 import org.danceofvalkyries.notion.domain.models.SpacedRepetitionDataBase
 import org.danceofvalkyries.notion.domain.models.SpacedRepetitionDataBaseGroup
+import org.danceofvalkyries.telegram.domain.Button
+import org.danceofvalkyries.telegram.domain.TelegramMessageBody
 
-class MessageBuilderTest : FunSpec() {
+class TelegramMessageBodyTest : FunSpec() {
 
     init {
-
         test("Should build good job message") {
-            goodJobMessage.invoke() shouldBe "Good Job! \uD83D\uDE0E Everything is revised! ✅"
+            TelegramMessageBody.done() shouldBe TelegramMessageBody(
+                text = """Good Job! 😎 Everything is revised! ✅""",
+                buttons = emptyList(),
+            )
         }
 
         test("Should build revising needed message") {
@@ -41,25 +43,32 @@ class MessageBuilderTest : FunSpec() {
                     )
                 )
             )
-            revisingIsNeededMessage(
+            TelegramMessageBody.revisingIsNeeded(
                 spacedRepetitionDataBaseGroup
-            ) shouldBe """
-                    Total count: 3
-                    
-                    English vocabulary: 1
-                    [Open](https://www.notion.so/databases/1)
-                    
-                    Greek vocabulary: 1
-                    [Open](https://www.notion.so/databases/2)
-                    
-                    English grammar: 1
-                    [Open](https://www.notion.so/databases/3)
-                    
-                    Greek grammar: 0
-                    [Open](https://www.notion.so/databases/4)
-                    
-                    
-                """.trimIndent()
+            ) shouldBe TelegramMessageBody(
+                text = """You have 3 flashcards to revise 🧠""".trimIndent(),
+                buttons = listOf(
+                    listOf(
+                        Button(
+                            text = "English vocabulary: 1",
+                            url = "https://www.notion.so/databases/1"
+                        )
+                    ),
+                    listOf(
+                        Button(
+                            text = "Greek vocabulary: 1",
+                            url = "https://www.notion.so/databases/2"
+                        )
+                    ),
+                    listOf(
+                        Button(
+                            text = "English grammar: 1",
+                            url = "https://www.notion.so/databases/3"
+                        )
+                    )
+                )
+            )
         }
     }
+
 }

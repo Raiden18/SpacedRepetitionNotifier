@@ -25,7 +25,7 @@ data class TelegramMessagesSqlQueries(
                 into = tableName,
                 values = listOf(
                     idColumn to telegramMessage.id.toString(),
-                    textColumn to telegramMessage.text,
+                    textColumn to telegramMessage.body.text,
                 )
             )
             .build()
