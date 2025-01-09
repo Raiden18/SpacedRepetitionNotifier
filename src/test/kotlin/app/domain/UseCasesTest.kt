@@ -6,15 +6,13 @@ import org.danceofvalkyries.app.domain.*
 import org.danceofvalkyries.notion.domain.models.FlashCard
 import org.danceofvalkyries.notion.domain.models.SpacedRepetitionDataBase
 import org.danceofvalkyries.notion.domain.models.SpacedRepetitionDataBaseGroup
-import org.danceofvalkyries.notion.domain.repositories.SpacedRepetitionDataBaseRepository
 import org.danceofvalkyries.telegram.data.api.TelegramChatApi
 import org.danceofvalkyries.telegram.data.db.TelegramMessagesDb
-import org.danceofvalkyries.telegram.domain.*
+import org.danceofvalkyries.telegram.domain.TelegramMessage
 
 class UseCasesTest : FunSpec() {
     private val telegramChatApi: TelegramChatApi = mockk(relaxed = true)
     private val telegramMessagesDb: TelegramMessagesDb = mockk(relaxed = true)
-    private val spacedRepetitionDataBaseRepository: SpacedRepetitionDataBaseRepository = mockk(relaxed = true)
     private val sendRevisingMessage: suspend (SpacedRepetitionDataBaseGroup) -> Unit = mockk(relaxed = true)
     private val sendGoodJobMessage: suspend () -> Unit = mockk(relaxed = true)
     private val text = "Message to telegram"
@@ -80,7 +78,7 @@ class UseCasesTest : FunSpec() {
 
 
         test("Should send good job notifications if there are less flash cards than threshold") {
-            coEvery { spacedRepetitionDataBaseRepository.getAll() } returns SpacedRepetitionDataBaseGroup(
+            val group = SpacedRepetitionDataBaseGroup(
                 listOf(
                     SpacedRepetitionDataBase(
                         id = "123",
@@ -91,7 +89,7 @@ class UseCasesTest : FunSpec() {
             )
 
             sendReviseOrDoneMessage.invoke(
-                spacedRepetitionDataBaseRepository,
+                group,
                 10,
                 sendRevisingMessage,
                 sendGoodJobMessage,
@@ -123,10 +121,9 @@ class UseCasesTest : FunSpec() {
                     )
                 )
             )
-            coEvery { spacedRepetitionDataBaseRepository.getAll() } returns group
 
             sendReviseOrDoneMessage.invoke(
-                spacedRepetitionDataBaseRepository,
+                group,
                 10,
                 sendRevisingMessage,
                 sendGoodJobMessage,

@@ -76,7 +76,7 @@ class AnalyzeFlashCardsAndSendNotificationApp : App {
 
     override suspend fun run() {
         sendReviseOrDoneMessage(
-            spacedRepetitionDataBaseRepository,
+            spacedRepetitionDataBaseRepository.getAll(),
             config.flashCardsThreshold,
             ::sendRevisingMessage,
             ::sendGoodJobMessage,

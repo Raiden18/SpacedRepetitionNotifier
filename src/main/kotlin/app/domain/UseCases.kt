@@ -44,15 +44,14 @@ val updateNotificationMessage: suspend (
 }
 
 val sendReviseOrDoneMessage: suspend (
-    SpacedRepetitionDataBaseRepository,
+    SpacedRepetitionDataBaseGroup,
     Int,
     suspend (SpacedRepetitionDataBaseGroup) -> Unit,
     suspend () -> Unit,
-) -> Unit = { notionDbs, threshold, sendNotification, sendDone ->
-    val spacedRepetitionDbs = notionDbs.getAll()
+) -> Unit = { spacedRepetitionDbs, threshold, sendNotification, sendDone ->
     if (spacedRepetitionDbs.totalFlashCardsNeedRevising >= threshold) {
         sendNotification(spacedRepetitionDbs)
     } else {
-        sendDone.invoke()
+        sendDone()
     }
 }
