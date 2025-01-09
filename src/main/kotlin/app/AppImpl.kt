@@ -1,16 +1,16 @@
-package org.danceofvalkyries
+package org.danceofvalkyries.app
 
 import org.danceofvalkyries.notion.domain.models.SpacedRepetitionDataBaseGroup
 import org.danceofvalkyries.notion.domain.repositories.SpacedRepetitionDataBaseRepository
 
-class SpaceRepetitionTelegramReminderApp(
+class AppImpl(
     private val spacedRepetitionDataBaseRepository: SpacedRepetitionDataBaseRepository,
     private val flashCardsThreshold: Int,
     private val sendRevisingMessage: suspend (SpacedRepetitionDataBaseGroup) -> Unit,
     private val sendGoodJobMessage: suspend () -> Unit,
-) {
+) : App {
 
-    suspend fun run() {
+    override suspend fun run() {
         checkSpaceRepetitionDatabasesAndSendNotificationIfNeeded()
     }
 

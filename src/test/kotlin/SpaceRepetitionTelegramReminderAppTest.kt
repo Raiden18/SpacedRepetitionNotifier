@@ -3,7 +3,7 @@ import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
-import org.danceofvalkyries.SpaceRepetitionTelegramReminderApp
+import org.danceofvalkyries.app.AppImpl
 import org.danceofvalkyries.notion.domain.models.FlashCard
 import org.danceofvalkyries.notion.domain.models.SpacedRepetitionDataBase
 import org.danceofvalkyries.notion.domain.models.SpacedRepetitionDataBaseGroup
@@ -14,12 +14,12 @@ class SpaceRepetitionTelegramReminderAppTest : FunSpec() {
     private val spacedRepetitionDataBaseRepository: SpacedRepetitionDataBaseRepository = mockk(relaxed = true)
     private val sendRevisingMessage: suspend (SpacedRepetitionDataBaseGroup) -> Unit = mockk(relaxed = true)
     private val sendGoodJobMessage: suspend () -> Unit = mockk(relaxed = true)
-    private lateinit var spaceRepetitionTelegramReminderApp: SpaceRepetitionTelegramReminderApp
+    private lateinit var appImpl: AppImpl
 
     init {
         beforeTest {
             clearAllMocks()
-            spaceRepetitionTelegramReminderApp = SpaceRepetitionTelegramReminderApp(
+            appImpl = AppImpl(
                 spacedRepetitionDataBaseRepository,
                 flashCardsThreshold = 10,
                 sendRevisingMessage = sendRevisingMessage,
@@ -37,7 +37,7 @@ class SpaceRepetitionTelegramReminderAppTest : FunSpec() {
                     )
                 )
             )
-            spaceRepetitionTelegramReminderApp.run()
+            appImpl.run()
 
             coVerify(exactly = 1) { sendGoodJobMessage.invoke() }
         }
@@ -66,7 +66,7 @@ class SpaceRepetitionTelegramReminderAppTest : FunSpec() {
             )
             coEvery { spacedRepetitionDataBaseRepository.getAll() } returns group
 
-            spaceRepetitionTelegramReminderApp.run()
+            appImpl.run()
 
             coVerify(exactly = 1) { sendRevisingMessage.invoke(group) }
         }
