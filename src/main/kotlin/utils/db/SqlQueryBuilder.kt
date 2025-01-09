@@ -1,5 +1,7 @@
 package org.danceofvalkyries.utils.db
 
+import org.danceofvalkyries.utils.db.tables.columns.TableColumn
+
 class SqlQueryBuilder {
 
     private val stringBuilder = mutableListOf<String>()

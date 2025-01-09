@@ -1,8 +1,8 @@
 package org.danceofvalkyries.telegram.data.db
 
 import org.danceofvalkyries.telegram.domain.TelegramMessage
-import org.danceofvalkyries.utils.db.TableColumn
 import org.danceofvalkyries.utils.db.asSequence
+import org.danceofvalkyries.utils.db.tables.columns.*
 import java.sql.Connection
 import java.sql.Statement
 
@@ -14,13 +14,13 @@ class TelegramMessagesDbImpl(
         const val TABLE_NAME = "telegram_messages"
     }
 
-    private val idTableColumn = TableColumn.Long(
+    private val idTableColumn = LongTableColumn(
         name = "id",
-        isPrimaryKey = true,
+        primaryKey = PrimaryKey(),
     )
-    private val textColumn = TableColumn.Text(
+    private val textColumn = TextTableColumn(
         name = "text",
-        isPrimaryKey = false,
+        primaryKey = NoPrimaryKey()
     )
 
     private val sqlQueries = TelegramMessagesSqlQueries(

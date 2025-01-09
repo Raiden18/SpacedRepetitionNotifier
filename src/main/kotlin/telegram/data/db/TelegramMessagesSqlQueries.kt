@@ -2,7 +2,7 @@ package org.danceofvalkyries.telegram.data.db
 
 import org.danceofvalkyries.telegram.domain.TelegramMessage
 import org.danceofvalkyries.utils.db.SqlQueryBuilder
-import org.danceofvalkyries.utils.db.TableColumn
+import org.danceofvalkyries.utils.db.tables.columns.TableColumn
 
 data class TelegramMessagesSqlQueries(
     private val tableName: String,
