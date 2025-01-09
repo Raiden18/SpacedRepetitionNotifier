@@ -42,14 +42,12 @@ class TelegramChatApiImpl(
                         parseMode = "Markdown",
                         replyMarkup = ReplyMarkupResponse(
                             textBody.buttons.map {
-                                it.map {
-                                    ButtonRequest(
-                                        text = it.text,
-                                        callbackData = "1",
-                                        url = it.url
-                                    )
-                                }
-                            }
+                                ButtonRequest(
+                                    text = it.text,
+                                    callbackData = "1",
+                                    url = it.url
+                                )
+                            }.map { listOf(it) }
                         )
                     )
                 )

@@ -4,7 +4,7 @@ import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import okhttp3.OkHttpClient
 import org.danceofvalkyries.app.domain.*
-import org.danceofvalkyries.config.data.TestConfigRepository
+import org.danceofvalkyries.config.data.LocalFileConfigRepository
 import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.environment.EnvironmentImpl
 import org.danceofvalkyries.notion.api.NotionDataBaseApi
@@ -24,7 +24,7 @@ import java.sql.DriverManager
 import java.util.concurrent.TimeUnit
 import kotlin.time.Duration.Companion.milliseconds
 
-class AnalyzeFlashCardsAndSendNotificationApp : App {
+class AnalyzeFlashCardsAndSendNotificationApp: App {
 
     private val environment by lazy { EnvironmentImpl() }
     private val dispatchers by lazy { DispatchersImpl(Dispatchers.IO) }
@@ -45,7 +45,7 @@ class AnalyzeFlashCardsAndSendNotificationApp : App {
     }
 
     private val config: Config by lazy {
-        TestConfigRepository(gson).getConfig()
+        LocalFileConfigRepository(gson).getConfig()
     }
 
     private val telegramChatApi by lazy {

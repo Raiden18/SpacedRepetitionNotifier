@@ -48,23 +48,17 @@ class TelegramMessageBodyTest : FunSpec() {
             ) shouldBe TelegramMessageBody(
                 text = """You have 3 flashcards to revise 🧠""".trimIndent(),
                 buttons = listOf(
-                    listOf(
-                        Button(
-                            text = "English vocabulary: 1",
-                            url = "https://www.notion.so/databases/1"
-                        )
+                    Button(
+                        text = "English vocabulary: 1",
+                        url = "https://www.notion.so/databases/1"
                     ),
-                    listOf(
-                        Button(
-                            text = "Greek vocabulary: 1",
-                            url = "https://www.notion.so/databases/2"
-                        )
+                    Button(
+                        text = "Greek vocabulary: 1",
+                        url = "https://www.notion.so/databases/2"
                     ),
-                    listOf(
-                        Button(
-                            text = "English grammar: 1",
-                            url = "https://www.notion.so/databases/3"
-                        )
+                    Button(
+                        text = "English grammar: 1",
+                        url = "https://www.notion.so/databases/3"
                     )
                 )
             )

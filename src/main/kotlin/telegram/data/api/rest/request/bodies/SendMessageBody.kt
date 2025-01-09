@@ -4,18 +4,6 @@ import com.google.gson.Gson
 import org.danceofvalkyries.utils.rest.`object`
 
 
-fun SendMessageBody(
-    gson: Gson,
-    chatId: String,
-    text: String,
-): String {
-    return `object` {
-        "chat_id" to chatId
-        "text" to text
-        "parse_mode" to "Markdown"
-    }.let(gson::toJson)
-}
-
 fun EditMessageBody(
     gson: Gson,
     chatId: String,

@@ -4,7 +4,7 @@ import org.danceofvalkyries.notion.domain.models.SpacedRepetitionDataBaseGroup
 
 data class TelegramMessageBody(
     val text: String,
-    val buttons: List<List<Button>>
+    val buttons: List<Button>
 ) {
     companion object {
 
@@ -18,7 +18,7 @@ data class TelegramMessageBody(
                             text = "${it.name}: ${it.flashCards.count()}",
                             url = "https://www.notion.so/databases/${it.id}"
                         )
-                    }.map { listOf(it) }
+                    }
             )
         }
 
