@@ -9,8 +9,6 @@ class AppMeasurePerfomanceDecorator(
     override suspend fun run() {
         printMeasure(
             "app time spent",
-        ) {
-            app.run()
-        }
+        ) { app.run() }
     }
 }

@@ -1,6 +1,5 @@
 package org.danceofvalkyries.config.domain
 
-
 interface Config {
     val notion: NotionConfig
     val telegram: TelegramConfig
