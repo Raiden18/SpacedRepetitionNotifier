@@ -5,34 +5,20 @@ import org.danceofvalkyries.telegram.data.api.TelegramChatApi
 import org.danceofvalkyries.telegram.data.db.TelegramNotificationMessageDb
 import org.danceofvalkyries.telegram.domain.TelegramMessageBody
 
-val sendMessageToChatAndSaveToDb: suspend (
+val deleteOldAndSendNewNotification: suspend (
     TelegramChatApi,
     TelegramNotificationMessageDb,
     textBody: TelegramMessageBody,
-) -> Unit = { api, db, text ->
-    val telegramMessage = api.sendMessage(text)
-    db.save(telegramMessage)
-}
-
-val deleteOldMessages: suspend (
-    telegramChatApi: TelegramChatApi,
-    telegramNotificationMessageDb: TelegramNotificationMessageDb,
-) -> Unit = { api, db ->
+) -> Unit = { api, db, messageBody ->
     db.getAll().forEach { oldMessage ->
         api.deleteMessage(oldMessage.id)
         db.delete(oldMessage)
     }
+    val telegramMessage = api.sendMessage(messageBody)
+    db.save(telegramMessage)
 }
 
-val replaceNotificationMessage: suspend (
-    deleteOld: suspend () -> Unit,
-    sendNew: suspend () -> Unit,
-) -> Unit = { deleteOld, sendNew ->
-    deleteOld.invoke()
-    sendNew.invoke()
-}
-
-val updateNotificationMessage: suspend (
+val editNotificationMessage: suspend (
     String,
     telegramNotificationMessageDb: TelegramNotificationMessageDb,
     telegramChatApi: TelegramChatApi,

@@ -76,7 +76,7 @@ class AnalyzeFlashCardsAndSendNotificationApp : App {
         sendReviseOrDoneMessage(
             spacedRepetitionDataBaseRepository.getAll(),
             config.flashCardsThreshold,
-            ::sendRevisingMessage,
+            ::deleteOldAndSendNewNotification,
             ::sendGoodJobMessage,
         )
     }
@@ -98,14 +98,15 @@ class AnalyzeFlashCardsAndSendNotificationApp : App {
             .map { NotionDataBaseApiTelegramMessageErrorLoggerDecorator(it, telegramChatApi) }
     }
 
-    private suspend fun sendRevisingMessage(group: SpacedRepetitionDataBaseGroup) {
-        replaceNotificationMessage(
-            { deleteOldMessages(telegramChatApi, telegramMessagesDb) },
-            { sendMessageToChatAndSaveToDb(telegramChatApi, telegramMessagesDb, TelegramMessageBody.revisingIsNeeded(group)) }
+    private suspend fun deleteOldAndSendNewNotification(group: SpacedRepetitionDataBaseGroup) {
+        deleteOldAndSendNewNotification(
+            telegramChatApi,
+            telegramMessagesDb,
+            TelegramMessageBody.revisingIsNeeded(group)
         )
     }
 
     private suspend fun sendGoodJobMessage() {
-        updateNotificationMessage(TelegramMessageBody.done().text, telegramMessagesDb, telegramChatApi)
+        editNotificationMessage(TelegramMessageBody.done().text, telegramMessagesDb, telegramChatApi)
     }
 }

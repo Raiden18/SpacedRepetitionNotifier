@@ -2,7 +2,9 @@ package app.domain
 
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.*
-import org.danceofvalkyries.app.domain.*
+import org.danceofvalkyries.app.domain.deleteOldAndSendNewNotification
+import org.danceofvalkyries.app.domain.editNotificationMessage
+import org.danceofvalkyries.app.domain.sendReviseOrDoneMessage
 import org.danceofvalkyries.notion.domain.models.FlashCard
 import org.danceofvalkyries.notion.domain.models.SpacedRepetitionDataBase
 import org.danceofvalkyries.notion.domain.models.SpacedRepetitionDataBaseGroup
@@ -12,6 +14,7 @@ import org.danceofvalkyries.telegram.domain.TelegramMessage
 import org.danceofvalkyries.telegram.domain.TelegramMessageBody
 
 class UseCasesTest : FunSpec() {
+
     private val telegramChatApi: TelegramChatApi = mockk(relaxed = true)
     private val telegramNotificationMessageDb: TelegramNotificationMessageDb = mockk(relaxed = true)
     private val sendRevisingMessage: suspend (SpacedRepetitionDataBaseGroup) -> Unit = mockk(relaxed = true)
@@ -40,42 +43,24 @@ class UseCasesTest : FunSpec() {
             coEvery { telegramNotificationMessageDb.getAll() } returns listOf(oldTelegramMessage)
         }
 
-        test("Should send message and save to db") {
-            sendMessageToChatAndSaveToDb(
+        test("Should replace old tg message with new one") {
+            deleteOldAndSendNewNotification(
                 telegramChatApi,
                 telegramNotificationMessageDb,
                 newTelegramMessage.body,
             )
 
-            coVerify(exactly = 1) { telegramNotificationMessageDb.save(newTelegramMessage) }
-        }
-
-        test("Should delete old messages in Telegram") {
-            deleteOldMessages(
-                telegramChatApi,
-                telegramNotificationMessageDb
-            )
-
-            coVerify(exactly = 1) { telegramChatApi.deleteMessage(oldTelegramMessage.id) }
             coVerify(exactly = 1) { telegramNotificationMessageDb.delete(oldTelegramMessage) }
-        }
+            coVerify(exactly = 1) { telegramChatApi.deleteMessage(oldTelegramMessage.id) }
 
-        test("Should update old message with new one") {
-            val deleteOld: suspend () -> Unit = mockk(relaxed = true)
-            val sendNew: suspend () -> Unit = mockk(relaxed = true)
-
-            replaceNotificationMessage(deleteOld, sendNew)
-
-            coVerify {
-                deleteOld.invoke()
-                sendNew.invoke()
-            }
+            coVerify(exactly = 1) { telegramNotificationMessageDb.save(newTelegramMessage) }
+            coVerify(exactly = 1) { telegramChatApi.sendMessage(newTelegramMessage.body) }
         }
 
         test("Should update message") {
             val newMessage = "Something new"
 
-            updateNotificationMessage.invoke(newMessage, telegramNotificationMessageDb, telegramChatApi)
+            editNotificationMessage.invoke(newMessage, telegramNotificationMessageDb, telegramChatApi)
 
             coVerifyOrder {
                 telegramNotificationMessageDb.update(newMessage, oldTelegramMessage.id)
