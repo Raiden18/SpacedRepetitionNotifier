@@ -27,7 +27,7 @@ suspend fun main() {
     val dbPaths = DataBasePaths(
         homeDirectory = System.getProperty("user.home")
     )
-    val connection = DriverManager.getConnection("jdbc:sqlite:${dbPaths.development()}")
+    val connection = DriverManager.getConnection("jdbc:sqlite:${dbPaths.production()}")
     val telegramMessagesDbTable = TelegramMessagesDbImpl(
         connection
     )
