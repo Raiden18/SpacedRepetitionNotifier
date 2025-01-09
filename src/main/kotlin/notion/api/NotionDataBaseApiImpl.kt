@@ -14,13 +14,12 @@ class NotionDataBaseApiImpl(
     private val gson: Gson,
     private val databaseId: String,
     private val client: OkHttpClient,
-    private val apiVersion: String,
     private val apiKey: String,
 ) : NotionDataBaseApi {
 
     private val headers = listOf(
         AuthorizationBearerHeader(apiKey),
-        NotionApiVersionHeader(apiVersion),
+        NotionApiVersionHeader("2022-06-28"),
         ContentType(ContentTypes.ApplicationJson),
     )
 

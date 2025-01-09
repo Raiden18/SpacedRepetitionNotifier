@@ -1,9 +1,11 @@
+package config
+
 import com.google.gson.Gson
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.Config
-import org.danceofvalkyries.Notion
-import org.danceofvalkyries.Telegram
+import org.danceofvalkyries.config.domain.Config
+import org.danceofvalkyries.config.domain.Notion
+import org.danceofvalkyries.config.domain.Telegram
 import org.danceofvalkyries.json.`object`
 
 class ConfigKtTest : FunSpec() {

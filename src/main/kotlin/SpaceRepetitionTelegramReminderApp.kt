@@ -11,10 +11,6 @@ class SpaceRepetitionTelegramReminderApp(
 ) {
 
     suspend fun run() {
-        tryToCheckSpaceRepetitionDatabasesAndSendNotificationIfNeeded()
-    }
-
-    private suspend fun tryToCheckSpaceRepetitionDatabasesAndSendNotificationIfNeeded() {
         checkSpaceRepetitionDatabasesAndSendNotificationIfNeeded()
     }
 

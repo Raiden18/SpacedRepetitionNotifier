@@ -1,4 +1,4 @@
-package org.danceofvalkyries
+package org.danceofvalkyries.config.domain
 
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
