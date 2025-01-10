@@ -13,14 +13,12 @@ import org.danceofvalkyries.notion.data.repositories.api.NotionDataBaseApi
 import org.danceofvalkyries.notion.data.repositories.api.NotionDataBaseApiImpl
 import org.danceofvalkyries.notion.data.repositories.api.NotionDataBaseApiTelegramMessageErrorLoggerDecorator
 import org.danceofvalkyries.notion.data.repositories.api.NotionDataBaseApiTimeMeasurePerfomanceDecorator
-import org.danceofvalkyries.notion.domain.models.FlashCard
 import org.danceofvalkyries.notion.domain.models.SpacedRepetitionDataBaseGroup
 import org.danceofvalkyries.telegram.data.api.TelegramChatApi
 import org.danceofvalkyries.telegram.data.api.TelegramChatApiImpl
 import org.danceofvalkyries.telegram.data.db.TelegramNotificationMessageDbImpl
-import org.danceofvalkyries.telegram.domain.DoneMessage
-import org.danceofvalkyries.telegram.domain.FlashCardMessage
-import org.danceofvalkyries.telegram.domain.RevisingIsNeededMessage
+import org.danceofvalkyries.telegram.domain.models.DoneMessage
+import org.danceofvalkyries.telegram.domain.models.RevisingIsNeededMessage
 import org.danceofvalkyries.utils.DispatchersImpl
 import org.danceofvalkyries.utils.db.DataBasePaths
 import java.sql.DriverManager

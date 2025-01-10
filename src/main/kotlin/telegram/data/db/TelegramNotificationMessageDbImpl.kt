@@ -1,7 +1,7 @@
 package org.danceofvalkyries.telegram.data.db
 
-import org.danceofvalkyries.telegram.domain.TelegramMessage
-import org.danceofvalkyries.telegram.domain.TelegramMessageBody
+import org.danceofvalkyries.telegram.domain.models.TelegramMessage
+import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
 import org.danceofvalkyries.utils.db.asSequence
 import org.danceofvalkyries.utils.db.tables.columns.*
 import java.sql.Connection

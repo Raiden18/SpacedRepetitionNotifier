@@ -3,7 +3,7 @@ package org.danceofvalkyries.notion.data.repositories.api
 import org.danceofvalkyries.notion.data.repositories.api.rest.response.NotionDbResponse
 import org.danceofvalkyries.notion.data.repositories.api.rest.response.NotionPageResponse
 import org.danceofvalkyries.telegram.data.api.TelegramChatApi
-import org.danceofvalkyries.telegram.domain.TelegramMessageBody
+import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
 
 class NotionDataBaseApiTelegramMessageErrorLoggerDecorator(
     private val notionDataBaseApi: NotionDataBaseApi,

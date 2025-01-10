@@ -5,13 +5,12 @@ import io.mockk.*
 import org.danceofvalkyries.app.domain.deleteOldAndSendNewNotification
 import org.danceofvalkyries.app.domain.editNotificationMessage
 import org.danceofvalkyries.app.domain.sendReviseOrDoneMessage
-import org.danceofvalkyries.notion.domain.models.FlashCard
 import org.danceofvalkyries.notion.domain.models.SpacedRepetitionDataBase
 import org.danceofvalkyries.notion.domain.models.SpacedRepetitionDataBaseGroup
 import org.danceofvalkyries.telegram.data.api.TelegramChatApi
 import org.danceofvalkyries.telegram.data.db.TelegramNotificationMessageDb
-import org.danceofvalkyries.telegram.domain.TelegramMessage
-import org.danceofvalkyries.telegram.domain.TelegramMessageBody
+import org.danceofvalkyries.telegram.domain.models.TelegramMessage
+import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
 
 class UseCasesTest : FunSpec() {
 

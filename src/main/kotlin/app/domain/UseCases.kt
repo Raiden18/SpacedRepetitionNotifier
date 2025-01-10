@@ -3,19 +3,20 @@ package org.danceofvalkyries.app.domain
 import org.danceofvalkyries.notion.domain.models.SpacedRepetitionDataBaseGroup
 import org.danceofvalkyries.telegram.data.api.TelegramChatApi
 import org.danceofvalkyries.telegram.data.db.TelegramNotificationMessageDb
-import org.danceofvalkyries.telegram.domain.TelegramMessageBody
+import org.danceofvalkyries.telegram.domain.TelegramChatRepository
+import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
 
 val deleteOldAndSendNewNotification: suspend (
-    TelegramChatApi,
+    TelegramChatRepository,
     TelegramNotificationMessageDb,
     textBody: TelegramMessageBody,
-) -> Unit = { api, db, messageBody ->
+) -> Unit = { repository, db, messageBody ->
     db.getAll().forEach { oldMessage ->
-        api.deleteMessage(oldMessage.id)
+        repository.deleteFromChat(oldMessage)
         db.delete(oldMessage)
     }
-    val telegramMessage = api.sendMessage(messageBody)
-    db.save(telegramMessage)
+    val telegramMessage = repository.sendToChat(messageBody)
+    repository.saveToDb(telegramMessage)
 }
 
 val editNotificationMessage: suspend (

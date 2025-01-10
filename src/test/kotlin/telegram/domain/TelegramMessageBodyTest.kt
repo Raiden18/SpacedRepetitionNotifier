@@ -5,10 +5,10 @@ import io.kotest.matchers.shouldBe
 import io.mockk.mockk
 import org.danceofvalkyries.notion.domain.models.SpacedRepetitionDataBase
 import org.danceofvalkyries.notion.domain.models.SpacedRepetitionDataBaseGroup
-import org.danceofvalkyries.telegram.domain.Button
-import org.danceofvalkyries.telegram.domain.DoneMessage
-import org.danceofvalkyries.telegram.domain.RevisingIsNeededMessage
-import org.danceofvalkyries.telegram.domain.TelegramMessageBody
+import org.danceofvalkyries.telegram.domain.models.Button
+import org.danceofvalkyries.telegram.domain.models.DoneMessage
+import org.danceofvalkyries.telegram.domain.models.RevisingIsNeededMessage
+import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
 
 class TelegramMessageBodyTest : FunSpec() {
 

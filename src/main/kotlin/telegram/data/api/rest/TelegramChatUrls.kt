@@ -14,26 +14,32 @@ data class TelegramChatUrls(
             .addPathSegment("bot$apiKey")
             .build()
 
-    fun sendMessage(): HttpUrl = telegramApiUrl
-        .newBuilder()
-        .addPathSegment("sendMessage")
-        .build()
+    fun sendMessage(): HttpUrl = telegramEndpoint {
+        addPathSegment("sendMessage")
+    }
 
-    fun getUpdates(limit: Int): HttpUrl = telegramApiUrl
-        .newBuilder()
-        .addPathSegment("getUpdates")
-        .addQueryParameter("limit", limit.toString())
-        .build()
+    fun getUpdates(limit: Int): HttpUrl = telegramEndpoint {
+        addPathSegment("getUpdates")
+        addQueryParameter("limit", limit.toString())
+    }
 
-    fun deleteMessage(messageId: Long): HttpUrl = telegramApiUrl
-        .newBuilder()
-        .addPathSegment("deleteMessage")
-        .addQueryParameter("chat_id", chatId)
-        .addQueryParameter("message_id", messageId.toString())
-        .build()
+    fun deleteMessage(messageId: Long): HttpUrl = telegramEndpoint {
+        addPathSegment("deleteMessage")
+        addQueryParameter("chat_id", chatId)
+        addQueryParameter("message_id", messageId.toString())
+    }
 
-    fun editMessageText(): HttpUrl = telegramApiUrl
-        .newBuilder()
-        .addPathSegment("editMessageText")
-        .build()
+    fun editMessageText(): HttpUrl = telegramEndpoint {
+        addPathSegment("editMessageText")
+    }
+
+    fun sendPhoto(): HttpUrl = telegramEndpoint {
+        addPathSegment("sendPhoto")
+    }
+
+    private fun telegramEndpoint(builder: HttpUrl.Builder.() -> Unit): HttpUrl {
+        return telegramApiUrl.newBuilder()
+            .apply(builder)
+            .build()
+    }
 }

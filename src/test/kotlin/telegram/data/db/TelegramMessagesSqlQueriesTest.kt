@@ -3,8 +3,8 @@ package telegram.data.db
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import org.danceofvalkyries.telegram.data.db.TelegramMessagesSqlQueries
-import org.danceofvalkyries.telegram.domain.TelegramMessage
-import org.danceofvalkyries.telegram.domain.TelegramMessageBody
+import org.danceofvalkyries.telegram.domain.models.TelegramMessage
+import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
 import org.danceofvalkyries.utils.db.tables.columns.LongTableColumn
 import org.danceofvalkyries.utils.db.tables.columns.NoPrimaryKey
 import org.danceofvalkyries.utils.db.tables.columns.PrimaryKey

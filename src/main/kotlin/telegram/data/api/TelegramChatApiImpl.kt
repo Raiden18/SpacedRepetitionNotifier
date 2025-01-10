@@ -1,20 +1,18 @@
 package org.danceofvalkyries.telegram.data.api
 
 import com.google.gson.Gson
+import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.danceofvalkyries.json.parse
 import org.danceofvalkyries.json.post
 import org.danceofvalkyries.json.request
-import org.danceofvalkyries.telegram.data.api.mappers.textWithEscapedCharacters
+import org.danceofvalkyries.telegram.data.api.mappers.toRequest
 import org.danceofvalkyries.telegram.data.api.rest.TelegramChatUrls
-import org.danceofvalkyries.telegram.data.api.rest.request.bodies.ButtonRequest
 import org.danceofvalkyries.telegram.data.api.rest.request.bodies.EditMessageBody
-import org.danceofvalkyries.telegram.data.api.rest.request.bodies.ReplyMarkupResponse
-import org.danceofvalkyries.telegram.data.api.rest.request.bodies.SendMessageRequest
 import org.danceofvalkyries.telegram.data.api.rest.response.TelegramMessageRootResponse
-import org.danceofvalkyries.telegram.domain.TelegramMessage
-import org.danceofvalkyries.telegram.domain.TelegramMessageBody
+import org.danceofvalkyries.telegram.domain.models.TelegramMessage
+import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
 
 class TelegramChatApiImpl(
     private val client: OkHttpClient,
@@ -30,43 +28,7 @@ class TelegramChatApiImpl(
         )
 
     override suspend fun sendMessage(textBody: TelegramMessageBody): TelegramMessage {
-        val request = Request.Builder()
-            .url(telegramChatUrls.sendMessage())
-            .post(
-                gson.toJson(
-                    SendMessageRequest(
-                        chatId = chatId,
-                        text = textBody.textWithEscapedCharacters(),
-                        parseMode = "MarkdownV2",
-                        replyMarkup = ReplyMarkupResponse(
-                            textBody.nestedButtons.map {
-                                it.map {
-                                    ButtonRequest(
-                                        text = it.text,
-                                        callbackData = "1",
-                                        url = it.url
-                                    )
-                                }
-                            }
-                        )
-                    )
-                )
-            ).build()
-
-        println(request.request(client).body?.string())
-
-        val response = request.request(client)
-            .parse<TelegramMessageRootResponse>(gson)
-            .result
-
-
-        return TelegramMessage(
-            id = response.messageId,
-            body = TelegramMessageBody(
-                text = response.text,
-                buttons = emptyList()
-            ),
-        )
+        return sendMessage(telegramChatUrls.sendMessage(), textBody)
     }
 
     override suspend fun deleteMessage(id: Long) {
@@ -92,7 +54,23 @@ class TelegramChatApiImpl(
             .request(client)
     }
 
-    override suspend fun sendPhoto(): TelegramMessage {
-        TODO()
+    override suspend fun sendPhoto(textBody: TelegramMessageBody): TelegramMessage {
+        return sendMessage(telegramChatUrls.sendPhoto(), textBody)
+    }
+
+    private fun sendMessage(url: HttpUrl, textBody: TelegramMessageBody): TelegramMessage {
+        val request = Request.Builder()
+            .url(url)
+            .post(gson.toJson(textBody.toRequest(chatId)))
+            .build()
+
+        val response = request.request(client)
+            .parse<TelegramMessageRootResponse>(gson)
+            .result
+
+        return TelegramMessage(
+            id = response.messageId,
+            body = textBody,
+        )
     }
 }

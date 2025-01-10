@@ -1,6 +1,6 @@
 package org.danceofvalkyries.telegram.data.db
 
-import org.danceofvalkyries.telegram.domain.TelegramMessage
+import org.danceofvalkyries.telegram.domain.models.TelegramMessage
 import org.danceofvalkyries.utils.db.SqlQueryBuilder
 import org.danceofvalkyries.utils.db.tables.columns.TableColumn
 

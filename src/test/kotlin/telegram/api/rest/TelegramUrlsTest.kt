@@ -37,5 +37,10 @@ class TelegramUrlsTest : FunSpec() {
             telegramChatUrl.editMessageText()
                 .toString() shouldBe "https://api.telegram.org/bot$apiKey/editMessageText"
         }
+
+        test("Should create send photo") {
+            telegramChatUrl.sendPhoto()
+                .toString() shouldBe "https://api.telegram.org/bot$apiKey/sendPhoto"
+        }
     }
 }
