@@ -5,6 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import okhttp3.OkHttpClient
 import org.danceofvalkyries.app.domain.*
 import org.danceofvalkyries.config.data.LocalFileConfigRepository
+import org.danceofvalkyries.config.data.TestConfigRepository
 import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.environment.EnvironmentImpl
 import org.danceofvalkyries.notion.api.NotionDataBaseApi
@@ -45,7 +46,7 @@ class AnalyzeFlashCardsAndSendNotificationApp: App {
     }
 
     private val config: Config by lazy {
-        LocalFileConfigRepository(gson).getConfig()
+        TestConfigRepository(gson).getConfig()
     }
 
     private val telegramChatApi by lazy {
