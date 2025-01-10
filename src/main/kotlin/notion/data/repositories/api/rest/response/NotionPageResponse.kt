@@ -10,7 +10,7 @@ data class NotionPageResponse(
     @SerializedName("last_edited_time") val lastEditedTime: String?,
     @SerializedName("created_by") val createdBy: UserResponse?,
     @SerializedName("last_edited_by") val lastEditedBy: UserResponse?,
-    @SerializedName("cover") val cover: Any?,
+    @SerializedName("cover") val cover: CoverResponse?,
     @SerializedName("icon") val icon: Any?,
     @SerializedName("parent") val parent: ParentResponse?,
     @SerializedName("archived") val archived: Boolean?,

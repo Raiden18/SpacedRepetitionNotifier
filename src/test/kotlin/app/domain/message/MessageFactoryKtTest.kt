@@ -6,6 +6,7 @@ import io.mockk.mockk
 import org.danceofvalkyries.app.domain.message.MessageFactory
 import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
 import org.danceofvalkyries.notion.domain.models.FlashCard
+import org.danceofvalkyries.notion.domain.models.ImageUrl
 import org.danceofvalkyries.notion.domain.models.SpacedRepetitionDataBase
 import org.danceofvalkyries.notion.domain.models.SpacedRepetitionDataBaseGroup
 import org.danceofvalkyries.telegram.domain.models.Button
@@ -25,14 +26,44 @@ class MessageFactoryKtTest : FunSpec() {
             messageFactory.createDone() shouldBe TelegramMessageBody(
                 text = """Good Job! 😎 Everything is revised! ✅""",
                 buttons = emptyList(),
+                imageUrl = null,
             )
         }
 
-        test("Should create FlashCard message") {
+        test("Should create FlashCard message only with info and not supported url") {
+            val flashCard = FlashCard(
+                memorizedInfo = "Expect",
+                example = null,
+                answer = null,
+                imageUrl = "https://www.shutterstock.com/image-vector/cute-baby-regurgitating-after-eating-260nw-2016458315.jpg"
+            )
+
+            messageFactory.createFlashCardMessage(flashCard) shouldBe TelegramMessageBody(
+                text = """
+                    *Expect*
+                    
+                    Choose:
+                """.trimIndent(),
+                nestedButtons = buttons(flashCard),
+                imageUrl = ImageUrl.BLUE_SCREEN,
+            )
+        }
+
+        test("Should add scissors at the end if url is not supported by Telegram") {
+            FlashCard(
+                memorizedInfo = "Expect",
+                example = null,
+                answer = null,
+                imageUrl = "url"
+            )
+        }
+
+        test("Should create Full FlashCard message") {
             val flashCard = FlashCard(
                 memorizedInfo = "Expect",
                 example = "I expected you to come",
                 answer = "to wait to happen in the future",
+                imageUrl = "url"
             )
             messageFactory.createFlashCardMessage(flashCard) shouldBe TelegramMessageBody(
                 text = """
@@ -43,15 +74,8 @@ class MessageFactoryKtTest : FunSpec() {
                     ||to wait to happen in the future||
                     
                     Choose:""".trimIndent(),
-                nestedButtons = listOf(
-                    listOf(Button("Forgot  ❌", ""), Button("Recalled  ✅", "")),
-                    listOf(
-                        Button(
-                            text = "Look it up",
-                            url = "https://dictionary.cambridge.org/dictionary/english/${flashCard.memorizedInfo}"
-                        ),
-                    )
-                )
+                nestedButtons = buttons(flashCard),
+                imageUrl = ImageUrl("url")
             )
         }
 
@@ -101,8 +125,19 @@ class MessageFactoryKtTest : FunSpec() {
                             url = "https://www.notion.so/databases/3"
                         )
                     )
-                )
+                ),
+                imageUrl = null
             )
         }
     }
+
+    private fun buttons(flashCard: FlashCard) = listOf(
+        listOf(Button("Forgot  ❌", ""), Button("Recalled  ✅", "")),
+        listOf(
+            Button(
+                text = "Look it up",
+                url = "https://dictionary.cambridge.org/dictionary/english/${flashCard.memorizedInfo}"
+            ),
+        )
+    )
 }

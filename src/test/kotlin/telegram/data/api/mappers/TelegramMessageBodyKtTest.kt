@@ -11,7 +11,8 @@ class TelegramMessageBodyKtTest : FunSpec() {
         test("Should escape special symbols") {
             TelegramMessageBody(
                 text = "!()=.",
-                nestedButtons = emptyList()
+                nestedButtons = emptyList(),
+                imageUrl = null,
             ).textWithEscapedCharacters() shouldBe "\\!\\(\\)\\=\\."
         }
     }

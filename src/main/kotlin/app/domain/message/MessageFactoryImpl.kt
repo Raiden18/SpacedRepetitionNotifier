@@ -1,6 +1,7 @@
 package org.danceofvalkyries.app.domain.message
 
 import org.danceofvalkyries.notion.domain.models.FlashCard
+import org.danceofvalkyries.notion.domain.models.ImageUrl.Companion.BLUE_SCREEN
 import org.danceofvalkyries.notion.domain.models.SpacedRepetitionDataBaseGroup
 import org.danceofvalkyries.telegram.domain.models.Button
 import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
@@ -10,7 +11,8 @@ class MessageFactoryImpl : MessageFactory {
     override fun createDone(): TelegramMessageBody {
         return TelegramMessageBody(
             text = """Good Job! 😎 Everything is revised! ✅""",
-            buttons = emptyList()
+            buttons = emptyList(),
+            imageUrl = null,
         )
     }
 
@@ -26,23 +28,35 @@ class MessageFactoryImpl : MessageFactory {
                         text = "${it.name}: ${it.flashCards.count()}",
                         url = "https://www.notion.so/databases/${it.id}"
                     )
-                }
+                },
+            imageUrl = null,
         )
     }
 
-    override fun createFlashCardMessage(flashCard: FlashCard): TelegramMessageBody {
+    override fun createFlashCardMessage(
+        flashCard: FlashCard,
+    ): TelegramMessageBody {
         val body = StringBuilder()
             .appendLine("*${flashCard.memorizedInfo}*")
-            .appendLine()
-            .appendLine("_${flashCard.example}_")
-            .appendLine()
-            .appendLine("||${flashCard.answer}||")
-            .appendLine()
+        if (flashCard.example != null) {
+            body.appendLine()
+                .appendLine("_${flashCard.example}_")
+        }
+        if (flashCard.answer != null) {
+            body.appendLine()
+                .appendLine("||${flashCard.answer}||")
+        }
+        body.appendLine()
             .append("Choose:")
-            .toString()
+
+        val imageUrl = if (flashCard.imageUrl?.isSupportedByTelegram == false) {
+            BLUE_SCREEN
+        } else {
+            flashCard.imageUrl
+        }
 
         return TelegramMessageBody(
-            text = body,
+            text = body.toString(),
             nestedButtons = listOf(
                 listOf(Button("Forgot  ❌", ""), Button("Recalled  ✅", "")),
                 listOf(
@@ -51,7 +65,8 @@ class MessageFactoryImpl : MessageFactory {
                         url = "https://dictionary.cambridge.org/dictionary/english/${flashCard.memorizedInfo}"
                     ),
                 )
-            )
+            ),
+            imageUrl = imageUrl,
         )
     }
 }

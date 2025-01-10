@@ -19,7 +19,8 @@ class EditNotificationMessageUseCaseKtTest : FunSpec() {
         id = 322,
         body = TelegramMessageBody(
             text = "old",
-            buttons = emptyList()
+            buttons = emptyList(),
+            imageUrl = null,
         )
     )
 
@@ -37,7 +38,8 @@ class EditNotificationMessageUseCaseKtTest : FunSpec() {
             editNotificationMessageUseCase.execute(
                 TelegramMessageBody(
                     text = newMessage,
-                    buttons = emptyList()
+                    buttons = emptyList(),
+                    imageUrl = null,
                 )
             )
 

@@ -34,8 +34,9 @@ class AnalyzeFlashCardsAndSendNotificationApp(
     override suspend fun run() {
         val telegramChatRepository = createTelegramChatRepository()
         val messageFactory = MessageFactoryImpl()
+        val notionDatabasesRepository = createSpacedRepetitionDataBaseRepository()
         AnalyzeFlashCardsAndSendNotificationUseCase(
-            createSpacedRepetitionDataBaseRepository(),
+            notionDatabasesRepository,
             EditNotificationMessageUseCase(telegramChatRepository),
             DeleteOldAndSendNewNotificationUseCase(
                 telegramChatRepository

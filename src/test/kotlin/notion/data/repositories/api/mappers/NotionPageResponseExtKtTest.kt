@@ -3,12 +3,15 @@ package notion.data.repositories.api.mappers
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import org.danceofvalkyries.notion.data.repositories.api.mappers.toFlashCard
+import org.danceofvalkyries.notion.data.repositories.api.rest.response.CoverBody
+import org.danceofvalkyries.notion.data.repositories.api.rest.response.CoverResponse
 import org.danceofvalkyries.notion.data.repositories.api.rest.response.NotionPageResponse
 import org.danceofvalkyries.notion.data.repositories.api.rest.response.properties.PropertyResponse
 import org.danceofvalkyries.notion.data.repositories.api.rest.response.properties.RichTextResponse
 import org.danceofvalkyries.notion.data.repositories.api.rest.response.properties.TextContentResponse
 import org.danceofvalkyries.notion.data.repositories.api.rest.response.properties.TextResponse
 import org.danceofvalkyries.notion.domain.models.FlashCard
+import org.danceofvalkyries.notion.domain.models.ImageUrl
 
 class NotionPageResponseExtKtTest : FunSpec() {
 
@@ -17,6 +20,7 @@ class NotionPageResponseExtKtTest : FunSpec() {
             val pageTitle = "encounter"
             val exampleSentence = "I had an alarming encounter with a wild pig"
             val explanation = "a meeting, especially one that happens by chance"
+            val coverUrl = "https://vovatia.wordpress.com/wp-content/uploads/2013/02/sidle.jpg"
             NotionPageResponse(
                 objectType = null,
                 id = null,
@@ -24,7 +28,11 @@ class NotionPageResponseExtKtTest : FunSpec() {
                 lastEditedTime = null,
                 createdBy = null,
                 lastEditedBy = null,
-                cover = null,
+                cover = CoverResponse(
+                    external = CoverBody(
+                        url = coverUrl
+                    )
+                ),
                 icon = null,
                 parent = null,
                 archived = null,
@@ -80,6 +88,7 @@ class NotionPageResponseExtKtTest : FunSpec() {
                 memorizedInfo = pageTitle,
                 example = exampleSentence,
                 answer = explanation,
+                imageUrl = ImageUrl(coverUrl),
             )
         }
 

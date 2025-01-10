@@ -5,6 +5,7 @@ import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.mockk
+import org.danceofvalkyries.notion.domain.models.ImageUrl
 import org.danceofvalkyries.telegram.data.api.TelegramChatApi
 import org.danceofvalkyries.telegram.data.db.TelegramNotificationMessageDb
 import org.danceofvalkyries.telegram.data.repositories.TelegramChatRepositoryImpl
@@ -32,7 +33,7 @@ class TelegramChatChatRepositoryImplTest : FunSpec() {
             val textMessage = TelegramMessageBody(
                 text = "Text message",
                 nestedButtons = emptyList(),
-                photoUrl = null,
+                imageUrl = null,
             )
 
             telegramChatRepositoryImpl.sendToChat(textMessage) shouldBe textMessageResponse
@@ -42,7 +43,7 @@ class TelegramChatChatRepositoryImplTest : FunSpec() {
             val textMessage = TelegramMessageBody(
                 text = "Text message",
                 nestedButtons = emptyList(),
-                photoUrl = "photo url",
+                imageUrl = ImageUrl("photo url"),
             )
 
             telegramChatRepositoryImpl.sendToChat(textMessage) shouldBe photoMessageResponse

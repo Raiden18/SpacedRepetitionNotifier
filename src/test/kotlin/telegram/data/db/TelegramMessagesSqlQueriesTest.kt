@@ -44,7 +44,8 @@ class TelegramMessagesSqlQueriesTest : FunSpec() {
                     id = 12,
                     body = TelegramMessageBody(
                         text = "something",
-                        buttons = emptyList()
+                        buttons = emptyList(),
+                        imageUrl = null,
                     ),
                 )
             ) shouldBe "INSERT INTO $tableName (id, text) VALUES (12, 'something')"

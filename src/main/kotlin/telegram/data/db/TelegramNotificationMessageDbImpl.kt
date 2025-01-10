@@ -3,7 +3,10 @@ package org.danceofvalkyries.telegram.data.db
 import org.danceofvalkyries.telegram.domain.models.TelegramMessage
 import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
 import org.danceofvalkyries.utils.db.asSequence
-import org.danceofvalkyries.utils.db.tables.columns.*
+import org.danceofvalkyries.utils.db.tables.columns.LongTableColumn
+import org.danceofvalkyries.utils.db.tables.columns.NoPrimaryKey
+import org.danceofvalkyries.utils.db.tables.columns.PrimaryKey
+import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
 import java.sql.Connection
 import java.sql.Statement
 
@@ -57,7 +60,8 @@ class TelegramNotificationMessageDbImpl(
                     id = idTableColumn.getValue(it),
                     body = TelegramMessageBody(
                         text = textColumn.getValue(it),
-                        buttons = emptyList()
+                        buttons = emptyList(),
+                        imageUrl = null,
                     ),
                 )
             }.toList()
