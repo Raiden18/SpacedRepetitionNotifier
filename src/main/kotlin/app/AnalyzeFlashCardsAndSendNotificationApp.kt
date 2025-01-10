@@ -4,7 +4,10 @@ import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.danceofvalkyries.app.domain.*
+import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
+import org.danceofvalkyries.app.domain.usecases.AnalyzeFlashCardsAndSendNotificationUseCase
+import org.danceofvalkyries.app.domain.usecases.DeleteOldAndSendNewNotificationUseCase
+import org.danceofvalkyries.app.domain.usecases.EditNotificationMessageUseCase
 import org.danceofvalkyries.config.data.TestConfigRepository
 import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.environment.EnvironmentImpl
@@ -13,12 +16,9 @@ import org.danceofvalkyries.notion.data.repositories.api.NotionDataBaseApi
 import org.danceofvalkyries.notion.data.repositories.api.NotionDataBaseApiImpl
 import org.danceofvalkyries.notion.data.repositories.api.NotionDataBaseApiTelegramMessageErrorLoggerDecorator
 import org.danceofvalkyries.notion.data.repositories.api.NotionDataBaseApiTimeMeasurePerfomanceDecorator
-import org.danceofvalkyries.notion.domain.models.SpacedRepetitionDataBaseGroup
-import org.danceofvalkyries.telegram.data.api.TelegramChatApi
 import org.danceofvalkyries.telegram.data.api.TelegramChatApiImpl
 import org.danceofvalkyries.telegram.data.db.TelegramNotificationMessageDbImpl
-import org.danceofvalkyries.telegram.domain.models.DoneMessage
-import org.danceofvalkyries.telegram.domain.models.RevisingIsNeededMessage
+import org.danceofvalkyries.telegram.data.repositories.TelegramChatRepositoryImpl
 import org.danceofvalkyries.utils.DispatchersImpl
 import org.danceofvalkyries.utils.db.DataBasePaths
 import java.sql.DriverManager
@@ -64,51 +64,44 @@ class AnalyzeFlashCardsAndSendNotificationApp : App {
     private val spacedRepetitionDataBaseRepository by lazy {
         SpacedRepetitionDataBaseRepositoryImpl(
             config.notion.delayBetweenRequests.milliseconds,
-            createNotionDataBasesApis(
-                gson,
-                httpClient,
-                config,
-                telegramChatApi,
-            ),
+            createNotionDataBasesApis(),
             dispatchers,
         )
     }
 
-    override suspend fun run() {
-        sendReviseOrDoneMessage(
-            spacedRepetitionDataBaseRepository.getAll(),
+    private val telegramChatRepository by lazy {
+        TelegramChatRepositoryImpl(telegramChatApi, telegramMessagesDb)
+    }
+
+    private val deleteOldAndSendNewNotificationUseCase by lazy {
+        DeleteOldAndSendNewNotificationUseCase(
+            telegramChatRepository
+        )
+    }
+    private val editNotificationMessageUseCase by lazy { EditNotificationMessageUseCase(telegramChatRepository) }
+    private val analyzeFlashCardsAndSendNotificationUseCase by lazy {
+        AnalyzeFlashCardsAndSendNotificationUseCase(
+            spacedRepetitionDataBaseRepository,
+            editNotificationMessageUseCase,
+            deleteOldAndSendNewNotificationUseCase,
+            MessageFactoryImpl(),
             config.flashCardsThreshold,
-            ::deleteOldAndSendNewNotification,
-            ::sendGoodJobMessage,
         )
     }
 
-    private fun createNotionDataBasesApis(
-        gson: Gson,
-        okHttpClient: OkHttpClient,
-        config: Config,
-        telegramChatApi: TelegramChatApi,
-    ): List<NotionDataBaseApi> {
+    override suspend fun run() {
+        analyzeFlashCardsAndSendNotificationUseCase.execute()
+    }
+
+    private fun createNotionDataBasesApis(): List<NotionDataBaseApi> {
         return config.notion.observedDatabases.map {
             NotionDataBaseApiImpl(
                 gson = gson,
                 databaseId = it,
-                client = okHttpClient,
+                client = httpClient,
                 apiKey = config.notion.apiKey,
             )
         }.map { NotionDataBaseApiTimeMeasurePerfomanceDecorator(it) }
             .map { NotionDataBaseApiTelegramMessageErrorLoggerDecorator(it, telegramChatApi) }
-    }
-
-    private suspend fun deleteOldAndSendNewNotification(group: SpacedRepetitionDataBaseGroup) {
-        deleteOldAndSendNewNotification(
-            telegramChatApi,
-            telegramMessagesDb,
-            RevisingIsNeededMessage(group),
-        )
-    }
-
-    private suspend fun sendGoodJobMessage() {
-        editNotificationMessage(DoneMessage().text, telegramMessagesDb, telegramChatApi)
     }
 }

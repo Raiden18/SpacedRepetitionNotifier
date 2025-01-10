@@ -16,7 +16,7 @@ fun SpacedRepetitionRequestBody(
                 },
                 `object` {
                     property("Show")
-                    checkBox(false)
+                    checkBox(true)
                 }
             )
         }

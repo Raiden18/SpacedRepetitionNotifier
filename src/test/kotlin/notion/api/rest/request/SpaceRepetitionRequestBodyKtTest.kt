@@ -13,7 +13,7 @@ class SpaceRepetitionRequestBodyKtTest : FunSpec() {
             val gson = GsonBuilder()
                 .setPrettyPrinting()
                 .create()
-            org.danceofvalkyries.notion.data.repositories.api.rest.request.SpacedRepetitionRequestBody(
+            SpacedRepetitionRequestBody(
                 gson
             ) shouldBe """
                 {

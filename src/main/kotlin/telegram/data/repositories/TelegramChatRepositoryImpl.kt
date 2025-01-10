@@ -6,7 +6,7 @@ import org.danceofvalkyries.telegram.domain.TelegramChatRepository
 import org.danceofvalkyries.telegram.domain.models.TelegramMessage
 import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
 
-class TelegramChatChatRepositoryImpl(
+class TelegramChatRepositoryImpl(
     private val api: TelegramChatApi,
     private val db: TelegramNotificationMessageDb,
 ) : TelegramChatRepository {
@@ -23,11 +23,23 @@ class TelegramChatChatRepositoryImpl(
         api.deleteMessage(telegramMessage.id)
     }
 
+    override suspend fun editInChat(text: String, messageId: Long) {
+        api.editMessageText(messageId, text)
+    }
+
     override suspend fun saveToDb(telegramMessage: TelegramMessage) {
         db.save(telegramMessage)
     }
 
     override suspend fun deleteFromDb(telegramMessage: TelegramMessage) {
         db.delete(telegramMessage)
+    }
+
+    override suspend fun getAllFromDb(): List<TelegramMessage> {
+        return db.getAll()
+    }
+
+    override suspend fun updateInDb(text: String, messageId: Long) {
+        db.update(text, messageId)
     }
 }
