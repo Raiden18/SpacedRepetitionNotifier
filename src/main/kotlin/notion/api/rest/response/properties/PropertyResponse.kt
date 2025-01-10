@@ -7,5 +7,5 @@ data class PropertyResponse(
     @SerializedName("type") val type: String,
     @SerializedName("checkbox") val checkbox: Boolean?,
     @SerializedName("rich_text") val richText: List<RichTextResponse>?,
-    @SerializedName("Name") val name: NameResponse?
+    @SerializedName("title") val title: List<TextResponse>
 )

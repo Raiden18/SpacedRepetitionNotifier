@@ -38,7 +38,7 @@ class TelegramChatApiImpl(
                 gson.toJson(
                     SendMessageRequest(
                         chatId = chatId,
-                        text = textBody.text,
+                        text = textBody.text.replace("!", ""),
                         parseMode = "MarkdownV2",
                         replyMarkup = ReplyMarkupResponse(
                             textBody.nestedButtons.map {

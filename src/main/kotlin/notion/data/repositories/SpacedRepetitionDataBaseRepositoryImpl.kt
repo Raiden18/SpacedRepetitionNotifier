@@ -34,9 +34,9 @@ class SpacedRepetitionDataBaseRepositoryImpl(
                     name = it.first.name,
                     flashCards = it.second.map {
                         FlashCard(
-                            it.properties["Name"]?.name?.title?.first()?.text?.content.orEmpty(),
-                            example = "",
-                            answer = ""
+                            memorizedInfo = it.properties["Name"]?.title?.first()?.text?.content.orEmpty(),
+                            example = "a specious argument", // TODO
+                            answer = it.properties["Explanation"]?.richText?.first()?.text?.content.orEmpty()
                         )
                     }
                 )
