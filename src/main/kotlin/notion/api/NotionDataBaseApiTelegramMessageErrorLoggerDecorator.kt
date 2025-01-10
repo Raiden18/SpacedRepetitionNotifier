@@ -2,6 +2,7 @@ package org.danceofvalkyries.notion.api
 
 import notion.api.rest.response.FlashCardResponse
 import notion.api.rest.response.NotionDbResponse
+import org.danceofvalkyries.notion.api.rest.response.NotionPageResponse
 import org.danceofvalkyries.telegram.data.api.TelegramChatApi
 import org.danceofvalkyries.telegram.domain.TelegramMessageBody
 
@@ -29,7 +30,7 @@ class NotionDataBaseApiTelegramMessageErrorLoggerDecorator(
         }
     }
 
-    override suspend fun getContent(): List<FlashCardResponse> {
+    override suspend fun getContent(): List<NotionPageResponse> {
         return try {
             notionDataBaseApi.getContent()
         } catch (throwable: Throwable) {

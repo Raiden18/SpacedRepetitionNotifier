@@ -1,7 +1,7 @@
 package org.danceofvalkyries.notion.api
 
-import notion.api.rest.response.FlashCardResponse
 import notion.api.rest.response.NotionDbResponse
+import org.danceofvalkyries.notion.api.rest.response.NotionPageResponse
 import org.danceofvalkyries.utils.printMeasure
 
 class NotionDataBaseApiTimeMeasurePerfomanceDecorator(
@@ -14,7 +14,7 @@ class NotionDataBaseApiTimeMeasurePerfomanceDecorator(
         ) { notionDataBaseApi.getDescription() }
     }
 
-    override suspend fun getContent(): List<FlashCardResponse> {
+    override suspend fun getContent(): List<NotionPageResponse> {
         return printMeasure(
             message = "getContent",
         ) { notionDataBaseApi.getContent() }

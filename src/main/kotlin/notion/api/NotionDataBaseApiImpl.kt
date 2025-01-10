@@ -9,6 +9,7 @@ import org.danceofvalkyries.json.*
 import org.danceofvalkyries.notion.api.rest.DatabaseUrl
 import org.danceofvalkyries.notion.api.rest.request.NotionApiVersionHeader
 import org.danceofvalkyries.notion.api.rest.request.SpacedRepetitionRequestBody
+import org.danceofvalkyries.notion.api.rest.response.NotionPageResponse
 
 class NotionDataBaseApiImpl(
     private val gson: Gson,
@@ -37,7 +38,7 @@ class NotionDataBaseApiImpl(
             .copy(id = databaseId)
     }
 
-    override suspend fun getContent(): List<FlashCardResponse> {
+    override suspend fun getContent(): List<NotionPageResponse> {
         return Request.Builder()
             .url(urls.databasesQuery())
             .headers(headers)
@@ -49,6 +50,6 @@ class NotionDataBaseApiImpl(
     }
 
     private data class FlashCardResponseWrapper(
-        val results: List<FlashCardResponse>
+        val results: List<NotionPageResponse>
     )
 }
