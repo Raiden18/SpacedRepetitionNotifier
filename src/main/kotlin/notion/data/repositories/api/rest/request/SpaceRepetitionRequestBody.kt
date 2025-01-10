@@ -1,4 +1,4 @@
-package org.danceofvalkyries.notion.api.rest.request
+package org.danceofvalkyries.notion.data.repositories.api.rest.request
 
 import com.google.gson.Gson
 import org.danceofvalkyries.utils.rest.JsonObject
@@ -16,7 +16,7 @@ fun SpacedRepetitionRequestBody(
                 },
                 `object` {
                     property("Show")
-                    checkBox(true)
+                    checkBox(false)
                 }
             )
         }

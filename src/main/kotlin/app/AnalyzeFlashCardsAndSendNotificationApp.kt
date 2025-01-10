@@ -3,15 +3,16 @@ package org.danceofvalkyries.app
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import org.danceofvalkyries.app.domain.*
 import org.danceofvalkyries.config.data.TestConfigRepository
 import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.environment.EnvironmentImpl
-import org.danceofvalkyries.notion.api.NotionDataBaseApi
-import org.danceofvalkyries.notion.api.NotionDataBaseApiImpl
-import org.danceofvalkyries.notion.api.NotionDataBaseApiTelegramMessageErrorLoggerDecorator
-import org.danceofvalkyries.notion.api.NotionDataBaseApiTimeMeasurePerfomanceDecorator
 import org.danceofvalkyries.notion.data.repositories.SpacedRepetitionDataBaseRepositoryImpl
+import org.danceofvalkyries.notion.data.repositories.api.NotionDataBaseApi
+import org.danceofvalkyries.notion.data.repositories.api.NotionDataBaseApiImpl
+import org.danceofvalkyries.notion.data.repositories.api.NotionDataBaseApiTelegramMessageErrorLoggerDecorator
+import org.danceofvalkyries.notion.data.repositories.api.NotionDataBaseApiTimeMeasurePerfomanceDecorator
 import org.danceofvalkyries.notion.domain.models.FlashCard
 import org.danceofvalkyries.notion.domain.models.SpacedRepetitionDataBaseGroup
 import org.danceofvalkyries.telegram.data.api.TelegramChatApi
@@ -32,12 +33,15 @@ class AnalyzeFlashCardsAndSendNotificationApp : App {
     private val dispatchers by lazy { DispatchersImpl(Dispatchers.IO) }
     private val gson by lazy { Gson() }
     private val httpClient by lazy {
+        val logger = HttpLoggingInterceptor.Logger { message -> println(message) }
+        val interceptor = HttpLoggingInterceptor(logger)
         val timeOut = 60_000L
         OkHttpClient.Builder()
             .callTimeout(timeOut, TimeUnit.MILLISECONDS)
             .readTimeout(timeOut, TimeUnit.MILLISECONDS)
             .writeTimeout(timeOut, TimeUnit.MILLISECONDS)
             .connectTimeout(timeOut, TimeUnit.MILLISECONDS)
+            .addInterceptor(interceptor)
             .build()
     }
     private val telegramMessagesDb by lazy {

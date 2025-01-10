@@ -1,4 +1,4 @@
-package notion.api.rest.response
+package org.danceofvalkyries.notion.data.repositories.api.rest.response
 
 data class NotionDbResponse(
     private val title: List<Title>,

@@ -1,15 +1,14 @@
-package org.danceofvalkyries.notion.api
+package org.danceofvalkyries.notion.data.repositories.api
 
 import com.google.gson.Gson
-import notion.api.rest.response.FlashCardResponse
-import notion.api.rest.response.NotionDbResponse
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.danceofvalkyries.json.*
-import org.danceofvalkyries.notion.api.rest.DatabaseUrl
-import org.danceofvalkyries.notion.api.rest.request.NotionApiVersionHeader
-import org.danceofvalkyries.notion.api.rest.request.SpacedRepetitionRequestBody
-import org.danceofvalkyries.notion.api.rest.response.NotionPageResponse
+import org.danceofvalkyries.notion.data.repositories.api.rest.request.SpacedRepetitionRequestBody
+import org.danceofvalkyries.notion.data.repositories.api.rest.DatabaseUrl
+import org.danceofvalkyries.notion.data.repositories.api.rest.request.NotionApiVersionHeader
+import org.danceofvalkyries.notion.data.repositories.api.rest.response.NotionDbResponse
+import org.danceofvalkyries.notion.data.repositories.api.rest.response.NotionPageResponse
 
 class NotionDataBaseApiImpl(
     private val gson: Gson,

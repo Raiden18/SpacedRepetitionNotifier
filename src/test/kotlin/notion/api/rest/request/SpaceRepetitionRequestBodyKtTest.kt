@@ -4,7 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.notion.api.rest.request.SpacedRepetitionRequestBody
+import org.danceofvalkyries.notion.data.repositories.api.rest.request.SpacedRepetitionRequestBody
 
 class SpaceRepetitionRequestBodyKtTest : FunSpec() {
 
@@ -13,7 +13,7 @@ class SpaceRepetitionRequestBodyKtTest : FunSpec() {
             val gson = GsonBuilder()
                 .setPrettyPrinting()
                 .create()
-            SpacedRepetitionRequestBody(
+            org.danceofvalkyries.notion.data.repositories.api.rest.request.SpacedRepetitionRequestBody(
                 gson
             ) shouldBe """
                 {

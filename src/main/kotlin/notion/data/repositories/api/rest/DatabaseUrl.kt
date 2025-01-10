@@ -1,4 +1,4 @@
-package org.danceofvalkyries.notion.api.rest
+package org.danceofvalkyries.notion.data.repositories.api.rest
 
 import okhttp3.HttpUrl
 

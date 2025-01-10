@@ -2,7 +2,7 @@ package notion.api.rest
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.notion.api.rest.DatabaseUrl
+import org.danceofvalkyries.notion.data.repositories.api.rest.DatabaseUrl
 
 class NotionUrlsTest : FunSpec() {
 

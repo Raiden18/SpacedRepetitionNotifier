@@ -22,7 +22,7 @@ fun FlashCardMessage(flashCard: FlashCard): TelegramMessageBody {
     val body = StringBuilder()
         .appendLine("*${flashCard.memorizedInfo}*")
         .appendLine()
-        .appendLine(flashCard.example)
+        .appendLine("_${flashCard.example}_")
         .appendLine()
         .appendLine("||${flashCard.answer}||")
         .appendLine()
@@ -32,7 +32,7 @@ fun FlashCardMessage(flashCard: FlashCard): TelegramMessageBody {
     return TelegramMessageBody(
         text = body,
         nestedButtons = listOf(
-            listOf(Button("Forgot", ""), Button("Recalled", "")),
+            listOf(Button("Forgot  ❌", ""), Button("Recalled  ✅", "")),
             listOf(
                 Button(
                     text = "Look it up",
@@ -46,6 +46,8 @@ fun FlashCardMessage(flashCard: FlashCard): TelegramMessageBody {
 fun RevisingIsNeededMessage(
     group: SpacedRepetitionDataBaseGroup
 ): TelegramMessageBody {
+    val message = group.group.flatMap { it.flashCards }
+    return FlashCardMessage(message[1])
     return TelegramMessageBody(
         text = """You have ${group.totalFlashCardsNeedRevising} flashcards to revise 🧠""".trimIndent(),
         buttons = group.group
