@@ -4,7 +4,6 @@ import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import okhttp3.OkHttpClient
 import org.danceofvalkyries.app.domain.*
-import org.danceofvalkyries.config.data.LocalFileConfigRepository
 import org.danceofvalkyries.config.data.TestConfigRepository
 import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.environment.EnvironmentImpl
@@ -13,25 +12,27 @@ import org.danceofvalkyries.notion.api.NotionDataBaseApiImpl
 import org.danceofvalkyries.notion.api.NotionDataBaseApiTelegramMessageErrorLoggerDecorator
 import org.danceofvalkyries.notion.api.NotionDataBaseApiTimeMeasurePerfomanceDecorator
 import org.danceofvalkyries.notion.data.repositories.SpacedRepetitionDataBaseRepositoryImpl
-import org.danceofvalkyries.notion.data.repositories.SpacedRepetitionDataBaseRepositoryMeasurePerfomanceDecorator
+import org.danceofvalkyries.notion.domain.models.FlashCard
 import org.danceofvalkyries.notion.domain.models.SpacedRepetitionDataBaseGroup
 import org.danceofvalkyries.telegram.data.api.TelegramChatApi
 import org.danceofvalkyries.telegram.data.api.TelegramChatApiImpl
 import org.danceofvalkyries.telegram.data.db.TelegramNotificationMessageDbImpl
-import org.danceofvalkyries.telegram.domain.TelegramMessageBody
+import org.danceofvalkyries.telegram.domain.DoneMessage
+import org.danceofvalkyries.telegram.domain.FlashCardMessage
+import org.danceofvalkyries.telegram.domain.RevisingIsNeededMessage
 import org.danceofvalkyries.utils.DispatchersImpl
 import org.danceofvalkyries.utils.db.DataBasePaths
 import java.sql.DriverManager
 import java.util.concurrent.TimeUnit
 import kotlin.time.Duration.Companion.milliseconds
 
-class AnalyzeFlashCardsAndSendNotificationApp: App {
+class AnalyzeFlashCardsAndSendNotificationApp : App {
 
     private val environment by lazy { EnvironmentImpl() }
     private val dispatchers by lazy { DispatchersImpl(Dispatchers.IO) }
     private val gson by lazy { Gson() }
     private val httpClient by lazy {
-        val timeOut = 30_000L
+        val timeOut = 60_000L
         OkHttpClient.Builder()
             .callTimeout(timeOut, TimeUnit.MILLISECONDS)
             .readTimeout(timeOut, TimeUnit.MILLISECONDS)
@@ -59,17 +60,15 @@ class AnalyzeFlashCardsAndSendNotificationApp: App {
     }
 
     private val spacedRepetitionDataBaseRepository by lazy {
-        SpacedRepetitionDataBaseRepositoryMeasurePerfomanceDecorator(
-            SpacedRepetitionDataBaseRepositoryImpl(
-                config.notion.delayBetweenRequests.milliseconds,
-                createNotionDataBasesApis(
-                    gson,
-                    httpClient,
-                    config,
-                    telegramChatApi,
-                ),
-                dispatchers,
-            )
+        SpacedRepetitionDataBaseRepositoryImpl(
+            config.notion.delayBetweenRequests.milliseconds,
+            createNotionDataBasesApis(
+                gson,
+                httpClient,
+                config,
+                telegramChatApi,
+            ),
+            dispatchers,
         )
     }
 
@@ -103,11 +102,11 @@ class AnalyzeFlashCardsAndSendNotificationApp: App {
         deleteOldAndSendNewNotification(
             telegramChatApi,
             telegramMessagesDb,
-            TelegramMessageBody.revisingIsNeeded(group)
+            RevisingIsNeededMessage(group),
         )
     }
 
     private suspend fun sendGoodJobMessage() {
-        editNotificationMessage(TelegramMessageBody.done().text, telegramMessagesDb, telegramChatApi)
+        editNotificationMessage(DoneMessage().text, telegramMessagesDb, telegramChatApi)
     }
 }

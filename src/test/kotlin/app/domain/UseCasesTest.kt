@@ -98,17 +98,17 @@ class UseCasesTest : FunSpec() {
                         id = "123",
                         name = "Untiteled",
                         flashCards = listOf(
-                            FlashCard,
-                            FlashCard,
-                            FlashCard,
-                            FlashCard,
-                            FlashCard,
-                            FlashCard,
-                            FlashCard,
-                            FlashCard,
-                            FlashCard,
-                            FlashCard,
-                            FlashCard
+                            mockk(),
+                            mockk(),
+                            mockk(),
+                            mockk(),
+                            mockk(),
+                            mockk(),
+                            mockk(),
+                            mockk(),
+                            mockk(),
+                            mockk(),
+                            mockk()
                         )
                     )
                 )

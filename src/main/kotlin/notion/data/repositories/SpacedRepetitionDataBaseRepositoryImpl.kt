@@ -32,7 +32,13 @@ class SpacedRepetitionDataBaseRepositoryImpl(
                 SpacedRepetitionDataBase(
                     id = it.first.id,
                     name = it.first.name,
-                    flashCards = it.second.map { FlashCard }
+                    flashCards = it.second.map {
+                        FlashCard(
+                            it.properties["Name"]?.name?.title?.first()?.text?.content.orEmpty(),
+                            example = "",
+                            answer = ""
+                        )
+                    }
                 )
             }
             SpacedRepetitionDataBaseGroup(list)

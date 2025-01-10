@@ -39,15 +39,17 @@ class TelegramChatApiImpl(
                     SendMessageRequest(
                         chatId = chatId,
                         text = textBody.text,
-                        parseMode = "Markdown",
+                        parseMode = "MarkdownV2",
                         replyMarkup = ReplyMarkupResponse(
-                            textBody.buttons.map {
-                                ButtonRequest(
-                                    text = it.text,
-                                    callbackData = "1",
-                                    url = it.url
-                                )
-                            }.map { listOf(it) }
+                            textBody.nestedButtons.map {
+                                it.map {
+                                    ButtonRequest(
+                                        text = it.text,
+                                        callbackData = "1",
+                                        url = it.url
+                                    )
+                                }
+                            }
                         )
                     )
                 )
