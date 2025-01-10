@@ -13,7 +13,7 @@ fun AppFactory(): AppFactory {
     return AppFactory {
         val environment = EnvironmentImpl()
         val dispatchers = DispatchersImpl(Dispatchers.IO)
-        val configRepository = ConfigRepositoryProvider()
-        AnalyzeFlashCardsAndSendNotificationApp(environment, dispatchers, configRepository)
+        val config = ConfigRepositoryProvider().getConfig()
+        AnalyzeFlashCardsAndSendNotificationApp(environment, dispatchers, config)
     }
 }

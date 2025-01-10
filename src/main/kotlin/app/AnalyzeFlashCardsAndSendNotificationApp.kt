@@ -7,7 +7,6 @@ import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
 import org.danceofvalkyries.app.domain.usecases.AnalyzeFlashCardsAndSendNotificationUseCase
 import org.danceofvalkyries.app.domain.usecases.DeleteOldAndSendNewNotificationUseCase
 import org.danceofvalkyries.app.domain.usecases.EditNotificationMessageUseCase
-import org.danceofvalkyries.config.data.TestConfigRepository
 import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.config.domain.ConfigRepository
 import org.danceofvalkyries.environment.Environment
@@ -29,12 +28,8 @@ import kotlin.time.Duration.Companion.milliseconds
 class AnalyzeFlashCardsAndSendNotificationApp(
     private val environment: Environment,
     private val dispatchers: Dispatchers,
-    private val configRepository: ConfigRepository,
+    private val config: Config,
 ) : App {
-
-    private val config: Config by lazy {
-        configRepository.getConfig()
-    }
 
     override suspend fun run() {
         val telegramChatRepository = createTelegramChatRepository()
@@ -83,7 +78,9 @@ class AnalyzeFlashCardsAndSendNotificationApp(
 
     private fun createHttpClient(): OkHttpClient {
         val logger = HttpLoggingInterceptor.Logger { message -> println(message) }
-        val interceptor = HttpLoggingInterceptor(logger)
+        val interceptor = HttpLoggingInterceptor(logger).apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
         val timeOut = 60_000L
         return OkHttpClient.Builder()
             .callTimeout(timeOut, TimeUnit.MILLISECONDS)

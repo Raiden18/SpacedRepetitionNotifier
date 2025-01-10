@@ -17,7 +17,8 @@ fun TelegramMessageBody.textWithEscapedCharacters(): String {
 fun TelegramMessageBody.toRequest(chatId: String): SendMessageRequest {
     return SendMessageRequest(
         chatId = chatId,
-        text = textWithEscapedCharacters(),
+        text = textWithEscapedCharacters().takeIf { photoUrl == null },
+        caption = textWithEscapedCharacters().takeIf { photoUrl != null },
         parseMode = "MarkdownV2",
         replyMarkup = ReplyMarkupResponse(
             nestedButtons.map {
