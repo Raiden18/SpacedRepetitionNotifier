@@ -20,10 +20,6 @@ data class SendMessageRequest(
     val replyMarkup: ReplyMarkupResponse?,
     @SerializedName("photo")
     val photo: String?,
-
-    /**
-     * Telegram has the sme
-     */
     @SerializedName("caption")
     val caption: String?,
     @SerializedName("text")
