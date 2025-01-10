@@ -8,7 +8,6 @@ import org.danceofvalkyries.app.domain.usecases.AnalyzeFlashCardsAndSendNotifica
 import org.danceofvalkyries.app.domain.usecases.DeleteOldAndSendNewNotificationUseCase
 import org.danceofvalkyries.app.domain.usecases.EditNotificationMessageUseCase
 import org.danceofvalkyries.config.domain.Config
-import org.danceofvalkyries.config.domain.ConfigRepository
 import org.danceofvalkyries.environment.Environment
 import org.danceofvalkyries.notion.data.repositories.SpacedRepetitionDataBaseRepositoryImpl
 import org.danceofvalkyries.notion.data.repositories.api.NotionDataBaseApi

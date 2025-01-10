@@ -1,6 +1,5 @@
 package notion.api.rest.request
 
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe

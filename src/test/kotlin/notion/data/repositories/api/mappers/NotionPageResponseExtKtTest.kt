@@ -63,7 +63,7 @@ class NotionPageResponseExtKtTest : FunSpec() {
                         id = null,
                         type = null,
                         checkbox = null,
-                        richText =  listOf(
+                        richText = listOf(
                             RichTextResponse(
                                 text = TextContentResponse(
                                     content = explanation,

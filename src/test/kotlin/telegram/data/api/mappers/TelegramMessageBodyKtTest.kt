@@ -8,7 +8,7 @@ import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
 class TelegramMessageBodyKtTest : FunSpec() {
 
     init {
-        test("Should escape special symbols"){
+        test("Should escape special symbols") {
             TelegramMessageBody(
                 text = "!()=.",
                 nestedButtons = emptyList()
