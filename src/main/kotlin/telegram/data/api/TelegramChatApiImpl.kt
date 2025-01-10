@@ -91,4 +91,8 @@ class TelegramChatApiImpl(
             .build()
             .request(client)
     }
+
+    override suspend fun sendPhoto(): TelegramMessage {
+        TODO()
+    }
 }
