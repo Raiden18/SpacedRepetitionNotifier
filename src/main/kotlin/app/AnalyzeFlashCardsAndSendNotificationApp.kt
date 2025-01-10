@@ -30,15 +30,17 @@ class AnalyzeFlashCardsAndSendNotificationApp(
     private val config: Config,
 ) : App {
 
+
     override suspend fun run() {
         val telegramChatRepository = createTelegramChatRepository()
+        val messageFactory = MessageFactoryImpl()
         AnalyzeFlashCardsAndSendNotificationUseCase(
             createSpacedRepetitionDataBaseRepository(),
             EditNotificationMessageUseCase(telegramChatRepository),
             DeleteOldAndSendNewNotificationUseCase(
                 telegramChatRepository
             ),
-            MessageFactoryImpl(),
+            messageFactory,
             config.flashCardsThreshold,
         ).execute()
     }
