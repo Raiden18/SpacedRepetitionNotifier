@@ -4,8 +4,10 @@ data class ImageUrl(
     val url: String
 ) {
     companion object {
-        val NOT_SUPPORTED_BY_TG_DOMAINS = listOf(
-            "shutterstock.com"
+        val NOT_SUPPORTED_BY_TELEGRAM_TAGS = listOf(
+            "shutterstock.com",
+            "base64",
+            "?",
         )
 
         val BLUE_SCREEN = ImageUrl(
@@ -14,6 +16,6 @@ data class ImageUrl(
     }
 
     val isSupportedByTelegram: Boolean
-        get() = NOT_SUPPORTED_BY_TG_DOMAINS.any { url.contains(it).not() }
+        get() = NOT_SUPPORTED_BY_TELEGRAM_TAGS.any { url.contains(it) }.not()
 
 }

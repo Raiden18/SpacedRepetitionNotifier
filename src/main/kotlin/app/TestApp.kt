@@ -40,18 +40,22 @@ class TestApp(
     }
 
     override suspend fun run() {
-      /*  val telegramChatRepository = createTelegramChatRepository()
+        val telegramChatRepository = createTelegramChatRepository()
         val messageFactory = MessageFactoryImpl()
         val dbConnection = db.establishConnection()
 
-        val notionDatabasesRepository = createSpacedRepetitionDataBaseRepository(dbConnection)
 
-
-        val dataBases = notionDatabasesRepository.getFromNotion()*/
 
         realApp.run()
 
+        val notionDatabasesRepository = createSpacedRepetitionDataBaseRepository(dbConnection)
 
+        notionDatabasesRepository.getFromNotion().group.flatMap { table ->
+            notionDatabasesRepository.getFromDb(table.id)
+        }.map { messageFactory.createFlashCardMessage(it) }
+            .forEach {
+                telegramChatRepository.sendToChat(it)
+            }
     }
 
     private fun createTelegramChatRepository(): TelegramChatRepository {

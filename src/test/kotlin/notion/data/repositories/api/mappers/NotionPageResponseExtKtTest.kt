@@ -25,72 +25,13 @@ class NotionPageResponseExtKtTest : FunSpec() {
             val id = "228"
             val parentDbId = "322"
 
-            NotionPageResponse(
-                objectType = null,
-                id = id,
-                createdTime = null,
-                lastEditedTime = null,
-                createdBy = null,
-                lastEditedBy = null,
-                cover = CoverResponse(
-                    external = CoverBody(
-                        url = coverUrl
-                    )
-                ),
-                icon = null,
-                parent = ParentResponse(
-                    type = null,
-                    databaseId_ = parentDbId,
-                ),
-                archived = null,
-                inTrash = null,
-                properties = mapOf(
-                    "Name" to PropertyResponse(
-                        id = null,
-                        type = null,
-                        checkbox = null,
-                        richText = null,
-                        title = listOf(
-                            TextResponse(
-                                text = TextContentResponse(
-                                    content = pageTitle,
-                                    link = null
-                                ),
-                                plainText = null,
-                            )
-                        ),
-                    ),
-                    "Example" to PropertyResponse(
-                        id = null,
-                        type = null,
-                        checkbox = null,
-                        richText = listOf(
-                            RichTextResponse(
-                                text = TextContentResponse(
-                                    content = exampleSentence,
-                                    link = null,
-                                )
-                            )
-                        ),
-                        title = null,
-                    ),
-                    "Explanation" to PropertyResponse(
-                        id = null,
-                        type = null,
-                        checkbox = null,
-                        richText = listOf(
-                            RichTextResponse(
-                                text = TextContentResponse(
-                                    content = explanation,
-                                    link = null,
-                                )
-                            )
-                        ),
-                        title = null,
-                    )
-                ),
-                url = null,
-                publicUrl = null,
+            createNotionPageResponse(
+                id,
+                coverUrl,
+                parentDbId,
+                pageTitle,
+                exampleSentence,
+                explanation
             ).toFlashCard() shouldBe FlashCard(
                 memorizedInfo = pageTitle,
                 example = exampleSentence,
@@ -104,25 +45,124 @@ class NotionPageResponseExtKtTest : FunSpec() {
         }
 
         test("Should remove '-' symbol from DB id") {
-            NotionPageResponse(
-                objectType = null,
-                id = null,
-                createdTime = null,
-                lastEditedTime = null,
-                createdBy = null,
-                lastEditedBy = null,
-                cover = null,
-                icon = null,
-                parent = ParentResponse(
-                    type = null,
-                    databaseId_ = "1-2-3-4-5",
-                ),
-                archived = null,
-                inTrash = null,
-                properties = null,
-                url = null,
-                publicUrl = null,
+            createNotionPageResponse(
+                parentDbId = "1-2-3-4-5",
             ).parent?.databaseId shouldBe "12345"
         }
+
+        test("Should null if fields are empty string") {
+            createNotionPageResponse(
+                "1",
+                "",
+                "2",
+                "title",
+                "",
+                "",
+            ).toFlashCard() shouldBe FlashCard(
+                memorizedInfo = "title",
+                example = null,
+                answer = null,
+                imageUrl = null,
+                metaInfo = FlashCard.MetaInfo(
+                    id = "1",
+                    parentDbId = "2",
+                )
+            )
+        }
+
+        test("Should null if fields are blank") {
+            createNotionPageResponse(
+                "1",
+                "  ",
+                "2",
+                "title",
+                "  ",
+                "  ",
+            ).toFlashCard() shouldBe FlashCard(
+                memorizedInfo = "title",
+                example = null,
+                answer = null,
+                imageUrl = null,
+                metaInfo = FlashCard.MetaInfo(
+                    id = "1",
+                    parentDbId = "2",
+                )
+            )
+        }
     }
+
+    private fun createNotionPageResponse(
+        id: String? = null,
+        coverUrl: String? = null,
+        parentDbId: String? = null,
+        pageTitle: String? = null,
+        exampleSentence: String? = null,
+        explanation: String? = null,
+    ) = NotionPageResponse(
+        objectType = null,
+        id = id,
+        createdTime = null,
+        lastEditedTime = null,
+        createdBy = null,
+        lastEditedBy = null,
+        cover = CoverResponse(
+            external = CoverBody(
+                url = coverUrl
+            )
+        ),
+        icon = null,
+        parent = ParentResponse(
+            type = null,
+            databaseId_ = parentDbId,
+        ),
+        archived = null,
+        inTrash = null,
+        properties = mapOf(
+            "Name" to PropertyResponse(
+                id = null,
+                type = null,
+                checkbox = null,
+                richText = null,
+                title = listOf(
+                    TextResponse(
+                        text = TextContentResponse(
+                            content = pageTitle,
+                            link = null
+                        ),
+                        plainText = null,
+                    )
+                ),
+            ),
+            "Example" to PropertyResponse(
+                id = null,
+                type = null,
+                checkbox = null,
+                richText = listOf(
+                    RichTextResponse(
+                        text = TextContentResponse(
+                            content = exampleSentence,
+                            link = null,
+                        )
+                    )
+                ),
+                title = null,
+            ),
+            "Explanation" to PropertyResponse(
+                id = null,
+                type = null,
+                checkbox = null,
+                richText = listOf(
+                    RichTextResponse(
+                        text = TextContentResponse(
+                            content = explanation,
+                            link = null,
+                        )
+                    )
+                ),
+                title = null,
+            )
+        ),
+        url = null,
+        publicUrl = null,
+    )
 }
