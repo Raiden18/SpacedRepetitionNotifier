@@ -4,7 +4,7 @@ data class ImageUrl(
     val url: String
 ) {
     companion object {
-        val PROHIBITED_DOMAIN = listOf(
+        val NOT_SUPPORTED_BY_TG_DOMAINS = listOf(
             "shutterstock.com"
         )
 
@@ -14,6 +14,6 @@ data class ImageUrl(
     }
 
     val isSupportedByTelegram: Boolean
-        get() = PROHIBITED_DOMAIN.any { url.contains(it).not() }
+        get() = NOT_SUPPORTED_BY_TG_DOMAINS.any { url.contains(it).not() }
 
 }

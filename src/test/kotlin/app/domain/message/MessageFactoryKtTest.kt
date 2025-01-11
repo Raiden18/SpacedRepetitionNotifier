@@ -31,11 +31,11 @@ class MessageFactoryKtTest : FunSpec() {
         }
 
         test("Should create FlashCard message only with info and not supported url") {
-            val flashCard = FlashCard(
+            val flashCard = FlashCard.EMPTY.copy(
                 memorizedInfo = "Expect",
                 example = null,
                 answer = null,
-                imageUrl = "https://www.shutterstock.com/image-vector/cute-baby-regurgitating-after-eating-260nw-2016458315.jpg"
+                imageUrl = ImageUrl("https://www.shutterstock.com/image-vector/cute-baby-regurgitating-after-eating-260nw-2016458315.jpg")
             )
 
             messageFactory.createFlashCardMessage(flashCard) shouldBe TelegramMessageBody(
@@ -49,21 +49,12 @@ class MessageFactoryKtTest : FunSpec() {
             )
         }
 
-        test("Should add scissors at the end if url is not supported by Telegram") {
-            FlashCard(
-                memorizedInfo = "Expect",
-                example = null,
-                answer = null,
-                imageUrl = "url"
-            )
-        }
-
         test("Should create Full FlashCard message") {
-            val flashCard = FlashCard(
+            val flashCard = FlashCard.EMPTY.copy(
                 memorizedInfo = "Expect",
                 example = "I expected you to come",
                 answer = "to wait to happen in the future",
-                imageUrl = "url"
+                imageUrl = ImageUrl("url")
             )
             messageFactory.createFlashCardMessage(flashCard) shouldBe TelegramMessageBody(
                 text = """

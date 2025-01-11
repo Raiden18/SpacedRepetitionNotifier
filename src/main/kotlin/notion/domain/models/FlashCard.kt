@@ -4,18 +4,25 @@ data class FlashCard(
     val memorizedInfo: String,
     val example: String?,
     val answer: String?,
-    val imageUrl: ImageUrl?
+    val imageUrl: ImageUrl?,
+    val metaInfo: MetaInfo,
 ) {
 
-    constructor(
-        memorizedInfo: String,
-        example: String?,
-        answer: String?,
-        imageUrl: String?
-    ) : this(
-        memorizedInfo,
-        example,
-        answer,
-        imageUrl.takeIf { it != null }?.let(::ImageUrl)
+    data class MetaInfo(
+        val id: String,
+        val parentDbId: String,
     )
+
+    companion object {
+        val EMPTY = FlashCard(
+            memorizedInfo = "",
+            example = "",
+            answer = "",
+            imageUrl = null,
+            metaInfo = MetaInfo(
+                id = "",
+                parentDbId = "",
+            )
+        )
+    }
 }

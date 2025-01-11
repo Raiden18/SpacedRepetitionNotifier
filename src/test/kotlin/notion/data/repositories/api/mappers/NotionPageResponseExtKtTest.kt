@@ -6,6 +6,7 @@ import org.danceofvalkyries.notion.data.repositories.api.mappers.toFlashCard
 import org.danceofvalkyries.notion.data.repositories.api.rest.response.CoverBody
 import org.danceofvalkyries.notion.data.repositories.api.rest.response.CoverResponse
 import org.danceofvalkyries.notion.data.repositories.api.rest.response.NotionPageResponse
+import org.danceofvalkyries.notion.data.repositories.api.rest.response.ParentResponse
 import org.danceofvalkyries.notion.data.repositories.api.rest.response.properties.PropertyResponse
 import org.danceofvalkyries.notion.data.repositories.api.rest.response.properties.RichTextResponse
 import org.danceofvalkyries.notion.data.repositories.api.rest.response.properties.TextContentResponse
@@ -21,9 +22,12 @@ class NotionPageResponseExtKtTest : FunSpec() {
             val exampleSentence = "I had an alarming encounter with a wild pig"
             val explanation = "a meeting, especially one that happens by chance"
             val coverUrl = "https://vovatia.wordpress.com/wp-content/uploads/2013/02/sidle.jpg"
+            val id = "228"
+            val parentDbId = "322"
+
             NotionPageResponse(
                 objectType = null,
-                id = null,
+                id = id,
                 createdTime = null,
                 lastEditedTime = null,
                 createdBy = null,
@@ -34,7 +38,10 @@ class NotionPageResponseExtKtTest : FunSpec() {
                     )
                 ),
                 icon = null,
-                parent = null,
+                parent = ParentResponse(
+                    type = null,
+                    databaseId = parentDbId,
+                ),
                 archived = null,
                 inTrash = null,
                 properties = mapOf(
@@ -89,6 +96,10 @@ class NotionPageResponseExtKtTest : FunSpec() {
                 example = exampleSentence,
                 answer = explanation,
                 imageUrl = ImageUrl(coverUrl),
+                metaInfo = FlashCard.MetaInfo(
+                    id = id,
+                    parentDbId = parentDbId,
+                )
             )
         }
 
