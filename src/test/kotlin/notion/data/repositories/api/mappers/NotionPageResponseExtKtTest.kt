@@ -40,7 +40,7 @@ class NotionPageResponseExtKtTest : FunSpec() {
                 icon = null,
                 parent = ParentResponse(
                     type = null,
-                    databaseId = parentDbId,
+                    databaseId_ = parentDbId,
                 ),
                 archived = null,
                 inTrash = null,
@@ -103,5 +103,26 @@ class NotionPageResponseExtKtTest : FunSpec() {
             )
         }
 
+        test("Should remove '-' symbol from DB id") {
+            NotionPageResponse(
+                objectType = null,
+                id = null,
+                createdTime = null,
+                lastEditedTime = null,
+                createdBy = null,
+                lastEditedBy = null,
+                cover = null,
+                icon = null,
+                parent = ParentResponse(
+                    type = null,
+                    databaseId_ = "1-2-3-4-5",
+                ),
+                archived = null,
+                inTrash = null,
+                properties = null,
+                url = null,
+                publicUrl = null,
+            ).parent?.databaseId shouldBe "12345"
+        }
     }
 }
