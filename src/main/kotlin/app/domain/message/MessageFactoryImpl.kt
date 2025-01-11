@@ -35,7 +35,7 @@ class MessageFactoryImpl : MessageFactory {
             text = """You have ${flashCards.count()} flashcards to revise 🧠""".trimIndent(),
             buttons = buttons,
             imageUrl = null,
-            type = TelegramMessageBody.Type.FLASH_CARD,
+            type = TelegramMessageBody.Type.NOTIFICATION,
         )
     }
 

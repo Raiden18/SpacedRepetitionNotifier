@@ -11,7 +11,17 @@ data class TelegramMessageBody(
 ) {
     enum class Type {
         NOTIFICATION,
-        FLASH_CARD;
+        FLASH_CARD,
+        UNKNOWN;
+    }
+
+    companion object {
+        val EMPTY = TelegramMessageBody(
+            text = "",
+            nestedButtons = emptyList(),
+            imageUrl = null,
+            type = Type.UNKNOWN,
+        )
     }
 }
 

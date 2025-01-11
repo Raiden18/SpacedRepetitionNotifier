@@ -34,20 +34,18 @@ class EditNotificationMessageUseCaseKtTest : FunSpec() {
         }
 
         test("Should update message") {
-            val newMessage = "Something new"
-
-            editNotificationMessageUseCase.execute(
-                TelegramMessageBody(
-                    text = newMessage,
-                    buttons = emptyList(),
-                    imageUrl = null,
-                    type = TelegramMessageBody.Type.NOTIFICATION,
-                )
+            val newMessageBody = TelegramMessageBody(
+                text = "Something new",
+                buttons = emptyList(),
+                imageUrl = null,
+                type = TelegramMessageBody.Type.NOTIFICATION,
             )
 
+            editNotificationMessageUseCase.execute(newMessageBody)
+
             coVerifyOrder {
-                telegramChatRepository.updateInDb(newMessage, oldTelegramMessage.id)
-                telegramChatRepository.editInChat(newMessage, oldTelegramMessage.id)
+                telegramChatRepository.updateInDb(newMessageBody, oldTelegramMessage.id)
+                telegramChatRepository.editInChat(newMessageBody, oldTelegramMessage.id)
             }
         }
     }

@@ -8,6 +8,7 @@ data class NotionDbId(
         val EMPTY = NotionDbId("")
     }
 
+    //TODO move removing - here
     val valueId: String
         get() = this.value
 }

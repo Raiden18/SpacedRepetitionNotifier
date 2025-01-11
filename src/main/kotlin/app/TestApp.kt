@@ -1,10 +1,12 @@
 package org.danceofvalkyries.app
 
 import com.google.gson.Gson
+import kotlinx.coroutines.delay
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
 import org.danceofvalkyries.app.domain.usecases.GetAllFlashCardsUseCase
+import org.danceofvalkyries.app.domain.usecases.SendFlashCardToChatUseCase
 import org.danceofvalkyries.config.data.TestConfigRepository
 import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.notion.data.repositories.FlashCardsRepositoryImpl
@@ -21,6 +23,7 @@ import org.danceofvalkyries.utils.Dispatchers
 import org.danceofvalkyries.utils.db.DataBase
 import java.sql.Connection
 import java.util.concurrent.TimeUnit
+import kotlin.time.Duration.Companion.seconds
 
 class TestApp(
     private val db: DataBase,
@@ -61,9 +64,14 @@ class TestApp(
         GetAllFlashCardsUseCase(
             notionDbsRepository,
             flashCardsRepository
-        ).execute().map {
-            messageFactory.createFlashCardMessage(it)
-        }.map { telegramChatRepository.sendToChat(it) }
+        ).execute()
+            .forEach {
+                SendFlashCardToChatUseCase(
+                    telegramChatRepository,
+                    messageFactory,
+                ).execute(it)
+                delay(2.seconds)
+            }
     }
 
     private fun createTelegramChatRepository(): TelegramChatRepository {

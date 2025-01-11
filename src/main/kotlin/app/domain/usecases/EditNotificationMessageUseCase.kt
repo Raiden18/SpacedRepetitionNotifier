@@ -12,8 +12,8 @@ fun EditNotificationMessageUseCase(
 ): EditNotificationMessageUseCase {
     return EditNotificationMessageUseCase {
         telegramChatRepository.getAllFromDb().forEach { message ->
-            telegramChatRepository.updateInDb(it.text, message.id)
-            telegramChatRepository.editInChat(it.text, message.id)
+            telegramChatRepository.updateInDb(it, message.id)
+            telegramChatRepository.editInChat(it, message.id)
         }
     }
 }

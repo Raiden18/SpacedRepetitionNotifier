@@ -141,7 +141,7 @@ class MessageFactoryKtTest : FunSpec() {
                     )
                 ),
                 imageUrl = null,
-                type = TelegramMessageBody.Type.FLASH_CARD,
+                type = TelegramMessageBody.Type.NOTIFICATION,
             )
         }
     }

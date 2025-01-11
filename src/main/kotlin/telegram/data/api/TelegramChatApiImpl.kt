@@ -9,7 +9,6 @@ import org.danceofvalkyries.json.post
 import org.danceofvalkyries.json.request
 import org.danceofvalkyries.telegram.data.api.mappers.toRequest
 import org.danceofvalkyries.telegram.data.api.rest.TelegramChatUrls
-import org.danceofvalkyries.telegram.data.api.rest.request.bodies.EditMessageBody
 import org.danceofvalkyries.telegram.data.api.rest.response.TelegramMessageRootResponse
 import org.danceofvalkyries.telegram.domain.models.TelegramMessage
 import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
@@ -39,17 +38,10 @@ class TelegramChatApiImpl(
             .request(client)
     }
 
-    override suspend fun editMessageText(messageId: Long, text: String) {
+    override suspend fun editMessageText(messageId: Long, text: TelegramMessageBody) {
         Request.Builder()
             .url(telegramChatUrls.editMessageText())
-            .post(
-                EditMessageBody(
-                    gson = gson,
-                    chatId = chatId,
-                    text = text,
-                    messageId = messageId.toString()
-                )
-            )
+            .post(gson.toJson(text.toRequest(chatId, messageId)))
             .build()
             .request(client)
     }

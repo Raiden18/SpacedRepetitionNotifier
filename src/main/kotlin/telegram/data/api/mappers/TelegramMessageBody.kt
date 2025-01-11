@@ -6,7 +6,10 @@ import org.danceofvalkyries.telegram.data.api.rest.request.bodies.SendMessageReq
 import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
 
 // TODO: Add Unit tests when I've figured out what to do with callbackData
-fun TelegramMessageBody.toRequest(chatId: String): SendMessageRequest {
+fun TelegramMessageBody.toRequest(
+    chatId: String,
+    messageId: Long? = null,
+): SendMessageRequest {
     return SendMessageRequest(
         chatId = chatId,
         text = text.takeIf { imageUrl == null },
@@ -23,6 +26,7 @@ fun TelegramMessageBody.toRequest(chatId: String): SendMessageRequest {
                 }
             }
         ),
-        photo = imageUrl?.url
+        photo = imageUrl?.url,
+        messageId = messageId
     )
 }

@@ -24,4 +24,6 @@ data class SendMessageRequest(
     val caption: String?,
     @SerializedName("text")
     val text: String?,
+    @SerializedName("message_id")
+    val messageId: Long?,
 )

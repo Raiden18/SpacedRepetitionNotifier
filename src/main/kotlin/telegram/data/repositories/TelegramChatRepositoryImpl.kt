@@ -23,8 +23,8 @@ class TelegramChatRepositoryImpl(
         api.deleteMessage(telegramMessage.id)
     }
 
-    override suspend fun editInChat(text: String, messageId: Long) {
-        api.editMessageText(messageId, text)
+    override suspend fun editInChat(telegramMessageBody: TelegramMessageBody, messageId: Long) {
+        api.editMessageText(messageId, telegramMessageBody)
     }
 
     override suspend fun saveToDb(telegramMessage: TelegramMessage) {
@@ -39,7 +39,7 @@ class TelegramChatRepositoryImpl(
         return db.getAll()
     }
 
-    override suspend fun updateInDb(text: String, messageId: Long) {
-        db.update(text, messageId)
+    override suspend fun updateInDb(telegramMessageBody: TelegramMessageBody, messageId: Long) {
+        db.update(telegramMessageBody, messageId)
     }
 }

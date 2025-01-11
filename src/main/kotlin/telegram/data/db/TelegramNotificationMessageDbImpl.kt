@@ -50,9 +50,9 @@ class TelegramNotificationMessageDbImpl(
             .also { it.close() }
     }
 
-    override suspend fun update(text: String, messageId: Long) {
+    override suspend fun update(text: TelegramMessageBody, messageId: Long) {
         connection.createStatement()
-            .also { it.execute(sqlQueries.update(text, messageId)) }
+            .also { it.execute(sqlQueries.update(text.text, messageId)) }
             .also { it.close() }
     }
 

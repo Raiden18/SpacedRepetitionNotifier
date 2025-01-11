@@ -6,6 +6,6 @@ import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
 interface TelegramChatApi {
     suspend fun sendMessage(textBody: TelegramMessageBody): TelegramMessage
     suspend fun deleteMessage(id: Long)
-    suspend fun editMessageText(messageId: Long, text: String)
+    suspend fun editMessageText(messageId: Long, text: TelegramMessageBody)
     suspend fun sendPhoto(textBody: TelegramMessageBody): TelegramMessage
 }
