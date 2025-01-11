@@ -1,5 +1,6 @@
 package org.danceofvalkyries.app.domain.message
 
+import org.danceofvalkyries.app.domain.message.MessageFactory.Notification
 import org.danceofvalkyries.notion.domain.models.FlashCard
 import org.danceofvalkyries.notion.domain.models.ImageUrl.Companion.BLUE_SCREEN
 import org.danceofvalkyries.notion.domain.models.FlashCardsTablesGroup
@@ -17,12 +18,12 @@ class MessageFactoryImpl : MessageFactory {
     }
 
     override fun createNotification(
-        group: FlashCardsTablesGroup
+        notification: Notification
     ): TelegramMessageBody {
         return TelegramMessageBody(
-            text = """You have ${group.totalFlashCardsNeedRevising} flashcards to revise 🧠""".trimIndent(),
-            buttons = group.group
-                .filter { it.flashCards.isNotEmpty() }
+            text = """You have ${notification.totalCount} flashcards to revise 🧠""".trimIndent(),
+            buttons = notification
+                .dataBases
                 .map {
                     Button(
                         text = "${it.name}: ${it.flashCardsNeedRevising}",

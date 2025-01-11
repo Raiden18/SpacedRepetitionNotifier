@@ -1,10 +1,11 @@
-package notion.data.repositories.db
+package notion.data.repositories.db.flashcards
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.notion.data.repositories.db.FlashCardSqlQueries
+import org.danceofvalkyries.notion.data.repositories.db.flashcards.FlashCardSqlQueries
 import org.danceofvalkyries.notion.domain.models.FlashCard
 import org.danceofvalkyries.notion.domain.models.ImageUrl
+import org.danceofvalkyries.notion.domain.models.NotionDbId
 import org.danceofvalkyries.utils.db.tables.columns.PrimaryKey
 import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
 
@@ -30,7 +31,7 @@ class FlashCardSqlQueriesTest : FunSpec() {
         ),
         metaInfo = FlashCard.MetaInfo(
             id = "5",
-            parentDbId = "6"
+            notionDbId = NotionDbId("6"),
         ),
     )
 
@@ -73,7 +74,7 @@ class FlashCardSqlQueriesTest : FunSpec() {
                 imageUrl = null,
                 metaInfo = FlashCard.MetaInfo(
                     id = "5",
-                    parentDbId = "6"
+                    notionDbId = NotionDbId("6"),
                 ),
             )
 

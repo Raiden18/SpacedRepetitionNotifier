@@ -3,6 +3,7 @@ package org.danceofvalkyries.notion.data.repositories.api.mappers
 import org.danceofvalkyries.notion.data.repositories.api.rest.response.NotionPageResponse
 import org.danceofvalkyries.notion.domain.models.FlashCard
 import org.danceofvalkyries.notion.domain.models.ImageUrl
+import org.danceofvalkyries.notion.domain.models.NotionDbId
 
 fun NotionPageResponse.toFlashCard(): FlashCard {
     val memorizedInfo = properties?.get("Name")?.title?.firstOrNull()?.text?.content.orEmpty()
@@ -15,7 +16,7 @@ fun NotionPageResponse.toFlashCard(): FlashCard {
         imageUrl = cover?.external?.url?.nullIfEmptyOrBlank()?.let(::ImageUrl),
         metaInfo = FlashCard.MetaInfo(
             id = id.orEmpty(),
-            parentDbId = parent?.databaseId.orEmpty()
+            notionDbId = NotionDbId(parent?.databaseId.orEmpty()),
         )
     )
 }

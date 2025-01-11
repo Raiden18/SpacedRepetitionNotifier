@@ -6,12 +6,10 @@ import okhttp3.logging.HttpLoggingInterceptor
 import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
 import org.danceofvalkyries.config.data.TestConfigRepository
 import org.danceofvalkyries.config.domain.Config
-import org.danceofvalkyries.notion.data.repositories.FlashCardsTablesRepositoryImpl
+import org.danceofvalkyries.notion.data.repositories.NotionDbRepositoryImpl
 import org.danceofvalkyries.notion.data.repositories.api.NotionDataBaseApi
 import org.danceofvalkyries.notion.data.repositories.api.NotionDataBaseApiImpl
-import org.danceofvalkyries.notion.data.repositories.api.NotionDataBaseApiTimeMeasurePerfomanceDecorator
-import org.danceofvalkyries.notion.data.repositories.db.FlashCardDbTableImpl
-import org.danceofvalkyries.notion.domain.repositories.FlashCardsTablesRepository
+import org.danceofvalkyries.notion.domain.repositories.NotionDbRepository
 import org.danceofvalkyries.telegram.data.api.TelegramChatApiImpl
 import org.danceofvalkyries.telegram.data.db.TelegramNotificationMessageDbImpl
 import org.danceofvalkyries.telegram.data.repositories.TelegramChatRepositoryImpl
@@ -51,8 +49,8 @@ class TestApp(
         val notionDatabasesRepository = createSpacedRepetitionDataBaseRepository(dbConnection)
 
         notionDatabasesRepository.getFromNotion().group.flatMap { table ->
-            notionDatabasesRepository.getFromDb(table.id)
-        }.map { messageFactory.createFlashCardMessage(it) }
+            notionDatabasesRepository.getFromDb()
+        }.map { messageFactory.createFlashCardMessage(TODO()) }
             .forEach {
                 telegramChatRepository.sendToChat(it)
             }
@@ -70,12 +68,10 @@ class TestApp(
         return TelegramChatRepositoryImpl(api, db)
     }
 
-    private fun createSpacedRepetitionDataBaseRepository(dbConnection: Connection): FlashCardsTablesRepository {
-        return FlashCardsTablesRepositoryImpl(
-            config.notion.delayBetweenRequests.milliseconds,
-            createNotionDataBasesApis(),
-            dispatchers,
-            FlashCardDbTableImpl(dbConnection)
+    private fun createSpacedRepetitionDataBaseRepository(dbConnection: Connection): NotionDbRepository {
+        return NotionDbRepositoryImpl(
+            TODO(),
+            TODO(),
         )
     }
 
@@ -102,10 +98,9 @@ class TestApp(
         return config.notion.observedDatabases.map {
             NotionDataBaseApiImpl(
                 gson = createGson(),
-                databaseId = it,
                 client = createHttpClient(),
                 apiKey = config.notion.apiKey,
             )
-        }.map { NotionDataBaseApiTimeMeasurePerfomanceDecorator(it) }
+        }
     }
 }

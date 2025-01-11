@@ -12,7 +12,6 @@ import org.danceofvalkyries.notion.data.repositories.api.rest.response.NotionPag
 
 class NotionDataBaseApiImpl(
     private val gson: Gson,
-    private val databaseId: String,
     private val client: OkHttpClient,
     private val apiKey: String,
 ) : NotionDataBaseApi {
@@ -23,23 +22,22 @@ class NotionDataBaseApiImpl(
         ContentType(ContentTypes.ApplicationJson),
     )
 
-    private val urls: DatabaseUrl
-        get() = DatabaseUrl(databaseId)
+    private val urls = DatabaseUrl()
 
-    override suspend fun getDescription(): NotionDbResponse {
+    override suspend fun getNotionDb(id: String): NotionDbResponse {
         return Request.Builder()
-            .url(urls.dataBases())
+            .url(urls.dataBases(id))
             .headers(headers)
             .get()
             .build()
             .request(client)
             .parse<NotionDbResponse>(gson)
-            .copy(id = databaseId)
+            .copy(id = id)
     }
 
-    override suspend fun getContent(): List<NotionPageResponse> {
+    override suspend fun getContentFor(id: String): List<NotionPageResponse> {
         return Request.Builder()
-            .url(urls.databasesQuery())
+            .url(urls.databasesQuery(id))
             .headers(headers)
             .post(SpacedRepetitionRequestBody(gson))
             .build()

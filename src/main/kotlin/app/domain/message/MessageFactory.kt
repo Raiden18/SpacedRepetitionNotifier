@@ -6,6 +6,16 @@ import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
 
 interface MessageFactory {
     fun createDone(): TelegramMessageBody
-    fun createNotification(group: FlashCardsTablesGroup): TelegramMessageBody
+    fun createNotification(notification: Notification): TelegramMessageBody
     fun createFlashCardMessage(flashCard: FlashCard): TelegramMessageBody
+
+    data class Notification(
+        val totalCount: Int,
+        val dataBases: List<DataBaseMessage>,
+    )
+
+    data class DataBaseMessage(
+        val name: String,
+        val countInt: Int,
+    )
 }

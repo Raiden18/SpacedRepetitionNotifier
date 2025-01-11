@@ -13,6 +13,7 @@ import org.danceofvalkyries.notion.data.repositories.api.rest.response.propertie
 import org.danceofvalkyries.notion.data.repositories.api.rest.response.properties.TextResponse
 import org.danceofvalkyries.notion.domain.models.FlashCard
 import org.danceofvalkyries.notion.domain.models.ImageUrl
+import org.danceofvalkyries.notion.domain.models.NotionDbId
 
 class NotionPageResponseExtKtTest : FunSpec() {
 
@@ -39,7 +40,7 @@ class NotionPageResponseExtKtTest : FunSpec() {
                 imageUrl = ImageUrl(coverUrl),
                 metaInfo = FlashCard.MetaInfo(
                     id = id,
-                    parentDbId = parentDbId,
+                    notionDbId = NotionDbId(parentDbId),
                 )
             )
         }
@@ -65,7 +66,7 @@ class NotionPageResponseExtKtTest : FunSpec() {
                 imageUrl = null,
                 metaInfo = FlashCard.MetaInfo(
                     id = "1",
-                    parentDbId = "2",
+                    notionDbId = NotionDbId("2"),
                 )
             )
         }
@@ -85,7 +86,7 @@ class NotionPageResponseExtKtTest : FunSpec() {
                 imageUrl = null,
                 metaInfo = FlashCard.MetaInfo(
                     id = "1",
-                    parentDbId = "2",
+                    notionDbId = NotionDbId("2"),
                 )
             )
         }

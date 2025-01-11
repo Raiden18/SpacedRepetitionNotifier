@@ -1,7 +1,7 @@
-package org.danceofvalkyries.notion.data.repositories.db
+package org.danceofvalkyries.notion.data.repositories.db.flashcards
 
 import org.danceofvalkyries.notion.domain.models.FlashCard
-import org.danceofvalkyries.utils.db.SqlQueryBuilder
+import org.danceofvalkyries.utils.db.SqlQuery
 import org.danceofvalkyries.utils.db.tables.columns.TableColumn
 import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
 
@@ -16,18 +16,18 @@ class FlashCardSqlQueries(
 ) {
 
     fun selectAll(databaseId: String): String {
-        return SqlQueryBuilder()
-            .select("*")
-            .from(tableName)
-            .where(notionDbId to databaseId)
-            .build()
+        return SqlQuery {
+            select("*")
+            from(tableName)
+            where(notionDbId to databaseId)
+        }
     }
 
     fun insert(
         flashCard: FlashCard
     ): String {
-        return SqlQueryBuilder()
-            .insert(
+        return SqlQuery {
+            insert(
                 into = tableName,
                 values = listOf(
                     id to flashCard.metaInfo.id,
@@ -35,32 +35,33 @@ class FlashCardSqlQueries(
                     answer to flashCard.answer,
                     imageUrl to flashCard.imageUrl?.url,
                     memorizedInfo to flashCard.memorizedInfo,
-                    notionDbId to flashCard.metaInfo.parentDbId,
+                    notionDbId to flashCard.metaInfo.notionDbId.valueId,
                 )
-            ).build()
+            )
+        }
     }
 
     fun createTableIfNotExisted(): String {
-        return SqlQueryBuilder()
-            .createIfNotExist(
+        return SqlQuery {
+            createIfNotExist(
                 tableName = tableName,
                 columns = listOf(id, example, answer, imageUrl, memorizedInfo, notionDbId)
             )
-            .build()
+        }
     }
 
     fun delete(id: String): String {
-        return SqlQueryBuilder()
-            .delete()
-            .from(tableName)
-            .where(this.id to id)
-            .build()
+        return SqlQuery {
+            delete()
+            from(tableName)
+            where(this@FlashCardSqlQueries.id to id)
+        }
     }
 
     fun deleteAll(): String {
-        return SqlQueryBuilder()
-            .delete()
-            .from(tableName)
-            .build()
+        return SqlQuery {
+            delete()
+            from(tableName)
+        }
     }
 }

@@ -10,7 +10,7 @@ data class FlashCard(
 
     data class MetaInfo(
         val id: String,
-        val parentDbId: String,
+        val notionDbId: NotionDbId,
     )
 
     companion object {
@@ -21,7 +21,7 @@ data class FlashCard(
             imageUrl = null,
             metaInfo = MetaInfo(
                 id = "",
-                parentDbId = "",
+                notionDbId = NotionDbId.EMPTY,
             )
         )
     }

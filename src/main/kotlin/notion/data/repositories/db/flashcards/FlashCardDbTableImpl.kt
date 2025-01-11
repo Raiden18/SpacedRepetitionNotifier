@@ -1,7 +1,8 @@
-package org.danceofvalkyries.notion.data.repositories.db
+package org.danceofvalkyries.notion.data.repositories.db.flashcards
 
 import org.danceofvalkyries.notion.domain.models.FlashCard
 import org.danceofvalkyries.notion.domain.models.ImageUrl
+import org.danceofvalkyries.notion.domain.models.NotionDbId
 import org.danceofvalkyries.utils.db.asSequence
 import org.danceofvalkyries.utils.db.tables.columns.PrimaryKey
 import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
@@ -37,7 +38,6 @@ class FlashCardDbTableImpl(
     )
 
     override suspend fun insert(flashCard: FlashCard) {
-        println(flashCard)
         createTableIfNotExist()
             .also { it.execute(sqlQueries.insert(flashCard)) }
             .also { it.close() }
@@ -55,7 +55,7 @@ class FlashCardDbTableImpl(
                     imageUrl = imageUrl.getValue(it)?.let(::ImageUrl),
                     metaInfo = FlashCard.MetaInfo(
                         id = id.getValue(it)!!,
-                        parentDbId = notionDbId.getValue(it)!!
+                        notionDbId = NotionDbId(notionDbId.getValue(it)!!)
                     )
                 )
             }.toList()

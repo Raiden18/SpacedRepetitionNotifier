@@ -8,14 +8,14 @@ class NotionUrlsTest : FunSpec() {
 
     init {
         test("Should return url for database") {
-            DatabaseUrl("228")
-                .dataBases()
+            DatabaseUrl()
+                .dataBases("228")
                 .toString() shouldBe "https://api.notion.com/v1/databases/228"
         }
 
         test("Should return url for query database") {
-            DatabaseUrl("228")
-                .databasesQuery()
+            DatabaseUrl()
+                .databasesQuery("228")
                 .toString() shouldBe "https://api.notion.com/v1/databases/228/query"
         }
     }

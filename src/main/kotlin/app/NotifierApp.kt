@@ -10,11 +10,10 @@ import org.danceofvalkyries.app.domain.usecases.GetFlashCardsTablesUseCase
 import org.danceofvalkyries.config.data.LocalFileConfigRepository
 import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.config.domain.ConfigRepository
-import org.danceofvalkyries.notion.data.repositories.FlashCardsTablesRepositoryImpl
+import org.danceofvalkyries.notion.data.repositories.NotionDbRepositoryImpl
 import org.danceofvalkyries.notion.data.repositories.api.NotionDataBaseApi
 import org.danceofvalkyries.notion.data.repositories.api.NotionDataBaseApiImpl
-import org.danceofvalkyries.notion.data.repositories.db.FlashCardDbTableImpl
-import org.danceofvalkyries.notion.domain.repositories.FlashCardsTablesRepository
+import org.danceofvalkyries.notion.domain.repositories.NotionDbRepository
 import org.danceofvalkyries.telegram.data.api.TelegramChatApiImpl
 import org.danceofvalkyries.telegram.data.db.TelegramNotificationMessageDbImpl
 import org.danceofvalkyries.telegram.data.repositories.TelegramChatRepositoryImpl
@@ -62,12 +61,13 @@ class NotifierApp(
         return TelegramChatRepositoryImpl(api, db)
     }
 
-    private fun createSpacedRepetitionDataBaseRepository(dbConnection: Connection): FlashCardsTablesRepository {
-        return FlashCardsTablesRepositoryImpl(
-            config.notion.delayBetweenRequests.milliseconds,
-            createNotionDataBasesApis(),
+    private fun createSpacedRepetitionDataBaseRepository(dbConnection: Connection): NotionDbRepository {
+        return NotionDbRepositoryImpl(
+            TODO(),
+            TODO(),
+          /*  createNotionDataBasesApis(),
             dispatchers,
-            FlashCardDbTableImpl(dbConnection)
+            FlashCardDbTableImpl(dbConnection)*/
         )
     }
 
@@ -89,7 +89,6 @@ class NotifierApp(
         return config.notion.observedDatabases.map {
             NotionDataBaseApiImpl(
                 gson = createGson(),
-                databaseId = it,
                 client = createHttpClient(),
                 apiKey = config.notion.apiKey,
             )

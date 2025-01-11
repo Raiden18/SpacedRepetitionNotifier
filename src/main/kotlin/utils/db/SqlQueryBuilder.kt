@@ -2,6 +2,12 @@ package org.danceofvalkyries.utils.db
 
 import org.danceofvalkyries.utils.db.tables.columns.TableColumn
 
+inline fun SqlQuery(block: SqlQueryBuilder.() -> Unit): String {
+    val builder = SqlQueryBuilder()
+    block.invoke(builder)
+    return builder.build()
+}
+
 class SqlQueryBuilder {
 
     private val stringBuilder = mutableListOf<String>()
