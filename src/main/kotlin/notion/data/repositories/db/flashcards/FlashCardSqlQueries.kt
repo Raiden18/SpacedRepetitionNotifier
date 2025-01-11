@@ -31,10 +31,10 @@ class FlashCardSqlQueries(
                 into = tableName,
                 values = listOf(
                     id to flashCard.metaInfo.id,
-                    example to flashCard.example,
-                    answer to flashCard.answer,
+                    example to flashCard.exampleValue,
+                    answer to flashCard.answerValue,
                     imageUrl to flashCard.imageUrl?.url,
-                    memorizedInfo to flashCard.memorizedInfo,
+                    memorizedInfo to flashCard.memorizedInfoValue,
                     notionDbId to flashCard.metaInfo.notionDbId.valueId,
                 )
             )

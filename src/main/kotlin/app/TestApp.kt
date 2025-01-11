@@ -4,11 +4,14 @@ import com.google.gson.Gson
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
+import org.danceofvalkyries.app.domain.usecases.GetAllFlashCardsUseCase
 import org.danceofvalkyries.config.data.TestConfigRepository
 import org.danceofvalkyries.config.domain.Config
+import org.danceofvalkyries.notion.data.repositories.FlashCardsRepositoryImpl
 import org.danceofvalkyries.notion.data.repositories.NotionDbRepositoryImpl
-import org.danceofvalkyries.notion.data.repositories.api.NotionApi
 import org.danceofvalkyries.notion.data.repositories.api.NotionApiImpl
+import org.danceofvalkyries.notion.data.repositories.db.flashcards.FlashCardDbTableImpl
+import org.danceofvalkyries.notion.data.repositories.db.table.FlashCardsTablesDbTableImpl
 import org.danceofvalkyries.notion.domain.repositories.NotionDbRepository
 import org.danceofvalkyries.telegram.data.api.TelegramChatApiImpl
 import org.danceofvalkyries.telegram.data.db.TelegramNotificationMessageDbImpl
@@ -37,22 +40,30 @@ class TestApp(
     }
 
     override suspend fun run() {
-        /*val telegramChatRepository = createTelegramChatRepository()
+        val telegramChatRepository = createTelegramChatRepository()
         val messageFactory = MessageFactoryImpl()
-        val dbConnection = db.establishConnection()*/
+        val dbConnection = db.establishConnection()
+        val notionApi = NotionApiImpl(
+            gson = createGson(),
+            client = createHttpClient(),
+            apiKey = config.notion.apiKey,
+        )
+        val flashCardsTablesDbTable = FlashCardsTablesDbTableImpl(dbConnection)
+        val notionDbsRepository = NotionDbRepositoryImpl(notionApi, flashCardsTablesDbTable)
 
-
+        val flashCardsRepository = FlashCardsRepositoryImpl(
+            FlashCardDbTableImpl(dbConnection),
+            notionApi,
+        )
 
         realApp.run()
 
-        /*val notionDatabasesRepository = createSpacedRepetitionDataBaseRepository(dbConnection)
-
-        notionDatabasesRepository.getFromNotion().group.flatMap { table ->
-            notionDatabasesRepository.getFromDb()
-        }.map { messageFactory.createFlashCardMessage(TODO()) }
-            .forEach {
-                telegramChatRepository.sendToChat(it)
-            }*/
+        GetAllFlashCardsUseCase(
+            notionDbsRepository,
+            flashCardsRepository
+        ).execute().map {
+            messageFactory.createFlashCardMessage(it)
+        }.map { telegramChatRepository.sendToChat(it) }
     }
 
     private fun createTelegramChatRepository(): TelegramChatRepository {
@@ -91,15 +102,5 @@ class TestApp(
 
     private fun createGson(): Gson {
         return Gson()
-    }
-
-    private fun createNotionDataBasesApis(): List<NotionApi> {
-        return config.notion.observedDatabases.map {
-            NotionApiImpl(
-                gson = createGson(),
-                client = createHttpClient(),
-                apiKey = config.notion.apiKey,
-            )
-        }
     }
 }

@@ -1,9 +1,9 @@
 package org.danceofvalkyries.notion.domain.models
 
 data class FlashCard(
-    val memorizedInfo: String,
-    val example: String?,
-    val answer: String?,
+    private val memorizedInfo: String,
+    private val example: String?,
+    private val answer: String?,
     val imageUrl: ImageUrl?,
     val metaInfo: MetaInfo,
 ) {
@@ -24,5 +24,24 @@ data class FlashCard(
                 notionDbId = NotionDbId.EMPTY,
             )
         )
+    }
+
+    val memorizedInfoValue: String
+        get() = memorizedInfo.withEscapedCharacters()
+
+    val exampleValue: String?
+        get() = example?.withEscapedCharacters()
+
+    val answerValue: String?
+        get() = answer?.withEscapedCharacters()
+
+    private fun String.withEscapedCharacters(): String {
+        return replace("!", "\\!")
+            .replace("(", "\\(")
+            .replace(")", "\\)")
+            .replace("=", "\\=")
+            .replace(".", "\\.")
+            .replace("_", "\\_")
+            .replace("\\\\", "\\")
     }
 }

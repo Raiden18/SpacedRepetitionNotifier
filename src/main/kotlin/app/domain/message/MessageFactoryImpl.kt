@@ -41,14 +41,14 @@ class MessageFactoryImpl : MessageFactory {
         flashCard: FlashCard,
     ): TelegramMessageBody {
         val body = StringBuilder()
-            .appendLine("*${flashCard.memorizedInfo}*")
-        if (flashCard.example != null) {
+            .appendLine("*${flashCard.memorizedInfoValue}*")
+        if (flashCard.exampleValue != null) {
             body.appendLine()
-                .appendLine("_${flashCard.example}_")
+                .appendLine("_${flashCard.exampleValue}_")
         }
-        if (flashCard.answer != null) {
+        if (flashCard.answerValue != null) {
             body.appendLine()
-                .appendLine("||${flashCard.answer}||")
+                .appendLine("||${flashCard.answerValue}||")
         }
         body.appendLine()
             .append("Choose:")
@@ -66,7 +66,7 @@ class MessageFactoryImpl : MessageFactory {
                 listOf(
                     Button(
                         text = "Look it up",
-                        url = "https://dictionary.cambridge.org/dictionary/english/${flashCard.memorizedInfo}"
+                        url = "https://dictionary.cambridge.org/dictionary/english/${flashCard.memorizedInfoValue}"
                     ),
                 )
             ),

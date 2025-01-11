@@ -147,7 +147,7 @@ class MessageFactoryKtTest : FunSpec() {
         listOf(
             Button(
                 text = "Look it up",
-                url = "https://dictionary.cambridge.org/dictionary/english/${flashCard.memorizedInfo}"
+                url = "https://dictionary.cambridge.org/dictionary/english/${flashCard.memorizedInfoValue}"
             ),
         )
     )
