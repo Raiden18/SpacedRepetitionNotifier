@@ -28,7 +28,7 @@ class SqlQueryBuilder {
 
     fun insert(
         into: String,
-        values: List<Pair<TableColumn, String>>
+        values: List<Pair<TableColumn, String?>>
     ): SqlQueryBuilder {
         val columns = values.map { it.first.name }.joinToString(", ")
         val values = values.map { it.first.sqlRequestValue(it.second) }.joinToString(", ")
@@ -41,7 +41,7 @@ class SqlQueryBuilder {
         columns: List<TableColumn>
     ): SqlQueryBuilder {
         val columnsDeclarations = columns.map { it.declaration }.joinToString(", ")
-        stringBuilder.add("CREATE TABLE IF NOT EXISTS $tableName ($columnsDeclarations);")
+        stringBuilder.add("CREATE TABLE IF NOT EXISTS $tableName ($columnsDeclarations)")
         return this
     }
 
@@ -58,6 +58,6 @@ class SqlQueryBuilder {
     }
 
     fun build(): String {
-        return stringBuilder.joinToString(" ")
+        return stringBuilder.joinToString(" ") + ";"
     }
 }

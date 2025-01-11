@@ -31,11 +31,11 @@ class TelegramMessagesSqlQueriesTest : FunSpec() {
         test("Should build Delete request") {
             telegramMessagesSqlQueries.delete(
                 id = 228
-            ) shouldBe "DELETE FROM $tableName WHERE id = 228"
+            ) shouldBe "DELETE FROM $tableName WHERE id = 228;"
         }
 
         test("Should build select request") {
-            telegramMessagesSqlQueries.getAll() shouldBe "SELECT * FROM $tableName"
+            telegramMessagesSqlQueries.getAll() shouldBe "SELECT * FROM $tableName;"
         }
 
         test("Should insert into table") {
@@ -48,7 +48,7 @@ class TelegramMessagesSqlQueriesTest : FunSpec() {
                         imageUrl = null,
                     ),
                 )
-            ) shouldBe "INSERT INTO $tableName (id, text) VALUES (12, 'something')"
+            ) shouldBe "INSERT INTO $tableName (id, text) VALUES (12, 'something');"
         }
 
         test("Should create table if not exist") {
@@ -62,7 +62,7 @@ class TelegramMessagesSqlQueriesTest : FunSpec() {
             telegramMessagesSqlQueries.update(
                 message,
                 id
-            ) shouldBe "UPDATE $tableName SET text = '$message' WHERE id = $id"
+            ) shouldBe "UPDATE $tableName SET text = '$message' WHERE id = $id;"
         }
     }
 }

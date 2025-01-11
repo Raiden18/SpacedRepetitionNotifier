@@ -59,7 +59,7 @@ class TelegramNotificationMessageDbImpl(
                 TelegramMessage(
                     id = idTableColumn.getValue(it),
                     body = TelegramMessageBody(
-                        text = textColumn.getValue(it),
+                        text = textColumn.getValue(it)!!,
                         buttons = emptyList(),
                         imageUrl = null,
                     ),

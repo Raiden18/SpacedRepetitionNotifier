@@ -12,5 +12,5 @@ data class LongTableColumn(
 
     fun getValue(resultSet: ResultSet) = resultSet.getLong(name)
 
-    override fun sqlRequestValue(value: String): String = value
+    override fun sqlRequestValue(value: String?): String = value ?: error("Cannot be null")
 }
