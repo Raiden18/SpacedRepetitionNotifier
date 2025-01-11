@@ -40,10 +40,11 @@ class TestApp(
 
         val dataBases = notionDatabasesRepository.getAll()
 
+        flashCardsDb.clear()
+
         dataBases.group
             .flatMap { it.flashCards }
             .forEach {
-                flashCardsDb.delete(it)
                 flashCardsDb.insert(it)
             }
 

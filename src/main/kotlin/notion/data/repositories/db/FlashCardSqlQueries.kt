@@ -56,4 +56,11 @@ class FlashCardSqlQueries(
             .where(this.id to id)
             .build()
     }
+
+    fun deleteAll(): String {
+        return SqlQueryBuilder()
+            .delete()
+            .from(tableName)
+            .build()
+    }
 }

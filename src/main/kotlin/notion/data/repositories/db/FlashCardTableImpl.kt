@@ -66,6 +66,12 @@ class FlashCardTableImpl(
             .also { it.close() }
     }
 
+    override suspend fun clear() {
+        createTableIfNotExist()
+            .also { it.execute(sqlQueries.deleteAll()) }
+            .also { it.close() }
+    }
+
     private fun createTableIfNotExist(): Statement {
         return connection.createStatement()
             .also { it.execute(sqlQueries.createTableIfNotExisted()) }

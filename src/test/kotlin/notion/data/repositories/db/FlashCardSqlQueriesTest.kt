@@ -89,5 +89,9 @@ class FlashCardSqlQueriesTest : FunSpec() {
                     flashcard.metaInfo.id
                 ) shouldBe "DELETE FROM $tableName WHERE id = '5';"
         }
+
+        test("Should create delete all statements") {
+            flashCardSqlQueries.deleteAll() shouldBe "DELETE FROM $tableName;"
+        }
     }
 }
