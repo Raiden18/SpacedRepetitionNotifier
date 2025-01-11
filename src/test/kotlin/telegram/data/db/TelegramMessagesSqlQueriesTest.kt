@@ -6,25 +6,21 @@ import org.danceofvalkyries.telegram.data.db.TelegramMessagesSqlQueries
 import org.danceofvalkyries.telegram.domain.models.TelegramMessage
 import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
 import org.danceofvalkyries.utils.db.tables.columns.LongTableColumn
-import org.danceofvalkyries.utils.db.tables.columns.NoPrimaryKey
 import org.danceofvalkyries.utils.db.tables.columns.PrimaryKey
 import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
 
 class TelegramMessagesSqlQueriesTest : FunSpec() {
 
     private val tableName = "table_name"
-    private val idColumn = LongTableColumn(
-        name = "id",
-        primaryKey = PrimaryKey(),
-    )
-    private val textColumn = TextTableColumn(
-        name = "text",
-        primaryKey = NoPrimaryKey(),
-    )
+    private val idColumn = LongTableColumn("id", PrimaryKey())
+    private val textColumn = TextTableColumn("text")
+    private val typeColumn = TextTableColumn("type")
+
     private val telegramMessagesSqlQueries = TelegramMessagesSqlQueries(
         tableName,
         idColumn,
         textColumn,
+        typeColumn,
     )
 
     init {
@@ -46,13 +42,14 @@ class TelegramMessagesSqlQueriesTest : FunSpec() {
                         text = "something",
                         buttons = emptyList(),
                         imageUrl = null,
+                        type = TelegramMessageBody.Type.NOTIFICATION,
                     ),
                 )
-            ) shouldBe "INSERT INTO $tableName (id, text) VALUES (12, 'something');"
+            ) shouldBe "INSERT INTO $tableName (id, text, type) VALUES (12, 'something', 'NOTIFICATION');"
         }
 
         test("Should create table if not exist") {
-            telegramMessagesSqlQueries.createTableIfNotExist() shouldBe "CREATE TABLE IF NOT EXISTS $tableName (id LONG PRIMARY KEY, text TEXT);"
+            telegramMessagesSqlQueries.createTableIfNotExist() shouldBe "CREATE TABLE IF NOT EXISTS $tableName (id LONG PRIMARY KEY, text TEXT, type TEXT);"
         }
 
         test("Should update message by message id") {

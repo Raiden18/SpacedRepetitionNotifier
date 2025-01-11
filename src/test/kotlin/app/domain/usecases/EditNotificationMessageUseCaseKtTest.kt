@@ -21,6 +21,7 @@ class EditNotificationMessageUseCaseKtTest : FunSpec() {
             text = "old",
             buttons = emptyList(),
             imageUrl = null,
+            type = TelegramMessageBody.Type.NOTIFICATION,
         )
     )
 
@@ -40,6 +41,7 @@ class EditNotificationMessageUseCaseKtTest : FunSpec() {
                     text = newMessage,
                     buttons = emptyList(),
                     imageUrl = null,
+                    type = TelegramMessageBody.Type.NOTIFICATION,
                 )
             )
 

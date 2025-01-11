@@ -26,6 +26,7 @@ class MessageFactoryKtTest : FunSpec() {
                 text = """Good Job! 😎 Everything is revised! ✅""",
                 buttons = emptyList(),
                 imageUrl = null,
+                type = TelegramMessageBody.Type.NOTIFICATION,
             )
         }
 
@@ -45,6 +46,7 @@ class MessageFactoryKtTest : FunSpec() {
                 """.trimIndent(),
                 nestedButtons = buttons(flashCard),
                 imageUrl = ImageUrl.BLUE_SCREEN,
+                type = TelegramMessageBody.Type.FLASH_CARD,
             )
         }
 
@@ -65,7 +67,8 @@ class MessageFactoryKtTest : FunSpec() {
                     
                     Choose:""".trimIndent(),
                 nestedButtons = buttons(flashCard),
-                imageUrl = ImageUrl("url")
+                imageUrl = ImageUrl("url"),
+                type = TelegramMessageBody.Type.FLASH_CARD,
             )
         }
 
@@ -137,7 +140,8 @@ class MessageFactoryKtTest : FunSpec() {
                         )
                     )
                 ),
-                imageUrl = null
+                imageUrl = null,
+                type = TelegramMessageBody.Type.FLASH_CARD,
             )
         }
     }

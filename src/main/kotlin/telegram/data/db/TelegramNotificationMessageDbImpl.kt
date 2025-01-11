@@ -26,11 +26,16 @@ class TelegramNotificationMessageDbImpl(
         name = "text",
         primaryKey = NoPrimaryKey()
     )
+    private val typeColumn = TextTableColumn(
+        name = "type",
+        primaryKey = NoPrimaryKey()
+    )
 
     private val sqlQueries = TelegramMessagesSqlQueries(
         tableName = TABLE_NAME,
         idColumn = idTableColumn,
-        textColumn = textColumn
+        textColumn = textColumn,
+        typeColumn = typeColumn,
     )
 
     override suspend fun save(telegramMessage: TelegramMessage) {
@@ -62,6 +67,7 @@ class TelegramNotificationMessageDbImpl(
                         text = textColumn.getValue(it)!!,
                         buttons = emptyList(),
                         imageUrl = null,
+                        type = TelegramMessageBody.Type.valueOf(typeColumn.getValue(it)!!)
                     ),
                 )
             }.toList()

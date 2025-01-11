@@ -34,6 +34,7 @@ class TelegramChatChatRepositoryImplTest : FunSpec() {
                 text = "Text message",
                 nestedButtons = emptyList(),
                 imageUrl = null,
+                type = TelegramMessageBody.Type.NOTIFICATION,
             )
 
             telegramChatRepositoryImpl.sendToChat(textMessage) shouldBe textMessageResponse
@@ -44,6 +45,7 @@ class TelegramChatChatRepositoryImplTest : FunSpec() {
                 text = "Text message",
                 nestedButtons = emptyList(),
                 imageUrl = ImageUrl("photo url"),
+                type = TelegramMessageBody.Type.NOTIFICATION,
             )
 
             telegramChatRepositoryImpl.sendToChat(textMessage) shouldBe photoMessageResponse

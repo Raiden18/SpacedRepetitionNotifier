@@ -13,6 +13,7 @@ class MessageFactoryImpl : MessageFactory {
             text = """Good Job! 😎 Everything is revised! ✅""",
             buttons = emptyList(),
             imageUrl = null,
+            type = TelegramMessageBody.Type.NOTIFICATION,
         )
     }
 
@@ -34,6 +35,7 @@ class MessageFactoryImpl : MessageFactory {
             text = """You have ${flashCards.count()} flashcards to revise 🧠""".trimIndent(),
             buttons = buttons,
             imageUrl = null,
+            type = TelegramMessageBody.Type.FLASH_CARD,
         )
     }
 
@@ -71,6 +73,7 @@ class MessageFactoryImpl : MessageFactory {
                 )
             ),
             imageUrl = imageUrl,
+            type = TelegramMessageBody.Type.FLASH_CARD,
         )
     }
 }

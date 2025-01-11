@@ -20,6 +20,7 @@ class DeleteOldAndSendNewNotificationUseCaseImplTest : FunSpec() {
             text = text,
             buttons = emptyList(),
             imageUrl = null,
+            type = TelegramMessageBody.Type.NOTIFICATION
         )
     )
     private val oldTelegramMessage = TelegramMessage(
@@ -28,6 +29,7 @@ class DeleteOldAndSendNewNotificationUseCaseImplTest : FunSpec() {
             text = text,
             buttons = emptyList(),
             imageUrl = null,
+            type = TelegramMessageBody.Type.NOTIFICATION
         )
     )
 

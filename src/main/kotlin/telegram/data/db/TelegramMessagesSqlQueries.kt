@@ -3,11 +3,13 @@ package org.danceofvalkyries.telegram.data.db
 import org.danceofvalkyries.telegram.domain.models.TelegramMessage
 import org.danceofvalkyries.utils.db.SqlQuery
 import org.danceofvalkyries.utils.db.tables.columns.TableColumn
+import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
 
 data class TelegramMessagesSqlQueries(
     private val tableName: String,
     private val idColumn: TableColumn,
     private val textColumn: TableColumn,
+    private val typeColumn: TextTableColumn,
 ) {
 
     fun getAll(): String {
@@ -26,6 +28,7 @@ data class TelegramMessagesSqlQueries(
                 values = listOf(
                     idColumn to telegramMessage.id.toString(),
                     textColumn to telegramMessage.body.text,
+                    typeColumn to telegramMessage.body.type.toString(),
                 )
             )
         }
@@ -46,6 +49,7 @@ data class TelegramMessagesSqlQueries(
                 columns = listOf(
                     idColumn,
                     textColumn,
+                    typeColumn,
                 )
             )
         }
