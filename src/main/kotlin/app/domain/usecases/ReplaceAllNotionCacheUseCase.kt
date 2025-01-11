@@ -5,16 +5,16 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.danceofvalkyries.utils.Dispatchers
 
-fun interface ReplaceAllCacheUseCase {
+fun interface ReplaceAllNotionCacheUseCase {
     suspend fun execute()
 }
 
-fun ReplaceAllCacheUseCase(
+fun ReplaceAllNotionCacheUseCase(
     replaceFlashCardsInCacheUseCase: ReplaceFlashCardsInCacheUseCase,
     replaceNotionDbsInCacheUseCase: ReplaceNotionDbsInCacheUseCase,
     dispatchers: Dispatchers,
-): ReplaceAllCacheUseCase {
-    return ReplaceAllCacheUseCase {
+): ReplaceAllNotionCacheUseCase {
+    return ReplaceAllNotionCacheUseCase {
         coroutineScope {
             val replaceAsync = listOf(
                 replaceFlashCardsInCacheUseCase::execute,
