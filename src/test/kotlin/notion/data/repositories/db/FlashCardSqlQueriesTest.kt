@@ -21,6 +21,18 @@ class FlashCardSqlQueriesTest : FunSpec() {
     private val imageUrl = TextTableColumn("image_url")
     private val memorizedInfo = TextTableColumn("memorized_info")
     private val notionDbId = TextTableColumn("notion_db_id")
+    private val flashcard = FlashCard(
+        memorizedInfo = "1",
+        example = "2",
+        answer = "3",
+        imageUrl = ImageUrl(
+            url = "4"
+        ),
+        metaInfo = FlashCard.MetaInfo(
+            id = "5",
+            parentDbId = "6"
+        ),
+    )
 
     private lateinit var flashCardSqlQueries: FlashCardSqlQueries
 
@@ -49,18 +61,6 @@ class FlashCardSqlQueriesTest : FunSpec() {
         }
 
         test("Should create insert statement") {
-            val flashcard = FlashCard(
-                memorizedInfo = "1",
-                example = "2",
-                answer = "3",
-                imageUrl = ImageUrl(
-                    url = "4"
-                ),
-                metaInfo = FlashCard.MetaInfo(
-                    id = "5",
-                    parentDbId = "6"
-                ),
-            )
             flashCardSqlQueries
                 .insert(flashcard) shouldBe "INSERT INTO $tableName (id, example, answer, image_url, memorized_info, notion_db_id) VALUES ('5', '2', '3', '4', '1', '6');"
         }
@@ -78,7 +78,16 @@ class FlashCardSqlQueriesTest : FunSpec() {
             )
 
             flashCardSqlQueries
-                .insert(flashcard) shouldBe "INSERT INTO $tableName (id, example, answer, image_url, memorized_info, notion_db_id) VALUES ('5', NULL, NULL, NULL, '1', '6');"
+                .insert(
+                    flashcard
+                ) shouldBe "INSERT INTO $tableName (id, example, answer, image_url, memorized_info, notion_db_id) VALUES ('5', NULL, NULL, NULL, '1', '6');"
+        }
+
+        test("Should create delete statement") {
+            flashCardSqlQueries
+                .delete(
+                    flashcard.metaInfo.id
+                ) shouldBe "DELETE FROM $tableName WHERE id = '5';"
         }
     }
 }

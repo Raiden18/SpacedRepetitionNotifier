@@ -40,13 +40,12 @@ class TestApp(
 
         val dataBases = notionDatabasesRepository.getAll()
 
-        dataBases.group.forEach {
-            println(it.id)
-            println(it.flashCards.map { it.metaInfo.parentDbId })
-        }
         dataBases.group
             .flatMap { it.flashCards }
-            .forEach { flashCardsDb.insert(it) }
+            .forEach {
+                flashCardsDb.delete(it)
+                flashCardsDb.insert(it)
+            }
 
         dataBases.group.forEach {
             flashCardsDb.getAllFor(it.id)

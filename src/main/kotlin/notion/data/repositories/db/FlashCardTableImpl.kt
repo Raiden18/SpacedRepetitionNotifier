@@ -60,6 +60,12 @@ class FlashCardTableImpl(
             }.toList()
     }
 
+    override suspend fun delete(flashCard: FlashCard) {
+        createTableIfNotExist()
+            .also { it.execute(sqlQueries.delete(flashCard.metaInfo.id)) }
+            .also { it.close() }
+    }
+
     private fun createTableIfNotExist(): Statement {
         return connection.createStatement()
             .also { it.execute(sqlQueries.createTableIfNotExisted()) }
