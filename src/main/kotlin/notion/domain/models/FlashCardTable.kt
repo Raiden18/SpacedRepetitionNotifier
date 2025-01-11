@@ -1,6 +1,6 @@
 package org.danceofvalkyries.notion.domain.models
 
-data class SpacedRepetitionDataBase(
+data class FlashCardTable(
     val id: String,
     val name: String,
     val flashCards: List<FlashCard>

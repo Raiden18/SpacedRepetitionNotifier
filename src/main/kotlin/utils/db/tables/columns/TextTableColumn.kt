@@ -20,6 +20,10 @@ data class TextTableColumn(
     fun getValue(resultSet: ResultSet): String? = resultSet.getString(name)
 
     override fun sqlRequestValue(value: String?): String {
-        return if (value == null) "NULL" else "'$value'"
+        return if (value == null) {
+            "NULL"
+        } else {
+            "'${value.replace("'", "''")}'"
+        }
     }
 }

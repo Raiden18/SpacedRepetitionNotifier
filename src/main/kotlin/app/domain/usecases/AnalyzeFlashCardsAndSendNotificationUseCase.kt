@@ -1,21 +1,21 @@
 package org.danceofvalkyries.app.domain.usecases
 
 import org.danceofvalkyries.app.domain.message.MessageFactory
-import org.danceofvalkyries.notion.domain.repositories.SpacedRepetitionDataBaseRepository
+import org.danceofvalkyries.notion.domain.repositories.FlashCardsTablesRepository
 
 fun interface AnalyzeFlashCardsAndSendNotificationUseCase {
     suspend fun execute()
 }
 
 fun AnalyzeFlashCardsAndSendNotificationUseCase(
-    spacedRepetitionRepository: SpacedRepetitionDataBaseRepository,
+    getFlashCardsTablesUseCase: GetFlashCardsTablesUseCase,
     editNotificationMessageUseCase: EditNotificationMessageUseCase,
     deleteOldAndSendNewNotificationUseCase: DeleteOldAndSendNewNotificationUseCase,
     messageFactory: MessageFactory,
     threshold: Int,
 ): AnalyzeFlashCardsAndSendNotificationUseCase {
     return AnalyzeFlashCardsAndSendNotificationUseCase {
-        val group = spacedRepetitionRepository.getAll()
+        val group = getFlashCardsTablesUseCase.execute()
         if (group.totalFlashCardsNeedRevising >= threshold) {
             val notificationMessage = messageFactory.createNotification(group)
             deleteOldAndSendNewNotificationUseCase.execute(notificationMessage)

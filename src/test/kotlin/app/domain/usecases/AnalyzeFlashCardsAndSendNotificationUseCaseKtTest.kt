@@ -6,14 +6,14 @@ import org.danceofvalkyries.app.domain.message.MessageFactory
 import org.danceofvalkyries.app.domain.usecases.AnalyzeFlashCardsAndSendNotificationUseCase
 import org.danceofvalkyries.app.domain.usecases.DeleteOldAndSendNewNotificationUseCase
 import org.danceofvalkyries.app.domain.usecases.EditNotificationMessageUseCase
-import org.danceofvalkyries.notion.domain.models.SpacedRepetitionDataBase
-import org.danceofvalkyries.notion.domain.models.SpacedRepetitionDataBaseGroup
-import org.danceofvalkyries.notion.domain.repositories.SpacedRepetitionDataBaseRepository
+import org.danceofvalkyries.app.domain.usecases.GetFlashCardsTablesUseCase
+import org.danceofvalkyries.notion.domain.models.FlashCardTable
+import org.danceofvalkyries.notion.domain.models.FlashCardsTablesGroup
 import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
 
 class AnalyzeFlashCardsAndSendNotificationUseCaseKtTest : FunSpec() {
 
-    private val spacedRepetitionRepository: SpacedRepetitionDataBaseRepository = mockk(relaxed = true)
+    private val getFlashCardsTablesUseCase: GetFlashCardsTablesUseCase = mockk(relaxed = true)
     private val editNotificationMessageUseCase: EditNotificationMessageUseCase = mockk(relaxed = true)
     private val deleteOldAndSendNewNotificationUseCase: DeleteOldAndSendNewNotificationUseCase = mockk(relaxed = true)
 
@@ -30,7 +30,7 @@ class AnalyzeFlashCardsAndSendNotificationUseCaseKtTest : FunSpec() {
             every { messageFactory.createNotification(any()) } returns notificationMessage
             every { messageFactory.createDone() } returns doneMessage
             analyzeFlashCardsAndSendNotificationUseCase = AnalyzeFlashCardsAndSendNotificationUseCase(
-                spacedRepetitionRepository,
+                getFlashCardsTablesUseCase,
                 editNotificationMessageUseCase,
                 deleteOldAndSendNewNotificationUseCase,
                 messageFactory,
@@ -39,9 +39,9 @@ class AnalyzeFlashCardsAndSendNotificationUseCaseKtTest : FunSpec() {
         }
 
         test("Should send notification message if there is flashcards more tan threshold") {
-            coEvery { spacedRepetitionRepository.getAll() } returns SpacedRepetitionDataBaseGroup(
+            coEvery { getFlashCardsTablesUseCase.execute() } returns FlashCardsTablesGroup(
                 listOf(
-                    SpacedRepetitionDataBase(
+                    FlashCardTable(
                         id = "",
                         name = "",
                         flashCards = listOf(
@@ -58,9 +58,9 @@ class AnalyzeFlashCardsAndSendNotificationUseCaseKtTest : FunSpec() {
         }
 
         test("Should send done message if there is flashcards less than threshold") {
-            coEvery { spacedRepetitionRepository.getAll() } returns SpacedRepetitionDataBaseGroup(
+            coEvery { getFlashCardsTablesUseCase.execute() } returns FlashCardsTablesGroup(
                 listOf(
-                    SpacedRepetitionDataBase(
+                    FlashCardTable(
                         id = "",
                         name = "",
                         flashCards = emptyList()

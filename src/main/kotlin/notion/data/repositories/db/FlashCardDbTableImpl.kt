@@ -8,9 +8,9 @@ import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
 import java.sql.Connection
 import java.sql.Statement
 
-class FlashCardTableImpl(
+class FlashCardDbTableImpl(
     private val connection: Connection,
-) : FlashCardTable {
+) : FlashCardDbTable {
 
     companion object {
         private const val TABLE_NAME = "flash_cards_to_revise"
@@ -37,6 +37,7 @@ class FlashCardTableImpl(
     )
 
     override suspend fun insert(flashCard: FlashCard) {
+        println(flashCard)
         createTableIfNotExist()
             .also { it.execute(sqlQueries.insert(flashCard)) }
             .also { it.close() }

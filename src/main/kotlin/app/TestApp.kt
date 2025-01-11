@@ -6,18 +6,19 @@ import okhttp3.logging.HttpLoggingInterceptor
 import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
 import org.danceofvalkyries.config.data.TestConfigRepository
 import org.danceofvalkyries.config.domain.Config
-import org.danceofvalkyries.notion.data.repositories.SpacedRepetitionDataBaseRepositoryImpl
+import org.danceofvalkyries.notion.data.repositories.FlashCardsTablesRepositoryImpl
 import org.danceofvalkyries.notion.data.repositories.api.NotionDataBaseApi
 import org.danceofvalkyries.notion.data.repositories.api.NotionDataBaseApiImpl
 import org.danceofvalkyries.notion.data.repositories.api.NotionDataBaseApiTimeMeasurePerfomanceDecorator
-import org.danceofvalkyries.notion.data.repositories.db.FlashCardTableImpl
-import org.danceofvalkyries.notion.domain.repositories.SpacedRepetitionDataBaseRepository
+import org.danceofvalkyries.notion.data.repositories.db.FlashCardDbTableImpl
+import org.danceofvalkyries.notion.domain.repositories.FlashCardsTablesRepository
 import org.danceofvalkyries.telegram.data.api.TelegramChatApiImpl
 import org.danceofvalkyries.telegram.data.db.TelegramNotificationMessageDbImpl
 import org.danceofvalkyries.telegram.data.repositories.TelegramChatRepositoryImpl
 import org.danceofvalkyries.telegram.domain.TelegramChatRepository
 import org.danceofvalkyries.utils.Dispatchers
 import org.danceofvalkyries.utils.db.DataBase
+import java.sql.Connection
 import java.util.concurrent.TimeUnit
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -27,32 +28,30 @@ class TestApp(
 ) : App {
 
     private val config: Config by lazy {
-        TestConfigRepository(createGson()).getConfig()
+        TestConfigRepository().getConfig()
+    }
+
+    private val realApp by lazy {
+        NotifierApp(
+            dispatchers,
+            db,
+            TestConfigRepository()
+        )
     }
 
     override suspend fun run() {
-        val telegramChatRepository = createTelegramChatRepository()
+      /*  val telegramChatRepository = createTelegramChatRepository()
         val messageFactory = MessageFactoryImpl()
-        val notionDatabasesRepository = createSpacedRepetitionDataBaseRepository()
         val dbConnection = db.establishConnection()
 
-        val flashCardsDb = FlashCardTableImpl(dbConnection)
+        val notionDatabasesRepository = createSpacedRepetitionDataBaseRepository(dbConnection)
 
-        val dataBases = notionDatabasesRepository.getAll()
 
-        flashCardsDb.clear()
+        val dataBases = notionDatabasesRepository.getFromNotion()*/
 
-        dataBases.group
-            .flatMap { it.flashCards }
-            .forEach {
-                flashCardsDb.insert(it)
-            }
+        realApp.run()
 
-        dataBases.group.forEach {
-            flashCardsDb.getAllFor(it.id)
-                .map { messageFactory.createFlashCardMessage(it) }
-                .forEach { telegramChatRepository.sendToChat(it) }
-        }
+
     }
 
     private fun createTelegramChatRepository(): TelegramChatRepository {
@@ -67,11 +66,12 @@ class TestApp(
         return TelegramChatRepositoryImpl(api, db)
     }
 
-    private fun createSpacedRepetitionDataBaseRepository(): SpacedRepetitionDataBaseRepository {
-        return SpacedRepetitionDataBaseRepositoryImpl(
+    private fun createSpacedRepetitionDataBaseRepository(dbConnection: Connection): FlashCardsTablesRepository {
+        return FlashCardsTablesRepositoryImpl(
             config.notion.delayBetweenRequests.milliseconds,
             createNotionDataBasesApis(),
             dispatchers,
+            FlashCardDbTableImpl(dbConnection)
         )
     }
 

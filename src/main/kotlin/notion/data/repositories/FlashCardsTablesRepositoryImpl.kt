@@ -5,19 +5,22 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.danceofvalkyries.notion.data.repositories.api.NotionDataBaseApi
 import org.danceofvalkyries.notion.data.repositories.api.mappers.toFlashCard
-import org.danceofvalkyries.notion.domain.models.SpacedRepetitionDataBase
-import org.danceofvalkyries.notion.domain.models.SpacedRepetitionDataBaseGroup
-import org.danceofvalkyries.notion.domain.repositories.SpacedRepetitionDataBaseRepository
+import org.danceofvalkyries.notion.data.repositories.db.FlashCardDbTable
+import org.danceofvalkyries.notion.domain.models.FlashCard
+import org.danceofvalkyries.notion.domain.models.FlashCardTable
+import org.danceofvalkyries.notion.domain.models.FlashCardsTablesGroup
+import org.danceofvalkyries.notion.domain.repositories.FlashCardsTablesRepository
 import org.danceofvalkyries.utils.Dispatchers
 import kotlin.time.Duration
 
-class SpacedRepetitionDataBaseRepositoryImpl(
+class FlashCardsTablesRepositoryImpl(
     private val delayBetweenRequests: Duration,
     private val apis: List<NotionDataBaseApi>,
     private val dispatchers: Dispatchers,
-) : SpacedRepetitionDataBaseRepository {
+    private val flashCardTable: FlashCardDbTable,
+) : FlashCardsTablesRepository {
 
-    override suspend fun getAll(): SpacedRepetitionDataBaseGroup {
+    override suspend fun getFromNotion(): FlashCardsTablesGroup {
         return coroutineScope {
             val descriptionsTasks = apis.map { async(dispatchers.io) { it.getDescription() } }
             val contentsTasks = apis.map { async(dispatchers.io) { it.getContent().map { it.toFlashCard() } } }
@@ -30,14 +33,28 @@ class SpacedRepetitionDataBaseRepositoryImpl(
                 val content = contents[index]
                 notionDbResponse to content
             }.map {
-                SpacedRepetitionDataBase(
+                FlashCardTable(
                     id = it.first.id,
                     name = it.first.name,
                     flashCards = it.second
                 )
             }
 
-            SpacedRepetitionDataBaseGroup(list)
+            FlashCardsTablesGroup(list)
         }
+    }
+
+    override suspend fun saveToDb(flashCards: List<FlashCard>) {
+        flashCards.forEach { flashCard ->
+            flashCardTable.insert(flashCard)
+        }
+    }
+
+    override suspend fun getFromDb(notionDbId: String): List<FlashCard> {
+        return flashCardTable.getAllFor(notionDbId)
+    }
+
+    override suspend fun clear() {
+        flashCardTable.clear()
     }
 }

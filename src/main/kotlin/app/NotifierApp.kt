@@ -6,38 +6,42 @@ import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
 import org.danceofvalkyries.app.domain.usecases.AnalyzeFlashCardsAndSendNotificationUseCase
 import org.danceofvalkyries.app.domain.usecases.DeleteOldAndSendNewNotificationUseCase
 import org.danceofvalkyries.app.domain.usecases.EditNotificationMessageUseCase
+import org.danceofvalkyries.app.domain.usecases.GetFlashCardsTablesUseCase
 import org.danceofvalkyries.config.data.LocalFileConfigRepository
 import org.danceofvalkyries.config.domain.Config
-import org.danceofvalkyries.notion.data.repositories.SpacedRepetitionDataBaseRepositoryImpl
+import org.danceofvalkyries.config.domain.ConfigRepository
+import org.danceofvalkyries.notion.data.repositories.FlashCardsTablesRepositoryImpl
 import org.danceofvalkyries.notion.data.repositories.api.NotionDataBaseApi
 import org.danceofvalkyries.notion.data.repositories.api.NotionDataBaseApiImpl
-import org.danceofvalkyries.notion.domain.repositories.SpacedRepetitionDataBaseRepository
+import org.danceofvalkyries.notion.data.repositories.db.FlashCardDbTableImpl
+import org.danceofvalkyries.notion.domain.repositories.FlashCardsTablesRepository
 import org.danceofvalkyries.telegram.data.api.TelegramChatApiImpl
 import org.danceofvalkyries.telegram.data.db.TelegramNotificationMessageDbImpl
 import org.danceofvalkyries.telegram.data.repositories.TelegramChatRepositoryImpl
 import org.danceofvalkyries.telegram.domain.TelegramChatRepository
 import org.danceofvalkyries.utils.Dispatchers
 import org.danceofvalkyries.utils.db.DataBase
+import java.sql.Connection
 import java.util.concurrent.TimeUnit
 import kotlin.time.Duration.Companion.milliseconds
 
 class NotifierApp(
     private val dispatchers: Dispatchers,
     private val dataBase: DataBase,
+    private val configRepository: ConfigRepository = LocalFileConfigRepository()
 ) : App {
 
     private val config: Config by lazy {
-        LocalFileConfigRepository(
-            createGson()
-        ).getConfig()
+        configRepository.getConfig()
     }
 
     override suspend fun run() {
-        val telegramChatRepository = createTelegramChatRepository()
+        val dbConnection = dataBase.establishConnection()
+        val telegramChatRepository = createTelegramChatRepository(dbConnection)
         val messageFactory = MessageFactoryImpl()
-        val notionDatabasesRepository = createSpacedRepetitionDataBaseRepository()
+        val notionDatabasesRepository = createSpacedRepetitionDataBaseRepository(dbConnection)
         AnalyzeFlashCardsAndSendNotificationUseCase(
-            notionDatabasesRepository,
+            GetFlashCardsTablesUseCase(notionDatabasesRepository),
             EditNotificationMessageUseCase(telegramChatRepository),
             DeleteOldAndSendNewNotificationUseCase(
                 telegramChatRepository
@@ -47,23 +51,23 @@ class NotifierApp(
         ).execute()
     }
 
-    private fun createTelegramChatRepository(): TelegramChatRepository {
+    private fun createTelegramChatRepository(dbConnection: Connection): TelegramChatRepository {
         val api = TelegramChatApiImpl(
             client = createHttpClient(),
             gson = createGson(),
             apiKey = config.telegram.apiKey,
             chatId = config.telegram.chatId,
         )
-        val connection = dataBase.establishConnection()
-        val db = TelegramNotificationMessageDbImpl(connection)
+        val db = TelegramNotificationMessageDbImpl(dbConnection)
         return TelegramChatRepositoryImpl(api, db)
     }
 
-    private fun createSpacedRepetitionDataBaseRepository(): SpacedRepetitionDataBaseRepository {
-        return SpacedRepetitionDataBaseRepositoryImpl(
+    private fun createSpacedRepetitionDataBaseRepository(dbConnection: Connection): FlashCardsTablesRepository {
+        return FlashCardsTablesRepositoryImpl(
             config.notion.delayBetweenRequests.milliseconds,
             createNotionDataBasesApis(),
             dispatchers,
+            FlashCardDbTableImpl(dbConnection)
         )
     }
 

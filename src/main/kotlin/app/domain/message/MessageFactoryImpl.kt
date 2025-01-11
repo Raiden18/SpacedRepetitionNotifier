@@ -2,7 +2,7 @@ package org.danceofvalkyries.app.domain.message
 
 import org.danceofvalkyries.notion.domain.models.FlashCard
 import org.danceofvalkyries.notion.domain.models.ImageUrl.Companion.BLUE_SCREEN
-import org.danceofvalkyries.notion.domain.models.SpacedRepetitionDataBaseGroup
+import org.danceofvalkyries.notion.domain.models.FlashCardsTablesGroup
 import org.danceofvalkyries.telegram.domain.models.Button
 import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
 
@@ -17,7 +17,7 @@ class MessageFactoryImpl : MessageFactory {
     }
 
     override fun createNotification(
-        group: SpacedRepetitionDataBaseGroup
+        group: FlashCardsTablesGroup
     ): TelegramMessageBody {
         return TelegramMessageBody(
             text = """You have ${group.totalFlashCardsNeedRevising} flashcards to revise 🧠""".trimIndent(),
@@ -25,7 +25,7 @@ class MessageFactoryImpl : MessageFactory {
                 .filter { it.flashCards.isNotEmpty() }
                 .map {
                     Button(
-                        text = "${it.name}: ${it.flashCards.count()}",
+                        text = "${it.name}: ${it.flashCardsNeedRevising}",
                         url = "https://www.notion.so/databases/${it.id}"
                     )
                 },
