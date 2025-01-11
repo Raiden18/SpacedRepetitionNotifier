@@ -1,17 +1,14 @@
 package org.danceofvalkyries.notion.data.repositories
 
-import org.danceofvalkyries.notion.data.repositories.api.NotionDataBaseApi
-import org.danceofvalkyries.notion.data.repositories.db.flashcards.FlashCardDbTable
+import org.danceofvalkyries.notion.data.repositories.api.NotionApi
 import org.danceofvalkyries.notion.data.repositories.db.table.FlashCardsTablesDbTable
-import org.danceofvalkyries.notion.domain.models.FlashCard
 import org.danceofvalkyries.notion.domain.models.NotionDataBase
 import org.danceofvalkyries.notion.domain.models.FlashCardsTablesGroup
 import org.danceofvalkyries.notion.domain.models.NotionDbId
 import org.danceofvalkyries.notion.domain.repositories.NotionDbRepository
-import kotlin.time.Duration
 
 class NotionDbRepositoryImpl(
-    private val notionDataBaseApi: NotionDataBaseApi,
+    private val notionApi: NotionApi,
     private val flashCardsTablesDbTable: FlashCardsTablesDbTable,
 ) : NotionDbRepository {
 
@@ -41,7 +38,7 @@ class NotionDbRepositoryImpl(
     }
 
     override suspend fun getFromNotion(notionDbId: NotionDbId): NotionDataBase {
-        val response = notionDataBaseApi.getNotionDb(notionDbId.valueId)
+        val response = notionApi.getNotionDb(notionDbId.valueId)
         return NotionDataBase(
             id = NotionDbId(response.id),
             name = response.name,

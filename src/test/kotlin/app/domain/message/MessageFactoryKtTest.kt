@@ -2,13 +2,12 @@ package app.domain.message
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import io.mockk.mockk
 import org.danceofvalkyries.app.domain.message.MessageFactory
 import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
 import org.danceofvalkyries.notion.domain.models.FlashCard
 import org.danceofvalkyries.notion.domain.models.ImageUrl
-import org.danceofvalkyries.notion.domain.models.FlashCardTable
-import org.danceofvalkyries.notion.domain.models.FlashCardsTablesGroup
+import org.danceofvalkyries.notion.domain.models.NotionDataBase
+import org.danceofvalkyries.notion.domain.models.NotionDbId
 import org.danceofvalkyries.telegram.domain.models.Button
 import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
 
@@ -71,31 +70,52 @@ class MessageFactoryKtTest : FunSpec() {
         }
 
         test("Should build revising needed message") {
-            val flashCardsTablesGroup = FlashCardsTablesGroup(
-                listOf(
-                    FlashCardTable(
-                        id = "1",
-                        name = "English vocabulary",
-                        flashCards = listOf(mockk())
-                    ),
-                    FlashCardTable(
-                        id = "2",
-                        name = "Greek vocabulary",
-                        flashCards = listOf(mockk())
-                    ),
-                    FlashCardTable(
-                        id = "3",
-                        name = "English grammar",
-                        flashCards = listOf(mockk())
-                    ),
-                    FlashCardTable(
-                        id = "4",
-                        name = "Greek grammar",
-                        flashCards = emptyList()
+            val emptyFLashCard = FlashCard.EMPTY
+
+            val englishVocabularyDb = NotionDataBase.EMPTY.copy(
+                id = NotionDbId("1"),
+                name = "English vocabulary"
+            )
+
+            val greekVocabularyDb = NotionDataBase.EMPTY.copy(
+                id = NotionDbId("2"),
+                name = "Greek vocabulary"
+            )
+
+            val englishGrammarDb = NotionDataBase.EMPTY.copy(
+                id = NotionDbId("3"),
+                name = "English grammar"
+            )
+
+            val flashCards = listOf(
+                emptyFLashCard.copy(
+                    metaInfo = FlashCard.MetaInfo(
+                        notionDbId = englishVocabularyDb.id,
+                        id = ""
+                    )
+                ),
+                emptyFLashCard.copy(
+                    metaInfo = FlashCard.MetaInfo(
+                        notionDbId = greekVocabularyDb.id,
+                        id = ""
+                    )
+                ),
+                emptyFLashCard.copy(
+                    metaInfo = FlashCard.MetaInfo(
+                        notionDbId = englishGrammarDb.id,
+                        id = ""
                     )
                 )
             )
-            messageFactory.createNotification(flashCardsTablesGroup) shouldBe TelegramMessageBody(
+            messageFactory.createNotification(
+                flashCards = flashCards,
+                notionDataBases = listOf(
+                    englishVocabularyDb,
+                    greekVocabularyDb,
+                    englishGrammarDb,
+                )
+
+            ) shouldBe TelegramMessageBody(
                 text = """You have 3 flashcards to revise 🧠""".trimIndent(),
                 nestedButtons = listOf(
                     listOf(

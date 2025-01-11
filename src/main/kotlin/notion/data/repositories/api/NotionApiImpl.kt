@@ -10,11 +10,11 @@ import org.danceofvalkyries.notion.data.repositories.api.rest.request.NotionApiV
 import org.danceofvalkyries.notion.data.repositories.api.rest.response.NotionDbResponse
 import org.danceofvalkyries.notion.data.repositories.api.rest.response.NotionPageResponse
 
-class NotionDataBaseApiImpl(
+class NotionApiImpl(
     private val gson: Gson,
     private val client: OkHttpClient,
     private val apiKey: String,
-) : NotionDataBaseApi {
+) : NotionApi {
 
     private val headers = listOf(
         AuthorizationBearerHeader(apiKey),

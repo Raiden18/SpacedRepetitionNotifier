@@ -3,16 +3,18 @@ package org.danceofvalkyries.app
 import com.google.gson.Gson
 import okhttp3.OkHttpClient
 import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
-import org.danceofvalkyries.app.domain.usecases.AnalyzeFlashCardsAndSendNotificationUseCase
-import org.danceofvalkyries.app.domain.usecases.DeleteOldAndSendNewNotificationUseCase
-import org.danceofvalkyries.app.domain.usecases.EditNotificationMessageUseCase
-import org.danceofvalkyries.app.domain.usecases.GetFlashCardsTablesUseCase
+import org.danceofvalkyries.app.domain.usecases.*
 import org.danceofvalkyries.config.data.LocalFileConfigRepository
 import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.config.domain.ConfigRepository
+import org.danceofvalkyries.notion.data.repositories.FlashCardsRepositoryImpl
 import org.danceofvalkyries.notion.data.repositories.NotionDbRepositoryImpl
-import org.danceofvalkyries.notion.data.repositories.api.NotionDataBaseApi
-import org.danceofvalkyries.notion.data.repositories.api.NotionDataBaseApiImpl
+import org.danceofvalkyries.notion.data.repositories.api.NotionApi
+import org.danceofvalkyries.notion.data.repositories.api.NotionApiImpl
+import org.danceofvalkyries.notion.data.repositories.db.flashcards.FlashCardDbTableImpl
+import org.danceofvalkyries.notion.data.repositories.db.table.FlashCardsTablesDbTableImpl
+import org.danceofvalkyries.notion.domain.models.NotionDbId
+import org.danceofvalkyries.notion.domain.repositories.FlashCardsRepository
 import org.danceofvalkyries.notion.domain.repositories.NotionDbRepository
 import org.danceofvalkyries.telegram.data.api.TelegramChatApiImpl
 import org.danceofvalkyries.telegram.data.db.TelegramNotificationMessageDbImpl
@@ -22,7 +24,6 @@ import org.danceofvalkyries.utils.Dispatchers
 import org.danceofvalkyries.utils.db.DataBase
 import java.sql.Connection
 import java.util.concurrent.TimeUnit
-import kotlin.time.Duration.Companion.milliseconds
 
 class NotifierApp(
     private val dispatchers: Dispatchers,
@@ -38,9 +39,28 @@ class NotifierApp(
         val dbConnection = dataBase.establishConnection()
         val telegramChatRepository = createTelegramChatRepository(dbConnection)
         val messageFactory = MessageFactoryImpl()
-        val notionDatabasesRepository = createSpacedRepetitionDataBaseRepository(dbConnection)
+        val notionDbsRepository = NotionDbRepository(dbConnection)
+        val flashCardsRepository = FlashCardsRepository(dbConnection)
+        val notionDbIds = config.notion.observedDatabases.map(::NotionDbId)
+        ReplaceAllCacheUseCase(
+            ReplaceFlashCardsInCacheUseCase(
+                notionDbIds,
+                flashCardsRepository,
+                dispatchers,
+            ),
+            ReplaceNotionDbsInCacheUseCase(
+                notionDbIds,
+                notionDbsRepository,
+                dispatchers,
+            ),
+            dispatchers
+        ).execute()
         AnalyzeFlashCardsAndSendNotificationUseCase(
-            GetFlashCardsTablesUseCase(notionDatabasesRepository),
+            GetAllFlashCardsUseCase(
+                notionDbsRepository,
+                flashCardsRepository,
+            ),
+            GetAllNotionDatabasesUseCase(notionDbsRepository),
             EditNotificationMessageUseCase(telegramChatRepository),
             DeleteOldAndSendNewNotificationUseCase(
                 telegramChatRepository
@@ -61,13 +81,17 @@ class NotifierApp(
         return TelegramChatRepositoryImpl(api, db)
     }
 
-    private fun createSpacedRepetitionDataBaseRepository(dbConnection: Connection): NotionDbRepository {
+    private fun NotionDbRepository(dbConnection: Connection): NotionDbRepository {
         return NotionDbRepositoryImpl(
-            TODO(),
-            TODO(),
-          /*  createNotionDataBasesApis(),
-            dispatchers,
-            FlashCardDbTableImpl(dbConnection)*/
+            NotionApi(),
+            FlashCardsTablesDbTableImpl(dbConnection)
+        )
+    }
+
+    private fun FlashCardsRepository(connection: Connection): FlashCardsRepository {
+        return FlashCardsRepositoryImpl(
+            FlashCardDbTableImpl(connection),
+            NotionApi(),
         )
     }
 
@@ -85,13 +109,11 @@ class NotifierApp(
         return Gson()
     }
 
-    private fun createNotionDataBasesApis(): List<NotionDataBaseApi> {
-        return config.notion.observedDatabases.map {
-            NotionDataBaseApiImpl(
-                gson = createGson(),
-                client = createHttpClient(),
-                apiKey = config.notion.apiKey,
-            )
-        }
+    private fun NotionApi(): NotionApi {
+        return NotionApiImpl(
+            gson = createGson(),
+            client = createHttpClient(),
+            apiKey = config.notion.apiKey,
+        )
     }
 }

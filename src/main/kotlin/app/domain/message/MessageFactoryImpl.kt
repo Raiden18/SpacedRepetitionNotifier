@@ -1,9 +1,8 @@
 package org.danceofvalkyries.app.domain.message
 
-import org.danceofvalkyries.app.domain.message.MessageFactory.Notification
 import org.danceofvalkyries.notion.domain.models.FlashCard
 import org.danceofvalkyries.notion.domain.models.ImageUrl.Companion.BLUE_SCREEN
-import org.danceofvalkyries.notion.domain.models.FlashCardsTablesGroup
+import org.danceofvalkyries.notion.domain.models.NotionDataBase
 import org.danceofvalkyries.telegram.domain.models.Button
 import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
 
@@ -18,18 +17,22 @@ class MessageFactoryImpl : MessageFactory {
     }
 
     override fun createNotification(
-        notification: Notification
+        flashCards: List<FlashCard>,
+        notionDataBases: List<NotionDataBase>,
     ): TelegramMessageBody {
+        val buttons = flashCards
+            .groupBy { it.metaInfo.notionDbId }
+            .map { (dbId, flashCards) ->
+                val db = notionDataBases.first { it.id == dbId }
+                Button(
+                    text = "${db.name}: ${flashCards.count()}",
+                    url = "https://www.notion.so/databases/${db.id.valueId}"
+                )
+            }
+
         return TelegramMessageBody(
-            text = """You have ${notification.totalCount} flashcards to revise 🧠""".trimIndent(),
-            buttons = notification
-                .dataBases
-                .map {
-                    Button(
-                        text = "${it.name}: ${it.flashCardsNeedRevising}",
-                        url = "https://www.notion.so/databases/${it.id}"
-                    )
-                },
+            text = """You have ${flashCards.count()} flashcards to revise 🧠""".trimIndent(),
+            buttons = buttons,
             imageUrl = null,
         )
     }

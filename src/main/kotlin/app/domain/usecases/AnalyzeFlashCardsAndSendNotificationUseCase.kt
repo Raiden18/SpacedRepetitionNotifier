@@ -8,14 +8,17 @@ fun interface AnalyzeFlashCardsAndSendNotificationUseCase {
 
 fun AnalyzeFlashCardsAndSendNotificationUseCase(
     getAllFlashCardsUseCase: GetAllFlashCardsUseCase,
+    getAllNotionDatabasesUseCase: GetAllNotionDatabasesUseCase,
     editNotificationMessageUseCase: EditNotificationMessageUseCase,
     deleteOldAndSendNewNotificationUseCase: DeleteOldAndSendNewNotificationUseCase,
     messageFactory: MessageFactory,
     threshold: Int,
 ): AnalyzeFlashCardsAndSendNotificationUseCase {
     return AnalyzeFlashCardsAndSendNotificationUseCase {
-        if (getAllFlashCardsUseCase.execute().count() >= threshold) {
-            val notificationMessage = messageFactory.createNotification(group)
+        val flashCards = getAllFlashCardsUseCase.execute()
+        val dataBases = getAllNotionDatabasesUseCase.execute()
+        if (flashCards.count() >= threshold) {
+            val notificationMessage = messageFactory.createNotification(flashCards, dataBases)
             deleteOldAndSendNewNotificationUseCase.execute(notificationMessage)
         } else {
             val doneMessage = messageFactory.createDone()

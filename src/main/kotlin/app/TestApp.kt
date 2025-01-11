@@ -7,8 +7,8 @@ import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
 import org.danceofvalkyries.config.data.TestConfigRepository
 import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.notion.data.repositories.NotionDbRepositoryImpl
-import org.danceofvalkyries.notion.data.repositories.api.NotionDataBaseApi
-import org.danceofvalkyries.notion.data.repositories.api.NotionDataBaseApiImpl
+import org.danceofvalkyries.notion.data.repositories.api.NotionApi
+import org.danceofvalkyries.notion.data.repositories.api.NotionApiImpl
 import org.danceofvalkyries.notion.domain.repositories.NotionDbRepository
 import org.danceofvalkyries.telegram.data.api.TelegramChatApiImpl
 import org.danceofvalkyries.telegram.data.db.TelegramNotificationMessageDbImpl
@@ -18,7 +18,6 @@ import org.danceofvalkyries.utils.Dispatchers
 import org.danceofvalkyries.utils.db.DataBase
 import java.sql.Connection
 import java.util.concurrent.TimeUnit
-import kotlin.time.Duration.Companion.milliseconds
 
 class TestApp(
     private val db: DataBase,
@@ -26,34 +25,34 @@ class TestApp(
 ) : App {
 
     private val config: Config by lazy {
-        TestConfigRepository().getConfig()
+        TestConfigRepository(Gson()).getConfig()
     }
 
     private val realApp by lazy {
         NotifierApp(
             dispatchers,
             db,
-            TestConfigRepository()
+            TestConfigRepository(Gson())
         )
     }
 
     override suspend fun run() {
-        val telegramChatRepository = createTelegramChatRepository()
+        /*val telegramChatRepository = createTelegramChatRepository()
         val messageFactory = MessageFactoryImpl()
-        val dbConnection = db.establishConnection()
+        val dbConnection = db.establishConnection()*/
 
 
 
         realApp.run()
 
-        val notionDatabasesRepository = createSpacedRepetitionDataBaseRepository(dbConnection)
+        /*val notionDatabasesRepository = createSpacedRepetitionDataBaseRepository(dbConnection)
 
         notionDatabasesRepository.getFromNotion().group.flatMap { table ->
             notionDatabasesRepository.getFromDb()
         }.map { messageFactory.createFlashCardMessage(TODO()) }
             .forEach {
                 telegramChatRepository.sendToChat(it)
-            }
+            }*/
     }
 
     private fun createTelegramChatRepository(): TelegramChatRepository {
@@ -94,9 +93,9 @@ class TestApp(
         return Gson()
     }
 
-    private fun createNotionDataBasesApis(): List<NotionDataBaseApi> {
+    private fun createNotionDataBasesApis(): List<NotionApi> {
         return config.notion.observedDatabases.map {
-            NotionDataBaseApiImpl(
+            NotionApiImpl(
                 gson = createGson(),
                 client = createHttpClient(),
                 apiKey = config.notion.apiKey,
