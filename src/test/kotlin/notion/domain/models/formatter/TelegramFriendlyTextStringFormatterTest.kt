@@ -2,7 +2,7 @@ package notion.domain.models.formatter
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.telegram.data.api.TelegramFriendlyTextTextFormatter
+import org.danceofvalkyries.telegram.data.api.TelegramFriendlyTextFormatter
 
 
 class TelegramFriendlyTextStringFormatterTest : FunSpec() {
@@ -11,7 +11,7 @@ class TelegramFriendlyTextStringFormatterTest : FunSpec() {
         test("Should escape special characters") {
 
             val specialCharacters = "!()=._-\\\\"
-            TelegramFriendlyTextTextFormatter()
+            TelegramFriendlyTextFormatter()
                 .format(specialCharacters) shouldBe "\\!\\(\\)\\=\\.\\_\\-\\"
         }
     }

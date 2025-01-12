@@ -6,7 +6,7 @@ import org.danceofvalkyries.app.domain.message.MessageFactory
 import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
 import org.danceofvalkyries.notion.domain.models.*
 import org.danceofvalkyries.notion.domain.models.text.Text
-import org.danceofvalkyries.telegram.data.api.TelegramFriendlyTextTextFormatter
+import org.danceofvalkyries.telegram.data.api.TelegramFriendlyTextFormatter
 import org.danceofvalkyries.telegram.domain.models.Button
 import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
 
@@ -18,7 +18,7 @@ class MessageFactoryKtTest : FunSpec() {
 
         beforeTest {
             messageFactory = MessageFactoryImpl(
-                TelegramFriendlyTextTextFormatter()
+                TelegramFriendlyTextFormatter()
             )
         }
 

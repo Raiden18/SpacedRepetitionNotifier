@@ -17,7 +17,7 @@ import org.danceofvalkyries.notion.domain.models.NotionDbId
 import org.danceofvalkyries.notion.domain.repositories.FlashCardsRepository
 import org.danceofvalkyries.notion.domain.repositories.NotionDbRepository
 import org.danceofvalkyries.telegram.data.api.TelegramChatApiImpl
-import org.danceofvalkyries.telegram.data.api.TelegramFriendlyTextTextFormatter
+import org.danceofvalkyries.telegram.data.api.TelegramFriendlyTextFormatter
 import org.danceofvalkyries.telegram.data.db.TelegramNotificationMessageDbImpl
 import org.danceofvalkyries.telegram.data.repositories.TelegramChatRepositoryImpl
 import org.danceofvalkyries.telegram.domain.TelegramChatRepository
@@ -40,7 +40,7 @@ class NotifierApp(
         val dbConnection = dataBase.establishConnection()
         val telegramChatRepository = createTelegramChatRepository(dbConnection)
         val messageFactory = MessageFactoryImpl(
-            TelegramFriendlyTextTextFormatter()
+            TelegramFriendlyTextFormatter()
         )
         val notionDbsRepository = NotionDbRepository(dbConnection)
         val flashCardsRepository = FlashCardsRepository(dbConnection)

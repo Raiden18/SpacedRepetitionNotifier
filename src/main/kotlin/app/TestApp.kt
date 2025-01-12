@@ -14,15 +14,13 @@ import org.danceofvalkyries.notion.data.repositories.NotionDbRepositoryImpl
 import org.danceofvalkyries.notion.data.repositories.api.NotionApiImpl
 import org.danceofvalkyries.notion.data.repositories.db.flashcards.FlashCardDbTableImpl
 import org.danceofvalkyries.notion.data.repositories.db.table.FlashCardsTablesDbTableImpl
-import org.danceofvalkyries.notion.domain.repositories.NotionDbRepository
 import org.danceofvalkyries.telegram.data.api.TelegramChatApiImpl
-import org.danceofvalkyries.telegram.data.api.TelegramFriendlyTextTextFormatter
+import org.danceofvalkyries.telegram.data.api.TelegramFriendlyTextFormatter
 import org.danceofvalkyries.telegram.data.db.TelegramNotificationMessageDbImpl
 import org.danceofvalkyries.telegram.data.repositories.TelegramChatRepositoryImpl
 import org.danceofvalkyries.telegram.domain.TelegramChatRepository
 import org.danceofvalkyries.utils.Dispatchers
 import org.danceofvalkyries.utils.db.DataBase
-import java.sql.Connection
 import java.util.concurrent.TimeUnit
 import kotlin.time.Duration.Companion.seconds
 
@@ -46,7 +44,7 @@ class TestApp(
     override suspend fun run() {
         val telegramChatRepository = createTelegramChatRepository()
         val messageFactory = MessageFactoryImpl(
-            TelegramFriendlyTextTextFormatter()
+            TelegramFriendlyTextFormatter()
         )
         val dbConnection = db.establishConnection()
         val notionApi = NotionApiImpl(

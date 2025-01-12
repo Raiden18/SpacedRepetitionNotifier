@@ -3,7 +3,7 @@ package org.danceofvalkyries.telegram.data.api
 import org.danceofvalkyries.notion.domain.models.text.TextFormatter
 
 
-class TelegramFriendlyTextTextFormatter : TextFormatter {
+class TelegramFriendlyTextFormatter : TextFormatter {
 
     override fun format(string: String?): String? {
         if (string == null) return null
