@@ -6,7 +6,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
 import org.danceofvalkyries.app.domain.usecases.GetAllFlashCardsUseCase
-import org.danceofvalkyries.app.domain.usecases.SendFlashCardToChatUseCase
+import org.danceofvalkyries.app.domain.usecases.ReplaceFlashCardInChatUseCase
 import org.danceofvalkyries.config.data.TestConfigRepository
 import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.notion.data.repositories.FlashCardsRepositoryImpl
@@ -31,14 +31,14 @@ class TestApp(
 ) : App {
 
     private val config: Config by lazy {
-        TestConfigRepository(Gson()).getConfig()
+        TestConfigRepository().getConfig()
     }
 
     private val realApp by lazy {
         NotifierApp(
             dispatchers,
             db,
-            TestConfigRepository(Gson())
+            TestConfigRepository()
         )
     }
 
@@ -66,11 +66,11 @@ class TestApp(
             flashCardsRepository
         ).execute()
             .forEach {
-                SendFlashCardToChatUseCase(
+                ReplaceFlashCardInChatUseCase(
                     telegramChatRepository,
                     messageFactory,
                 ).execute(it)
-                delay(2.seconds)
+                delay(10.seconds)
             }
     }
 

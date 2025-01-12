@@ -5,7 +5,7 @@ import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
-import org.danceofvalkyries.app.domain.usecases.SendFlashCardToChatUseCase
+import org.danceofvalkyries.app.domain.usecases.ReplaceFlashCardInChatUseCase
 import org.danceofvalkyries.notion.domain.models.FlashCard
 import org.danceofvalkyries.notion.domain.models.NotionDbId
 import org.danceofvalkyries.telegram.domain.TelegramChatRepository
@@ -13,7 +13,7 @@ import org.danceofvalkyries.telegram.domain.models.TelegramMessage
 import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
 import testutils.MessageFactoryFake
 
-class SendFlashCardToChatUseCaseKtTest : FunSpec() {
+class ReplaceFlashCardInChatUseCaseTest : FunSpec() {
 
     private val telegramChatRepository: TelegramChatRepository = mockk(relaxed = true)
 
@@ -53,26 +53,26 @@ class SendFlashCardToChatUseCaseKtTest : FunSpec() {
         )
     )
 
-    private lateinit var sendFlashCardToChatUseCase: SendFlashCardToChatUseCase
+    private lateinit var replaceFlashCardInChatUseCase: ReplaceFlashCardInChatUseCase
 
     init {
         beforeTest {
             clearAllMocks()
             messageFactoryFake = MessageFactoryFake()
-            sendFlashCardToChatUseCase = SendFlashCardToChatUseCase(
+            replaceFlashCardInChatUseCase = ReplaceFlashCardInChatUseCase(
                 telegramChatRepository,
                 messageFactoryFake,
             )
 
             coEvery { telegramChatRepository.sendToChat(flashCardMessage.body) } returns flashCardMessage
-            //coEvery { telegramChatRepository.sendToChat(anotherFlashCardMessage.body) } returns anotherFlashCardMessage
+
         }
 
         test("Should send FlashCard message to TG if there is no flashcard message in chat") {
             coEvery { telegramChatRepository.getAllFromDb() } returns listOf(notification)
             messageFactoryFake.flashCardBody = flashCardMessage.body
 
-            sendFlashCardToChatUseCase.execute(flashCard)
+            replaceFlashCardInChatUseCase.execute(flashCard)
 
             coVerify(exactly = 1) { telegramChatRepository.sendToChat(flashCardMessage.body) }
             coVerify(exactly = 1) { telegramChatRepository.saveToDb(flashCardMessage) }
@@ -80,22 +80,16 @@ class SendFlashCardToChatUseCaseKtTest : FunSpec() {
 
         test("Should update FlashCard message if it already presents") {
             coEvery { telegramChatRepository.getAllFromDb() } returns listOf(flashCardMessage, notification)
+            coEvery { telegramChatRepository.sendToChat(anotherFlashCardMessage.body) } returns anotherFlashCardMessage
             messageFactoryFake.flashCardBody = anotherFlashCardMessage.body
 
-            sendFlashCardToChatUseCase.execute(anotherFlashCard)
+            replaceFlashCardInChatUseCase.execute(anotherFlashCard)
 
-            coVerify(exactly = 1) {
-                telegramChatRepository.editInChat(
-                    anotherFlashCardMessage.body,
-                    flashCardMessage.id
-                )
-            }
-            coVerify(exactly = 1) {
-                telegramChatRepository.updateInDb(
-                    anotherFlashCardMessage.body,
-                    flashCardMessage.id
-                )
-            }
+            coVerify(exactly = 1) { telegramChatRepository.deleteFromChat(flashCardMessage) }
+            coVerify(exactly = 1) { telegramChatRepository.deleteFromDb(flashCardMessage) }
+
+            coVerify(exactly = 1) { telegramChatRepository.sendToChat(anotherFlashCardMessage.body) }
+            coVerify(exactly = 1) { telegramChatRepository.saveToDb(anotherFlashCardMessage) }
         }
     }
 }

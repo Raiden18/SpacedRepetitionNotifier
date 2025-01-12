@@ -5,24 +5,23 @@ import org.danceofvalkyries.notion.domain.models.FlashCard
 import org.danceofvalkyries.telegram.domain.TelegramChatRepository
 import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
 
-fun interface SendFlashCardToChatUseCase {
+fun interface ReplaceFlashCardInChatUseCase {
     suspend fun execute(flashCard: FlashCard)
 }
 
-fun SendFlashCardToChatUseCase(
+fun ReplaceFlashCardInChatUseCase(
     telegramChatRepository: TelegramChatRepository,
     messageFactory: MessageFactory,
-): SendFlashCardToChatUseCase {
-    return SendFlashCardToChatUseCase {
+): ReplaceFlashCardInChatUseCase {
+    return ReplaceFlashCardInChatUseCase {
         val messages = telegramChatRepository.getAllFromDb()
         val flashCardFromChat = messages.firstOrNull { it.body.type == TelegramMessageBody.Type.FLASH_CARD }
-        val messageBody = messageFactory.createFlashCardMessage(it)
-        if (flashCardFromChat == null) {
-            val chatMessage = telegramChatRepository.sendToChat(messageBody)
-            telegramChatRepository.saveToDb(chatMessage)
-        } else {
-            telegramChatRepository.editInChat(messageBody, flashCardFromChat.id)
-            telegramChatRepository.updateInDb(messageBody, flashCardFromChat.id)
+        if (flashCardFromChat != null) {
+            telegramChatRepository.deleteFromChat(flashCardFromChat)
+            telegramChatRepository.deleteFromDb(flashCardFromChat)
         }
+        val messageBody = messageFactory.createFlashCardMessage(it)
+        val chatMessage = telegramChatRepository.sendToChat(messageBody)
+        telegramChatRepository.saveToDb(chatMessage)
     }
 }
