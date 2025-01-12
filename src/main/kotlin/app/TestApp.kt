@@ -67,8 +67,20 @@ class TestApp(
             .flatMap { flashCardsRepository.getFromDb(it.id) }
             .forEach { println(it) }
 
+       /* while (true){
+            val tgApi = TelegramChatApiImpl(
+                client = createHttpClient(),
+                gson = createGson(),
+                apiKey = config.telegram.apiKey,
+                chatId = config.telegram.chatId,
+            )
+            tgApi.getUpdate()
+            delay(2.seconds)
+        }*/
 
-        GetAllFlashCardsUseCase(
+        notionApi.recall()
+
+        /*GetAllFlashCardsUseCase(
             notionDbsRepository,
             flashCardsRepository
         ).execute()
@@ -79,7 +91,7 @@ class TestApp(
                     dispatchers
                 ).execute(it)
                 delay(1.seconds)
-            }
+            }*/
     }
 
     private fun createTelegramChatRepository(): TelegramChatRepository {

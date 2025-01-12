@@ -1,18 +1,20 @@
 package org.danceofvalkyries.notion.data.repositories.api
 
 import com.google.gson.Gson
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.danceofvalkyries.json.*
 import org.danceofvalkyries.notion.data.repositories.api.rest.request.SpacedRepetitionRequestBody
 import org.danceofvalkyries.notion.data.repositories.api.rest.DatabaseUrl
 import org.danceofvalkyries.notion.data.repositories.api.rest.request.NotionApiVersionHeader
+import org.danceofvalkyries.notion.data.repositories.api.rest.request.checkBox
+import org.danceofvalkyries.notion.data.repositories.api.rest.request.property
 import org.danceofvalkyries.notion.data.repositories.api.rest.response.NotionDbResponse
 import org.danceofvalkyries.notion.data.repositories.api.rest.response.NotionPageResponse
-import org.danceofvalkyries.utils.rest.headers
-import org.danceofvalkyries.utils.rest.parse
-import org.danceofvalkyries.utils.rest.post
-import org.danceofvalkyries.utils.rest.request
+import org.danceofvalkyries.notion.domain.models.FlashCard
+import org.danceofvalkyries.utils.rest.*
 
 class NotionApiImpl(
     private val gson: Gson,
@@ -48,6 +50,36 @@ class NotionApiImpl(
             .request(client)
             .parse<FlashCardResponseWrapper>(gson)
             .results
+    }
+
+    override suspend fun recall() {
+        val notionPage = Request.Builder()
+            .url("https://api.notion.com/v1/pages/17240270a14380d8a80bc055a9267cf6")
+            .headers(headers)
+            .get()
+            .build()
+            .request(client)
+            .parse<NotionPageResponse>(gson)
+
+
+        Request.Builder()
+            .url("https://api.notion.com/v1/pages/17240270a14380d8a80bc055a9267cf6")
+            .headers(headers)
+            .patch(
+                jsonObject {
+                    "properties" to jsonObject {
+                        "Know Level 4" to jsonObject {
+                            "checkbox" to true
+                        }
+                    }
+                }.let { gson.toJson(it) }.toRequestBody( ContentType(ContentTypes.ApplicationJson).value.toMediaType())
+            ).build()
+            .request(client)
+            .parse<NotionPageResponse>(gson)
+    }
+
+    override suspend fun forgot(flashCard: FlashCard) {
+        TODO("Not yet implemented")
     }
 
     private data class FlashCardResponseWrapper(
