@@ -12,6 +12,7 @@ import org.danceofvalkyries.notion.data.repositories.api.NotionApiImpl
 import org.danceofvalkyries.notion.data.repositories.database.NotionDataBaseRepositoryImpl
 import org.danceofvalkyries.notion.data.repositories.database.db.NotionDataBaseDbTableImpl
 import org.danceofvalkyries.notion.data.repositories.page.FlashCardNotionPageRepositoryImpl
+import org.danceofvalkyries.notion.domain.models.NotionId
 import org.danceofvalkyries.telegram.data.api.TelegramChatApiImpl
 import org.danceofvalkyries.telegram.data.api.TelegramFriendlyTextModifier
 import org.danceofvalkyries.telegram.data.db.TelegramNotificationMessageDbImpl
@@ -21,6 +22,7 @@ import org.danceofvalkyries.utils.Dispatchers
 import org.danceofvalkyries.utils.db.DataBase
 import java.util.concurrent.TimeUnit
 
+// TODO: Remove notion id from here
 class TestApp(
     private val db: DataBase,
     private val dispatchers: Dispatchers,
@@ -65,7 +67,7 @@ class TestApp(
         notionDbsRepository.getFromCache()
             .forEach {
                 val repo = FlashCardNotionPageRepositoryImpl(notionApi)
-                val notionPages = repo.getAllFromDb(it.id.withoutScore)
+                val notionPages = repo.getAllFromDb(it.id.get(NotionId.Modifier.URL_FRIENDLY))
                 println(notionPages)
             }
 

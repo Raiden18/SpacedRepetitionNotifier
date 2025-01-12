@@ -4,6 +4,7 @@ import org.danceofvalkyries.app.domain.models.FlashCard
 import org.danceofvalkyries.app.domain.models.ImageUrl.Companion.BLUE_SCREEN
 import org.danceofvalkyries.app.domain.models.text.Text
 import org.danceofvalkyries.notion.domain.models.NotionDataBase
+import org.danceofvalkyries.notion.domain.models.NotionId
 import org.danceofvalkyries.telegram.domain.models.Button
 import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
 
@@ -27,10 +28,10 @@ class MessageFactoryImpl(
         val buttons = flashCards
             .groupBy { it.metaInfo.notionDbId }
             .map { (dbId, flashCards) ->
-                val db = notionDataBases.first { it.id.withoutScore == dbId.valueId } // TODO: REMOVE NOTION FROM HERE
+                val db = notionDataBases.first { it.id.get(NotionId.Modifier.URL_FRIENDLY) == dbId.valueId } // TODO: REMOVE NOTION FROM HERE
                 Button(
                     text = "${db.name}: ${flashCards.count()}",
-                    url = "https://www.notion.so/databases/${db.id.withoutScore}"
+                    url = "https://www.notion.so/databases/${db.id.get(NotionId.Modifier.URL_FRIENDLY) }"
                 )
             }
 

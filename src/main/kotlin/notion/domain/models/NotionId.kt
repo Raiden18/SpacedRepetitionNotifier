@@ -1,15 +1,27 @@
 package org.danceofvalkyries.notion.domain.models
 
-// TODO: add strategy to access id
 data class NotionId(
-    val rawValue: String
+    private val rawValue: String
 ) {
 
     companion object {
         val EMPTY = NotionId("")
     }
 
-    val withoutScore: String
-        get() = rawValue.replace("-", "")
+    fun get(modifier: Modifier): String {
+        return modifier.modify(rawValue)
+    }
 
+    interface Modifier {
+        companion object {
+            val AS_IS = object : Modifier {
+                override fun modify(value: String): String = value
+            }
+            val URL_FRIENDLY = object : Modifier {
+                override fun modify(value: String): String = value.replace("-", "")
+            }
+        }
+
+        fun modify(value: String): String
+    }
 }

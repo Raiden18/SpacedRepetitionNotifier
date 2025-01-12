@@ -1,6 +1,7 @@
 package org.danceofvalkyries.notion.data.repositories.database.db
 
 import org.danceofvalkyries.notion.domain.models.NotionDataBase
+import org.danceofvalkyries.notion.domain.models.NotionId
 import org.danceofvalkyries.utils.db.SqlQuery
 import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
 
@@ -15,7 +16,7 @@ class NotionDbSqlQueries(
             insert(
                 into = tableName,
                 values = listOf(
-                    id to notionDataBase.id.withoutScore,
+                    id to notionDataBase.id.get(NotionId.Modifier.AS_IS),
                     name to notionDataBase.name,
                 )
             )

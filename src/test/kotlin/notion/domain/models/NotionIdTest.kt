@@ -9,7 +9,7 @@ class NotionIdTest : FunSpec() {
     init {
         test("Should return value without scope") {
             NotionId("1-2-3-4-5")
-                .withoutScore shouldBe "12345"
+                .get(NotionId.Modifier.URL_FRIENDLY) shouldBe "12345"
         }
     }
 }

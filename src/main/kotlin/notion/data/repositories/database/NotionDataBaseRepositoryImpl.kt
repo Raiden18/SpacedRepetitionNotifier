@@ -1,6 +1,5 @@
 package org.danceofvalkyries.notion.data.repositories.database
 
-import org.danceofvalkyries.app.domain.models.Id
 import org.danceofvalkyries.notion.data.repositories.api.NotionApi
 import org.danceofvalkyries.notion.data.repositories.database.db.NotionDataBaseDbTable
 import org.danceofvalkyries.notion.domain.models.NotionDataBase
@@ -12,8 +11,8 @@ class NotionDataBaseRepositoryImpl(
     private val notionDataBaseDbTable: NotionDataBaseDbTable,
 ) : NotionDataBaseRepository {
 
-    override suspend fun getFromNotion(id: Id): NotionDataBase {
-        val response = notionApi.getNotionDb(id.valueId)
+    override suspend fun getFromNotion(id: NotionId): NotionDataBase {
+        val response = notionApi.getNotionDb(id.get(NotionId.Modifier.URL_FRIENDLY))
         return NotionDataBase(
             id = NotionId(response.id),
             name = response.name,

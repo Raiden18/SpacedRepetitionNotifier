@@ -1,7 +1,5 @@
 package org.danceofvalkyries.notion.domain.models
 
-import org.danceofvalkyries.app.domain.models.Id
-
 data class NotionDataBase(
     val id: NotionId,
     val name: String,

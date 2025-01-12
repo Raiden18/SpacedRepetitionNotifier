@@ -1,7 +1,6 @@
 package org.danceofvalkyries.notion.data.repositories.database.db
 
 import org.danceofvalkyries.notion.domain.models.NotionDataBase
-import org.danceofvalkyries.app.domain.models.Id
 import org.danceofvalkyries.notion.domain.models.NotionId
 import org.danceofvalkyries.utils.db.asSequence
 import org.danceofvalkyries.utils.db.tables.columns.PrimaryKey

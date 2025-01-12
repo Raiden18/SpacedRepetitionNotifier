@@ -24,7 +24,7 @@ fun NotionPageData.toDomain(): FlashCardNotionPage {
 
 fun FlashCardNotionPage.toUpdateKnowLevels(): NotionPageData {
     return NotionPageData(
-        id = id.rawValue,
+        id = id.get(NotionId.Modifier.AS_IS),
         properties = knowLevels.levels
             .mapKeys { "Know Level ${it.key}" }
             .mapValues { PropertyData(checkbox = it.value) }
