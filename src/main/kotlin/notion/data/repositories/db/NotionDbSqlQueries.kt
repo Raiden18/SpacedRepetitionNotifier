@@ -1,4 +1,4 @@
-package org.danceofvalkyries.notion.data.repositories.db.table
+package org.danceofvalkyries.notion.data.repositories.db
 
 import org.danceofvalkyries.notion.domain.models.NotionDataBase
 import org.danceofvalkyries.utils.db.SqlQuery

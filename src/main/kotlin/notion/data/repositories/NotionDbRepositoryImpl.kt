@@ -1,7 +1,7 @@
 package org.danceofvalkyries.notion.data.repositories
 
 import org.danceofvalkyries.notion.data.repositories.api.NotionApi
-import org.danceofvalkyries.notion.data.repositories.db.table.NotionDataBaseDbTable
+import org.danceofvalkyries.notion.data.repositories.db.NotionDataBaseDbTable
 import org.danceofvalkyries.notion.domain.models.NotionDataBase
 import org.danceofvalkyries.app.domain.models.Id
 import org.danceofvalkyries.notion.domain.repositories.NotionDbRepository

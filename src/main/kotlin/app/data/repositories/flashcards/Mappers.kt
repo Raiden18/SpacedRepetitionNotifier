@@ -6,7 +6,7 @@ import org.danceofvalkyries.app.domain.models.Id
 import org.danceofvalkyries.app.domain.models.ImageUrl
 import org.danceofvalkyries.app.domain.models.OnlineDictionary
 import org.danceofvalkyries.app.domain.models.text.Text
-import org.danceofvalkyries.notion.data.repositories.api.rest.response.NotionPageResponse
+import org.danceofvalkyries.notion.data.repositories.api.response.NotionPageResponse
 
 fun NotionPageResponse.toFlashCard(): FlashCard {
     val memorizedInfo = properties?.get("Name")?.title?.firstOrNull()?.text?.content.orEmpty()

@@ -10,7 +10,7 @@ import org.danceofvalkyries.app.data.repositories.flashcards.FlashCardsRepositor
 import org.danceofvalkyries.notion.data.repositories.NotionDbRepositoryImpl
 import org.danceofvalkyries.notion.data.repositories.api.NotionApiImpl
 import org.danceofvalkyries.app.data.repositories.flashcards.db.FlashCardDbTableImpl
-import org.danceofvalkyries.notion.data.repositories.db.table.NotionDataBaseDbTableImpl
+import org.danceofvalkyries.notion.data.repositories.db.NotionDataBaseDbTableImpl
 import org.danceofvalkyries.telegram.data.api.TelegramChatApiImpl
 import org.danceofvalkyries.telegram.data.api.TelegramFriendlyTextModifier
 import org.danceofvalkyries.telegram.data.db.TelegramNotificationMessageDbImpl
@@ -74,7 +74,7 @@ class TestApp(
             delay(2.seconds)
         }*/
 
-        notionApi.recall()
+        //notionApi.recall()
 
         /*GetAllFlashCardsUseCase(
             notionDbsRepository,

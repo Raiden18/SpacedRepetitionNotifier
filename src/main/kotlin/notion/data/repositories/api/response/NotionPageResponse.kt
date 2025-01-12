@@ -1,7 +1,7 @@
-package org.danceofvalkyries.notion.data.repositories.api.rest.response
+package org.danceofvalkyries.notion.data.repositories.api.response
 
 import com.google.gson.annotations.SerializedName
-import org.danceofvalkyries.notion.data.repositories.api.rest.response.properties.PropertyResponse
+import org.danceofvalkyries.notion.data.repositories.api.response.properties.PropertyResponse
 
 data class NotionPageResponse(
     @SerializedName("object") val objectType: String?,

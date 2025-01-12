@@ -12,7 +12,7 @@ import org.danceofvalkyries.notion.data.repositories.NotionDbRepositoryImpl
 import org.danceofvalkyries.notion.data.repositories.api.NotionApi
 import org.danceofvalkyries.notion.data.repositories.api.NotionApiImpl
 import org.danceofvalkyries.app.data.repositories.flashcards.db.FlashCardDbTableImpl
-import org.danceofvalkyries.notion.data.repositories.db.table.NotionDataBaseDbTableImpl
+import org.danceofvalkyries.notion.data.repositories.db.NotionDataBaseDbTableImpl
 import org.danceofvalkyries.app.domain.models.Id
 import org.danceofvalkyries.app.domain.repositories.FlashCardsRepository
 import org.danceofvalkyries.notion.domain.repositories.NotionDbRepository

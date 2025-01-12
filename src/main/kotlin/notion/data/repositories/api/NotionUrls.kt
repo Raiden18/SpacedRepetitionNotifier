@@ -1,8 +1,8 @@
-package org.danceofvalkyries.notion.data.repositories.api.rest
+package org.danceofvalkyries.notion.data.repositories.api
 
 import okhttp3.HttpUrl
 
-class DatabaseUrl {
+class NotionUrls {
 
     private val notionUrl = HttpUrl.Builder()
         .scheme("https")
@@ -20,6 +20,13 @@ class DatabaseUrl {
     fun databasesQuery(databaseId: String): HttpUrl {
         return dataBases(databaseId).newBuilder()
             .addPathSegment("query")
+            .build()
+    }
+
+    fun pages(pageId: String): HttpUrl {
+        return notionUrl.newBuilder()
+            .addPathSegment("pages")
+            .addPathSegment(pageId)
             .build()
     }
 }

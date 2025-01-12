@@ -6,14 +6,14 @@ import org.danceofvalkyries.app.data.repositories.flashcards.toFlashCard
 import org.danceofvalkyries.app.domain.models.FlashCard
 import org.danceofvalkyries.app.domain.models.Id
 import org.danceofvalkyries.app.domain.models.ImageUrl
-import org.danceofvalkyries.notion.data.repositories.api.rest.response.CoverBody
-import org.danceofvalkyries.notion.data.repositories.api.rest.response.CoverResponse
-import org.danceofvalkyries.notion.data.repositories.api.rest.response.NotionPageResponse
-import org.danceofvalkyries.notion.data.repositories.api.rest.response.ParentResponse
-import org.danceofvalkyries.notion.data.repositories.api.rest.response.properties.PropertyResponse
-import org.danceofvalkyries.notion.data.repositories.api.rest.response.properties.RichTextResponse
-import org.danceofvalkyries.notion.data.repositories.api.rest.response.properties.TextContentResponse
-import org.danceofvalkyries.notion.data.repositories.api.rest.response.properties.TextResponse
+import org.danceofvalkyries.notion.data.repositories.api.response.CoverBody
+import org.danceofvalkyries.notion.data.repositories.api.response.CoverResponse
+import org.danceofvalkyries.notion.data.repositories.api.response.NotionPageResponse
+import org.danceofvalkyries.notion.data.repositories.api.response.ParentResponse
+import org.danceofvalkyries.notion.data.repositories.api.response.properties.PropertyResponse
+import org.danceofvalkyries.notion.data.repositories.api.response.properties.RichTextResponse
+import org.danceofvalkyries.notion.data.repositories.api.response.properties.TextContentResponse
+import org.danceofvalkyries.notion.data.repositories.api.response.properties.TextResponse
 
 class NotionPageResponseExtKtTest : FunSpec() {
 

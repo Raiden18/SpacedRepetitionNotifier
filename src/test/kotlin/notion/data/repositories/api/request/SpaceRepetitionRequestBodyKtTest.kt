@@ -1,9 +1,9 @@
-package notion.api.rest.request
+package notion.data.repositories.api.request
 
 import com.google.gson.GsonBuilder
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.notion.data.repositories.api.rest.request.SpacedRepetitionRequestBody
+import org.danceofvalkyries.notion.data.repositories.api.request.SpacedRepetitionRequestBody
 
 class SpaceRepetitionRequestBodyKtTest : FunSpec() {
 

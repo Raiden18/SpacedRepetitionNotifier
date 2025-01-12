@@ -1,4 +1,4 @@
-package org.danceofvalkyries.notion.data.repositories.api.rest.request
+package org.danceofvalkyries.notion.data.repositories.api.request
 
 import org.danceofvalkyries.json.Header
 

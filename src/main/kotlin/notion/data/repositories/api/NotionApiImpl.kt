@@ -1,16 +1,13 @@
 package org.danceofvalkyries.notion.data.repositories.api
 
 import com.google.gson.Gson
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
 import org.danceofvalkyries.json.*
-import org.danceofvalkyries.notion.data.repositories.api.rest.request.SpacedRepetitionRequestBody
-import org.danceofvalkyries.notion.data.repositories.api.rest.DatabaseUrl
-import org.danceofvalkyries.notion.data.repositories.api.rest.request.NotionApiVersionHeader
-import org.danceofvalkyries.notion.data.repositories.api.rest.response.NotionDbResponse
-import org.danceofvalkyries.notion.data.repositories.api.rest.response.NotionPageResponse
+import org.danceofvalkyries.notion.data.repositories.api.request.SpacedRepetitionRequestBody
+import org.danceofvalkyries.notion.data.repositories.api.request.NotionApiVersionHeader
+import org.danceofvalkyries.notion.data.repositories.api.response.NotionDbResponse
+import org.danceofvalkyries.notion.data.repositories.api.response.NotionPageResponse
 import org.danceofvalkyries.utils.rest.*
 
 class NotionApiImpl(
@@ -25,7 +22,7 @@ class NotionApiImpl(
         ContentType(ContentTypes.ApplicationJson),
     )
 
-    private val urls = DatabaseUrl()
+    private val urls = NotionUrls()
 
     override suspend fun getNotionDb(id: String): NotionDbResponse {
         return Request.Builder()
@@ -49,7 +46,11 @@ class NotionApiImpl(
             .results
     }
 
-    override suspend fun recall() {
+    override suspend fun getNotionPage(id: String): NotionPageResponse {
+       TODO()
+    }
+
+   /* override suspend fun recall() {
         val notionPage = Request.Builder()
             .url("https://api.notion.com/v1/pages/17240270a14380d8a80bc055a9267cf6")
             .headers(headers)
@@ -77,7 +78,7 @@ class NotionApiImpl(
 
     override suspend fun forgot() {
         TODO("Not yet implemented")
-    }
+    }*/
 
     private data class NotionPagesResponse(
         val results: List<NotionPageResponse>

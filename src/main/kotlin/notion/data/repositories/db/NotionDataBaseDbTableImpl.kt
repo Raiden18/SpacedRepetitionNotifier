@@ -1,4 +1,4 @@
-package org.danceofvalkyries.notion.data.repositories.db.table
+package org.danceofvalkyries.notion.data.repositories.db
 
 import org.danceofvalkyries.notion.domain.models.NotionDataBase
 import org.danceofvalkyries.app.domain.models.Id
@@ -13,7 +13,7 @@ class NotionDataBaseDbTableImpl(
 ) : NotionDataBaseDbTable {
 
     private companion object {
-        const val TABLE_NAME = "notion_flash_cards_"
+        const val TABLE_NAME = "notion_data_bases"
     }
 
     private val id = TextTableColumn("id", PrimaryKey())

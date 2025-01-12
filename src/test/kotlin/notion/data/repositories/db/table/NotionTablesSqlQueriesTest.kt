@@ -2,7 +2,7 @@ package notion.data.repositories.db.table
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.notion.data.repositories.db.table.NotionDbSqlQueries
+import org.danceofvalkyries.notion.data.repositories.db.NotionDbSqlQueries
 import org.danceofvalkyries.notion.domain.models.NotionDataBase
 import org.danceofvalkyries.app.domain.models.Id
 import org.danceofvalkyries.utils.db.tables.columns.PrimaryKey
