@@ -11,6 +11,7 @@ import org.danceofvalkyries.notion.domain.models.NotionDbId
 import org.danceofvalkyries.telegram.domain.TelegramChatRepository
 import org.danceofvalkyries.telegram.domain.models.TelegramMessage
 import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
+import org.danceofvalkyries.utils.DispatchersImpl
 import testutils.MessageFactoryFake
 
 class ReplaceFlashCardInChatUseCaseTest : FunSpec() {
@@ -62,6 +63,7 @@ class ReplaceFlashCardInChatUseCaseTest : FunSpec() {
             replaceFlashCardInChatUseCase = ReplaceFlashCardInChatUseCase(
                 telegramChatRepository,
                 messageFactoryFake,
+                DispatchersImpl(kotlinx.coroutines.Dispatchers.Unconfined)
             )
 
             coEvery { telegramChatRepository.sendToChat(flashCardMessage.body) } returns flashCardMessage

@@ -69,8 +69,9 @@ class TestApp(
                 ReplaceFlashCardInChatUseCase(
                     telegramChatRepository,
                     messageFactory,
+                    dispatchers
                 ).execute(it)
-                delay(10.seconds)
+                delay(4.seconds)
             }
     }
 
