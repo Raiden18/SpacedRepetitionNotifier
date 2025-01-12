@@ -4,9 +4,9 @@ import com.google.gson.Gson
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import org.danceofvalkyries.json.parse
-import org.danceofvalkyries.json.post
-import org.danceofvalkyries.json.request
+import org.danceofvalkyries.utils.rest.parse
+import org.danceofvalkyries.utils.rest.post
+import org.danceofvalkyries.utils.rest.request
 import org.danceofvalkyries.telegram.data.api.mappers.toRequest
 import org.danceofvalkyries.telegram.data.api.rest.TelegramChatUrls
 import org.danceofvalkyries.telegram.data.api.rest.response.TelegramMessageRootResponse

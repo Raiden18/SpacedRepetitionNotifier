@@ -3,13 +3,13 @@ package org.danceofvalkyries.app.domain.message
 import org.danceofvalkyries.notion.domain.models.FlashCard
 import org.danceofvalkyries.notion.domain.models.ImageUrl.Companion.BLUE_SCREEN
 import org.danceofvalkyries.notion.domain.models.NotionDataBase
-import org.danceofvalkyries.notion.domain.models.TextFormatter
+import org.danceofvalkyries.notion.domain.models.text.TextFormatter
 import org.danceofvalkyries.telegram.domain.models.Button
 import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
 
 class MessageFactoryImpl(
     private val formatter: TextFormatter
-): MessageFactory {
+) : MessageFactory {
 
     override fun createDone(): TelegramMessageBody {
         return TelegramMessageBody(
@@ -45,9 +45,15 @@ class MessageFactoryImpl(
     override fun createFlashCardMessage(
         flashCard: FlashCard,
     ): TelegramMessageBody {
-        val memorizedInfo = flashCard.getMemorizedInfo(formatter)
-        val example = flashCard.getExample(formatter)
-        val answer = flashCard.getAnswer(formatter)
+        val memorizedInfo = flashCard
+            .memorizedInfo
+            .getValue(formatter)
+        val example = flashCard
+            .example
+            ?.getValue(formatter)
+        val answer = flashCard
+            .answer
+            ?.getValue(formatter)
 
         val body = StringBuilder()
             .appendLine("*${memorizedInfo}*")
@@ -68,16 +74,20 @@ class MessageFactoryImpl(
             flashCard.imageUrl
         }
 
+        val recallActions = listOf(Button("Forgot  ❌", ""), Button("Recalled  ✅", ""))
+        val dictionaryButtons = flashCard.onlineDictionaries
+            .map {
+                Button(
+                    text = "Look it up",
+                    url = it.getWordUrl(memorizedInfo)
+                )
+            }
+
         return TelegramMessageBody(
             text = body.toString(),
             nestedButtons = listOf(
-                listOf(Button("Forgot  ❌", ""), Button("Recalled  ✅", "")),
-                listOf(
-                    Button(
-                        text = "Look it up",
-                        url = "https://dictionary.cambridge.org/dictionary/english/${memorizedInfo}"
-                    ),
-                )
+                recallActions,
+                dictionaryButtons
             ),
             imageUrl = imageUrl,
             type = TelegramMessageBody.Type.FLASH_CARD,

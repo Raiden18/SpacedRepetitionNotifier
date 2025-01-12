@@ -5,25 +5,30 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import org.danceofvalkyries.config.data.ConfigData
 import org.danceofvalkyries.config.data.NotionData
+import org.danceofvalkyries.config.data.ObservedDatabaseData
 import org.danceofvalkyries.config.data.TelegramData
-import org.danceofvalkyries.utils.rest.`object`
+import org.danceofvalkyries.utils.rest.jsonObject
 
 class ConfigKtTest : FunSpec() {
 
     init {
         test("Should parse config from json") {
-            val jsonObject = `object` {
-                "notion" to `object` {
+            val jsonObject = jsonObject {
+                "notion" to jsonObject {
                     "api_key" to "1"
                     "observed_databases" to arrayOf(
-                        "2",
-                        "3",
-                        "4",
-                        "5",
+                        jsonObject {
+                            "id" to "2"
+                            "dictionaries" to listOf("3")
+                        },
+                        jsonObject {
+                            "id" to "4"
+                            "dictionaries" to listOf("5")
+                        }
                     )
                     "delay_between_requests" to 500
                 }
-                "telegram" to `object` {
+                "telegram" to jsonObject {
                     "api_key" to "6"
                     "chat_id" to "7"
                 }
@@ -38,7 +43,16 @@ class ConfigKtTest : FunSpec() {
             ) shouldBe ConfigData(
                 notion = NotionData(
                     apiKey = "1",
-                    observedDatabases = listOf("2", "3", "4", "5"),
+                    observedDatabases = listOf(
+                        ObservedDatabaseData(
+                            id = "2",
+                            dictionaries = listOf("3")
+                        ),
+                        ObservedDatabaseData(
+                            id = "4",
+                            dictionaries = listOf("5")
+                        )
+                    ),
                     delayBetweenRequests = 500
                 ),
                 telegram = TelegramData(

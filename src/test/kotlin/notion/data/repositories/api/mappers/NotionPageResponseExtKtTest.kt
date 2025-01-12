@@ -2,7 +2,6 @@ package notion.data.repositories.api.mappers
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.notion.data.repositories.api.mappers.toFlashCard
 import org.danceofvalkyries.notion.data.repositories.api.rest.response.CoverBody
 import org.danceofvalkyries.notion.data.repositories.api.rest.response.CoverResponse
 import org.danceofvalkyries.notion.data.repositories.api.rest.response.NotionPageResponse
@@ -11,6 +10,7 @@ import org.danceofvalkyries.notion.data.repositories.api.rest.response.propertie
 import org.danceofvalkyries.notion.data.repositories.api.rest.response.properties.RichTextResponse
 import org.danceofvalkyries.notion.data.repositories.api.rest.response.properties.TextContentResponse
 import org.danceofvalkyries.notion.data.repositories.api.rest.response.properties.TextResponse
+import org.danceofvalkyries.notion.data.repositories.toFlashCard
 import org.danceofvalkyries.notion.domain.models.FlashCard
 import org.danceofvalkyries.notion.domain.models.ImageUrl
 import org.danceofvalkyries.notion.domain.models.NotionDbId
@@ -38,17 +38,12 @@ class NotionPageResponseExtKtTest : FunSpec() {
                 example = exampleSentence,
                 answer = explanation,
                 imageUrl = ImageUrl(coverUrl),
+                onlineDictionaries = emptyList(),
                 metaInfo = FlashCard.MetaInfo(
                     id = id,
                     notionDbId = NotionDbId(parentDbId),
                 )
             )
-        }
-
-        test("Should remove '-' symbol from DB id") {
-            createNotionPageResponse(
-                parentDbId = "1-2-3-4-5",
-            ).parent?.databaseId shouldBe "12345"
         }
 
         test("Should null if fields are empty string") {
@@ -64,6 +59,7 @@ class NotionPageResponseExtKtTest : FunSpec() {
                 example = null,
                 answer = null,
                 imageUrl = null,
+                onlineDictionaries = emptyList(),
                 metaInfo = FlashCard.MetaInfo(
                     id = "1",
                     notionDbId = NotionDbId("2"),
@@ -84,6 +80,7 @@ class NotionPageResponseExtKtTest : FunSpec() {
                 example = null,
                 answer = null,
                 imageUrl = null,
+                onlineDictionaries = emptyList(),
                 metaInfo = FlashCard.MetaInfo(
                     id = "1",
                     notionDbId = NotionDbId("2"),
@@ -114,7 +111,7 @@ class NotionPageResponseExtKtTest : FunSpec() {
         icon = null,
         parent = ParentResponse(
             type = null,
-            databaseId_ = parentDbId,
+            databaseId = parentDbId,
         ),
         archived = null,
         inTrash = null,

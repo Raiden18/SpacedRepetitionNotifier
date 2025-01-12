@@ -1,6 +1,6 @@
 package org.danceofvalkyries.telegram.data.api
 
-import org.danceofvalkyries.notion.domain.models.TextFormatter
+import org.danceofvalkyries.notion.domain.models.text.TextFormatter
 
 
 class TelegramFriendlyTextTextFormatter : TextFormatter {

@@ -13,8 +13,7 @@ fun GetAllFlashCardsUseCase(
     flashCardsRepository: FlashCardsRepository
 ): GetAllFlashCardsUseCase {
     return GetAllFlashCardsUseCase {
-        notionDbRepository
-            .getFromDb()
+        notionDbRepository.getFromDb()
             .map { it.id }
             .flatMap { flashCardsRepository.getFromDb(it) }
     }

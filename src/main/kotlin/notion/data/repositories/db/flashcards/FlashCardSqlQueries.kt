@@ -1,11 +1,8 @@
 package org.danceofvalkyries.notion.data.repositories.db.flashcards
 
-import org.danceofvalkyries.notion.domain.models.FlashCard
-import org.danceofvalkyries.notion.domain.models.TextFormatter
 import org.danceofvalkyries.utils.db.SqlQuery
 import org.danceofvalkyries.utils.db.tables.columns.TableColumn
 import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
-import java.text.Normalizer.Form
 
 class FlashCardSqlQueries(
     private val tableName: String,
@@ -26,18 +23,18 @@ class FlashCardSqlQueries(
     }
 
     fun insert(
-        flashCard: FlashCard
+        flashCardDbEntity: FlashCardDbEntity
     ): String {
         return SqlQuery {
             insert(
                 into = tableName,
                 values = listOf(
-                    id to flashCard.metaInfo.id,
-                    example to flashCard.getExample(TextFormatter()),
-                    answer to flashCard.getAnswer(TextFormatter()),
-                    imageUrl to flashCard.imageUrl?.url,
-                    memorizedInfo to flashCard.getMemorizedInfo(TextFormatter()),
-                    notionDbId to flashCard.metaInfo.notionDbId.valueId,
+                    id to flashCardDbEntity.cardId,
+                    example to flashCardDbEntity.example,
+                    answer to flashCardDbEntity.answer,
+                    imageUrl to flashCardDbEntity.imageUrl,
+                    memorizedInfo to flashCardDbEntity.memorizedInfo,
+                    notionDbId to flashCardDbEntity.notionDbId,
                 )
             )
         }

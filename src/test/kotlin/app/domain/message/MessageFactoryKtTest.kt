@@ -4,10 +4,8 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import org.danceofvalkyries.app.domain.message.MessageFactory
 import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
-import org.danceofvalkyries.notion.domain.models.FlashCard
-import org.danceofvalkyries.notion.domain.models.ImageUrl
-import org.danceofvalkyries.notion.domain.models.NotionDataBase
-import org.danceofvalkyries.notion.domain.models.NotionDbId
+import org.danceofvalkyries.notion.domain.models.*
+import org.danceofvalkyries.notion.domain.models.text.Text
 import org.danceofvalkyries.telegram.data.api.TelegramFriendlyTextTextFormatter
 import org.danceofvalkyries.telegram.domain.models.Button
 import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
@@ -35,10 +33,13 @@ class MessageFactoryKtTest : FunSpec() {
 
         test("Should create FlashCard message only with info and not supported url") {
             val flashCard = FlashCard.EMPTY.copy(
-                memorizedInfo = "Expect",
+                memorizedInfo = Text("Expect"),
                 example = null,
                 answer = null,
-                imageUrl = ImageUrl("https://www.shutterstock.com/image-vector/cute-baby-regurgitating-after-eating-260nw-2016458315.jpg")
+                imageUrl = ImageUrl("https://www.shutterstock.com/image-vector/cute-baby-regurgitating-after-eating-260nw-2016458315.jpg"),
+                onlineDictionaries = listOf(
+                    OnlineDictionary("https://dictionary.cambridge.org/dictionary/english/")
+                ),
             )
 
             messageFactory.createFlashCardMessage(flashCard) shouldBe TelegramMessageBody(
@@ -47,18 +48,34 @@ class MessageFactoryKtTest : FunSpec() {
                     
                     Choose:
                 """.trimIndent(),
-                nestedButtons = buttons("Expect"),
+                nestedButtons = buttonsWithDictionary("Expect"),
                 imageUrl = ImageUrl.BLUE_SCREEN,
                 type = TelegramMessageBody.Type.FLASH_CARD,
             )
         }
 
+        test("Should create flashcard without dictionary button") {
+            val flashCard = FlashCard.EMPTY.copy(
+                memorizedInfo = Text("Expect"),
+                example = null,
+                answer = null,
+                imageUrl = ImageUrl("url"),
+                onlineDictionaries = emptyList(),
+            )
+            messageFactory
+                .createFlashCardMessage(flashCard)
+                .nestedButtons shouldBe buttonsWithoutDictionary()
+        }
+
         test("Should create Full FlashCard message") {
             val flashCard = FlashCard.EMPTY.copy(
-                memorizedInfo = "Expect",
-                example = "I expected you to come",
-                answer = "to wait to happen in the future",
-                imageUrl = ImageUrl("url")
+                memorizedInfo = Text("Expect"),
+                example = Text("I expected you to come"),
+                answer = Text("to wait to happen in the future"),
+                imageUrl = ImageUrl("url"),
+                onlineDictionaries = listOf(
+                    OnlineDictionary("https://dictionary.cambridge.org/dictionary/english/")
+                )
             )
             messageFactory.createFlashCardMessage(flashCard) shouldBe TelegramMessageBody(
                 text = """
@@ -69,7 +86,7 @@ class MessageFactoryKtTest : FunSpec() {
                     ||to wait to happen in the future||
                     
                     Choose:""".trimIndent(),
-                nestedButtons = buttons("Expect"),
+                nestedButtons = buttonsWithDictionary("Expect"),
                 imageUrl = ImageUrl("url"),
                 type = TelegramMessageBody.Type.FLASH_CARD,
             )
@@ -149,8 +166,8 @@ class MessageFactoryKtTest : FunSpec() {
         }
     }
 
-    private fun buttons(memorizedInfo: String) = listOf(
-        listOf(Button("Forgot  ❌", ""), Button("Recalled  ✅", "")),
+    private fun buttonsWithDictionary(memorizedInfo: String) = listOf(
+        resultButtons(),
         listOf(
             Button(
                 text = "Look it up",
@@ -158,4 +175,13 @@ class MessageFactoryKtTest : FunSpec() {
             ),
         )
     )
+
+    private fun buttonsWithoutDictionary() = listOf(
+        resultButtons(),
+        emptyList(),
+    )
+
+    private fun resultButtons(): List<Button> {
+        return listOf(Button("Forgot  ❌", ""), Button("Recalled  ✅", ""))
+    }
 }

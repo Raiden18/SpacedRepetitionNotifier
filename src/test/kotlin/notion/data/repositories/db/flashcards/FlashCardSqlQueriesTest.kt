@@ -2,9 +2,9 @@ package notion.data.repositories.db.flashcards
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
+import org.danceofvalkyries.notion.data.repositories.db.flashcards.FlashCardDbEntity
 import org.danceofvalkyries.notion.data.repositories.db.flashcards.FlashCardSqlQueries
 import org.danceofvalkyries.notion.domain.models.FlashCard
-import org.danceofvalkyries.notion.domain.models.ImageUrl
 import org.danceofvalkyries.notion.domain.models.NotionDbId
 import org.danceofvalkyries.utils.db.tables.columns.PrimaryKey
 import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
@@ -22,17 +22,13 @@ class FlashCardSqlQueriesTest : FunSpec() {
     private val imageUrl = TextTableColumn("image_url")
     private val memorizedInfo = TextTableColumn("memorized_info")
     private val notionDbId = TextTableColumn("notion_db_id")
-    private val flashcard = FlashCard(
+    private val flashcard = FlashCardDbEntity(
         memorizedInfo = "1",
         example = "2",
         answer = "3",
-        imageUrl = ImageUrl(
-            url = "4"
-        ),
-        metaInfo = FlashCard.MetaInfo(
-            id = "5",
-            notionDbId = NotionDbId("6"),
-        ),
+        imageUrl = "4",
+        cardId = "5",
+        notionDbId = "6",
     )
 
     private lateinit var flashCardSqlQueries: FlashCardSqlQueries
@@ -67,15 +63,13 @@ class FlashCardSqlQueriesTest : FunSpec() {
         }
 
         test("Should create insert statements with NULL") {
-            val flashcard = FlashCard(
+            val flashcard = FlashCardDbEntity(
                 memorizedInfo = "1",
                 example = null,
                 answer = null,
                 imageUrl = null,
-                metaInfo = FlashCard.MetaInfo(
-                    id = "5",
-                    notionDbId = NotionDbId("6"),
-                ),
+                cardId = "5",
+                notionDbId = "6",
             )
 
             flashCardSqlQueries
@@ -87,7 +81,7 @@ class FlashCardSqlQueriesTest : FunSpec() {
         test("Should create delete statement") {
             flashCardSqlQueries
                 .delete(
-                    flashcard.metaInfo.id
+                    flashcard.cardId
                 ) shouldBe "DELETE FROM $tableName WHERE id = '5';"
         }
 

@@ -1,4 +1,4 @@
-package org.danceofvalkyries.notion.domain.models
+package org.danceofvalkyries.notion.domain.models.text
 
 fun TextFormatter(): TextFormatter {
     return object : TextFormatter {

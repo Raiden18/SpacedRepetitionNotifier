@@ -60,20 +60,26 @@ class TestApp(
         val flashCardsRepository = FlashCardsRepositoryImpl(
             FlashCardDbTableImpl(dbConnection),
             notionApi,
+            config,
         )
 
         realApp.run()
+
+        notionDbsRepository.getFromDb()
+            .flatMap { flashCardsRepository.getFromDb(it.id) }
+            .forEach { println(it) }
+
 
         GetAllFlashCardsUseCase(
             notionDbsRepository,
             flashCardsRepository
         ).execute()
             .forEach {
-               /* ReplaceFlashCardInChatUseCase(
+                ReplaceFlashCardInChatUseCase(
                     telegramChatRepository,
                     messageFactory,
                     dispatchers
-                ).execute(it)*/
+                ).execute(it)
                 delay(1.seconds)
             }
     }
@@ -88,15 +94,6 @@ class TestApp(
         val connection = db.establishConnection()
         val db = TelegramNotificationMessageDbImpl(connection)
         return TelegramChatRepositoryImpl(api, db)
-    }
-
-    private fun createSpacedRepetitionDataBaseRepository(
-        dbConnection: Connection
-    ): NotionDbRepository {
-        return NotionDbRepositoryImpl(
-            TODO(),
-            TODO(),
-        )
     }
 
     private fun createHttpClient(): OkHttpClient {

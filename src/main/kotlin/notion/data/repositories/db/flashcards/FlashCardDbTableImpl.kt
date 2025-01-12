@@ -1,8 +1,5 @@
 package org.danceofvalkyries.notion.data.repositories.db.flashcards
 
-import org.danceofvalkyries.notion.domain.models.FlashCard
-import org.danceofvalkyries.notion.domain.models.ImageUrl
-import org.danceofvalkyries.notion.domain.models.NotionDbId
 import org.danceofvalkyries.utils.db.asSequence
 import org.danceofvalkyries.utils.db.tables.columns.PrimaryKey
 import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
@@ -37,33 +34,31 @@ class FlashCardDbTableImpl(
         id = id,
     )
 
-    override suspend fun insert(flashCard: FlashCard) {
+    override suspend fun insert(entity: FlashCardDbEntity) {
         createTableIfNotExist()
-            .also { it.execute(sqlQueries.insert(flashCard)) }
+            .also { it.execute(sqlQueries.insert(entity)) }
             .also { it.close() }
     }
 
-    override suspend fun getAllFor(notionDataBaseId: String): List<FlashCard> {
+    override suspend fun getAllFor(notionDataBaseId: String): List<FlashCardDbEntity> {
         return createTableIfNotExist()
             .executeQuery(sqlQueries.selectAll(notionDataBaseId))
             .asSequence()
             .map {
-                FlashCard(
+                FlashCardDbEntity(
                     memorizedInfo = memorizedInfo.getValue(it)!!,
                     example = example.getValue(it),
                     answer = answer.getValue(it),
-                    imageUrl = imageUrl.getValue(it)?.let(::ImageUrl),
-                    metaInfo = FlashCard.MetaInfo(
-                        id = id.getValue(it)!!,
-                        notionDbId = NotionDbId(notionDbId.getValue(it)!!)
-                    )
+                    imageUrl = imageUrl.getValue(it),
+                    cardId = id.getValue(it)!!,
+                    notionDbId = notionDbId.getValue(it)!!
                 )
             }.toList()
     }
 
-    override suspend fun delete(flashCard: FlashCard) {
+    override suspend fun delete(entity: FlashCardDbEntity) {
         createTableIfNotExist()
-            .also { it.execute(sqlQueries.delete(flashCard.metaInfo.id)) }
+            .also { it.execute(sqlQueries.delete(entity.cardId)) }
             .also { it.close() }
     }
 

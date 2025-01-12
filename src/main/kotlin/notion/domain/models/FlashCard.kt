@@ -1,12 +1,31 @@
 package org.danceofvalkyries.notion.domain.models
 
+import org.danceofvalkyries.notion.domain.models.text.Text
+
 data class FlashCard(
-    private val memorizedInfo: String,
-    private val example: String?,
-    private val answer: String?,
+    val memorizedInfo: Text,
+    val example: Text?,
+    val answer: Text?,
+    val onlineDictionaries: List<OnlineDictionary>,
     val imageUrl: ImageUrl?,
     val metaInfo: MetaInfo,
 ) {
+
+    constructor(
+        memorizedInfo: String,
+        example: String?,
+        answer: String?,
+        onlineDictionaries: List<OnlineDictionary>,
+        imageUrl: ImageUrl?,
+        metaInfo: MetaInfo,
+    ) : this(
+        memorizedInfo = Text(memorizedInfo),
+        example = Text(example),
+        answer = Text(answer),
+        onlineDictionaries = onlineDictionaries,
+        imageUrl = imageUrl,
+        metaInfo = metaInfo,
+    )
 
     data class MetaInfo(
         val id: String,
@@ -15,26 +34,15 @@ data class FlashCard(
 
     companion object {
         val EMPTY = FlashCard(
-            memorizedInfo = "",
-            example = "",
-            answer = "",
+            memorizedInfo = Text.EMPTY,
+            example = Text.EMPTY,
+            answer = Text.EMPTY,
             imageUrl = null,
+            onlineDictionaries = emptyList(),
             metaInfo = MetaInfo(
                 id = "",
                 notionDbId = NotionDbId.EMPTY,
             )
         )
-    }
-
-    fun getMemorizedInfo(formatter: TextFormatter): String? {
-        return formatter.format(memorizedInfo)
-    }
-
-    fun getExample(formatter: TextFormatter): String? {
-        return formatter.format(example)
-    }
-
-    fun getAnswer(formatter: TextFormatter): String? {
-        return formatter.format(answer)
     }
 }

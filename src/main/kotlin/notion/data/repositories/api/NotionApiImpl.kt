@@ -9,6 +9,10 @@ import org.danceofvalkyries.notion.data.repositories.api.rest.DatabaseUrl
 import org.danceofvalkyries.notion.data.repositories.api.rest.request.NotionApiVersionHeader
 import org.danceofvalkyries.notion.data.repositories.api.rest.response.NotionDbResponse
 import org.danceofvalkyries.notion.data.repositories.api.rest.response.NotionPageResponse
+import org.danceofvalkyries.utils.rest.headers
+import org.danceofvalkyries.utils.rest.parse
+import org.danceofvalkyries.utils.rest.post
+import org.danceofvalkyries.utils.rest.request
 
 class NotionApiImpl(
     private val gson: Gson,

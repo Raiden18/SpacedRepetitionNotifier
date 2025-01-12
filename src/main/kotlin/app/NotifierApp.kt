@@ -44,7 +44,10 @@ class NotifierApp(
         )
         val notionDbsRepository = NotionDbRepository(dbConnection)
         val flashCardsRepository = FlashCardsRepository(dbConnection)
-        val notionDbIds = config.notion.observedDatabases.map(::NotionDbId)
+        val notionDbIds = config
+            .notion
+            .observedDatabases
+            .map { NotionDbId(it.id) }
         ReplaceAllNotionCacheUseCase(
             ReplaceFlashCardsInCacheUseCase(
                 notionDbIds,
@@ -95,6 +98,7 @@ class NotifierApp(
         return FlashCardsRepositoryImpl(
             FlashCardDbTableImpl(connection),
             NotionApi(),
+            config,
         )
     }
 
