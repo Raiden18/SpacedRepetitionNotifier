@@ -50,6 +50,13 @@ class TelegramChatApiImpl(
         return sendMessage(telegramChatUrls.sendPhoto(), textBody)
     }
 
+    override suspend fun getUpdate() {
+        Request.Builder()
+            .url(telegramChatUrls.getUpdates())
+            .build()
+            .request(client)
+    }
+
     private fun sendMessage(url: HttpUrl, textBody: TelegramMessageBody): TelegramMessage {
         val request = Request.Builder()
             .url(url)

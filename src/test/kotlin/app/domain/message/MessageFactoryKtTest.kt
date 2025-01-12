@@ -8,6 +8,7 @@ import org.danceofvalkyries.notion.domain.models.FlashCard
 import org.danceofvalkyries.notion.domain.models.ImageUrl
 import org.danceofvalkyries.notion.domain.models.NotionDataBase
 import org.danceofvalkyries.notion.domain.models.NotionDbId
+import org.danceofvalkyries.telegram.data.api.TelegramFriendlyTextTextFormatter
 import org.danceofvalkyries.telegram.domain.models.Button
 import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
 
@@ -18,7 +19,9 @@ class MessageFactoryKtTest : FunSpec() {
     init {
 
         beforeTest {
-            messageFactory = MessageFactoryImpl()
+            messageFactory = MessageFactoryImpl(
+                TelegramFriendlyTextTextFormatter()
+            )
         }
 
         test("Should create Done message") {
@@ -44,7 +47,7 @@ class MessageFactoryKtTest : FunSpec() {
                     
                     Choose:
                 """.trimIndent(),
-                nestedButtons = buttons(flashCard),
+                nestedButtons = buttons("Expect"),
                 imageUrl = ImageUrl.BLUE_SCREEN,
                 type = TelegramMessageBody.Type.FLASH_CARD,
             )
@@ -66,7 +69,7 @@ class MessageFactoryKtTest : FunSpec() {
                     ||to wait to happen in the future||
                     
                     Choose:""".trimIndent(),
-                nestedButtons = buttons(flashCard),
+                nestedButtons = buttons("Expect"),
                 imageUrl = ImageUrl("url"),
                 type = TelegramMessageBody.Type.FLASH_CARD,
             )
@@ -146,12 +149,12 @@ class MessageFactoryKtTest : FunSpec() {
         }
     }
 
-    private fun buttons(flashCard: FlashCard) = listOf(
+    private fun buttons(memorizedInfo: String) = listOf(
         listOf(Button("Forgot  ❌", ""), Button("Recalled  ✅", "")),
         listOf(
             Button(
                 text = "Look it up",
-                url = "https://dictionary.cambridge.org/dictionary/english/${flashCard.memorizedInfoValue}"
+                url = "https://dictionary.cambridge.org/dictionary/english/${memorizedInfo}"
             ),
         )
     )

@@ -37,6 +37,10 @@ data class TelegramChatUrls(
         addPathSegment("sendPhoto")
     }
 
+    fun getUpdates(): HttpUrl = telegramEndpoint {
+        addPathSegment("getUpdates")
+    }
+
     private fun telegramEndpoint(builder: HttpUrl.Builder.() -> Unit): HttpUrl {
         return telegramApiUrl.newBuilder()
             .apply(builder)

@@ -26,22 +26,15 @@ data class FlashCard(
         )
     }
 
-    val memorizedInfoValue: String
-        get() = memorizedInfo.withEscapedCharacters()
+    fun getMemorizedInfo(formatter: TextFormatter): String? {
+        return formatter.format(memorizedInfo)
+    }
 
-    val exampleValue: String?
-        get() = example?.withEscapedCharacters()
+    fun getExample(formatter: TextFormatter): String? {
+        return formatter.format(example)
+    }
 
-    val answerValue: String?
-        get() = answer?.withEscapedCharacters()
-
-    private fun String.withEscapedCharacters(): String {
-        return replace("!", "\\!")
-            .replace("(", "\\(")
-            .replace(")", "\\)")
-            .replace("=", "\\=")
-            .replace(".", "\\.")
-            .replace("_", "\\_")
-            .replace("\\\\", "\\")
+    fun getAnswer(formatter: TextFormatter): String? {
+        return formatter.format(answer)
     }
 }

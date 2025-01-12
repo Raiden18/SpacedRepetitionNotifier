@@ -8,4 +8,5 @@ interface TelegramChatApi {
     suspend fun deleteMessage(id: Long)
     suspend fun editMessageText(messageId: Long, text: TelegramMessageBody)
     suspend fun sendPhoto(textBody: TelegramMessageBody): TelegramMessage
+    suspend fun getUpdate()
 }

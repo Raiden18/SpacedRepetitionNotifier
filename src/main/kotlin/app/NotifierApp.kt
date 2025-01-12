@@ -17,6 +17,7 @@ import org.danceofvalkyries.notion.domain.models.NotionDbId
 import org.danceofvalkyries.notion.domain.repositories.FlashCardsRepository
 import org.danceofvalkyries.notion.domain.repositories.NotionDbRepository
 import org.danceofvalkyries.telegram.data.api.TelegramChatApiImpl
+import org.danceofvalkyries.telegram.data.api.TelegramFriendlyTextTextFormatter
 import org.danceofvalkyries.telegram.data.db.TelegramNotificationMessageDbImpl
 import org.danceofvalkyries.telegram.data.repositories.TelegramChatRepositoryImpl
 import org.danceofvalkyries.telegram.domain.TelegramChatRepository
@@ -38,7 +39,9 @@ class NotifierApp(
     override suspend fun run() {
         val dbConnection = dataBase.establishConnection()
         val telegramChatRepository = createTelegramChatRepository(dbConnection)
-        val messageFactory = MessageFactoryImpl()
+        val messageFactory = MessageFactoryImpl(
+            TelegramFriendlyTextTextFormatter()
+        )
         val notionDbsRepository = NotionDbRepository(dbConnection)
         val flashCardsRepository = FlashCardsRepository(dbConnection)
         val notionDbIds = config.notion.observedDatabases.map(::NotionDbId)

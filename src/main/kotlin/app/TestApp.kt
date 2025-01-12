@@ -16,6 +16,7 @@ import org.danceofvalkyries.notion.data.repositories.db.flashcards.FlashCardDbTa
 import org.danceofvalkyries.notion.data.repositories.db.table.FlashCardsTablesDbTableImpl
 import org.danceofvalkyries.notion.domain.repositories.NotionDbRepository
 import org.danceofvalkyries.telegram.data.api.TelegramChatApiImpl
+import org.danceofvalkyries.telegram.data.api.TelegramFriendlyTextTextFormatter
 import org.danceofvalkyries.telegram.data.db.TelegramNotificationMessageDbImpl
 import org.danceofvalkyries.telegram.data.repositories.TelegramChatRepositoryImpl
 import org.danceofvalkyries.telegram.domain.TelegramChatRepository
@@ -44,7 +45,9 @@ class TestApp(
 
     override suspend fun run() {
         val telegramChatRepository = createTelegramChatRepository()
-        val messageFactory = MessageFactoryImpl()
+        val messageFactory = MessageFactoryImpl(
+            TelegramFriendlyTextTextFormatter()
+        )
         val dbConnection = db.establishConnection()
         val notionApi = NotionApiImpl(
             gson = createGson(),
@@ -66,12 +69,12 @@ class TestApp(
             flashCardsRepository
         ).execute()
             .forEach {
-                ReplaceFlashCardInChatUseCase(
+               /* ReplaceFlashCardInChatUseCase(
                     telegramChatRepository,
                     messageFactory,
                     dispatchers
-                ).execute(it)
-                delay(4.seconds)
+                ).execute(it)*/
+                delay(1.seconds)
             }
     }
 
@@ -87,7 +90,9 @@ class TestApp(
         return TelegramChatRepositoryImpl(api, db)
     }
 
-    private fun createSpacedRepetitionDataBaseRepository(dbConnection: Connection): NotionDbRepository {
+    private fun createSpacedRepetitionDataBaseRepository(
+        dbConnection: Connection
+    ): NotionDbRepository {
         return NotionDbRepositoryImpl(
             TODO(),
             TODO(),

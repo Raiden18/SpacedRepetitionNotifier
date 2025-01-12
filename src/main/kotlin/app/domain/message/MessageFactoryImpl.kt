@@ -3,10 +3,13 @@ package org.danceofvalkyries.app.domain.message
 import org.danceofvalkyries.notion.domain.models.FlashCard
 import org.danceofvalkyries.notion.domain.models.ImageUrl.Companion.BLUE_SCREEN
 import org.danceofvalkyries.notion.domain.models.NotionDataBase
+import org.danceofvalkyries.notion.domain.models.TextFormatter
 import org.danceofvalkyries.telegram.domain.models.Button
 import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
 
-class MessageFactoryImpl : MessageFactory {
+class MessageFactoryImpl(
+    private val formatter: TextFormatter
+): MessageFactory {
 
     override fun createDone(): TelegramMessageBody {
         return TelegramMessageBody(
@@ -42,15 +45,19 @@ class MessageFactoryImpl : MessageFactory {
     override fun createFlashCardMessage(
         flashCard: FlashCard,
     ): TelegramMessageBody {
+        val memorizedInfo = flashCard.getMemorizedInfo(formatter)
+        val example = flashCard.getExample(formatter)
+        val answer = flashCard.getAnswer(formatter)
+
         val body = StringBuilder()
-            .appendLine("*${flashCard.memorizedInfoValue}*")
-        if (flashCard.exampleValue != null) {
+            .appendLine("*${memorizedInfo}*")
+        if (example != null) {
             body.appendLine()
-                .appendLine("_${flashCard.exampleValue}_")
+                .appendLine("_${example}_")
         }
-        if (flashCard.answerValue != null) {
+        if (answer != null) {
             body.appendLine()
-                .appendLine("||${flashCard.answerValue}||")
+                .appendLine("||${answer}||")
         }
         body.appendLine()
             .append("Choose:")
@@ -68,7 +75,7 @@ class MessageFactoryImpl : MessageFactory {
                 listOf(
                     Button(
                         text = "Look it up",
-                        url = "https://dictionary.cambridge.org/dictionary/english/${flashCard.memorizedInfoValue}"
+                        url = "https://dictionary.cambridge.org/dictionary/english/${memorizedInfo}"
                     ),
                 )
             ),

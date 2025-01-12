@@ -1,9 +1,11 @@
 package org.danceofvalkyries.notion.data.repositories.db.flashcards
 
 import org.danceofvalkyries.notion.domain.models.FlashCard
+import org.danceofvalkyries.notion.domain.models.TextFormatter
 import org.danceofvalkyries.utils.db.SqlQuery
 import org.danceofvalkyries.utils.db.tables.columns.TableColumn
 import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
+import java.text.Normalizer.Form
 
 class FlashCardSqlQueries(
     private val tableName: String,
@@ -31,10 +33,10 @@ class FlashCardSqlQueries(
                 into = tableName,
                 values = listOf(
                     id to flashCard.metaInfo.id,
-                    example to flashCard.exampleValue,
-                    answer to flashCard.answerValue,
+                    example to flashCard.getExample(TextFormatter()),
+                    answer to flashCard.getAnswer(TextFormatter()),
                     imageUrl to flashCard.imageUrl?.url,
-                    memorizedInfo to flashCard.memorizedInfoValue,
+                    memorizedInfo to flashCard.getMemorizedInfo(TextFormatter()),
                     notionDbId to flashCard.metaInfo.notionDbId.valueId,
                 )
             )

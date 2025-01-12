@@ -11,10 +11,12 @@ fun DeleteOldAndSendNewNotificationUseCase(
     telegramChatRepository: TelegramChatRepository,
 ): DeleteOldAndSendNewNotificationUseCase {
     return DeleteOldAndSendNewNotificationUseCase {
-        telegramChatRepository.getAllFromDb().forEach { oldMessage ->
-            telegramChatRepository.deleteFromChat(oldMessage)
-            telegramChatRepository.deleteFromDb(oldMessage)
-        }
+        telegramChatRepository.getAllFromDb()
+            .filter { it.body.type == TelegramMessageBody.Type.NOTIFICATION }
+            .forEach { oldMessage ->
+                telegramChatRepository.deleteFromChat(oldMessage)
+                telegramChatRepository.deleteFromDb(oldMessage)
+            }
         val telegramMessage = telegramChatRepository.sendToChat(it)
         telegramChatRepository.saveToDb(telegramMessage)
     }
