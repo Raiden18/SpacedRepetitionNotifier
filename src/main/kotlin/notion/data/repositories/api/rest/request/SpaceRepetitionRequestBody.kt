@@ -23,11 +23,11 @@ fun SpacedRepetitionRequestBody(
     }.let(gson::toJson)
 }
 
-fun JsonObject.property(name: String) {
+private fun JsonObject.property(name: String) {
     "property" to name
 }
 
-fun JsonObject.checkBox(isChecked: Boolean) {
+private fun JsonObject.checkBox(isChecked: Boolean) {
     "checkbox" to jsonObject {
         "equals" to isChecked
     }

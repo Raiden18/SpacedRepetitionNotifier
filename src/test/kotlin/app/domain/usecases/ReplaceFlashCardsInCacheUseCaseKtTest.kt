@@ -6,16 +6,16 @@ import io.mockk.coVerifyOrder
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import org.danceofvalkyries.app.domain.usecases.ReplaceFlashCardsInCacheUseCase
-import org.danceofvalkyries.notion.domain.models.FlashCard
-import org.danceofvalkyries.notion.domain.models.NotionDbId
-import org.danceofvalkyries.notion.domain.repositories.FlashCardsRepository
+import org.danceofvalkyries.app.domain.models.FlashCard
+import org.danceofvalkyries.app.domain.models.Id
+import org.danceofvalkyries.app.domain.repositories.FlashCardsRepository
 import org.danceofvalkyries.utils.DispatchersImpl
 
 class ReplaceFlashCardsInCacheUseCaseKtTest : FunSpec() {
 
     private val flashCardsRepository: FlashCardsRepository = mockk(relaxed = true)
-    private val notionDbId = NotionDbId("1")
-    private val dbIds = listOf(notionDbId)
+    private val id = Id("1")
+    private val dbIds = listOf(id)
     private lateinit var replaceFlashCardsInCacheUseCase: ReplaceFlashCardsInCacheUseCase
 
     init {
@@ -29,7 +29,7 @@ class ReplaceFlashCardsInCacheUseCaseKtTest : FunSpec() {
 
         test("Should clear flash cards in db, fetch them from notion and save them") {
             val newFlashCard = FlashCard.EMPTY
-            coEvery { flashCardsRepository.getFromNotion(notionDbId) } returns listOf(newFlashCard)
+            coEvery { flashCardsRepository.getFromNotion(id) } returns listOf(newFlashCard)
 
             replaceFlashCardsInCacheUseCase.execute()
 

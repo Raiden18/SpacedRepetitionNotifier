@@ -6,8 +6,8 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import org.danceofvalkyries.app.domain.usecases.ReplaceFlashCardInChatUseCase
-import org.danceofvalkyries.notion.domain.models.FlashCard
-import org.danceofvalkyries.notion.domain.models.NotionDbId
+import org.danceofvalkyries.app.domain.models.FlashCard
+import org.danceofvalkyries.app.domain.models.Id
 import org.danceofvalkyries.telegram.domain.TelegramChatRepository
 import org.danceofvalkyries.telegram.domain.models.TelegramMessage
 import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
@@ -43,14 +43,14 @@ class ReplaceFlashCardInChatUseCaseTest : FunSpec() {
     private val flashCard = FlashCard.EMPTY.copy(
         metaInfo = FlashCard.MetaInfo(
             id = "123",
-            notionDbId = NotionDbId("228")
+            notionDbId = Id("228")
         )
     )
 
     private val anotherFlashCard = FlashCard.EMPTY.copy(
         metaInfo = FlashCard.MetaInfo(
             id = "333",
-            notionDbId = NotionDbId("228")
+            notionDbId = Id("228")
         )
     )
 

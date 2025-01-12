@@ -1,28 +1,24 @@
 package org.danceofvalkyries.app
 
 import com.google.gson.Gson
-import kotlinx.coroutines.delay
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
-import org.danceofvalkyries.app.domain.usecases.GetAllFlashCardsUseCase
-import org.danceofvalkyries.app.domain.usecases.ReplaceFlashCardInChatUseCase
 import org.danceofvalkyries.config.data.TestConfigRepository
 import org.danceofvalkyries.config.domain.Config
-import org.danceofvalkyries.notion.data.repositories.FlashCardsRepositoryImpl
+import org.danceofvalkyries.app.data.repositories.flashcards.FlashCardsRepositoryImpl
 import org.danceofvalkyries.notion.data.repositories.NotionDbRepositoryImpl
 import org.danceofvalkyries.notion.data.repositories.api.NotionApiImpl
-import org.danceofvalkyries.notion.data.repositories.db.flashcards.FlashCardDbTableImpl
-import org.danceofvalkyries.notion.data.repositories.db.table.FlashCardsTablesDbTableImpl
+import org.danceofvalkyries.app.data.repositories.flashcards.db.FlashCardDbTableImpl
+import org.danceofvalkyries.notion.data.repositories.db.table.NotionDataBaseDbTableImpl
 import org.danceofvalkyries.telegram.data.api.TelegramChatApiImpl
-import org.danceofvalkyries.telegram.data.api.TelegramFriendlyTextFormatter
+import org.danceofvalkyries.telegram.data.api.TelegramFriendlyTextModifier
 import org.danceofvalkyries.telegram.data.db.TelegramNotificationMessageDbImpl
 import org.danceofvalkyries.telegram.data.repositories.TelegramChatRepositoryImpl
 import org.danceofvalkyries.telegram.domain.TelegramChatRepository
 import org.danceofvalkyries.utils.Dispatchers
 import org.danceofvalkyries.utils.db.DataBase
 import java.util.concurrent.TimeUnit
-import kotlin.time.Duration.Companion.seconds
 
 class TestApp(
     private val db: DataBase,
@@ -44,7 +40,7 @@ class TestApp(
     override suspend fun run() {
         val telegramChatRepository = createTelegramChatRepository()
         val messageFactory = MessageFactoryImpl(
-            TelegramFriendlyTextFormatter()
+            TelegramFriendlyTextModifier()
         )
         val dbConnection = db.establishConnection()
         val notionApi = NotionApiImpl(
@@ -52,7 +48,7 @@ class TestApp(
             client = createHttpClient(),
             apiKey = config.notion.apiKey,
         )
-        val flashCardsTablesDbTable = FlashCardsTablesDbTableImpl(dbConnection)
+        val flashCardsTablesDbTable = NotionDataBaseDbTableImpl(dbConnection)
         val notionDbsRepository = NotionDbRepositoryImpl(notionApi, flashCardsTablesDbTable)
 
         val flashCardsRepository = FlashCardsRepositoryImpl(

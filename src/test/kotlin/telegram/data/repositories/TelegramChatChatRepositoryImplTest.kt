@@ -5,7 +5,7 @@ import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.mockk
-import org.danceofvalkyries.notion.domain.models.ImageUrl
+import org.danceofvalkyries.app.domain.models.ImageUrl
 import org.danceofvalkyries.telegram.data.api.TelegramChatApi
 import org.danceofvalkyries.telegram.data.db.TelegramNotificationMessageDb
 import org.danceofvalkyries.telegram.data.repositories.TelegramChatRepositoryImpl

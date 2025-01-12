@@ -3,7 +3,7 @@ package org.danceofvalkyries.app.domain.usecases
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import org.danceofvalkyries.notion.domain.models.NotionDbId
+import org.danceofvalkyries.app.domain.models.Id
 import org.danceofvalkyries.notion.domain.repositories.NotionDbRepository
 import org.danceofvalkyries.utils.Dispatchers
 
@@ -12,7 +12,7 @@ fun interface ReplaceNotionDbsInCacheUseCase {
 }
 
 fun ReplaceNotionDbsInCacheUseCase(
-    dbIds: List<NotionDbId>,
+    dbIds: List<Id>,
     notionDbRepository: NotionDbRepository,
     dispatchers: Dispatchers,
 ): ReplaceNotionDbsInCacheUseCase {

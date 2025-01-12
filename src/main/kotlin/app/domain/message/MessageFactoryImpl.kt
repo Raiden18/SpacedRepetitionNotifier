@@ -1,14 +1,14 @@
 package org.danceofvalkyries.app.domain.message
 
-import org.danceofvalkyries.notion.domain.models.FlashCard
-import org.danceofvalkyries.notion.domain.models.ImageUrl.Companion.BLUE_SCREEN
+import org.danceofvalkyries.app.domain.models.FlashCard
+import org.danceofvalkyries.app.domain.models.ImageUrl.Companion.BLUE_SCREEN
+import org.danceofvalkyries.app.domain.models.text.Text
 import org.danceofvalkyries.notion.domain.models.NotionDataBase
-import org.danceofvalkyries.notion.domain.models.text.TextFormatter
 import org.danceofvalkyries.telegram.domain.models.Button
 import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
 
 class MessageFactoryImpl(
-    private val formatter: TextFormatter
+    private val modifier: Text.TextModifier
 ) : MessageFactory {
 
     override fun createDone(): TelegramMessageBody {
@@ -47,13 +47,13 @@ class MessageFactoryImpl(
     ): TelegramMessageBody {
         val memorizedInfo = flashCard
             .memorizedInfo
-            .getValue(formatter)
+            .getValue(modifier)
         val example = flashCard
             .example
-            ?.getValue(formatter)
+            ?.getValue(modifier)
         val answer = flashCard
             .answer
-            ?.getValue(formatter)
+            ?.getValue(modifier)
 
         val body = StringBuilder()
             .appendLine("*${memorizedInfo}*")

@@ -1,12 +1,14 @@
 package org.danceofvalkyries.notion.domain.models
 
+import org.danceofvalkyries.app.domain.models.Id
+
 data class NotionDataBase(
-    val id: NotionDbId,
+    val id: Id,
     val name: String,
 ) {
     companion object {
         val EMPTY = NotionDataBase(
-            id = NotionDbId.EMPTY,
+            id = Id.EMPTY,
             name = "",
         )
     }

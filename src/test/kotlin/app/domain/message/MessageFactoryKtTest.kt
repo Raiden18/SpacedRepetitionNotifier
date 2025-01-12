@@ -4,9 +4,13 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import org.danceofvalkyries.app.domain.message.MessageFactory
 import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
+import org.danceofvalkyries.app.domain.models.FlashCard
+import org.danceofvalkyries.app.domain.models.Id
+import org.danceofvalkyries.app.domain.models.ImageUrl
+import org.danceofvalkyries.app.domain.models.OnlineDictionary
 import org.danceofvalkyries.notion.domain.models.*
-import org.danceofvalkyries.notion.domain.models.text.Text
-import org.danceofvalkyries.telegram.data.api.TelegramFriendlyTextFormatter
+import org.danceofvalkyries.app.domain.models.text.Text
+import org.danceofvalkyries.telegram.data.api.TelegramFriendlyTextModifier
 import org.danceofvalkyries.telegram.domain.models.Button
 import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
 
@@ -18,7 +22,7 @@ class MessageFactoryKtTest : FunSpec() {
 
         beforeTest {
             messageFactory = MessageFactoryImpl(
-                TelegramFriendlyTextFormatter()
+                TelegramFriendlyTextModifier()
             )
         }
 
@@ -96,17 +100,17 @@ class MessageFactoryKtTest : FunSpec() {
             val emptyFLashCard = FlashCard.EMPTY
 
             val englishVocabularyDb = NotionDataBase.EMPTY.copy(
-                id = NotionDbId("1"),
+                id = Id("1"),
                 name = "English vocabulary"
             )
 
             val greekVocabularyDb = NotionDataBase.EMPTY.copy(
-                id = NotionDbId("2"),
+                id = Id("2"),
                 name = "Greek vocabulary"
             )
 
             val englishGrammarDb = NotionDataBase.EMPTY.copy(
-                id = NotionDbId("3"),
+                id = Id("3"),
                 name = "English grammar"
             )
 

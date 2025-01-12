@@ -5,7 +5,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.danceofvalkyries.app.domain.message.MessageFactory
-import org.danceofvalkyries.notion.domain.models.FlashCard
+import org.danceofvalkyries.app.domain.models.FlashCard
 import org.danceofvalkyries.telegram.domain.TelegramChatRepository
 import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
 import org.danceofvalkyries.utils.Dispatchers

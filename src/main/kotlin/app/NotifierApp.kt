@@ -7,17 +7,17 @@ import org.danceofvalkyries.app.domain.usecases.*
 import org.danceofvalkyries.config.data.LocalFileConfigRepository
 import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.config.domain.ConfigRepository
-import org.danceofvalkyries.notion.data.repositories.FlashCardsRepositoryImpl
+import org.danceofvalkyries.app.data.repositories.flashcards.FlashCardsRepositoryImpl
 import org.danceofvalkyries.notion.data.repositories.NotionDbRepositoryImpl
 import org.danceofvalkyries.notion.data.repositories.api.NotionApi
 import org.danceofvalkyries.notion.data.repositories.api.NotionApiImpl
-import org.danceofvalkyries.notion.data.repositories.db.flashcards.FlashCardDbTableImpl
-import org.danceofvalkyries.notion.data.repositories.db.table.FlashCardsTablesDbTableImpl
-import org.danceofvalkyries.notion.domain.models.NotionDbId
-import org.danceofvalkyries.notion.domain.repositories.FlashCardsRepository
+import org.danceofvalkyries.app.data.repositories.flashcards.db.FlashCardDbTableImpl
+import org.danceofvalkyries.notion.data.repositories.db.table.NotionDataBaseDbTableImpl
+import org.danceofvalkyries.app.domain.models.Id
+import org.danceofvalkyries.app.domain.repositories.FlashCardsRepository
 import org.danceofvalkyries.notion.domain.repositories.NotionDbRepository
 import org.danceofvalkyries.telegram.data.api.TelegramChatApiImpl
-import org.danceofvalkyries.telegram.data.api.TelegramFriendlyTextFormatter
+import org.danceofvalkyries.telegram.data.api.TelegramFriendlyTextModifier
 import org.danceofvalkyries.telegram.data.db.TelegramNotificationMessageDbImpl
 import org.danceofvalkyries.telegram.data.repositories.TelegramChatRepositoryImpl
 import org.danceofvalkyries.telegram.domain.TelegramChatRepository
@@ -40,22 +40,22 @@ class NotifierApp(
         val dbConnection = dataBase.establishConnection()
         val telegramChatRepository = createTelegramChatRepository(dbConnection)
         val messageFactory = MessageFactoryImpl(
-            TelegramFriendlyTextFormatter()
+            TelegramFriendlyTextModifier()
         )
         val notionDbsRepository = NotionDbRepository(dbConnection)
         val flashCardsRepository = FlashCardsRepository(dbConnection)
-        val notionDbIds = config
+        val ids = config
             .notion
             .observedDatabases
-            .map { NotionDbId(it.id) }
+            .map { Id(it.id) }
         ReplaceAllNotionCacheUseCase(
             ReplaceFlashCardsInCacheUseCase(
-                notionDbIds,
+                ids,
                 flashCardsRepository,
                 dispatchers,
             ),
             ReplaceNotionDbsInCacheUseCase(
-                notionDbIds,
+                ids,
                 notionDbsRepository,
                 dispatchers,
             ),
@@ -90,7 +90,7 @@ class NotifierApp(
     private fun NotionDbRepository(dbConnection: Connection): NotionDbRepository {
         return NotionDbRepositoryImpl(
             NotionApi(),
-            FlashCardsTablesDbTableImpl(dbConnection)
+            NotionDataBaseDbTableImpl(dbConnection)
         )
     }
 

@@ -1,7 +1,7 @@
 package testutils
 
 import org.danceofvalkyries.app.domain.message.MessageFactory
-import org.danceofvalkyries.notion.domain.models.FlashCard
+import org.danceofvalkyries.app.domain.models.FlashCard
 import org.danceofvalkyries.notion.domain.models.NotionDataBase
 import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
 

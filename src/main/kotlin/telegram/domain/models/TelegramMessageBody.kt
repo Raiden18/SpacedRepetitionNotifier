@@ -1,6 +1,6 @@
 package org.danceofvalkyries.telegram.domain.models
 
-import org.danceofvalkyries.notion.domain.models.ImageUrl
+import org.danceofvalkyries.app.domain.models.ImageUrl
 import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody.Type
 
 data class TelegramMessageBody(

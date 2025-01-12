@@ -9,11 +9,8 @@ import org.danceofvalkyries.json.*
 import org.danceofvalkyries.notion.data.repositories.api.rest.request.SpacedRepetitionRequestBody
 import org.danceofvalkyries.notion.data.repositories.api.rest.DatabaseUrl
 import org.danceofvalkyries.notion.data.repositories.api.rest.request.NotionApiVersionHeader
-import org.danceofvalkyries.notion.data.repositories.api.rest.request.checkBox
-import org.danceofvalkyries.notion.data.repositories.api.rest.request.property
 import org.danceofvalkyries.notion.data.repositories.api.rest.response.NotionDbResponse
 import org.danceofvalkyries.notion.data.repositories.api.rest.response.NotionPageResponse
-import org.danceofvalkyries.notion.domain.models.FlashCard
 import org.danceofvalkyries.utils.rest.*
 
 class NotionApiImpl(
@@ -48,7 +45,7 @@ class NotionApiImpl(
             .post(SpacedRepetitionRequestBody(gson))
             .build()
             .request(client)
-            .parse<FlashCardResponseWrapper>(gson)
+            .parse<NotionPagesResponse>(gson)
             .results
     }
 
@@ -72,17 +69,17 @@ class NotionApiImpl(
                             "checkbox" to true
                         }
                     }
-                }.let { gson.toJson(it) }.toRequestBody( ContentType(ContentTypes.ApplicationJson).value.toMediaType())
+                }.let { gson.toJson(it) }.toRequestBody(ContentType(ContentTypes.ApplicationJson).value.toMediaType())
             ).build()
             .request(client)
             .parse<NotionPageResponse>(gson)
     }
 
-    override suspend fun forgot(flashCard: FlashCard) {
+    override suspend fun forgot() {
         TODO("Not yet implemented")
     }
 
-    private data class FlashCardResponseWrapper(
+    private data class NotionPagesResponse(
         val results: List<NotionPageResponse>
     )
 }

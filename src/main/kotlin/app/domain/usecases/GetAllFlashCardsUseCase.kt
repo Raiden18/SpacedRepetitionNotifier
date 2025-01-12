@@ -1,7 +1,7 @@
 package org.danceofvalkyries.app.domain.usecases
 
-import org.danceofvalkyries.notion.domain.models.FlashCard
-import org.danceofvalkyries.notion.domain.repositories.FlashCardsRepository
+import org.danceofvalkyries.app.domain.models.FlashCard
+import org.danceofvalkyries.app.domain.repositories.FlashCardsRepository
 import org.danceofvalkyries.notion.domain.repositories.NotionDbRepository
 
 fun interface GetAllFlashCardsUseCase {

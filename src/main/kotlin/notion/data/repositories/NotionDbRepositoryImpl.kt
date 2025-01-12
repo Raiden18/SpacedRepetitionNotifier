@@ -1,33 +1,33 @@
 package org.danceofvalkyries.notion.data.repositories
 
 import org.danceofvalkyries.notion.data.repositories.api.NotionApi
-import org.danceofvalkyries.notion.data.repositories.db.table.FlashCardsTablesDbTable
+import org.danceofvalkyries.notion.data.repositories.db.table.NotionDataBaseDbTable
 import org.danceofvalkyries.notion.domain.models.NotionDataBase
-import org.danceofvalkyries.notion.domain.models.NotionDbId
+import org.danceofvalkyries.app.domain.models.Id
 import org.danceofvalkyries.notion.domain.repositories.NotionDbRepository
 
 class NotionDbRepositoryImpl(
     private val notionApi: NotionApi,
-    private val flashCardsTablesDbTable: FlashCardsTablesDbTable,
+    private val notionDataBaseDbTable: NotionDataBaseDbTable,
 ) : NotionDbRepository {
 
-    override suspend fun getFromNotion(notionDbId: NotionDbId): NotionDataBase {
-        val response = notionApi.getNotionDb(notionDbId.valueId)
+    override suspend fun getFromNotion(id: Id): NotionDataBase {
+        val response = notionApi.getNotionDb(id.valueId)
         return NotionDataBase(
-            id = NotionDbId(response.id),
+            id = Id(response.id),
             name = response.name,
         )
     }
 
     override suspend fun saveToDb(tables: List<NotionDataBase>) {
-        tables.forEach { flashCardsTablesDbTable.insert(it) }
+        tables.forEach { notionDataBaseDbTable.insert(it) }
     }
 
     override suspend fun getFromDb(): List<NotionDataBase> {
-        return flashCardsTablesDbTable.getAll()
+        return notionDataBaseDbTable.getAll()
     }
 
     override suspend fun clearDb() {
-        flashCardsTablesDbTable.clear()
+        notionDataBaseDbTable.clear()
     }
 }

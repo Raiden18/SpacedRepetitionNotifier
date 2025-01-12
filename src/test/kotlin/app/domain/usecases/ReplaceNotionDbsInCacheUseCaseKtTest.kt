@@ -7,15 +7,15 @@ import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import org.danceofvalkyries.app.domain.usecases.ReplaceNotionDbsInCacheUseCase
 import org.danceofvalkyries.notion.domain.models.NotionDataBase
-import org.danceofvalkyries.notion.domain.models.NotionDbId
+import org.danceofvalkyries.app.domain.models.Id
 import org.danceofvalkyries.notion.domain.repositories.NotionDbRepository
 import org.danceofvalkyries.utils.DispatchersImpl
 
 class ReplaceNotionDbsInCacheUseCaseKtTest : FunSpec() {
 
     private val motionDbRepository: NotionDbRepository = mockk(relaxed = true)
-    private val notionDbId = NotionDbId("1")
-    private val dbIds = listOf(notionDbId)
+    private val id = Id("1")
+    private val dbIds = listOf(id)
     private lateinit var replaceNotionDbsInCacheUseCase: ReplaceNotionDbsInCacheUseCase
 
     init {
@@ -29,7 +29,7 @@ class ReplaceNotionDbsInCacheUseCaseKtTest : FunSpec() {
 
         test("Should clear flash cards in db, fetch them from notion and save them") {
             val newNotionDb = NotionDataBase.EMPTY
-            coEvery { motionDbRepository.getFromNotion(notionDbId) } returns newNotionDb
+            coEvery { motionDbRepository.getFromNotion(id) } returns newNotionDb
 
             replaceNotionDbsInCacheUseCase.execute()
 
