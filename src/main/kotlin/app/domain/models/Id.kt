@@ -1,5 +1,6 @@
 package org.danceofvalkyries.app.domain.models
 
+// TODO: Remove from TG and Notion
 data class Id(
     private val value: String
 ) {
@@ -8,19 +9,7 @@ data class Id(
         val EMPTY = Id("")
     }
 
-    fun getValue(idEditor: IdEditor): String {
-        return idEditor.get(valueId)
-    }
-
     val valueId: String
         get() = value
             .replace("-", "")
-
-    fun interface IdEditor {
-        companion object {
-            val AS_IS = IdEditor { it }
-        }
-
-        fun get(value: String): String
-    }
 }

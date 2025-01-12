@@ -7,6 +7,6 @@ interface FlashCardsRepository {
     suspend fun getFromNotion(id: Id): List<FlashCard>
 
     suspend fun saveToDb(flashCards: List<FlashCard>)
-    suspend fun getFromDb(id: Id): List<FlashCard>
+    suspend fun getFromDbForTable(id: Id): List<FlashCard>
     suspend fun clearDb()
 }

@@ -6,9 +6,9 @@ import org.danceofvalkyries.app.domain.models.Id
 import org.danceofvalkyries.app.domain.models.ImageUrl
 import org.danceofvalkyries.app.domain.models.OnlineDictionary
 import org.danceofvalkyries.app.domain.models.text.Text
-import org.danceofvalkyries.notion.data.repositories.api.response.NotionPageResponse
+import org.danceofvalkyries.notion.data.repositories.api.models.NotionPageData
 
-fun NotionPageResponse.toFlashCard(): FlashCard {
+fun NotionPageData.toFlashCard(): FlashCard {
     val memorizedInfo = properties?.get("Name")?.title?.firstOrNull()?.text?.content.orEmpty()
     val example = properties?.get("Example")?.richText?.firstOrNull()?.text?.content.orEmpty().nullIfEmptyOrBlank()
     val answer = properties?.get("Explanation")?.richText?.firstOrNull()?.text?.content.orEmpty().nullIfEmptyOrBlank()

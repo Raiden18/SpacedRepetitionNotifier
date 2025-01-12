@@ -4,7 +4,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.danceofvalkyries.app.domain.models.Id
-import org.danceofvalkyries.notion.domain.repositories.NotionDbRepository
+import org.danceofvalkyries.notion.domain.repositories.NotionDataBaseRepository
 import org.danceofvalkyries.utils.Dispatchers
 
 fun interface ReplaceNotionDbsInCacheUseCase {
@@ -13,19 +13,19 @@ fun interface ReplaceNotionDbsInCacheUseCase {
 
 fun ReplaceNotionDbsInCacheUseCase(
     dbIds: List<Id>,
-    notionDbRepository: NotionDbRepository,
+    notionDataBaseRepository: NotionDataBaseRepository,
     dispatchers: Dispatchers,
 ): ReplaceNotionDbsInCacheUseCase {
     return ReplaceNotionDbsInCacheUseCase {
         coroutineScope {
-            val clearAsync = async(dispatchers.io) { notionDbRepository.clearDb() }
+            val clearAsync = async(dispatchers.io) { notionDataBaseRepository.clearCache() }
 
-            val fetchNotionDbsFromNotionAsync = dbIds.map { async(dispatchers.io) { notionDbRepository.getFromNotion(it) } }
+            val fetchNotionDbsFromNotionAsync = dbIds.map { async(dispatchers.io) { notionDataBaseRepository.getFromNotion(it) } }
 
             clearAsync.await()
             val notionDataBases = fetchNotionDbsFromNotionAsync.awaitAll()
 
-            notionDbRepository.saveToDb(notionDataBases)
+            notionDataBaseRepository.saveToCache(notionDataBases)
         }
     }
 }

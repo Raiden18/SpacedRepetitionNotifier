@@ -1,7 +1,8 @@
-package org.danceofvalkyries.notion.data.repositories.db
+package org.danceofvalkyries.notion.data.repositories.database.db
 
 import org.danceofvalkyries.notion.domain.models.NotionDataBase
 import org.danceofvalkyries.app.domain.models.Id
+import org.danceofvalkyries.notion.domain.models.NotionId
 import org.danceofvalkyries.utils.db.asSequence
 import org.danceofvalkyries.utils.db.tables.columns.PrimaryKey
 import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
@@ -37,7 +38,7 @@ class NotionDataBaseDbTableImpl(
             .asSequence()
             .map {
                 NotionDataBase(
-                    id = Id(id.getValue(it)!!),
+                    id = NotionId(id.getValue(it)!!),
                     name = name.getValue(it)!!,
                 )
             }.toList()

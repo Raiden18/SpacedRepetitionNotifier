@@ -26,7 +26,7 @@ class FlashCardsRepositoryImpl(
             .forEach { flashCardTable.insert(it) }
     }
 
-    override suspend fun getFromDb(id: Id): List<FlashCard> {
+    override suspend fun getFromDbForTable(id: Id): List<FlashCard> {
         return flashCardTable.getAllFor(id.valueId)
             .map { it.toFlashCard(getOnlineDictionariesFor(id)) }
     }

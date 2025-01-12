@@ -2,9 +2,9 @@ package notion.data.repositories.db.table
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.notion.data.repositories.db.NotionDbSqlQueries
+import org.danceofvalkyries.notion.data.repositories.database.db.NotionDbSqlQueries
 import org.danceofvalkyries.notion.domain.models.NotionDataBase
-import org.danceofvalkyries.app.domain.models.Id
+import org.danceofvalkyries.notion.domain.models.NotionId
 import org.danceofvalkyries.utils.db.tables.columns.PrimaryKey
 import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
 
@@ -24,7 +24,7 @@ class NotionTablesSqlQueriesTest : FunSpec() {
     )
 
     private val notionDataBase = NotionDataBase(
-        id = Id("228"),
+        id = NotionId("228"),
         name = "English Grammar",
     )
 

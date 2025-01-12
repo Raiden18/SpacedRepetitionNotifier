@@ -22,6 +22,11 @@ fun Request.Builder.post(body: String): Request.Builder {
     return post(body.toRequestBody(applicationJson.value.toMediaType()))
 }
 
+fun Request.Builder.patch(body: String): Request.Builder {
+    val applicationJson = ContentType(ContentTypes.ApplicationJson)
+    return patch(body.toRequestBody(applicationJson.value.toMediaType()))
+}
+
 fun Request.Builder.headers(headers: List<Header>): Request.Builder {
     val headersBuilder = Headers.Builder()
     headers.forEach { headersBuilder.add(it.name, it.value) }

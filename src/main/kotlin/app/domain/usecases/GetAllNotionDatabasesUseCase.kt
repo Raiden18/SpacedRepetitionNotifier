@@ -1,16 +1,16 @@
 package org.danceofvalkyries.app.domain.usecases
 
 import org.danceofvalkyries.notion.domain.models.NotionDataBase
-import org.danceofvalkyries.notion.domain.repositories.NotionDbRepository
+import org.danceofvalkyries.notion.domain.repositories.NotionDataBaseRepository
 
 fun interface GetAllNotionDatabasesUseCase {
     suspend fun execute(): List<NotionDataBase>
 }
 
 fun GetAllNotionDatabasesUseCase(
-    repository: NotionDbRepository,
+    repository: NotionDataBaseRepository,
 ): GetAllNotionDatabasesUseCase {
     return GetAllNotionDatabasesUseCase {
-        repository.getFromDb()
+        repository.getFromCache()
     }
 }

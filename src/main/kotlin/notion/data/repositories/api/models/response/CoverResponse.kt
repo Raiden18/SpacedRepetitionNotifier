@@ -1,4 +1,4 @@
-package org.danceofvalkyries.notion.data.repositories.api.response
+package org.danceofvalkyries.notion.data.repositories.api.models.response
 
 import com.google.gson.annotations.SerializedName
 

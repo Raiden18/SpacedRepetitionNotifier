@@ -8,12 +8,12 @@ import kotlinx.coroutines.Dispatchers
 import org.danceofvalkyries.app.domain.usecases.ReplaceNotionDbsInCacheUseCase
 import org.danceofvalkyries.notion.domain.models.NotionDataBase
 import org.danceofvalkyries.app.domain.models.Id
-import org.danceofvalkyries.notion.domain.repositories.NotionDbRepository
+import org.danceofvalkyries.notion.domain.repositories.NotionDataBaseRepository
 import org.danceofvalkyries.utils.DispatchersImpl
 
 class ReplaceNotionDbsInCacheUseCaseKtTest : FunSpec() {
 
-    private val motionDbRepository: NotionDbRepository = mockk(relaxed = true)
+    private val motionDbRepository: NotionDataBaseRepository = mockk(relaxed = true)
     private val id = Id("1")
     private val dbIds = listOf(id)
     private lateinit var replaceNotionDbsInCacheUseCase: ReplaceNotionDbsInCacheUseCase
@@ -34,8 +34,8 @@ class ReplaceNotionDbsInCacheUseCaseKtTest : FunSpec() {
             replaceNotionDbsInCacheUseCase.execute()
 
             coVerifyOrder {
-                motionDbRepository.clearDb()
-                motionDbRepository.saveToDb(listOf(newNotionDb))
+                motionDbRepository.clearCache()
+                motionDbRepository.saveToCache(listOf(newNotionDb))
             }
         }
     }

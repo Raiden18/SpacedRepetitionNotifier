@@ -100,36 +100,36 @@ class MessageFactoryKtTest : FunSpec() {
             val emptyFLashCard = FlashCard.EMPTY
 
             val englishVocabularyDb = NotionDataBase.EMPTY.copy(
-                id = Id("1"),
+                id = NotionId("1"),
                 name = "English vocabulary"
             )
 
             val greekVocabularyDb = NotionDataBase.EMPTY.copy(
-                id = Id("2"),
+                id = NotionId("2"),
                 name = "Greek vocabulary"
             )
 
             val englishGrammarDb = NotionDataBase.EMPTY.copy(
-                id = Id("3"),
+                id = NotionId("3"),
                 name = "English grammar"
             )
 
             val flashCards = listOf(
                 emptyFLashCard.copy(
                     metaInfo = FlashCard.MetaInfo(
-                        notionDbId = englishVocabularyDb.id,
+                        notionDbId = Id(englishVocabularyDb.id.rawValue),
                         id = ""
                     )
                 ),
                 emptyFLashCard.copy(
                     metaInfo = FlashCard.MetaInfo(
-                        notionDbId = greekVocabularyDb.id,
+                        notionDbId = Id(greekVocabularyDb.id.rawValue),
                         id = ""
                     )
                 ),
                 emptyFLashCard.copy(
                     metaInfo = FlashCard.MetaInfo(
-                        notionDbId = englishGrammarDb.id,
+                        notionDbId = Id(englishGrammarDb.id.rawValue),
                         id = ""
                     )
                 )

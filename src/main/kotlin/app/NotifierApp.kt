@@ -8,14 +8,13 @@ import org.danceofvalkyries.config.data.LocalFileConfigRepository
 import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.config.domain.ConfigRepository
 import org.danceofvalkyries.app.data.repositories.flashcards.FlashCardsRepositoryImpl
-import org.danceofvalkyries.notion.data.repositories.NotionDbRepositoryImpl
-import org.danceofvalkyries.notion.data.repositories.api.NotionApi
-import org.danceofvalkyries.notion.data.repositories.api.NotionApiImpl
+import org.danceofvalkyries.notion.data.repositories.database.NotionDataBaseRepositoryImpl
 import org.danceofvalkyries.app.data.repositories.flashcards.db.FlashCardDbTableImpl
-import org.danceofvalkyries.notion.data.repositories.db.NotionDataBaseDbTableImpl
+import org.danceofvalkyries.notion.data.repositories.database.db.NotionDataBaseDbTableImpl
 import org.danceofvalkyries.app.domain.models.Id
 import org.danceofvalkyries.app.domain.repositories.FlashCardsRepository
-import org.danceofvalkyries.notion.domain.repositories.NotionDbRepository
+import org.danceofvalkyries.notion.data.repositories.api.NotionApi
+import org.danceofvalkyries.notion.domain.repositories.NotionDataBaseRepository
 import org.danceofvalkyries.telegram.data.api.TelegramChatApiImpl
 import org.danceofvalkyries.telegram.data.api.TelegramFriendlyTextModifier
 import org.danceofvalkyries.telegram.data.db.TelegramNotificationMessageDbImpl
@@ -25,6 +24,7 @@ import org.danceofvalkyries.utils.Dispatchers
 import org.danceofvalkyries.utils.db.DataBase
 import java.sql.Connection
 import java.util.concurrent.TimeUnit
+import org.danceofvalkyries.notion.data.repositories.api.NotionApiImpl
 
 class NotifierApp(
     private val dispatchers: Dispatchers,
@@ -87,8 +87,8 @@ class NotifierApp(
         return TelegramChatRepositoryImpl(api, db)
     }
 
-    private fun NotionDbRepository(dbConnection: Connection): NotionDbRepository {
-        return NotionDbRepositoryImpl(
+    private fun NotionDbRepository(dbConnection: Connection): NotionDataBaseRepository {
+        return NotionDataBaseRepositoryImpl(
             NotionApi(),
             NotionDataBaseDbTableImpl(dbConnection)
         )

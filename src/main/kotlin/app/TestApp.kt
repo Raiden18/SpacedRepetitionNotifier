@@ -3,14 +3,15 @@ package org.danceofvalkyries.app
 import com.google.gson.Gson
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.danceofvalkyries.app.data.repositories.flashcards.FlashCardsRepositoryImpl
+import org.danceofvalkyries.app.data.repositories.flashcards.db.FlashCardDbTableImpl
 import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
 import org.danceofvalkyries.config.data.TestConfigRepository
 import org.danceofvalkyries.config.domain.Config
-import org.danceofvalkyries.app.data.repositories.flashcards.FlashCardsRepositoryImpl
-import org.danceofvalkyries.notion.data.repositories.NotionDbRepositoryImpl
 import org.danceofvalkyries.notion.data.repositories.api.NotionApiImpl
-import org.danceofvalkyries.app.data.repositories.flashcards.db.FlashCardDbTableImpl
-import org.danceofvalkyries.notion.data.repositories.db.NotionDataBaseDbTableImpl
+import org.danceofvalkyries.notion.data.repositories.database.NotionDataBaseRepositoryImpl
+import org.danceofvalkyries.notion.data.repositories.database.db.NotionDataBaseDbTableImpl
+import org.danceofvalkyries.notion.data.repositories.page.FlashCardNotionPageRepositoryImpl
 import org.danceofvalkyries.telegram.data.api.TelegramChatApiImpl
 import org.danceofvalkyries.telegram.data.api.TelegramFriendlyTextModifier
 import org.danceofvalkyries.telegram.data.db.TelegramNotificationMessageDbImpl
@@ -49,7 +50,7 @@ class TestApp(
             apiKey = config.notion.apiKey,
         )
         val flashCardsTablesDbTable = NotionDataBaseDbTableImpl(dbConnection)
-        val notionDbsRepository = NotionDbRepositoryImpl(notionApi, flashCardsTablesDbTable)
+        val notionDbsRepository = NotionDataBaseRepositoryImpl(notionApi, flashCardsTablesDbTable)
 
         val flashCardsRepository = FlashCardsRepositoryImpl(
             FlashCardDbTableImpl(dbConnection),
@@ -59,20 +60,26 @@ class TestApp(
 
         realApp.run()
 
-        notionDbsRepository.getFromDb()
-            .flatMap { flashCardsRepository.getFromDb(it.id) }
-            .forEach { println(it) }
 
-       /* while (true){
-            val tgApi = TelegramChatApiImpl(
-                client = createHttpClient(),
-                gson = createGson(),
-                apiKey = config.telegram.apiKey,
-                chatId = config.telegram.chatId,
-            )
-            tgApi.getUpdate()
-            delay(2.seconds)
-        }*/
+
+        notionDbsRepository.getFromCache()
+            .forEach {
+                val repo = FlashCardNotionPageRepositoryImpl(notionApi)
+                val notionPages = repo.getAllFromDb(it.id.withoutScore)
+                println(notionPages)
+            }
+
+
+        /* while (true){
+             val tgApi = TelegramChatApiImpl(
+                 client = createHttpClient(),
+                 gson = createGson(),
+                 apiKey = config.telegram.apiKey,
+                 chatId = config.telegram.chatId,
+             )
+             tgApi.getUpdate()
+             delay(2.seconds)
+         }*/
 
         //notionApi.recall()
 

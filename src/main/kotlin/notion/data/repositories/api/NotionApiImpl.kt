@@ -3,11 +3,13 @@ package org.danceofvalkyries.notion.data.repositories.api
 import com.google.gson.Gson
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import org.danceofvalkyries.json.*
-import org.danceofvalkyries.notion.data.repositories.api.request.SpacedRepetitionRequestBody
-import org.danceofvalkyries.notion.data.repositories.api.request.NotionApiVersionHeader
-import org.danceofvalkyries.notion.data.repositories.api.response.NotionDbResponse
-import org.danceofvalkyries.notion.data.repositories.api.response.NotionPageResponse
+import org.danceofvalkyries.json.AuthorizationBearerHeader
+import org.danceofvalkyries.json.ContentType
+import org.danceofvalkyries.json.ContentTypes
+import org.danceofvalkyries.notion.data.repositories.api.models.NotionPageData
+import org.danceofvalkyries.notion.data.repositories.api.models.request.NotionApiVersionHeader
+import org.danceofvalkyries.notion.data.repositories.api.models.request.SpacedRepetitionRequestBody
+import org.danceofvalkyries.notion.data.repositories.api.models.response.NotionDbResponse
 import org.danceofvalkyries.utils.rest.*
 
 class NotionApiImpl(
@@ -35,7 +37,7 @@ class NotionApiImpl(
             .copy(id = id)
     }
 
-    override suspend fun getContentFor(id: String): List<NotionPageResponse> {
+    override suspend fun getContentFor(id: String): List<NotionPageData> {
         return Request.Builder()
             .url(urls.databasesQuery(id))
             .headers(headers)
@@ -46,41 +48,26 @@ class NotionApiImpl(
             .results
     }
 
-    override suspend fun getNotionPage(id: String): NotionPageResponse {
-       TODO()
-    }
-
-   /* override suspend fun recall() {
-        val notionPage = Request.Builder()
-            .url("https://api.notion.com/v1/pages/17240270a14380d8a80bc055a9267cf6")
-            .headers(headers)
+    override suspend fun getNotionPage(id: String): NotionPageData {
+        return Request.Builder()
+            .url(urls.pages(id))
             .get()
+            .headers(headers)
             .build()
             .request(client)
-            .parse<NotionPageResponse>(gson)
-
-
-        Request.Builder()
-            .url("https://api.notion.com/v1/pages/17240270a14380d8a80bc055a9267cf6")
-            .headers(headers)
-            .patch(
-                jsonObject {
-                    "properties" to jsonObject {
-                        "Know Level 4" to jsonObject {
-                            "checkbox" to true
-                        }
-                    }
-                }.let { gson.toJson(it) }.toRequestBody(ContentType(ContentTypes.ApplicationJson).value.toMediaType())
-            ).build()
-            .request(client)
-            .parse<NotionPageResponse>(gson)
+            .parse(gson)
     }
 
-    override suspend fun forgot() {
-        TODO("Not yet implemented")
-    }*/
+    override suspend fun updateInNotion(notionPageData: NotionPageData) {
+        Request.Builder()
+            .headers(headers)
+            .url(urls.pages(notionPageData.id!!))
+            .patch(gson.toJson(notionPageData))
+            .build()
+            .request(client)
+    }
 
     private data class NotionPagesResponse(
-        val results: List<NotionPageResponse>
+        val results: List<NotionPageData>
     )
 }
