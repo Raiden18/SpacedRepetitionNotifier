@@ -1,9 +1,9 @@
-package app.data.persistance.notion.page.flashcard
+package app.data.persistance.notion.page.dao.flashcard
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.FlashCardDbEntity
-import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.FlashCardSqlQueries
+import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.dao.FlashCardDbEntity
+import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.dao.FlashCardSqlQueries
 import org.danceofvalkyries.utils.db.tables.columns.PrimaryKey
 import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
 

@@ -1,7 +1,7 @@
 package org.danceofvalkyries.telegram.impl
 
-import org.danceofvalkyries.app.data.persistance.telegram.TelegramMessageDao
-import org.danceofvalkyries.app.data.persistance.telegram.TelegramMessageEntity
+import org.danceofvalkyries.app.data.persistance.telegram.messages.dao.TelegramMessageDao
+import org.danceofvalkyries.app.data.persistance.telegram.messages.dao.TelegramMessageEntity
 import org.danceofvalkyries.telegram.api.models.TelegramMessage
 import org.danceofvalkyries.telegram.api.models.TelegramMessageBody
 import org.danceofvalkyries.telegram.impl.restapi.TelegramChatRestApi

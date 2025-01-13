@@ -3,8 +3,8 @@ package org.danceofvalkyries.app
 import com.google.gson.Gson
 import okhttp3.OkHttpClient
 import org.danceofvalkyries.app.data.repositories.flashcards.FlashCardsRepositoryImpl
-import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.FlashCardDaoImpl
-import org.danceofvalkyries.app.data.persistance.telegram.TelegramMessageDaoImpl
+import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.dao.FlashCardDaoImpl
+import org.danceofvalkyries.app.data.persistance.telegram.messages.dao.TelegramMessageDaoImpl
 import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
 import org.danceofvalkyries.app.domain.repositories.FlashCardsRepository
 import org.danceofvalkyries.app.domain.usecases.*
@@ -14,7 +14,7 @@ import org.danceofvalkyries.config.domain.ConfigRepository
 import notion.impl.client.NotionApi
 import org.danceofvalkyries.notion.impl.restapi.NotionApiImpl
 import org.danceofvalkyries.notion.impl.database.NotionDataBaseApiImpl
-import org.danceofvalkyries.app.data.persistance.notion.database.NotionDataBaseDaoImpl
+import org.danceofvalkyries.app.data.persistance.notion.database.dao.NotionDataBaseDaoImpl
 import org.danceofvalkyries.notion.api.models.NotionId
 import org.danceofvalkyries.notion.impl.GetDataBaseFromNotion
 import org.danceofvalkyries.notion.impl.database.NotionDataBaseApi

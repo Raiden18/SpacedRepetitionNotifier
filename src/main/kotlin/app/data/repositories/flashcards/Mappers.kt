@@ -1,6 +1,6 @@
 package org.danceofvalkyries.app.data.repositories.flashcards
 
-import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.FlashCardDbEntity
+import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.dao.FlashCardDbEntity
 import org.danceofvalkyries.app.domain.models.FlashCard
 import org.danceofvalkyries.app.domain.models.OnlineDictionary
 import org.danceofvalkyries.notion.impl.restapi.models.NotionPageData
@@ -46,7 +46,6 @@ fun FlashCard.toEntity(): FlashCardDbEntity {
         notionDbId = metaInfo.notionDbId,
     )
 }
-
 
 private fun String.nullIfEmptyOrBlank(): String? {
     if (isEmpty()) {

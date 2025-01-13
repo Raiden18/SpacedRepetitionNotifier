@@ -1,4 +1,4 @@
-package org.danceofvalkyries.app.data.persistance.telegram
+package org.danceofvalkyries.app.data.persistance.telegram.messages.dao
 
 import org.danceofvalkyries.utils.db.SqlQuery
 import org.danceofvalkyries.utils.db.tables.columns.TableColumn

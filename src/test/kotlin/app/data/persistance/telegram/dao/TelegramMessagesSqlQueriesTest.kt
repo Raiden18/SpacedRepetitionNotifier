@@ -1,9 +1,9 @@
-package app.data.persistance.telegram
+package app.data.persistance.telegram.dao
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.app.data.persistance.telegram.TelegramMessageEntity
-import org.danceofvalkyries.app.data.persistance.telegram.TelegramMessagesSqlQueries
+import org.danceofvalkyries.app.data.persistance.telegram.messages.dao.TelegramMessageEntity
+import org.danceofvalkyries.app.data.persistance.telegram.messages.dao.TelegramMessagesSqlQueries
 import org.danceofvalkyries.utils.db.tables.columns.LongTableColumn
 import org.danceofvalkyries.utils.db.tables.columns.PrimaryKey
 import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn

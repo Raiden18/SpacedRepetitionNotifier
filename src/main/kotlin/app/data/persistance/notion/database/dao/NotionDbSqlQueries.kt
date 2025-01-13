@@ -1,4 +1,4 @@
-package org.danceofvalkyries.app.data.persistance.notion.database
+package org.danceofvalkyries.app.data.persistance.notion.database.dao
 
 import org.danceofvalkyries.utils.db.SqlQuery
 import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn

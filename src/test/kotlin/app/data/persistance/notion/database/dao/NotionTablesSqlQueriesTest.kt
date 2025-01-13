@@ -1,9 +1,9 @@
-package app.data.persistance.notion.database
+package app.data.persistance.notion.database.dao
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.app.data.persistance.notion.database.NotionDataBaseEntity
-import org.danceofvalkyries.app.data.persistance.notion.database.NotionDbSqlQueries
+import org.danceofvalkyries.app.data.persistance.notion.database.dao.NotionDataBaseEntity
+import org.danceofvalkyries.app.data.persistance.notion.database.dao.NotionDbSqlQueries
 import org.danceofvalkyries.utils.db.tables.columns.PrimaryKey
 import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
 

@@ -1,4 +1,4 @@
-package org.danceofvalkyries.app.data.persistance.notion.page.flashcard
+package org.danceofvalkyries.app.data.persistance.notion.page.flashcard.dao
 
 interface FlashCardDao {
     suspend fun insert(entity: FlashCardDbEntity)

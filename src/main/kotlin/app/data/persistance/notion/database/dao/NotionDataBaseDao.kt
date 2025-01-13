@@ -1,4 +1,4 @@
-package org.danceofvalkyries.app.data.persistance.notion.database
+package org.danceofvalkyries.app.data.persistance.notion.database.dao
 
 interface NotionDataBaseDao {
     suspend fun insert(notionDataBaseEntity: NotionDataBaseEntity)

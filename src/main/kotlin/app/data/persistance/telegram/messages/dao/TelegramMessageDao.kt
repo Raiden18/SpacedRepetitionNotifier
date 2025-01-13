@@ -1,4 +1,4 @@
-package org.danceofvalkyries.app.data.persistance.telegram
+package org.danceofvalkyries.app.data.persistance.telegram.messages.dao
 
 interface TelegramMessageDao {
     suspend fun save(entity: TelegramMessageEntity)
