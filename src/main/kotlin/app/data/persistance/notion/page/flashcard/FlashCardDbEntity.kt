@@ -1,4 +1,4 @@
-package org.danceofvalkyries.app.data.repositories.flashcards.db
+package org.danceofvalkyries.app.data.persistance.notion.page.flashcard
 
 data class FlashCardDbEntity(
     val memorizedInfo: String?,

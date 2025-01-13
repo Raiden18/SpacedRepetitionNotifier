@@ -3,7 +3,7 @@ package org.danceofvalkyries.app
 import com.google.gson.Gson
 import okhttp3.OkHttpClient
 import org.danceofvalkyries.app.data.repositories.flashcards.FlashCardsRepositoryImpl
-import org.danceofvalkyries.app.data.repositories.flashcards.db.FlashCardDbTableImpl
+import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.FlashCardDbTableImpl
 import org.danceofvalkyries.app.data.repositories.telegram.db.TelegramNotificationMessageDbImpl
 import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
 import org.danceofvalkyries.app.domain.repositories.FlashCardsRepository
@@ -11,7 +11,7 @@ import org.danceofvalkyries.app.domain.usecases.*
 import org.danceofvalkyries.config.data.LocalFileConfigRepository
 import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.config.domain.ConfigRepository
-import org.danceofvalkyries.notion.impl.restapi.NotionApi
+import notion.impl.client.NotionApi
 import org.danceofvalkyries.notion.impl.restapi.NotionApiImpl
 import org.danceofvalkyries.notion.impl.database.NotionDataBaseApiImpl
 import org.danceofvalkyries.app.data.persistance.notion.database.NotionDataBaseDbTableImpl

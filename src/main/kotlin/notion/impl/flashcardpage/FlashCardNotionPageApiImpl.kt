@@ -1,6 +1,6 @@
 package org.danceofvalkyries.notion.impl.flashcardpage
 
-import org.danceofvalkyries.notion.impl.restapi.NotionApi
+import notion.impl.client.NotionApi
 import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
 import org.danceofvalkyries.notion.api.models.NotionId
 import org.danceofvalkyries.notion.impl.toDomain

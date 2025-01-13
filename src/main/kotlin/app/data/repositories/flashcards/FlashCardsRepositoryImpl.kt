@@ -1,11 +1,11 @@
 package org.danceofvalkyries.app.data.repositories.flashcards
 
-import org.danceofvalkyries.app.data.repositories.flashcards.db.FlashCardDbTable
+import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.FlashCardDbTable
 import org.danceofvalkyries.app.domain.models.FlashCard
 import org.danceofvalkyries.app.domain.models.OnlineDictionary
 import org.danceofvalkyries.app.domain.repositories.FlashCardsRepository
 import org.danceofvalkyries.config.domain.Config
-import org.danceofvalkyries.notion.impl.restapi.NotionApi
+import notion.impl.client.NotionApi
 import org.danceofvalkyries.notion.api.models.NotionId
 
 class FlashCardsRepositoryImpl(
@@ -21,8 +21,7 @@ class FlashCardsRepositoryImpl(
     }
 
     override suspend fun saveToDb(flashCards: List<FlashCard>) {
-        flashCards
-            .map { it.toEntity() }
+        flashCards.map { it.toEntity() }
             .forEach { flashCardTable.insert(it) }
     }
 

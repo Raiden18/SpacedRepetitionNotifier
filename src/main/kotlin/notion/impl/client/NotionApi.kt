@@ -1,4 +1,4 @@
-package org.danceofvalkyries.notion.impl.restapi
+package notion.impl.client
 
 import org.danceofvalkyries.notion.impl.restapi.models.response.NotionDbResponse
 import org.danceofvalkyries.notion.impl.restapi.models.NotionPageData

@@ -1,6 +1,7 @@
 package org.danceofvalkyries.notion.impl.restapi
 
 import com.google.gson.Gson
+import notion.impl.client.NotionApi
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.danceofvalkyries.json.AuthorizationBearerHeader

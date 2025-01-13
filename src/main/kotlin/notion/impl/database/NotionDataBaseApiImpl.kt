@@ -1,6 +1,6 @@
 package org.danceofvalkyries.notion.impl.database
 
-import org.danceofvalkyries.notion.impl.restapi.NotionApi
+import notion.impl.client.NotionApi
 import org.danceofvalkyries.app.data.persistance.notion.database.NotionDataBaseDbTable
 import org.danceofvalkyries.app.data.persistance.notion.database.NotionDataBaseEntity
 import org.danceofvalkyries.notion.api.models.NotionDataBase

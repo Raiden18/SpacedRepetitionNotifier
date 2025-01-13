@@ -1,4 +1,4 @@
-package org.danceofvalkyries.app.data.repositories.flashcards.db
+package org.danceofvalkyries.app.data.persistance.notion.page.flashcard
 
 import org.danceofvalkyries.utils.db.asSequence
 import org.danceofvalkyries.utils.db.tables.columns.PrimaryKey
