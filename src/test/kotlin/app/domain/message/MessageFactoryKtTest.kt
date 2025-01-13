@@ -5,11 +5,11 @@ import io.kotest.matchers.shouldBe
 import org.danceofvalkyries.app.domain.message.MessageFactory
 import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
 import org.danceofvalkyries.app.domain.models.FlashCard
-import org.danceofvalkyries.app.domain.models.Id
 import org.danceofvalkyries.app.domain.models.ImageUrl
 import org.danceofvalkyries.app.domain.models.OnlineDictionary
-import org.danceofvalkyries.notion.domain.models.*
 import org.danceofvalkyries.app.domain.models.text.Text
+import org.danceofvalkyries.notion.domain.models.NotionDataBase
+import org.danceofvalkyries.notion.domain.models.NotionId
 import org.danceofvalkyries.telegram.data.api.TelegramFriendlyTextModifier
 import org.danceofvalkyries.telegram.domain.models.Button
 import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody

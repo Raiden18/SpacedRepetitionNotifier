@@ -3,8 +3,8 @@ package org.danceofvalkyries.app.domain.usecases
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import org.danceofvalkyries.app.domain.models.Id
 import org.danceofvalkyries.app.domain.repositories.FlashCardsRepository
+import org.danceofvalkyries.notion.domain.models.NotionId
 import org.danceofvalkyries.utils.Dispatchers
 
 fun interface ReplaceFlashCardsInCacheUseCase {
@@ -12,7 +12,7 @@ fun interface ReplaceFlashCardsInCacheUseCase {
 }
 
 fun ReplaceFlashCardsInCacheUseCase(
-    ids: List<Id>,
+    ids: List<NotionId>,
     flashCardsRepository: FlashCardsRepository,
     dispatchers: Dispatchers
 ): ReplaceFlashCardsInCacheUseCase {

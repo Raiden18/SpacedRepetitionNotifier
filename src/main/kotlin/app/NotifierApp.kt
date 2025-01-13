@@ -2,18 +2,19 @@ package org.danceofvalkyries.app
 
 import com.google.gson.Gson
 import okhttp3.OkHttpClient
+import org.danceofvalkyries.app.data.repositories.flashcards.FlashCardsRepositoryImpl
+import org.danceofvalkyries.app.data.repositories.flashcards.db.FlashCardDbTableImpl
 import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
+import org.danceofvalkyries.app.domain.repositories.FlashCardsRepository
 import org.danceofvalkyries.app.domain.usecases.*
 import org.danceofvalkyries.config.data.LocalFileConfigRepository
 import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.config.domain.ConfigRepository
-import org.danceofvalkyries.app.data.repositories.flashcards.FlashCardsRepositoryImpl
-import org.danceofvalkyries.notion.data.repositories.database.NotionDataBaseRepositoryImpl
-import org.danceofvalkyries.app.data.repositories.flashcards.db.FlashCardDbTableImpl
-import org.danceofvalkyries.notion.data.repositories.database.db.NotionDataBaseDbTableImpl
-import org.danceofvalkyries.app.domain.models.Id
-import org.danceofvalkyries.app.domain.repositories.FlashCardsRepository
 import org.danceofvalkyries.notion.data.repositories.api.NotionApi
+import org.danceofvalkyries.notion.data.repositories.api.NotionApiImpl
+import org.danceofvalkyries.notion.data.repositories.database.NotionDataBaseRepositoryImpl
+import org.danceofvalkyries.notion.data.repositories.database.db.NotionDataBaseDbTableImpl
+import org.danceofvalkyries.notion.domain.models.NotionId
 import org.danceofvalkyries.notion.domain.repositories.NotionDataBaseRepository
 import org.danceofvalkyries.telegram.data.api.TelegramChatApiImpl
 import org.danceofvalkyries.telegram.data.api.TelegramFriendlyTextModifier
@@ -24,7 +25,6 @@ import org.danceofvalkyries.utils.Dispatchers
 import org.danceofvalkyries.utils.db.DataBase
 import java.sql.Connection
 import java.util.concurrent.TimeUnit
-import org.danceofvalkyries.notion.data.repositories.api.NotionApiImpl
 
 class NotifierApp(
     private val dispatchers: Dispatchers,
@@ -47,7 +47,7 @@ class NotifierApp(
         val ids = config
             .notion
             .observedDatabases
-            .map { Id(it.id) }
+            .map { NotionId(it.id) }
         ReplaceAllNotionCacheUseCase(
             ReplaceFlashCardsInCacheUseCase(
                 ids,
