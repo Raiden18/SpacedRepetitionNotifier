@@ -52,7 +52,7 @@ class TelegramNotificationMessageDbImpl(
 
     override suspend fun update(text: TelegramMessageBody, messageId: Long) {
         connection.createStatement()
-            .also { it.execute(sqlQueries.update(text.text, messageId)) }
+            .also { it.execute(sqlQueries.update(text.text.get(), messageId)) }
             .also { it.close() }
     }
 
@@ -65,8 +65,8 @@ class TelegramNotificationMessageDbImpl(
                     id = idTableColumn.getValue(it),
                     body = TelegramMessageBody(
                         text = textColumn.getValue(it)!!,
-                        buttons = emptyList(),
-                        imageUrl = null,
+                        telegramButtons = emptyList(),
+                        telegramImageUrl = null,
                         type = TelegramMessageBody.Type.valueOf(typeColumn.getValue(it)!!)
                     ),
                 )

@@ -1,14 +1,15 @@
 package org.danceofvalkyries.telegram.domain.models
 
-import org.danceofvalkyries.app.domain.models.ImageUrl
 import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody.Type
 
 data class TelegramMessageBody(
-    val text: String,
-    val nestedButtons: List<List<Button>>,
-    val imageUrl: ImageUrl?,
+    val text: TelegramText,
+    val nestedButtons: List<List<TelegramButton>>,
+    val telegramImageUrl: TelegramImageUrl?,
     val type: Type,
 ) {
+
+    // TODO: Probably must be part of app
     enum class Type {
         NOTIFICATION,
         FLASH_CARD,
@@ -17,9 +18,9 @@ data class TelegramMessageBody(
 
     companion object {
         val EMPTY = TelegramMessageBody(
-            text = "",
+            text = TelegramText.EMPTY,
             nestedButtons = emptyList(),
-            imageUrl = null,
+            telegramImageUrl = null,
             type = Type.UNKNOWN,
         )
     }
@@ -27,14 +28,14 @@ data class TelegramMessageBody(
 
 fun TelegramMessageBody(
     text: String,
-    buttons: List<Button>,
-    imageUrl: ImageUrl?,
+    telegramButtons: List<TelegramButton>,
+    telegramImageUrl: TelegramImageUrl?,
     type: Type,
 ): TelegramMessageBody {
     return TelegramMessageBody(
-        text = text,
-        nestedButtons = buttons.map { listOf(it) },
-        imageUrl = imageUrl,
+        text = TelegramText(text),
+        nestedButtons = telegramButtons.map { listOf(it) },
+        telegramImageUrl = telegramImageUrl,
         type = type,
     )
 }

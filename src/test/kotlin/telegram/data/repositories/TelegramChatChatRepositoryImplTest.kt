@@ -5,12 +5,13 @@ import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.mockk
-import org.danceofvalkyries.app.domain.models.ImageUrl
+import org.danceofvalkyries.telegram.domain.models.TelegramImageUrl
 import org.danceofvalkyries.telegram.data.api.TelegramChatApi
 import org.danceofvalkyries.telegram.data.db.TelegramNotificationMessageDb
 import org.danceofvalkyries.telegram.data.repositories.TelegramChatRepositoryImpl
 import org.danceofvalkyries.telegram.domain.models.TelegramMessage
 import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
+import org.danceofvalkyries.telegram.domain.models.TelegramText
 
 class TelegramChatChatRepositoryImplTest : FunSpec() {
 
@@ -31,9 +32,9 @@ class TelegramChatChatRepositoryImplTest : FunSpec() {
 
         test("Should send text message if there is no photo") {
             val textMessage = TelegramMessageBody(
-                text = "Text message",
+                text = TelegramText("Text message"),
                 nestedButtons = emptyList(),
-                imageUrl = null,
+                telegramImageUrl = null,
                 type = TelegramMessageBody.Type.NOTIFICATION,
             )
 
@@ -42,9 +43,9 @@ class TelegramChatChatRepositoryImplTest : FunSpec() {
 
         test("Should send photo if there is photo") {
             val textMessage = TelegramMessageBody(
-                text = "Text message",
+                text = TelegramText("Text message"),
                 nestedButtons = emptyList(),
-                imageUrl = ImageUrl("photo url"),
+                telegramImageUrl = TelegramImageUrl("photo url"),
                 type = TelegramMessageBody.Type.NOTIFICATION,
             )
 

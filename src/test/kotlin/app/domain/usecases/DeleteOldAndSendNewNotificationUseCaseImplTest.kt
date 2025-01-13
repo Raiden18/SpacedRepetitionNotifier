@@ -19,8 +19,8 @@ class DeleteOldAndSendNewNotificationUseCaseImplTest : FunSpec() {
         id = 228,
         body = TelegramMessageBody(
             text = text,
-            buttons = emptyList(),
-            imageUrl = null,
+            telegramButtons = emptyList(),
+            telegramImageUrl = null,
             type = TelegramMessageBody.Type.NOTIFICATION
         )
     )
@@ -28,8 +28,8 @@ class DeleteOldAndSendNewNotificationUseCaseImplTest : FunSpec() {
         id = 322,
         body = TelegramMessageBody(
             text = text,
-            buttons = emptyList(),
-            imageUrl = null,
+            telegramButtons = emptyList(),
+            telegramImageUrl = null,
             type = TelegramMessageBody.Type.NOTIFICATION
         )
     )

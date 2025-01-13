@@ -14,7 +14,6 @@ import org.danceofvalkyries.notion.data.repositories.database.db.NotionDataBaseD
 import org.danceofvalkyries.notion.data.repositories.page.FlashCardNotionPageRepositoryImpl
 import org.danceofvalkyries.notion.domain.models.NotionId
 import org.danceofvalkyries.telegram.data.api.TelegramChatApiImpl
-import org.danceofvalkyries.telegram.data.api.TelegramFriendlyTextModifier
 import org.danceofvalkyries.telegram.data.db.TelegramNotificationMessageDbImpl
 import org.danceofvalkyries.telegram.data.repositories.TelegramChatRepositoryImpl
 import org.danceofvalkyries.telegram.domain.TelegramChatRepository
@@ -42,9 +41,7 @@ class TestApp(
 
     override suspend fun run() {
         val telegramChatRepository = createTelegramChatRepository()
-        val messageFactory = MessageFactoryImpl(
-            TelegramFriendlyTextModifier()
-        )
+        val messageFactory = MessageFactoryImpl()
         val dbConnection = db.establishConnection()
         val notionApi = NotionApiImpl(
             gson = createGson(),

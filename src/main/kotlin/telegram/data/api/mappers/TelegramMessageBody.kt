@@ -12,8 +12,8 @@ fun TelegramMessageBody.toRequest(
 ): SendMessageRequest {
     return SendMessageRequest(
         chatId = chatId,
-        text = text.takeIf { imageUrl == null },
-        caption = text.takeIf { imageUrl != null },
+        text = text.get().takeIf { telegramImageUrl == null },
+        caption = text.get().takeIf { telegramImageUrl != null },
         parseMode = "MarkdownV2",
         replyMarkup = ReplyMarkupResponse(
             nestedButtons.map {
@@ -26,7 +26,7 @@ fun TelegramMessageBody.toRequest(
                 }
             }
         ),
-        photo = imageUrl?.url,
+        photo = telegramImageUrl?.get(),
         messageId = messageId
     )
 }

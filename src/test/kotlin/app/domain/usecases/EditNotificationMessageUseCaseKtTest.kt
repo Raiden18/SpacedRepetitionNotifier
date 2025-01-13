@@ -19,8 +19,8 @@ class EditNotificationMessageUseCaseKtTest : FunSpec() {
         id = 322,
         body = TelegramMessageBody(
             text = "old",
-            buttons = emptyList(),
-            imageUrl = null,
+            telegramButtons = emptyList(),
+            telegramImageUrl = null,
             type = TelegramMessageBody.Type.NOTIFICATION,
         )
     )
@@ -36,8 +36,8 @@ class EditNotificationMessageUseCaseKtTest : FunSpec() {
         test("Should update message") {
             val newMessageBody = TelegramMessageBody(
                 text = "Something new",
-                buttons = emptyList(),
-                imageUrl = null,
+                telegramButtons = emptyList(),
+                telegramImageUrl = null,
                 type = TelegramMessageBody.Type.NOTIFICATION,
             )
 

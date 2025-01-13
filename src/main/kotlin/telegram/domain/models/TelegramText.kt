@@ -1,12 +1,14 @@
-package org.danceofvalkyries.telegram.data.api
+package org.danceofvalkyries.telegram.domain.models
 
-import org.danceofvalkyries.app.domain.models.text.Text
+data class TelegramText(
+    private val value: String
+) {
 
+    companion object {
+        val EMPTY = TelegramText("")
+    }
 
-class TelegramFriendlyTextModifier : Text.TextModifier {
-
-    override fun modify(value: String?): String? {
-        if (value == null) return null
+    fun get(): String {
         return value.replace("!", "\\!")
             .replace("(", "\\(")
             .replace(")", "\\)")

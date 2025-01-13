@@ -40,8 +40,8 @@ class TelegramMessagesSqlQueriesTest : FunSpec() {
                     id = 12,
                     body = TelegramMessageBody(
                         text = "something",
-                        buttons = emptyList(),
-                        imageUrl = null,
+                        telegramButtons = emptyList(),
+                        telegramImageUrl = null,
                         type = TelegramMessageBody.Type.NOTIFICATION,
                     ),
                 )

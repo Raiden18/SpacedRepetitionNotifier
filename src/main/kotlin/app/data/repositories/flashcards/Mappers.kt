@@ -2,9 +2,8 @@ package org.danceofvalkyries.app.data.repositories.flashcards
 
 import org.danceofvalkyries.app.data.repositories.flashcards.db.FlashCardDbEntity
 import org.danceofvalkyries.app.domain.models.FlashCard
-import org.danceofvalkyries.app.domain.models.ImageUrl
+import org.danceofvalkyries.telegram.domain.models.TelegramImageUrl
 import org.danceofvalkyries.app.domain.models.OnlineDictionary
-import org.danceofvalkyries.app.domain.models.text.Text
 import org.danceofvalkyries.notion.data.repositories.api.models.NotionPageData
 
 fun NotionPageData.toFlashCard(): FlashCard {
@@ -15,7 +14,7 @@ fun NotionPageData.toFlashCard(): FlashCard {
         memorizedInfo = memorizedInfo,
         example = example,
         answer = answer,
-        imageUrl = cover?.external?.url?.nullIfEmptyOrBlank()?.let(::ImageUrl),
+        telegramImageUrl = cover?.external?.url?.nullIfEmptyOrBlank()?.let(::TelegramImageUrl),
         onlineDictionaries = emptyList(),
         metaInfo = FlashCard.MetaInfo(
             id = id.orEmpty(),
@@ -29,7 +28,7 @@ fun FlashCardDbEntity.toFlashCard(onlineDictionaries: List<OnlineDictionary>): F
         memorizedInfo = memorizedInfo!!,
         example = example,
         answer = answer,
-        imageUrl = imageUrl?.let(::ImageUrl),
+        telegramImageUrl = imageUrl?.let(::TelegramImageUrl),
         onlineDictionaries = onlineDictionaries,
         metaInfo = FlashCard.MetaInfo(
             id = cardId,
@@ -40,10 +39,10 @@ fun FlashCardDbEntity.toFlashCard(onlineDictionaries: List<OnlineDictionary>): F
 
 fun FlashCard.toEntity(): FlashCardDbEntity {
     return FlashCardDbEntity(
-        memorizedInfo = memorizedInfo.getValue(Text.TextModifier.AS_IS),
-        example = example?.getValue(Text.TextModifier.AS_IS),
-        answer = answer?.getValue(Text.TextModifier.AS_IS),
-        imageUrl = imageUrl?.url,
+        memorizedInfo = memorizedInfo,
+        example = example,
+        answer = answer,
+        imageUrl = telegramImageUrl?.get(),
         cardId = metaInfo.id,
         notionDbId = metaInfo.notionDbId,
     )

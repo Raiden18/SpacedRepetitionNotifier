@@ -12,7 +12,7 @@ class TelegramChatRepositoryImpl(
 ) : TelegramChatRepository {
 
     override suspend fun sendToChat(telegramMessageBody: TelegramMessageBody): TelegramMessage {
-        return if (telegramMessageBody.imageUrl == null) {
+        return if (telegramMessageBody.telegramImageUrl == null) {
             api.sendMessage(telegramMessageBody)
         } else {
             api.sendPhoto(telegramMessageBody)

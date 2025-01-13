@@ -1,22 +1,19 @@
 package org.danceofvalkyries.app.domain.message
 
 import org.danceofvalkyries.app.domain.models.FlashCard
-import org.danceofvalkyries.app.domain.models.ImageUrl.Companion.BLUE_SCREEN
-import org.danceofvalkyries.app.domain.models.text.Text
 import org.danceofvalkyries.notion.domain.models.NotionDataBase
 import org.danceofvalkyries.notion.domain.models.NotionId
-import org.danceofvalkyries.telegram.domain.models.Button
+import org.danceofvalkyries.telegram.domain.models.TelegramButton
 import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
+import org.danceofvalkyries.telegram.domain.models.TelegramText
 
-class MessageFactoryImpl(
-    private val modifier: Text.TextModifier
-) : MessageFactory {
+class MessageFactoryImpl : MessageFactory {
 
     override fun createDone(): TelegramMessageBody {
         return TelegramMessageBody(
             text = """Good Job! 😎 Everything is revised! ✅""",
-            buttons = emptyList(),
-            imageUrl = null,
+            telegramButtons = emptyList(),
+            telegramImageUrl = null,
             type = TelegramMessageBody.Type.NOTIFICATION,
         )
     }
@@ -25,20 +22,20 @@ class MessageFactoryImpl(
         flashCards: List<FlashCard>,
         notionDataBases: List<NotionDataBase>,
     ): TelegramMessageBody {
-        val buttons = flashCards
+        val telegramButtons = flashCards
             .groupBy { it.metaInfo.notionDbId }
             .map { (dbId, flashCards) ->
                 val db = notionDataBases.first { it.id.get(NotionId.Modifier.URL_FRIENDLY) == dbId }
-                Button(
+                TelegramButton(
                     text = "${db.name}: ${flashCards.count()}",
-                    url = "https://www.notion.so/databases/${db.id.get(NotionId.Modifier.URL_FRIENDLY) }"
+                    url = "https://www.notion.so/databases/${db.id.get(NotionId.Modifier.URL_FRIENDLY)}"
                 )
             }
 
         return TelegramMessageBody(
             text = """You have ${flashCards.count()} flashcards to revise 🧠""".trimIndent(),
-            buttons = buttons,
-            imageUrl = null,
+            telegramButtons = telegramButtons,
+            telegramImageUrl = null,
             type = TelegramMessageBody.Type.NOTIFICATION,
         )
     }
@@ -46,15 +43,9 @@ class MessageFactoryImpl(
     override fun createFlashCardMessage(
         flashCard: FlashCard,
     ): TelegramMessageBody {
-        val memorizedInfo = flashCard
-            .memorizedInfo
-            .getValue(modifier)
-        val example = flashCard
-            .example
-            ?.getValue(modifier)
-        val answer = flashCard
-            .answer
-            ?.getValue(modifier)
+        val memorizedInfo = flashCard.memorizedInfo
+        val example = flashCard.example
+        val answer = flashCard.answer
 
         val body = StringBuilder()
             .appendLine("*${memorizedInfo}*")
@@ -69,28 +60,24 @@ class MessageFactoryImpl(
         body.appendLine()
             .append("Choose:")
 
-        val imageUrl = if (flashCard.imageUrl?.isSupportedByTelegram == false) {
-            BLUE_SCREEN
-        } else {
-            flashCard.imageUrl
-        }
+        val imageUrl = flashCard.telegramImageUrl
 
-        val recallActions = listOf(Button("Forgot  ❌", ""), Button("Recalled  ✅", ""))
-        val dictionaryButtons = flashCard.onlineDictionaries
+        val recallActions = listOf(TelegramButton("Forgot  ❌", ""), TelegramButton("Recalled  ✅", ""))
+        val dictionaryTelegramButtons = flashCard.onlineDictionaries
             .map {
-                Button(
+                TelegramButton(
                     text = "Look it up",
                     url = it.getWordUrl(memorizedInfo)
                 )
             }
 
         return TelegramMessageBody(
-            text = body.toString(),
+            text = TelegramText(body.toString()),
             nestedButtons = listOf(
                 recallActions,
-                dictionaryButtons
+                dictionaryTelegramButtons
             ),
-            imageUrl = imageUrl,
+            telegramImageUrl = imageUrl,
             type = TelegramMessageBody.Type.FLASH_CARD,
         )
     }
