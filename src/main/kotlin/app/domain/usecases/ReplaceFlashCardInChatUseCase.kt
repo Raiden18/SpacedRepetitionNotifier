@@ -6,6 +6,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.danceofvalkyries.app.domain.message.MessageFactory
 import org.danceofvalkyries.app.domain.models.FlashCard
+import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
 import org.danceofvalkyries.telegram.api.DeleteMessageFromTelegramChat
 import org.danceofvalkyries.telegram.api.SendMessageToTelegramChat
 import org.danceofvalkyries.telegram.impl.TelegramChatApi
@@ -13,7 +14,7 @@ import org.danceofvalkyries.telegram.api.models.TelegramMessageBody
 import org.danceofvalkyries.utils.Dispatchers
 
 fun interface ReplaceFlashCardInChatUseCase {
-    suspend fun execute(flashCard: FlashCard)
+    suspend fun execute(flashCard: FlashCardNotionPage)
 }
 
 fun ReplaceFlashCardInChatUseCase(

@@ -6,6 +6,7 @@ import org.danceofvalkyries.app.domain.message.MessageFactory
 import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
 import org.danceofvalkyries.app.domain.models.FlashCard
 import org.danceofvalkyries.app.domain.models.OnlineDictionary
+import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
 import org.danceofvalkyries.notion.api.models.NotionDataBase
 import org.danceofvalkyries.notion.api.models.NotionId
 import org.danceofvalkyries.telegram.api.models.TelegramButton
@@ -34,14 +35,14 @@ class MessageFactoryKtTest : FunSpec() {
 
         test("Should create FlashCard message only with info") {
             val imageUrl = "https://www.shutterstock.com/image-vector/cute-baby-regurgitating-after-eating-260nw-2016458315.jpg"
-            val flashCard = FlashCard.EMPTY.copy(
-                memorizedInfo = "Expect",
+            val flashCard = FlashCardNotionPage.EMPTY.copy(
+                name = "Expect",
                 example = null,
-                answer = null,
-                telegramImageUrl = imageUrl,
-                onlineDictionaries = listOf(
-                    OnlineDictionary("https://dictionary.cambridge.org/dictionary/english/")
-                ),
+                explanation = null,
+                coverUrl = imageUrl,
+                /* onlineDictionaries = listOf(
+                     OnlineDictionary("https://dictionary.cambridge.org/dictionary/english/")
+                 ),*/
             )
 
             messageFactory.createFlashCardMessage(flashCard) shouldBe TelegramMessageBody(
@@ -52,19 +53,19 @@ class MessageFactoryKtTest : FunSpec() {
                     Choose:
                 """.trimIndent()
                 ),
-                nestedButtons = buttonsWithDictionary("Expect"),
+                nestedButtons = buttonsWithoutDictionary(),
                 imageUrl = TelegramImageUrl(imageUrl),
                 type = TelegramMessageBody.Type.FLASH_CARD,
             )
         }
 
         test("Should create flashcard without dictionary button") {
-            val flashCard = FlashCard.EMPTY.copy(
-                memorizedInfo = "Expect",
+            val flashCard = FlashCardNotionPage.EMPTY.copy(
+                name = "Expect",
                 example = null,
-                answer = null,
-                telegramImageUrl = "url",
-                onlineDictionaries = emptyList(),
+                explanation = null,
+                coverUrl = "url",
+                //onlineDictionaries = emptyList(),
             )
             messageFactory
                 .createFlashCardMessage(flashCard)
@@ -72,14 +73,14 @@ class MessageFactoryKtTest : FunSpec() {
         }
 
         test("Should create Full FlashCard message") {
-            val flashCard = FlashCard.EMPTY.copy(
-                memorizedInfo = "Expect",
+            val flashCard = FlashCardNotionPage.EMPTY.copy(
+                name = "Expect",
                 example = "I expected you to come",
-                answer = "to wait to happen in the future",
-                telegramImageUrl = "url",
-                onlineDictionaries = listOf(
+                explanation = "to wait to happen in the future",
+                coverUrl = "url",
+                /*onlineDictionaries = listOf(
                     OnlineDictionary("https://dictionary.cambridge.org/dictionary/english/")
-                )
+                )*/
             )
             messageFactory.createFlashCardMessage(flashCard) shouldBe TelegramMessageBody(
                 text = TelegramText(
@@ -92,15 +93,13 @@ class MessageFactoryKtTest : FunSpec() {
                     
                     Choose:""".trimIndent()
                 ),
-                nestedButtons = buttonsWithDictionary("Expect"),
+                nestedButtons = buttonsWithoutDictionary(),
                 imageUrl = TelegramImageUrl("url"),
                 type = TelegramMessageBody.Type.FLASH_CARD,
             )
         }
 
         test("Should build revising needed message") {
-            val emptyFLashCard = FlashCard.EMPTY
-
             val englishVocabularyDb = NotionDataBase.EMPTY.copy(
                 id = NotionId("1"),
                 name = "English vocabulary"
@@ -117,27 +116,22 @@ class MessageFactoryKtTest : FunSpec() {
             )
 
             val flashCards = listOf(
-                emptyFLashCard.copy(
-                    metaInfo = FlashCard.MetaInfo(
-                        notionDbId = englishVocabularyDb.id.get(NotionId.Modifier.AS_IS),
-                        id = ""
-                    )
-                ),
-                emptyFLashCard.copy(
-                    metaInfo = FlashCard.MetaInfo(
-                        notionDbId = greekVocabularyDb.id.get(NotionId.Modifier.AS_IS),
-                        id = ""
-                    )
-                ),
-                emptyFLashCard.copy(
-                    metaInfo = FlashCard.MetaInfo(
-                        notionDbId = englishGrammarDb.id.get(NotionId.Modifier.AS_IS),
-                        id = ""
-                    )
-                )
+                englishVocabularyDb,
+                greekVocabularyDb,
+                englishGrammarDb
             )
             messageFactory.createNotification(
-                flashCards = flashCards,
+                flashCards = listOf(
+                    FlashCardNotionPage.EMPTY.copy(
+                        notionDbID = englishVocabularyDb.id
+                    ),
+                    FlashCardNotionPage.EMPTY.copy(
+                        notionDbID = greekVocabularyDb.id
+                    ),
+                    FlashCardNotionPage.EMPTY.copy(
+                        notionDbID = englishGrammarDb.id
+                    )
+                ),
                 notionDataBases = listOf(
                     englishVocabularyDb,
                     greekVocabularyDb,
@@ -172,12 +166,12 @@ class MessageFactoryKtTest : FunSpec() {
         }
     }
 
-    private fun buttonsWithDictionary(memorizedInfo: String) = listOf(
+    private fun buttonsWithDictionary(name: String) = listOf(
         resultButtons(),
         listOf(
             TelegramButton(
                 text = "Look it up",
-                url = "https://dictionary.cambridge.org/dictionary/english/${memorizedInfo}"
+                url = "https://dictionary.cambridge.org/dictionary/english/${name}"
             ),
         )
     )

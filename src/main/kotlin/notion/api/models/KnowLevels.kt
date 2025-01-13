@@ -4,6 +4,10 @@ data class KnowLevels(
     val levels: Map<Int, Boolean>,
 ) {
 
+    companion object{
+        val EMPTY = KnowLevels(emptyMap())
+    }
+
     fun disableAll(): KnowLevels {
         return copy(levels.mapValues { false })
     }

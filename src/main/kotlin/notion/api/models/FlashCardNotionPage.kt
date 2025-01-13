@@ -10,6 +10,18 @@ data class FlashCardNotionPage(
     val knowLevels: KnowLevels,
 ) {
 
+    companion object {
+        val EMPTY = FlashCardNotionPage(
+            id = NotionId.EMPTY,
+            coverUrl = "",
+            notionDbID = NotionId.EMPTY,
+            name = "",
+            example = "",
+            explanation = "",
+            knowLevels = KnowLevels.EMPTY,
+        )
+    }
+
     fun forgot(): FlashCardNotionPage {
         return copy(knowLevels = knowLevels.disableAll())
     }

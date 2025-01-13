@@ -16,6 +16,7 @@ import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.notion.impl.restapi.NotionApiImpl
 import org.danceofvalkyries.notion.impl.database.NotionDataBaseApiImpl
 import org.danceofvalkyries.app.data.persistance.notion.database.dao.NotionDataBaseDaoImpl
+import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.NotionPageFlashCardDataBaseTableImpl
 import org.danceofvalkyries.notion.impl.flashcardpage.FlashCardNotionPageApiImpl
 import org.danceofvalkyries.notion.api.models.NotionId
 import org.danceofvalkyries.telegram.impl.restapi.TelegramChatRestApiImpl
@@ -58,7 +59,6 @@ class TestApp(
         )
         val flashCardsTablesDbTable = NotionDataBaseDaoImpl(dbConnection)
         val notionDatabaseDataBaseTable = NotionDatabaseDataBaseTableImpl(flashCardsTablesDbTable)
-        val notionDbsRepository = NotionDataBaseApiImpl(notionApi)
 
         val flashCardsRepository = FlashCardsRepositoryImpl(
             NotionPageFlashCardDaoImpl(dbConnection),
@@ -74,19 +74,7 @@ class TestApp(
             .forEach {
                 val repo = FlashCardNotionPageApiImpl(notionApi)
                 repo.getAllFromDb(it.id)
-                    .map {
-                        FlashCard(
-                            memorizedInfo = it.name,
-                            example = it.example,
-                            answer = it.explanation,
-                            onlineDictionaries = emptyList(),
-                            telegramImageUrl = null,
-                            metaInfo = FlashCard.MetaInfo(
-                                id = it.id.get(NotionId.Modifier.URL_FRIENDLY),
-                                notionDbId = it.notionDbID.get(NotionId.Modifier.URL_FRIENDLY)
-                            )
-                        )
-                    }.map { messageFactory.createFlashCardMessage(it) }
+                    .map { messageFactory.createFlashCardMessage(it) }
                     .forEach {
                         telegramChatRepository.sendTextMessage(it)
                     }
@@ -108,7 +96,7 @@ class TestApp(
 
         GetAllFlashCardsUseCase(
             NotionDatabaseDataBaseTableImpl(flashCardsTablesDbTable),
-            flashCardsRepository
+            NotionPageFlashCardDataBaseTableImpl(NotionPageFlashCardDaoImpl(dbConnection))
         ).execute()
             .forEach {
                 ReplaceFlashCardInChatUseCase(

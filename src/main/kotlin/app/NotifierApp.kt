@@ -5,6 +5,8 @@ import notion.impl.client.NotionApi
 import okhttp3.OkHttpClient
 import org.danceofvalkyries.app.data.persistance.notion.database.NotionDatabaseDataBaseTableImpl
 import org.danceofvalkyries.app.data.persistance.notion.database.dao.NotionDataBaseDaoImpl
+import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.NotionPageFlashCardDataBaseTable
+import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.NotionPageFlashCardDataBaseTableImpl
 import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.dao.NotionPageFlashCardDaoImpl
 import org.danceofvalkyries.app.data.persistance.telegram.messages.dao.TelegramMessageDaoImpl
 import org.danceofvalkyries.app.data.repositories.flashcards.FlashCardsRepositoryImpl
@@ -44,6 +46,9 @@ class NotifierApp(
         val notionDatabaseDataBaseTable = NotionDatabaseDataBaseTableImpl(notionDataBaseDao)
         val notionDbsRepository = NotionDbRepository()
         val flashCardsRepository = FlashCardsRepository(dbConnection)
+        val notionPageFlashCardDataBaseTable = NotionPageFlashCardDataBaseTableImpl(
+            NotionPageFlashCardDaoImpl(dbConnection)
+        )
         val ids = config
             .notion
             .observedDatabases
@@ -65,7 +70,7 @@ class NotifierApp(
         AnalyzeFlashCardsAndSendNotificationUseCase(
             GetAllFlashCardsUseCase(
                 notionDatabaseDataBaseTable,
-                flashCardsRepository,
+                notionPageFlashCardDataBaseTable,
             ),
             GetAllNotionDatabasesUseCase(notionDatabaseDataBaseTable),
             EditNotificationMessageUseCase(

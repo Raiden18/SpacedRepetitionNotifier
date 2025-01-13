@@ -1,6 +1,6 @@
 package org.danceofvalkyries.app.domain.message
 
-import org.danceofvalkyries.app.domain.models.FlashCard
+import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
 import org.danceofvalkyries.notion.api.models.NotionDataBase
 import org.danceofvalkyries.notion.api.models.NotionId
 import org.danceofvalkyries.telegram.api.models.TelegramButton
@@ -20,13 +20,13 @@ class MessageFactoryImpl : MessageFactory {
     }
 
     override fun createNotification(
-        flashCards: List<FlashCard>,
+        flashCards: List<FlashCardNotionPage>,
         notionDataBases: List<NotionDataBase>,
     ): TelegramMessageBody {
         val telegramButtons = flashCards
-            .groupBy { it.metaInfo.notionDbId }
+            .groupBy { it.notionDbID }
             .map { (dbId, flashCards) ->
-                val db = notionDataBases.first { it.id.get(NotionId.Modifier.URL_FRIENDLY) == dbId }
+                val db = notionDataBases.first { it.id == dbId }
                 TelegramButton(
                     text = "${db.name}: ${flashCards.count()}",
                     url = "https://www.notion.so/databases/${db.id.get(NotionId.Modifier.URL_FRIENDLY)}"
@@ -42,11 +42,11 @@ class MessageFactoryImpl : MessageFactory {
     }
 
     override fun createFlashCardMessage(
-        flashCard: FlashCard,
+        flashCard: FlashCardNotionPage,
     ): TelegramMessageBody {
-        val memorizedInfo = flashCard.memorizedInfo
+        val memorizedInfo = flashCard.name
         val example = flashCard.example
-        val answer = flashCard.answer
+        val answer = flashCard.explanation
 
         val body = StringBuilder()
             .appendLine("*${memorizedInfo}*")
@@ -61,24 +61,23 @@ class MessageFactoryImpl : MessageFactory {
         body.appendLine()
             .append("Choose:")
 
-        val imageUrl = flashCard.telegramImageUrl
-
         val recallActions = listOf(TelegramButton("Forgot  ❌", ""), TelegramButton("Recalled  ✅", ""))
-        val dictionaryTelegramButtons = flashCard.onlineDictionaries
+        // Add online dictionaries
+        /*val dictionaryTelegramButtons = flashCard.onlineDictionaries
             .map {
                 TelegramButton(
                     text = "Look it up",
                     url = it.getWordUrl(memorizedInfo)
                 )
-            }
+            }*/
 
         return TelegramMessageBody(
             text = TelegramText(body.toString()),
             nestedButtons = listOf(
                 recallActions,
-                dictionaryTelegramButtons
+                emptyList()
             ),
-            imageUrl = imageUrl?.let(::TelegramImageUrl),
+            imageUrl = flashCard.coverUrl?.let(::TelegramImageUrl),
             type = TelegramMessageBody.Type.FLASH_CARD,
         )
     }

@@ -7,6 +7,8 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import org.danceofvalkyries.app.domain.models.FlashCard
 import org.danceofvalkyries.app.domain.usecases.ReplaceFlashCardInChatUseCase
+import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
+import org.danceofvalkyries.notion.api.models.NotionId
 import org.danceofvalkyries.telegram.api.DeleteMessageFromTelegramChat
 import org.danceofvalkyries.telegram.api.SendMessageToTelegramChat
 import org.danceofvalkyries.telegram.impl.TelegramChatApi
@@ -43,18 +45,14 @@ class ReplaceFlashCardInChatUseCaseTest : FunSpec() {
         )
     )
 
-    private val flashCard = FlashCard.EMPTY.copy(
-        metaInfo = FlashCard.MetaInfo(
-            id = "123",
-            notionDbId = "228"
-        )
+    private val flashCard = FlashCardNotionPage.EMPTY.copy(
+        id = NotionId("123"),
+        notionDbID = NotionId("228")
     )
 
-    private val anotherFlashCard = FlashCard.EMPTY.copy(
-        metaInfo = FlashCard.MetaInfo(
-            id = "333",
-            notionDbId = "228"
-        )
+    private val anotherFlashCard =FlashCardNotionPage.EMPTY.copy(
+        id = NotionId("333"),
+        notionDbID = NotionId("228")
     )
 
     private lateinit var replaceFlashCardInChatUseCase: ReplaceFlashCardInChatUseCase
