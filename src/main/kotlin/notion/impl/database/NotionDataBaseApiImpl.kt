@@ -9,7 +9,7 @@ class NotionDataBaseApiImpl(
 ) : NotionDataBaseApi {
 
     override suspend fun getFromNotion(id: NotionId): NotionDataBase {
-        val response = notionApi.getNotionDb(id.get(NotionId.Modifier.URL_FRIENDLY))
+        val response = notionApi.getNotionDb(id.get())
         return NotionDataBase(
             id = NotionId(response.id),
             name = response.name,

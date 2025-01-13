@@ -7,9 +7,9 @@ import org.danceofvalkyries.notion.api.models.NotionId
 class NotionIdTest : FunSpec() {
 
     init {
-        test("Should return value without scope") {
+        test("Should return value without scopes") {
             NotionId("1-2-3-4-5")
-                .get(NotionId.Modifier.URL_FRIENDLY) shouldBe "12345"
+                .get() shouldBe "12345"
         }
     }
 }

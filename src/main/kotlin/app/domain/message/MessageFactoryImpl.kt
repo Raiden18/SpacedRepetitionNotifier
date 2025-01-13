@@ -29,7 +29,7 @@ class MessageFactoryImpl : MessageFactory {
                 val db = notionDataBases.first { it.id == dbId }
                 TelegramButton(
                     text = "${db.name}: ${flashCards.count()}",
-                    url = "https://www.notion.so/databases/${db.id.get(NotionId.Modifier.URL_FRIENDLY)}"
+                    url = "https://www.notion.so/databases/${db.id.get()}"
                 )
             }
 

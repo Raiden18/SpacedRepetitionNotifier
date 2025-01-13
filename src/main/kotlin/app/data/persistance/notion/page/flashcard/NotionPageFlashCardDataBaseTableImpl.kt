@@ -16,8 +16,8 @@ class NotionPageFlashCardDataBaseTableImpl(
             example = flashCardPage.example,
             explanation = flashCardPage.explanation,
             imageUrl = flashCardPage.coverUrl,
-            id = flashCardPage.id.get(NotionId.Modifier.AS_IS),
-            notionDbId = flashCardPage.notionDbID.get(NotionId.Modifier.AS_IS)
+            id = flashCardPage.id.get(),
+            notionDbId = flashCardPage.notionDbID.get()
         )
         notionPageFlashCardDao.insert(entity)
     }
@@ -28,7 +28,7 @@ class NotionPageFlashCardDataBaseTableImpl(
 
     override suspend fun getAllFor(notionDataBaseId: NotionId): List<FlashCardNotionPage> {
         return notionPageFlashCardDao.getAllFor(
-            notionDataBaseId.get(NotionId.Modifier.AS_IS)
+            notionDataBaseId.get()
         ).map {
             FlashCardNotionPage(
                 id = NotionId(it.id),
@@ -43,7 +43,7 @@ class NotionPageFlashCardDataBaseTableImpl(
     }
 
     override suspend fun delete(flashCardPage: FlashCardNotionPage) {
-        notionPageFlashCardDao.delete(flashCardPage.id.get(NotionId.Modifier.AS_IS))
+        notionPageFlashCardDao.delete(flashCardPage.id.get())
     }
 
     override suspend fun clear() {

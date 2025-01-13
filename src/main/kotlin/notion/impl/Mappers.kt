@@ -1,10 +1,10 @@
 package org.danceofvalkyries.notion.impl
 
-import org.danceofvalkyries.notion.impl.restapi.models.NotionPageData
-import org.danceofvalkyries.notion.impl.restapi.models.PropertyData
 import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
 import org.danceofvalkyries.notion.api.models.KnowLevels
 import org.danceofvalkyries.notion.api.models.NotionId
+import org.danceofvalkyries.notion.impl.restapi.models.NotionPageData
+import org.danceofvalkyries.notion.impl.restapi.models.PropertyData
 
 fun NotionPageData.toDomain(): FlashCardNotionPage {
     return FlashCardNotionPage(
@@ -24,7 +24,7 @@ fun NotionPageData.toDomain(): FlashCardNotionPage {
 
 fun FlashCardNotionPage.toUpdateKnowLevels(): NotionPageData {
     return NotionPageData(
-        id = id.get(NotionId.Modifier.AS_IS),
+        id = id.get(),
         properties = knowLevels.levels
             .mapKeys { "Know Level ${it.key}" }
             .mapValues { PropertyData(checkbox = it.value) }

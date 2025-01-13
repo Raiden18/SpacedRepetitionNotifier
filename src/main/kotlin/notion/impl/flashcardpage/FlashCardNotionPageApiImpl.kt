@@ -11,7 +11,7 @@ class FlashCardNotionPageApiImpl(
 ) : FlashCardNotionPageApi {
 
     override suspend fun getFromNotion(notionId: NotionId): FlashCardNotionPage {
-        val response = notionApi.getNotionPage(notionId.get(NotionId.Modifier.URL_FRIENDLY))
+        val response = notionApi.getNotionPage(notionId.get())
         return response.toDomain()
     }
 
@@ -21,7 +21,7 @@ class FlashCardNotionPageApiImpl(
     }
 
     override suspend fun getAllFromDb(notionId: NotionId): List<FlashCardNotionPage> {
-        return notionApi.getContentFor(notionId.get(NotionId.Modifier.URL_FRIENDLY))
+        return notionApi.getContentFor(notionId.get())
             .map { it.toDomain() }
     }
 }

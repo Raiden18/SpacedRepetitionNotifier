@@ -12,7 +12,7 @@ class NotionDatabaseDataBaseTableImpl(
     override suspend fun insert(notionDataBases: List<NotionDataBase>) {
         notionDataBases.map {
             NotionDataBaseEntity(
-                id = it.id.get(NotionId.Modifier.AS_IS),
+                id = it.id.get(),
                 name = it.name
             )
         }.forEach { notionDataBaseDao.insert(it) }
