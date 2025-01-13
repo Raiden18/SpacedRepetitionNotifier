@@ -1,4 +1,4 @@
-package org.danceofvalkyries.telegram.impl.restapi
+package org.danceofvalkyries.telegram.impl.client
 
 import okhttp3.HttpUrl
 

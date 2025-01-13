@@ -2,6 +2,8 @@ package app.domain.usecases
 
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.*
+import org.danceofvalkyries.app.data.persistance.notion.database.NotionDatabaseDataBaseTable
+import org.danceofvalkyries.app.data.persistance.notion.database.NotionDatabaseDataBaseTableImpl
 import org.danceofvalkyries.app.domain.message.MessageFactory
 import org.danceofvalkyries.app.domain.usecases.*
 import org.danceofvalkyries.telegram.api.models.TelegramMessageBody
@@ -11,7 +13,7 @@ class AnalyzeFlashCardsAndSendNotificationUseCaseKtTest : FunSpec() {
     private val editNotificationMessageUseCase: EditNotificationMessageUseCase = mockk(relaxed = true)
     private val deleteOldAndSendNewNotificationUseCase: DeleteOldAndSendNewNotificationUseCase = mockk(relaxed = true)
     private val getAllFlashCardsUseCase: GetAllFlashCardsUseCase = mockk(relaxed = true)
-    private val getAllNotionDatabasesUseCase: GetAllNotionDatabasesUseCase = mockk(relaxed = true)
+    private val notionDatabaseDataBaseTable: NotionDatabaseDataBaseTable = mockk(relaxed = true)
 
     private val notificationMessage: TelegramMessageBody = mockk(relaxed = true)
     private val doneMessage: TelegramMessageBody = mockk(relaxed = true)
@@ -27,7 +29,7 @@ class AnalyzeFlashCardsAndSendNotificationUseCaseKtTest : FunSpec() {
             every { messageFactory.createDone() } returns doneMessage
             analyzeFlashCardsAndSendNotificationUseCase = AnalyzeFlashCardsAndSendNotificationUseCase(
                 getAllFlashCardsUseCase,
-                getAllNotionDatabasesUseCase,
+                notionDatabaseDataBaseTable,
                 editNotificationMessageUseCase,
                 deleteOldAndSendNewNotificationUseCase,
                 messageFactory,

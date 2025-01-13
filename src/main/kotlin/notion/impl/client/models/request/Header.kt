@@ -1,6 +1,6 @@
-package org.danceofvalkyries.notion.impl.restapi.models.request
+package notion.impl.client.models.request
 
-import org.danceofvalkyries.json.Header
+import org.danceofvalkyries.utils.rest.Header
 
 fun NotionApiVersionHeader(version: String): Header {
     return Header(

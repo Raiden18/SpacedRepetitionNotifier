@@ -2,7 +2,7 @@ package telegram.impl.client
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.telegram.impl.restapi.TelegramChatUrls
+import org.danceofvalkyries.telegram.impl.client.TelegramChatUrls
 
 class TelegramUrlsTest : FunSpec() {
     private val apiKey = "228"

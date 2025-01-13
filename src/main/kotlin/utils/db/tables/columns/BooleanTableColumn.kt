@@ -2,7 +2,7 @@ package org.danceofvalkyries.utils.db.tables.columns
 
 import java.sql.ResultSet
 
-class BooleanTableColumn(
+class BoolenTableColumn(
     override val name: String,
     override val primaryKey: PrimaryKey,
 ) : TableColumn {

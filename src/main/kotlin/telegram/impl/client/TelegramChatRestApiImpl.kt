@@ -1,12 +1,12 @@
-package org.danceofvalkyries.telegram.impl.restapi
+package org.danceofvalkyries.telegram.impl.client
 
 import com.google.gson.Gson
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import org.danceofvalkyries.telegram.impl.restapi.response.TelegramMessageResponse
-import org.danceofvalkyries.telegram.impl.restapi.response.TelegramMessageRootResponse
-import org.danceofvalkyries.telegram.impl.restapi.request.bodies.SendMessageRequest
+import org.danceofvalkyries.telegram.impl.client.response.TelegramMessageResponse
+import org.danceofvalkyries.telegram.impl.client.response.TelegramMessageRootResponse
+import org.danceofvalkyries.telegram.impl.client.request.bodies.SendMessageRequest
 import org.danceofvalkyries.utils.rest.parse
 import org.danceofvalkyries.utils.rest.post
 import org.danceofvalkyries.utils.rest.request

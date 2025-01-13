@@ -1,4 +1,4 @@
-package org.danceofvalkyries.telegram.impl.restapi.request.bodies
+package org.danceofvalkyries.telegram.impl.client.request.bodies
 
 import com.google.gson.annotations.SerializedName
 

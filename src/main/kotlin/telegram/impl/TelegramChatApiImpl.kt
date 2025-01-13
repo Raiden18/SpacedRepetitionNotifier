@@ -2,7 +2,7 @@ package org.danceofvalkyries.telegram.impl
 
 import org.danceofvalkyries.telegram.api.models.TelegramMessage
 import org.danceofvalkyries.telegram.api.models.TelegramMessageBody
-import org.danceofvalkyries.telegram.impl.restapi.TelegramChatRestApi
+import org.danceofvalkyries.telegram.impl.client.TelegramChatRestApi
 
 class TelegramChatApiImpl(
     private val api: TelegramChatRestApi,

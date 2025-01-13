@@ -1,9 +1,9 @@
-package org.danceofvalkyries.notion.impl.restapi.models
+package notion.impl.client.models
 
 import com.google.gson.annotations.SerializedName
-import org.danceofvalkyries.notion.impl.restapi.models.response.CoverResponse
-import org.danceofvalkyries.notion.impl.restapi.models.response.ParentResponse
-import org.danceofvalkyries.notion.impl.restapi.models.response.UserResponse
+import notion.impl.client.models.response.CoverResponse
+import notion.impl.client.models.response.ParentResponse
+import notion.impl.client.models.response.UserResponse
 
 data class NotionPageData(
     @SerializedName("object") val objectType: String? = null,

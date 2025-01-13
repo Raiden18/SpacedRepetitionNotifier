@@ -2,14 +2,14 @@ package notion.impl
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.notion.impl.restapi.models.NotionPageData
-import org.danceofvalkyries.notion.impl.restapi.models.PropertyData
-import org.danceofvalkyries.notion.impl.restapi.models.response.CoverBody
-import org.danceofvalkyries.notion.impl.restapi.models.response.CoverResponse
-import org.danceofvalkyries.notion.impl.restapi.models.response.ParentResponse
-import org.danceofvalkyries.notion.impl.restapi.models.response.properties.RichTextResponse
-import org.danceofvalkyries.notion.impl.restapi.models.response.properties.TextContentResponse
-import org.danceofvalkyries.notion.impl.restapi.models.response.properties.TextResponse
+import notion.impl.client.models.NotionPageData
+import notion.impl.client.models.PropertyData
+import notion.impl.client.models.response.CoverBody
+import notion.impl.client.models.response.CoverResponse
+import notion.impl.client.models.response.ParentResponse
+import notion.impl.client.models.response.properties.RichTextResponse
+import notion.impl.client.models.response.properties.TextContentResponse
+import notion.impl.client.models.response.properties.TextResponse
 import org.danceofvalkyries.notion.impl.toDomain
 import org.danceofvalkyries.notion.impl.toUpdateKnowLevels
 import org.danceofvalkyries.notion.api.models.FlashCardNotionPage

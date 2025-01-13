@@ -3,8 +3,8 @@ package org.danceofvalkyries.notion.impl
 import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
 import org.danceofvalkyries.notion.api.models.KnowLevels
 import org.danceofvalkyries.notion.api.models.NotionId
-import org.danceofvalkyries.notion.impl.restapi.models.NotionPageData
-import org.danceofvalkyries.notion.impl.restapi.models.PropertyData
+import notion.impl.client.models.NotionPageData
+import notion.impl.client.models.PropertyData
 
 fun NotionPageData.toDomain(): FlashCardNotionPage {
     return FlashCardNotionPage(

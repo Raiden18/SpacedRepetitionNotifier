@@ -4,7 +4,6 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.dao.NotionPageFlashCardDbEntity
 import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.dao.NotionPageFlashCardSqlQueries
-import org.danceofvalkyries.utils.db.tables.columns.BooleanTableColumn
 import org.danceofvalkyries.utils.db.tables.columns.PrimaryKey
 import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
 

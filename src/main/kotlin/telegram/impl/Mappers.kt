@@ -1,8 +1,8 @@
 package org.danceofvalkyries.telegram.impl
 
-import org.danceofvalkyries.telegram.impl.restapi.request.bodies.ButtonRequest
-import org.danceofvalkyries.telegram.impl.restapi.request.bodies.ReplyMarkupResponse
-import org.danceofvalkyries.telegram.impl.restapi.request.bodies.SendMessageRequest
+import org.danceofvalkyries.telegram.impl.client.request.bodies.ButtonRequest
+import org.danceofvalkyries.telegram.impl.client.request.bodies.ReplyMarkupResponse
+import org.danceofvalkyries.telegram.impl.client.request.bodies.SendMessageRequest
 import org.danceofvalkyries.telegram.api.models.TelegramMessageBody
 
 // TODO: Add Unit tests when I've figured out what to do with callbackData

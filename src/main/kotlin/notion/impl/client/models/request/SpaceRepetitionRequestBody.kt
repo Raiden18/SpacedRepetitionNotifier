@@ -1,4 +1,4 @@
-package org.danceofvalkyries.notion.impl.restapi.models.request
+package notion.impl.client.models.request
 
 import com.google.gson.Gson
 import org.danceofvalkyries.utils.rest.JsonObject

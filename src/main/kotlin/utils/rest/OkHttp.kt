@@ -7,9 +7,6 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
-import org.danceofvalkyries.json.ContentType
-import org.danceofvalkyries.json.ContentTypes
-import org.danceofvalkyries.json.Header
 
 inline fun <reified T> Response.parse(gson: Gson): T {
     return gson.fromJson(body?.string().orEmpty(), T::class.java)

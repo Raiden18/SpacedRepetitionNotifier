@@ -1,7 +1,7 @@
-package org.danceofvalkyries.telegram.impl.restapi
+package org.danceofvalkyries.telegram.impl.client
 
-import org.danceofvalkyries.telegram.impl.restapi.request.bodies.SendMessageRequest
-import org.danceofvalkyries.telegram.impl.restapi.response.TelegramMessageResponse
+import org.danceofvalkyries.telegram.impl.client.request.bodies.SendMessageRequest
+import org.danceofvalkyries.telegram.impl.client.response.TelegramMessageResponse
 
 interface TelegramChatRestApi {
     suspend fun sendMessage(textBody: SendMessageRequest): TelegramMessageResponse

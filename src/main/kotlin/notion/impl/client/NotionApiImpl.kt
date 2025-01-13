@@ -4,13 +4,13 @@ import com.google.gson.Gson
 import notion.impl.client.NotionApi
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import org.danceofvalkyries.json.AuthorizationBearerHeader
-import org.danceofvalkyries.json.ContentType
-import org.danceofvalkyries.json.ContentTypes
-import org.danceofvalkyries.notion.impl.restapi.models.NotionPageData
-import org.danceofvalkyries.notion.impl.restapi.models.request.NotionApiVersionHeader
-import org.danceofvalkyries.notion.impl.restapi.models.request.SpacedRepetitionRequestBody
-import org.danceofvalkyries.notion.impl.restapi.models.response.NotionDbResponse
+import org.danceofvalkyries.utils.rest.AuthorizationBearerHeader
+import org.danceofvalkyries.utils.rest.ContentType
+import org.danceofvalkyries.utils.rest.ContentTypes
+import notion.impl.client.models.NotionPageData
+import notion.impl.client.models.request.NotionApiVersionHeader
+import notion.impl.client.models.request.SpacedRepetitionRequestBody
+import notion.impl.client.models.response.NotionDbResponse
 import org.danceofvalkyries.utils.rest.*
 
 class NotionApiImpl(

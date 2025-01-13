@@ -16,14 +16,13 @@ import org.danceofvalkyries.app.domain.usecases.GetOnlineDictionariesForFlashCar
 import org.danceofvalkyries.app.domain.usecases.ReplaceFlashCardInChatUseCase
 import org.danceofvalkyries.config.data.TestConfigRepository
 import org.danceofvalkyries.config.domain.Config
-import org.danceofvalkyries.notion.impl.UpdatePageInNotion
 import org.danceofvalkyries.notion.impl.flashcardpage.FlashCardNotionPageApiImpl
 import org.danceofvalkyries.notion.impl.restapi.NotionApiImpl
 import org.danceofvalkyries.telegram.impl.DeleteMessageFromTelegramChat
 import org.danceofvalkyries.telegram.impl.SendMessageToTelegramChat
 import org.danceofvalkyries.telegram.impl.TelegramChatApi
 import org.danceofvalkyries.telegram.impl.TelegramChatApiImpl
-import org.danceofvalkyries.telegram.impl.restapi.TelegramChatRestApiImpl
+import org.danceofvalkyries.telegram.impl.client.TelegramChatRestApiImpl
 import org.danceofvalkyries.utils.Dispatchers
 import org.danceofvalkyries.utils.db.DataBase
 import java.util.concurrent.TimeUnit
@@ -66,7 +65,7 @@ class TestApp(
         )
 
         realApp.run()
-
+return
 
         /*  notionDatabaseDataBaseTable.getAll()
               .forEach {

@@ -1,7 +1,7 @@
 package notion.impl.client
 
-import org.danceofvalkyries.notion.impl.restapi.models.response.NotionDbResponse
-import org.danceofvalkyries.notion.impl.restapi.models.NotionPageData
+import notion.impl.client.models.response.NotionDbResponse
+import notion.impl.client.models.NotionPageData
 
 interface NotionApi {
     suspend fun getNotionDb(id: String): NotionDbResponse

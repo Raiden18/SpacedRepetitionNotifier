@@ -22,7 +22,7 @@ import org.danceofvalkyries.notion.impl.database.NotionDataBaseApiImpl
 import org.danceofvalkyries.notion.impl.flashcardpage.FlashCardNotionPageApiImpl
 import org.danceofvalkyries.notion.impl.restapi.NotionApiImpl
 import org.danceofvalkyries.telegram.impl.*
-import org.danceofvalkyries.telegram.impl.restapi.TelegramChatRestApiImpl
+import org.danceofvalkyries.telegram.impl.client.TelegramChatRestApiImpl
 import org.danceofvalkyries.utils.Dispatchers
 import org.danceofvalkyries.utils.db.DataBase
 import java.util.concurrent.TimeUnit
@@ -77,7 +77,7 @@ class NotifierApp(
                 notionDatabaseDataBaseTable,
                 notionPageFlashCardDataBaseTable,
             ),
-            GetAllNotionDatabasesUseCase(notionDatabaseDataBaseTable),
+            notionDatabaseDataBaseTable,
             EditNotificationMessageUseCase(
                 telegramMessagesDataBaseTable,
                 EditMessageInTelegramChat(telegramChatRepository)
