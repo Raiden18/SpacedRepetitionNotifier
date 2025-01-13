@@ -1,13 +1,11 @@
 package org.danceofvalkyries.app.domain.models
 
-import org.danceofvalkyries.telegram.domain.models.TelegramImageUrl
-
 data class FlashCard(
     val memorizedInfo: String,
     val example: String?,
     val answer: String?,
     val onlineDictionaries: List<OnlineDictionary>,
-    val telegramImageUrl: TelegramImageUrl?,
+    val telegramImageUrl: String?,
     val metaInfo: MetaInfo,
 ) {
 

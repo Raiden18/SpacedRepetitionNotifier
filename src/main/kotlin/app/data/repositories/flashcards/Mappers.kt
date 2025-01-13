@@ -14,7 +14,7 @@ fun NotionPageData.toFlashCard(): FlashCard {
         memorizedInfo = memorizedInfo,
         example = example,
         answer = answer,
-        telegramImageUrl = cover?.external?.url?.nullIfEmptyOrBlank()?.let(::TelegramImageUrl),
+        telegramImageUrl = cover?.external?.url?.nullIfEmptyOrBlank(),
         onlineDictionaries = emptyList(),
         metaInfo = FlashCard.MetaInfo(
             id = id.orEmpty(),
@@ -28,7 +28,7 @@ fun FlashCardDbEntity.toFlashCard(onlineDictionaries: List<OnlineDictionary>): F
         memorizedInfo = memorizedInfo!!,
         example = example,
         answer = answer,
-        telegramImageUrl = imageUrl?.let(::TelegramImageUrl),
+        telegramImageUrl = imageUrl,
         onlineDictionaries = onlineDictionaries,
         metaInfo = FlashCard.MetaInfo(
             id = cardId,
@@ -42,7 +42,7 @@ fun FlashCard.toEntity(): FlashCardDbEntity {
         memorizedInfo = memorizedInfo,
         example = example,
         answer = answer,
-        imageUrl = telegramImageUrl?.get(),
+        imageUrl = telegramImageUrl,
         cardId = metaInfo.id,
         notionDbId = metaInfo.notionDbId,
     )

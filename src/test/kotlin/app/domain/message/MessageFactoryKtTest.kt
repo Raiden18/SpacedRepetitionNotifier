@@ -5,11 +5,11 @@ import io.kotest.matchers.shouldBe
 import org.danceofvalkyries.app.domain.message.MessageFactory
 import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
 import org.danceofvalkyries.app.domain.models.FlashCard
-import org.danceofvalkyries.telegram.domain.models.TelegramImageUrl
 import org.danceofvalkyries.app.domain.models.OnlineDictionary
 import org.danceofvalkyries.notion.domain.models.NotionDataBase
 import org.danceofvalkyries.notion.domain.models.NotionId
 import org.danceofvalkyries.telegram.domain.models.TelegramButton
+import org.danceofvalkyries.telegram.domain.models.TelegramImageUrl
 import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
 import org.danceofvalkyries.telegram.domain.models.TelegramText
 
@@ -38,7 +38,7 @@ class MessageFactoryKtTest : FunSpec() {
                 memorizedInfo = "Expect",
                 example = null,
                 answer = null,
-                telegramImageUrl = TelegramImageUrl(imageUrl),
+                telegramImageUrl = imageUrl,
                 onlineDictionaries = listOf(
                     OnlineDictionary("https://dictionary.cambridge.org/dictionary/english/")
                 ),
@@ -63,7 +63,7 @@ class MessageFactoryKtTest : FunSpec() {
                 memorizedInfo = "Expect",
                 example = null,
                 answer = null,
-                telegramImageUrl = TelegramImageUrl("url"),
+                telegramImageUrl = "url",
                 onlineDictionaries = emptyList(),
             )
             messageFactory
@@ -76,7 +76,7 @@ class MessageFactoryKtTest : FunSpec() {
                 memorizedInfo = "Expect",
                 example = "I expected you to come",
                 answer = "to wait to happen in the future",
-                telegramImageUrl = TelegramImageUrl("url"),
+                telegramImageUrl = "url",
                 onlineDictionaries = listOf(
                     OnlineDictionary("https://dictionary.cambridge.org/dictionary/english/")
                 )

@@ -1,11 +1,15 @@
 package org.danceofvalkyries.app
 
 import com.google.gson.Gson
+import kotlinx.coroutines.delay
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.danceofvalkyries.app.data.repositories.flashcards.FlashCardsRepositoryImpl
 import org.danceofvalkyries.app.data.repositories.flashcards.db.FlashCardDbTableImpl
 import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
+import org.danceofvalkyries.app.domain.models.FlashCard
+import org.danceofvalkyries.app.domain.usecases.GetAllFlashCardsUseCase
+import org.danceofvalkyries.app.domain.usecases.ReplaceFlashCardInChatUseCase
 import org.danceofvalkyries.config.data.TestConfigRepository
 import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.notion.data.repositories.api.NotionApiImpl
@@ -17,9 +21,11 @@ import org.danceofvalkyries.telegram.data.api.TelegramChatApiImpl
 import org.danceofvalkyries.telegram.data.db.TelegramNotificationMessageDbImpl
 import org.danceofvalkyries.telegram.data.repositories.TelegramChatRepositoryImpl
 import org.danceofvalkyries.telegram.domain.TelegramChatRepository
+import org.danceofvalkyries.telegram.domain.models.TelegramImageUrl
 import org.danceofvalkyries.utils.Dispatchers
 import org.danceofvalkyries.utils.db.DataBase
 import java.util.concurrent.TimeUnit
+import kotlin.time.Duration.Companion.seconds
 
 // TODO: Remove notion id from here
 class TestApp(
@@ -64,8 +70,23 @@ class TestApp(
         notionDbsRepository.getFromCache()
             .forEach {
                 val repo = FlashCardNotionPageRepositoryImpl(notionApi)
-                val notionPages = repo.getAllFromDb(it.id.get(NotionId.Modifier.URL_FRIENDLY))
-                println(notionPages)
+                repo.getAllFromDb(it.id.get(NotionId.Modifier.URL_FRIENDLY))
+                    .map {
+                        FlashCard(
+                            memorizedInfo = it.name,
+                            example = it.example,
+                            answer = it.explanation,
+                            onlineDictionaries = emptyList(),
+                            telegramImageUrl = null,
+                            metaInfo = FlashCard.MetaInfo(
+                                id = it.id.get(NotionId.Modifier.URL_FRIENDLY),
+                                notionDbId = it.notionDbID.get(NotionId.Modifier.URL_FRIENDLY)
+                            )
+                        )
+                    }.map { messageFactory.createFlashCardMessage(it) }
+                    .forEach {
+                        telegramChatRepository.sendToChat(it)
+                    }
             }
 
 
@@ -82,7 +103,7 @@ class TestApp(
 
         //notionApi.recall()
 
-        /*GetAllFlashCardsUseCase(
+        GetAllFlashCardsUseCase(
             notionDbsRepository,
             flashCardsRepository
         ).execute()
@@ -93,7 +114,7 @@ class TestApp(
                     dispatchers
                 ).execute(it)
                 delay(1.seconds)
-            }*/
+            }
     }
 
     private fun createTelegramChatRepository(): TelegramChatRepository {

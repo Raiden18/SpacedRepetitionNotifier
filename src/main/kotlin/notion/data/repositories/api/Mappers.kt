@@ -9,7 +9,7 @@ import org.danceofvalkyries.notion.domain.models.NotionId
 fun NotionPageData.toDomain(): FlashCardNotionPage {
     return FlashCardNotionPage(
         id = NotionId(id!!),
-        notionDbID = parent?.databaseId!!,
+        notionDbID = NotionId(parent?.databaseId!!),
         name = name,
         example = example,
         explanation = explanation,

@@ -4,6 +4,7 @@ import org.danceofvalkyries.app.domain.models.FlashCard
 import org.danceofvalkyries.notion.domain.models.NotionDataBase
 import org.danceofvalkyries.notion.domain.models.NotionId
 import org.danceofvalkyries.telegram.domain.models.TelegramButton
+import org.danceofvalkyries.telegram.domain.models.TelegramImageUrl
 import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
 import org.danceofvalkyries.telegram.domain.models.TelegramText
 
@@ -77,7 +78,7 @@ class MessageFactoryImpl : MessageFactory {
                 recallActions,
                 dictionaryTelegramButtons
             ),
-            telegramImageUrl = imageUrl,
+            telegramImageUrl = imageUrl?.let(::TelegramImageUrl),
             type = TelegramMessageBody.Type.FLASH_CARD,
         )
     }
