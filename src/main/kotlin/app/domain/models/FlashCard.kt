@@ -29,7 +29,7 @@ data class FlashCard(
 
     data class MetaInfo(
         val id: String,
-        val notionDbId: Id,
+        val notionDbId: String,
     )
 
     companion object {
@@ -41,7 +41,7 @@ data class FlashCard(
             onlineDictionaries = emptyList(),
             metaInfo = MetaInfo(
                 id = "",
-                notionDbId = Id.EMPTY,
+                notionDbId = "",
             )
         )
     }

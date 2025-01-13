@@ -28,7 +28,7 @@ class MessageFactoryImpl(
         val buttons = flashCards
             .groupBy { it.metaInfo.notionDbId }
             .map { (dbId, flashCards) ->
-                val db = notionDataBases.first { it.id.get(NotionId.Modifier.URL_FRIENDLY) == dbId.valueId } // TODO: REMOVE NOTION FROM HERE
+                val db = notionDataBases.first { it.id.get(NotionId.Modifier.URL_FRIENDLY) == dbId }
                 Button(
                     text = "${db.name}: ${flashCards.count()}",
                     url = "https://www.notion.so/databases/${db.id.get(NotionId.Modifier.URL_FRIENDLY) }"

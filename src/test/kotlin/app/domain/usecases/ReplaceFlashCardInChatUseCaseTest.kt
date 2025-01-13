@@ -43,14 +43,14 @@ class ReplaceFlashCardInChatUseCaseTest : FunSpec() {
     private val flashCard = FlashCard.EMPTY.copy(
         metaInfo = FlashCard.MetaInfo(
             id = "123",
-            notionDbId = Id("228")
+            notionDbId = "228"
         )
     )
 
     private val anotherFlashCard = FlashCard.EMPTY.copy(
         metaInfo = FlashCard.MetaInfo(
             id = "333",
-            notionDbId = Id("228")
+            notionDbId = "228"
         )
     )
 

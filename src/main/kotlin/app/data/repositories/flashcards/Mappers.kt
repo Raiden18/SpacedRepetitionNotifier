@@ -2,7 +2,6 @@ package org.danceofvalkyries.app.data.repositories.flashcards
 
 import org.danceofvalkyries.app.data.repositories.flashcards.db.FlashCardDbEntity
 import org.danceofvalkyries.app.domain.models.FlashCard
-import org.danceofvalkyries.app.domain.models.Id
 import org.danceofvalkyries.app.domain.models.ImageUrl
 import org.danceofvalkyries.app.domain.models.OnlineDictionary
 import org.danceofvalkyries.app.domain.models.text.Text
@@ -20,7 +19,7 @@ fun NotionPageData.toFlashCard(): FlashCard {
         onlineDictionaries = emptyList(),
         metaInfo = FlashCard.MetaInfo(
             id = id.orEmpty(),
-            notionDbId = Id(parent?.databaseId.orEmpty()),
+            notionDbId = parent?.databaseId.orEmpty(),
         )
     )
 }
@@ -34,7 +33,7 @@ fun FlashCardDbEntity.toFlashCard(onlineDictionaries: List<OnlineDictionary>): F
         onlineDictionaries = onlineDictionaries,
         metaInfo = FlashCard.MetaInfo(
             id = cardId,
-            notionDbId = Id(notionDbId!!)
+            notionDbId = notionDbId!!
         )
     )
 }
@@ -46,7 +45,7 @@ fun FlashCard.toEntity(): FlashCardDbEntity {
         answer = answer?.getValue(Text.TextModifier.AS_IS),
         imageUrl = imageUrl?.url,
         cardId = metaInfo.id,
-        notionDbId = metaInfo.notionDbId.valueId,
+        notionDbId = metaInfo.notionDbId,
     )
 }
 

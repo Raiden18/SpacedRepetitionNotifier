@@ -117,19 +117,19 @@ class MessageFactoryKtTest : FunSpec() {
             val flashCards = listOf(
                 emptyFLashCard.copy(
                     metaInfo = FlashCard.MetaInfo(
-                        notionDbId = Id(englishVocabularyDb.id.get(NotionId.Modifier.AS_IS)),
+                        notionDbId =englishVocabularyDb.id.get(NotionId.Modifier.AS_IS),
                         id = ""
                     )
                 ),
                 emptyFLashCard.copy(
                     metaInfo = FlashCard.MetaInfo(
-                        notionDbId = Id(greekVocabularyDb.id.get(NotionId.Modifier.AS_IS)),
+                        notionDbId = greekVocabularyDb.id.get(NotionId.Modifier.AS_IS),
                         id = ""
                     )
                 ),
                 emptyFLashCard.copy(
                     metaInfo = FlashCard.MetaInfo(
-                        notionDbId = Id(englishGrammarDb.id.get(NotionId.Modifier.AS_IS)),
+                        notionDbId = englishGrammarDb.id.get(NotionId.Modifier.AS_IS),
                         id = ""
                     )
                 )
