@@ -1,7 +1,7 @@
 package org.danceofvalkyries.notion.api.models
 
 data class NotionId(
-    private val rawValue: String
+    val rawValue: String
 ) {
 
     companion object {

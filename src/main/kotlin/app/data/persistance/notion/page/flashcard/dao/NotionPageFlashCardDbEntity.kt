@@ -7,4 +7,5 @@ data class NotionPageFlashCardDbEntity(
     val imageUrl: String?,
     val id: String,
     val notionDbId: String,
+    val knowLevels: Map<Int, Boolean?>,
 )

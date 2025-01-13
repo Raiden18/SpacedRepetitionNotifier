@@ -15,17 +15,18 @@ fun NotionPageData.toDomain(): FlashCardNotionPage {
         explanation = explanation,
         coverUrl = urlCover,
         knowLevels = KnowLevels(
-            levels = (1..13).map { getKnowLevel(it) }
-                .mapNotNull { it }
-                .toMap()
+            levels = (1..13).associate { getKnowLevel(it) }
+                .filterValues { it != null }
+                .mapValues { it.value!! }
         )
     )
 }
 
 fun FlashCardNotionPage.toUpdateKnowLevels(): NotionPageData {
     return NotionPageData(
-        id = id.get(),
+        id = id.rawValue,
         properties = knowLevels.levels
+            .filterValues { it != null }
             .mapKeys { "Know Level ${it.key}" }
             .mapValues { PropertyData(checkbox = it.value) }
     )

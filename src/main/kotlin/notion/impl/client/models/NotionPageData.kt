@@ -53,8 +53,8 @@ data class NotionPageData(
         get() = cover?.external?.url
 
 
-    fun getKnowLevel(level: Int): Pair<Int, Boolean>? {
-        val property = properties?.get("Know Level $level") ?: return null
-        return level to property.checkbox!!
+    fun getKnowLevel(level: Int): Pair<Int, Boolean?> {
+        val property = properties?.get("Know Level $level")
+        return level to property?.checkbox
     }
 }

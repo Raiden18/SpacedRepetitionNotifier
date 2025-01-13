@@ -8,20 +8,15 @@ import org.danceofvalkyries.app.data.persistance.notion.database.NotionDatabaseD
 import org.danceofvalkyries.app.data.persistance.notion.database.dao.NotionDataBaseDaoImpl
 import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.NotionPageFlashCardDataBaseTableImpl
 import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.dao.NotionPageFlashCardDaoImpl
-import org.danceofvalkyries.app.data.persistance.telegram.messages.TelegramMessagesDataBaseTable
 import org.danceofvalkyries.app.data.persistance.telegram.messages.TelegramMessagesDataBaseTableImpl
-import org.danceofvalkyries.app.data.persistance.telegram.messages.dao.TelegramMessageDao
 import org.danceofvalkyries.app.data.persistance.telegram.messages.dao.TelegramMessageDaoImpl
 import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
 import org.danceofvalkyries.app.domain.usecases.GetAllFlashCardsUseCase
-import org.danceofvalkyries.app.domain.usecases.GetOnlineDictionariesForFlashCard
-import org.danceofvalkyries.app.domain.usecases.ReplaceFlashCardInChatUseCase
 import org.danceofvalkyries.config.data.TestConfigRepository
 import org.danceofvalkyries.config.domain.Config
+import org.danceofvalkyries.notion.impl.UpdatePageInNotion
 import org.danceofvalkyries.notion.impl.flashcardpage.FlashCardNotionPageApiImpl
 import org.danceofvalkyries.notion.impl.restapi.NotionApiImpl
-import org.danceofvalkyries.telegram.impl.DeleteMessageFromTelegramChat
-import org.danceofvalkyries.telegram.impl.SendMessageToTelegramChat
 import org.danceofvalkyries.telegram.impl.TelegramChatApi
 import org.danceofvalkyries.telegram.impl.TelegramChatApiImpl
 import org.danceofvalkyries.telegram.impl.restapi.TelegramChatRestApiImpl
@@ -60,22 +55,27 @@ class TestApp(
         val notionDatabaseDataBaseTable = NotionDatabaseDataBaseTableImpl(flashCardsTablesDbTable)
         val telegramMessageDao = TelegramMessageDaoImpl(dbConnection)
         val telegramMessagesDataBaseTable = TelegramMessagesDataBaseTableImpl(telegramMessageDao)
+        val flashCardNotionPageApi = FlashCardNotionPageApiImpl(notionApi)
+        val notionPageFlashCardDao = NotionPageFlashCardDaoImpl(dbConnection)
+        val notionPageFlashCardDataBaseTable = NotionPageFlashCardDataBaseTableImpl(
+            notionPageFlashCardDao
+        )
 
-        realApp.run()
+        ///realApp.run()
 
 
-      /*  notionDatabaseDataBaseTable.getAll()
-            .forEach {
-                val repo = FlashCardNotionPageApiImpl(notionApi)
-                repo.getAllFromDb(it.id)
-                    .map {
-                        val dictionaries = GetOnlineDictionariesForFlashCard(config.notion.observedDatabases).execute(it)
-                        messageFactory.createFlashCardMessage(it, dictionaries)
-                    }
-                    .forEach {
-                        SendMessageToTelegramChat(telegramChatRepository).execute(it)
-                    }
-            }*/
+        /*  notionDatabaseDataBaseTable.getAll()
+              .forEach {
+
+                  repo.getAllFromDb(it.id)
+                      .map {
+                          val dictionaries = GetOnlineDictionariesForFlashCard(config.notion.observedDatabases).execute(it)
+                          messageFactory.createFlashCardMessage(it, dictionaries)
+                      }
+                      .forEach {
+                          SendMessageToTelegramChat(telegramChatRepository).execute(it)
+                      }
+              }*/
 
 
         /* while (true){
@@ -96,14 +96,15 @@ class TestApp(
             NotionPageFlashCardDataBaseTableImpl(NotionPageFlashCardDaoImpl(dbConnection))
         ).execute()
             .forEach {
-                ReplaceFlashCardInChatUseCase(
-                    telegramMessagesDataBaseTable,
-                    DeleteMessageFromTelegramChat(telegramChatRepository),
-                    SendMessageToTelegramChat(telegramChatRepository),
-                    GetOnlineDictionariesForFlashCard(config.notion.observedDatabases),
-                    messageFactory,
-                    dispatchers
-                ).execute(it)
+                UpdatePageInNotion(flashCardNotionPageApi).execute(it.recalled())
+                /* ReplaceFlashCardInChatUseCase(
+                     telegramMessagesDataBaseTable,
+                     DeleteMessageFromTelegramChat(telegramChatRepository),
+                     SendMessageToTelegramChat(telegramChatRepository),
+                     GetOnlineDictionariesForFlashCard(config.notion.observedDatabases),
+                     messageFactory,
+                     dispatchers
+                 ).execute(it)*/
                 delay(1.seconds)
             }
     }

@@ -12,6 +12,7 @@ class NotionPageFlashCardSqlQueries(
     private val imageUrl: TextTableColumn,
     private val memorizedInfo: TextTableColumn,
     private val notionDbId: TableColumn,
+    private val knowLevels: List<TextTableColumn>,
 ) {
 
     fun selectAll(databaseId: String): String {
@@ -23,6 +24,12 @@ class NotionPageFlashCardSqlQueries(
     }
 
     fun insert(notionPageFlashCardDbEntity: NotionPageFlashCardDbEntity): String {
+        val knowLevelDbValues = notionPageFlashCardDbEntity.knowLevels
+            .keys
+            .map { level ->
+                val knowLevelColumn = knowLevels.first { it.name.endsWith(level.toString()) }
+                knowLevelColumn to notionPageFlashCardDbEntity.knowLevels[level]?.toString()
+            }
         return SqlQuery {
             insert(
                 into = tableName,
@@ -33,7 +40,7 @@ class NotionPageFlashCardSqlQueries(
                     imageUrl to notionPageFlashCardDbEntity.imageUrl,
                     memorizedInfo to notionPageFlashCardDbEntity.name,
                     notionDbId to notionPageFlashCardDbEntity.notionDbId,
-                )
+                ) + knowLevelDbValues
             )
         }
     }
@@ -42,7 +49,14 @@ class NotionPageFlashCardSqlQueries(
         return SqlQuery {
             createIfNotExist(
                 tableName = tableName,
-                columns = listOf(id, example, answer, imageUrl, memorizedInfo, notionDbId)
+                columns = listOf(
+                    id,
+                    example,
+                    answer,
+                    imageUrl,
+                    memorizedInfo,
+                    notionDbId,
+                ) + knowLevels
             )
         }
     }

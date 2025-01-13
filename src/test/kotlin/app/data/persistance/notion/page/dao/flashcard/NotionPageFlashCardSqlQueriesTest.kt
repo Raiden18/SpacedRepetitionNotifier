@@ -4,6 +4,7 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.dao.NotionPageFlashCardDbEntity
 import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.dao.NotionPageFlashCardSqlQueries
+import org.danceofvalkyries.utils.db.tables.columns.BooleanTableColumn
 import org.danceofvalkyries.utils.db.tables.columns.PrimaryKey
 import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
 
@@ -20,6 +21,10 @@ class NotionPageFlashCardSqlQueriesTest : FunSpec() {
     private val imageUrl = TextTableColumn("image_url")
     private val name = TextTableColumn("name")
     private val notionDbId = TextTableColumn("notion_db_id")
+    private val knowLevels = listOf(
+        TextTableColumn("know_level_1"),
+        TextTableColumn("know_level_2"),
+    )
 
     private val flashcard = NotionPageFlashCardDbEntity(
         name = "1",
@@ -28,6 +33,10 @@ class NotionPageFlashCardSqlQueriesTest : FunSpec() {
         imageUrl = "4",
         id = "5",
         notionDbId = "6",
+        knowLevels = mapOf(
+            1 to true,
+            2 to false,
+        )
     )
 
     private lateinit var notionPageFlashCardSqlQueries: NotionPageFlashCardSqlQueries
@@ -42,12 +51,13 @@ class NotionPageFlashCardSqlQueriesTest : FunSpec() {
                 imageUrl,
                 name,
                 notionDbId,
+                knowLevels
             )
         }
 
         test("Should create if not exist table query") {
             notionPageFlashCardSqlQueries
-                .createTableIfNotExisted() shouldBe "CREATE TABLE IF NOT EXISTS $tableName (id TEXT PRIMARY KEY, example TEXT, explanation TEXT, image_url TEXT, name TEXT, notion_db_id TEXT);"
+                .createTableIfNotExisted() shouldBe "CREATE TABLE IF NOT EXISTS $tableName (id TEXT PRIMARY KEY, example TEXT, explanation TEXT, image_url TEXT, name TEXT, notion_db_id TEXT, know_level_1 TEXT, know_level_2 TEXT);"
         }
 
         test("Should create select query for flashcards from specific notion db") {
@@ -58,7 +68,7 @@ class NotionPageFlashCardSqlQueriesTest : FunSpec() {
 
         test("Should create insert statement") {
             notionPageFlashCardSqlQueries
-                .insert(flashcard) shouldBe "INSERT INTO $tableName (id, example, explanation, image_url, name, notion_db_id) VALUES ('5', '2', '3', '4', '1', '6');"
+                .insert(flashcard) shouldBe "INSERT INTO $tableName (id, example, explanation, image_url, name, notion_db_id, know_level_1, know_level_2) VALUES ('5', '2', '3', '4', '1', '6', 'true', 'false');"
         }
 
         test("Should create insert statements with NULL") {
@@ -69,12 +79,16 @@ class NotionPageFlashCardSqlQueriesTest : FunSpec() {
                 imageUrl = null,
                 id = "5",
                 notionDbId = "6",
+                knowLevels = mapOf(
+                    1 to true,
+                    2 to false,
+                )
             )
 
             notionPageFlashCardSqlQueries
                 .insert(
                     flashcard
-                ) shouldBe "INSERT INTO $tableName (id, example, explanation, image_url, name, notion_db_id) VALUES ('5', NULL, NULL, NULL, '1', '6');"
+                ) shouldBe "INSERT INTO $tableName (id, example, explanation, image_url, name, notion_db_id, know_level_1, know_level_2) VALUES ('5', NULL, NULL, NULL, '1', '6', 'true', 'false');"
         }
 
         test("Should create delete statement") {

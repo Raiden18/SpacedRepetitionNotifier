@@ -23,15 +23,17 @@ class NotionPageFlashCardDaoImpl(
     private val imageUrl = TextTableColumn("image_url")
     private val memorizedInfo = TextTableColumn("name")
     private val notionDbId = TextTableColumn("notion_db_id")
+    private val knowLevels = (1..13).associateWith { createKnowLevelColumn(it) }
 
     private val sqlQueries = NotionPageFlashCardSqlQueries(
+        id = id,
         tableName = TABLE_NAME,
         example = example,
         answer = answer,
         imageUrl = imageUrl,
         memorizedInfo = memorizedInfo,
         notionDbId = notionDbId,
-        id = id,
+        knowLevels = knowLevels.values.toList()
     )
 
     override suspend fun insert(entity: NotionPageFlashCardDbEntity) {
@@ -44,14 +46,15 @@ class NotionPageFlashCardDaoImpl(
         return createTableIfNotExist()
             .executeQuery(sqlQueries.selectAll(notionDataBaseId))
             .asSequence()
-            .map {
+            .map { resultSet ->
                 NotionPageFlashCardDbEntity(
-                    name = memorizedInfo.getValue(it)!!,
-                    example = example.getValue(it),
-                    explanation = answer.getValue(it),
-                    imageUrl = imageUrl.getValue(it),
-                    id = id.getValue(it)!!,
-                    notionDbId = notionDbId.getValue(it)!!
+                    name = memorizedInfo.getValue(resultSet)!!,
+                    example = example.getValue(resultSet),
+                    explanation = answer.getValue(resultSet),
+                    imageUrl = imageUrl.getValue(resultSet),
+                    id = id.getValue(resultSet)!!,
+                    notionDbId = notionDbId.getValue(resultSet)!!,
+                    knowLevels = knowLevels.map { it.key to it.value.getValue(resultSet)?.toBoolean() }.toMap()
                 )
             }.toList()
     }
@@ -71,5 +74,9 @@ class NotionPageFlashCardDaoImpl(
     private fun createTableIfNotExist(): Statement {
         return connection.createStatement()
             .also { it.execute(sqlQueries.createTableIfNotExisted()) }
+    }
+
+    private fun createKnowLevelColumn(lvl: Int): TextTableColumn {
+        return TextTableColumn("know_level_$lvl")
     }
 }
