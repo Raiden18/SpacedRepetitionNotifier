@@ -5,6 +5,7 @@ import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import org.danceofvalkyries.app.data.persistance.telegram.messages.TelegramMessagesDataBaseTable
 import org.danceofvalkyries.app.domain.usecases.DeleteOldAndSendNewNotificationUseCase
 import org.danceofvalkyries.telegram.api.DeleteMessageFromTelegramChat
 import org.danceofvalkyries.telegram.api.SendMessageToTelegramChat
@@ -14,7 +15,7 @@ import org.danceofvalkyries.telegram.api.models.TelegramMessageBody
 
 class DeleteOldAndSendNewNotificationUseCaseImplTest : FunSpec() {
 
-    private val telegramChatApi: TelegramChatApi = mockk(relaxed = true)
+    private val telegramMessagesDataBaseTable: TelegramMessagesDataBaseTable = mockk(relaxed = true)
     private val deleteMessageFromTelegramChat: DeleteMessageFromTelegramChat = mockk(relaxed = true)
     private val sendMessageToTelegramChat: SendMessageToTelegramChat = mockk(relaxed = true)
 
@@ -51,25 +52,25 @@ class DeleteOldAndSendNewNotificationUseCaseImplTest : FunSpec() {
         beforeTest {
             clearAllMocks()
             useCase = DeleteOldAndSendNewNotificationUseCase(
-                telegramChatApi,
+                telegramMessagesDataBaseTable,
                 deleteMessageFromTelegramChat,
                 sendMessageToTelegramChat,
             )
             coEvery { sendMessageToTelegramChat.execute(telegramNotification.body) } returns telegramNotification
-            coEvery { telegramChatApi.getAllFromDb() } returns listOf(oldTelegramNotification, flashCardMessage)
+            coEvery { telegramMessagesDataBaseTable.getAll() } returns listOf(oldTelegramNotification, flashCardMessage)
         }
 
         test("Should replace old tg message with new one") {
 
             useCase.execute(telegramNotification.body)
 
-            coVerify(exactly = 1) { telegramChatApi.deleteFromDb(oldTelegramNotification) }
+            coVerify(exactly = 1) { telegramMessagesDataBaseTable.delete(oldTelegramNotification) }
             coVerify(exactly = 1) { deleteMessageFromTelegramChat.execute(oldTelegramNotification) }
 
-            coVerify(exactly = 1) { telegramChatApi.saveToDb(telegramNotification) }
+            coVerify(exactly = 1) { telegramMessagesDataBaseTable.save(telegramNotification) }
             coVerify(exactly = 1) { sendMessageToTelegramChat.execute(telegramNotification.body) }
 
-            coVerify(exactly = 0) { telegramChatApi.deleteFromDb(flashCardMessage) }
+            coVerify(exactly = 0) { telegramMessagesDataBaseTable.delete(flashCardMessage) }
             coVerify(exactly = 0) { deleteMessageFromTelegramChat.execute(flashCardMessage) }
         }
     }

@@ -5,15 +5,15 @@ import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerifyOrder
 import io.mockk.mockk
+import org.danceofvalkyries.app.data.persistance.telegram.messages.TelegramMessagesDataBaseTable
 import org.danceofvalkyries.app.domain.usecases.EditNotificationMessageUseCase
 import org.danceofvalkyries.telegram.api.EditMessageInTelegramChat
-import org.danceofvalkyries.telegram.impl.TelegramChatApi
 import org.danceofvalkyries.telegram.api.models.TelegramMessage
 import org.danceofvalkyries.telegram.api.models.TelegramMessageBody
 
 class EditNotificationMessageUseCaseKtTest : FunSpec() {
 
-    private val telegramChatApi: TelegramChatApi = mockk(relaxed = true)
+    private val telegramMessagesDataBaseTable: TelegramMessagesDataBaseTable = mockk(relaxed = true)
     private val editMessageInTelegramChat: EditMessageInTelegramChat = mockk(relaxed = true)
     private lateinit var editNotificationMessageUseCase: EditNotificationMessageUseCase
 
@@ -31,8 +31,8 @@ class EditNotificationMessageUseCaseKtTest : FunSpec() {
 
         beforeTest {
             clearAllMocks()
-            editNotificationMessageUseCase = EditNotificationMessageUseCase(telegramChatApi, editMessageInTelegramChat)
-            coEvery { telegramChatApi.getAllFromDb() } returns listOf(oldTelegramMessage)
+            editNotificationMessageUseCase = EditNotificationMessageUseCase(telegramMessagesDataBaseTable, editMessageInTelegramChat)
+            coEvery { telegramMessagesDataBaseTable.getAll() } returns listOf(oldTelegramMessage)
         }
 
         test("Should update message") {
@@ -46,7 +46,7 @@ class EditNotificationMessageUseCaseKtTest : FunSpec() {
             editNotificationMessageUseCase.execute(newMessageBody)
 
             coVerifyOrder {
-                telegramChatApi.updateInDb(newMessageBody, oldTelegramMessage.id)
+                telegramMessagesDataBaseTable.update(newMessageBody, oldTelegramMessage.id)
                 editMessageInTelegramChat.execute(newMessageBody, oldTelegramMessage.id)
             }
         }

@@ -8,6 +8,9 @@ import org.danceofvalkyries.app.data.persistance.notion.database.NotionDatabaseD
 import org.danceofvalkyries.app.data.persistance.notion.database.dao.NotionDataBaseDaoImpl
 import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.NotionPageFlashCardDataBaseTableImpl
 import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.dao.NotionPageFlashCardDaoImpl
+import org.danceofvalkyries.app.data.persistance.telegram.messages.TelegramMessagesDataBaseTable
+import org.danceofvalkyries.app.data.persistance.telegram.messages.TelegramMessagesDataBaseTableImpl
+import org.danceofvalkyries.app.data.persistance.telegram.messages.dao.TelegramMessageDao
 import org.danceofvalkyries.app.data.persistance.telegram.messages.dao.TelegramMessageDaoImpl
 import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
 import org.danceofvalkyries.app.domain.usecases.GetAllFlashCardsUseCase
@@ -54,6 +57,8 @@ class TestApp(
         )
         val flashCardsTablesDbTable = NotionDataBaseDaoImpl(dbConnection)
         val notionDatabaseDataBaseTable = NotionDatabaseDataBaseTableImpl(flashCardsTablesDbTable)
+        val telegramMessageDao = TelegramMessageDaoImpl(dbConnection)
+        val telegramMessagesDataBaseTable = TelegramMessagesDataBaseTableImpl(telegramMessageDao)
 
         realApp.run()
 
@@ -89,7 +94,7 @@ class TestApp(
         ).execute()
             .forEach {
                 ReplaceFlashCardInChatUseCase(
-                    telegramChatRepository,
+                    telegramMessagesDataBaseTable,
                     DeleteMessageFromTelegramChat(telegramChatRepository),
                     SendMessageToTelegramChat(telegramChatRepository),
                     messageFactory,
@@ -105,9 +110,7 @@ class TestApp(
             gson = createGson(),
             apiKey = config.telegram.apiKey,
         )
-        val connection = db.establishConnection()
-        val db = TelegramMessageDaoImpl(connection)
-        return TelegramChatApiImpl(api, db, config.telegram.chatId)
+        return TelegramChatApiImpl(api, config.telegram.chatId)
     }
 
     private fun createHttpClient(): OkHttpClient {

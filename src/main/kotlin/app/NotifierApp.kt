@@ -1,4 +1,5 @@
 package org.danceofvalkyries.app
+
 import com.google.gson.Gson
 import notion.impl.client.NotionApi
 import okhttp3.OkHttpClient
@@ -6,6 +7,7 @@ import org.danceofvalkyries.app.data.persistance.notion.database.NotionDatabaseD
 import org.danceofvalkyries.app.data.persistance.notion.database.dao.NotionDataBaseDaoImpl
 import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.NotionPageFlashCardDataBaseTableImpl
 import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.dao.NotionPageFlashCardDaoImpl
+import org.danceofvalkyries.app.data.persistance.telegram.messages.TelegramMessagesDataBaseTableImpl
 import org.danceofvalkyries.app.data.persistance.telegram.messages.dao.TelegramMessageDaoImpl
 import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
 import org.danceofvalkyries.app.domain.usecases.*
@@ -23,7 +25,6 @@ import org.danceofvalkyries.telegram.impl.*
 import org.danceofvalkyries.telegram.impl.restapi.TelegramChatRestApiImpl
 import org.danceofvalkyries.utils.Dispatchers
 import org.danceofvalkyries.utils.db.DataBase
-import java.sql.Connection
 import java.util.concurrent.TimeUnit
 
 class NotifierApp(
@@ -38,7 +39,7 @@ class NotifierApp(
 
     override suspend fun run() {
         val dbConnection = dataBase.establishConnection()
-        val telegramChatRepository = createTelegramChatRepository(dbConnection)
+        val telegramChatRepository = createTelegramChatApi()
         val messageFactory = MessageFactoryImpl()
         val notionDataBaseDao = NotionDataBaseDaoImpl(dbConnection)
         val notionDatabaseDataBaseTable = NotionDatabaseDataBaseTableImpl(notionDataBaseDao)
@@ -50,6 +51,8 @@ class NotifierApp(
         val notionPageFlashCardDataBaseTable = NotionPageFlashCardDataBaseTableImpl(
             NotionPageFlashCardDaoImpl(dbConnection)
         )
+        val telegramMessageDao = TelegramMessageDaoImpl(dbConnection)
+        val telegramMessagesDataBaseTable = TelegramMessagesDataBaseTableImpl(telegramMessageDao)
         val ids = config
             .notion
             .observedDatabases
@@ -76,11 +79,11 @@ class NotifierApp(
             ),
             GetAllNotionDatabasesUseCase(notionDatabaseDataBaseTable),
             EditNotificationMessageUseCase(
-                telegramChatRepository,
+                telegramMessagesDataBaseTable,
                 EditMessageInTelegramChat(telegramChatRepository)
             ),
             DeleteOldAndSendNewNotificationUseCase(
-                telegramChatRepository,
+                telegramMessagesDataBaseTable,
                 DeleteMessageFromTelegramChat(telegramChatRepository),
                 SendMessageToTelegramChat(telegramChatRepository)
             ),
@@ -89,14 +92,13 @@ class NotifierApp(
         ).execute()
     }
 
-    private fun createTelegramChatRepository(dbConnection: Connection): TelegramChatApi {
+    private fun createTelegramChatApi(): TelegramChatApi {
         val api = TelegramChatRestApiImpl(
             client = createHttpClient(),
             gson = createGson(),
             apiKey = config.telegram.apiKey,
         )
-        val db = TelegramMessageDaoImpl(dbConnection)
-        return TelegramChatApiImpl(api, db, config.telegram.chatId)
+        return TelegramChatApiImpl(api, config.telegram.chatId)
     }
 
     private fun NotionDbRepository(): NotionDataBaseApi {
