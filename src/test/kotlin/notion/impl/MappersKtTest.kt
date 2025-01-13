@@ -68,21 +68,7 @@ class MappersKtTest : FunSpec() {
                 id = NotionId(id),
                 notionDbID = NotionId(parentDbId),
                 knowLevels = KnowLevels(
-                    mapOf(
-                        1 to true,
-                        2 to null,
-                        3 to null,
-                        4 to null,
-                        5 to null,
-                        6 to null,
-                        7 to null,
-                        8 to null,
-                        9 to null,
-                        10 to null,
-                        11 to null,
-                        12 to null,
-                        13 to null
-                    )
+                    mapOf(1 to true)
                 )
             )
         }
