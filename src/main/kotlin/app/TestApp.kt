@@ -76,7 +76,7 @@ class TestApp(
                 repo.getAllFromDb(it.id)
                     .map { messageFactory.createFlashCardMessage(it) }
                     .forEach {
-                        telegramChatRepository.sendTextMessage(it)
+                        SendMessageToTelegramChat(telegramChatRepository).execute(it)
                     }
             }
 
