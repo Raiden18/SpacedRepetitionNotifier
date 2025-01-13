@@ -21,7 +21,7 @@ fun TelegramMessageBody.toRequest(
                 it.map {
                     ButtonData(
                         text = it.text,
-                        callbackData = "Злоебучий коллбек",
+                        callbackData = it.callback,
                         url = it.url
                     )
                 }
@@ -45,7 +45,8 @@ fun MessageData.toDomain(): TelegramMessage {
                     it.map {
                         TelegramButton(
                             text = it.text,
-                            url = it.url.orEmpty()
+                            url = it.url.orEmpty(),
+                            callback = it.callbackData
                         )
                     }
                 } ?: emptyList(),

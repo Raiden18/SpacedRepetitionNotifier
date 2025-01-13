@@ -2,6 +2,6 @@ package org.danceofvalkyries.telegram.api.models
 
 data class TelegramUpdateCallbackQuery(
     val id: String,
-    val messages: TelegramMessage,
+    val message: TelegramMessage,
     val callback: String
 )

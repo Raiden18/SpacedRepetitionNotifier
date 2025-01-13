@@ -44,6 +44,14 @@ class TestApp(
         )
     }
 
+    private val telegramButtonsListener by lazy {
+        TelegramButtonListenerApp(
+            dispatchers,
+            db,
+            TestConfigRepository()
+        )
+    }
+
     override suspend fun run() {
         val telegramChatApi = createTelegramChatRepository()
         val messageFactory = MessageFactoryImpl()
@@ -72,6 +80,7 @@ class TestApp(
         )
 
         realApp.run()
+        telegramButtonsListener.run()
 
         /*  notionDatabaseDataBaseTable.getAll()
               .forEach {
@@ -93,28 +102,28 @@ class TestApp(
              delay(2.seconds)
          }*/
 
-        //notionApi.recall()
-
-        GetAllFlashCardsUseCase(
+        while (true) {
+            telegramButtonsListener.run()
+            delay(1000)
+        }
+        val getAllFlashCards = GetAllFlashCardsUseCase(
             NotionDatabaseDataBaseTableImpl(flashCardsTablesDbTable),
             NotionPageFlashCardDataBaseTableImpl(NotionPageFlashCardDaoImpl(dbConnection))
-        ).execute().forEach {
-            ReplaceFlashCardInChatUseCase(
-                telegramMessagesDataBaseTable,
-                DeleteMessageFromTelegramChat(telegramChatApi),
-                SendMessageToTelegramChat(telegramChatApi),
-                GetOnlineDictionariesForFlashCard(config.notion.observedDatabases),
-                messageFactory,
-                dispatchers
-            ).execute(it)
-        }
+        )
+        val replaceMessage = ReplaceFlashCardInChatUseCase(
+            telegramMessagesDataBaseTable,
+            DeleteMessageFromTelegramChat(telegramChatApi),
+            SendMessageToTelegramChat(telegramChatApi),
+            GetOnlineDictionariesForFlashCard(config.notion.observedDatabases),
+            messageFactory,
+            dispatchers
+        )
+        /* GetAllFlashCardsUseCase(
+             NotionDatabaseDataBaseTableImpl(flashCardsTablesDbTable),
+             NotionPageFlashCardDataBaseTableImpl(NotionPageFlashCardDaoImpl(dbConnection))
+         ).execute().forEach {
 
-        //TODO: Надо полность спасрсить джосн сообщения
-        while (true) {
-            val updates = telegramChatApi.getUpdates()
-            println(updates)
-            delay(5)
-        }
+         }*/
     }
 
     private fun createTelegramChatRepository(): TelegramChatApi {

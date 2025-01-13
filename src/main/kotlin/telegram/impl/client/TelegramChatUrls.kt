@@ -38,6 +38,7 @@ data class TelegramChatUrls(
 
     fun getUpdates(): HttpUrl = telegramEndpoint {
         addPathSegment("getUpdates")
+        addQueryParameter("offset", "-1")
     }
 
     private fun telegramEndpoint(builder: HttpUrl.Builder.() -> Unit): HttpUrl {

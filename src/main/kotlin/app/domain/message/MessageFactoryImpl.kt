@@ -29,7 +29,8 @@ class MessageFactoryImpl : MessageFactory {
                 val db = notionDataBases.first { it.id == dbId }
                 TelegramButton(
                     text = "${db.name}: ${flashCards.count()}",
-                    url = "https://www.notion.so/databases/${db.id.get()}"
+                    url = null,
+                    callback = dbId.get(),
                 )
             }
 
@@ -62,13 +63,14 @@ class MessageFactoryImpl : MessageFactory {
         body.appendLine()
             .append("Choose:")
 
-        val recallActions = listOf(TelegramButton("Forgot  ❌", ""), TelegramButton("Recalled  ✅", ""))
+        val recallActions = listOf(TelegramButton("Forgot  ❌", null, "123"), TelegramButton("Recalled  ✅", null, "123"))
 
         val dictionaryTelegramButtons = onlineDictionaries
             .map {
                 TelegramButton(
                     text = "Look it up",
-                    url = it.getWordUrl(memorizedInfo)
+                    url = it.getWordUrl(memorizedInfo),
+                    callback = null,
                 )
             }
 

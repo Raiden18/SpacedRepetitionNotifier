@@ -2,6 +2,7 @@ package org.danceofvalkyries.telegram.impl
 
 import org.danceofvalkyries.telegram.api.models.TelegramMessage
 import org.danceofvalkyries.telegram.api.models.TelegramMessageBody
+import org.danceofvalkyries.telegram.api.models.TelegramUpdate
 import org.danceofvalkyries.telegram.api.models.TelegramUpdateCallbackQuery
 import org.danceofvalkyries.telegram.impl.client.TelegramChatRestApi
 
@@ -40,14 +41,16 @@ class TelegramChatApiImpl(
         api.editMessageText(messageId, request)
     }
 
-    override suspend fun getUpdates(): List<TelegramUpdateCallbackQuery> {
+    override suspend fun getUpdates(): List<TelegramUpdate> {
         return api.getUpdates()
-            .map { it.callbackQueryData }
             .map {
-                TelegramUpdateCallbackQuery(
+                TelegramUpdate(
                     id = it.id,
-                    messages = it.message.toDomain(),
-                    callback = it.data
+                    telegramUpdateCallbackQuery = TelegramUpdateCallbackQuery(
+                        id = it.callbackQueryData.id,
+                        message = it.callbackQueryData.message.toDomain(),
+                        callback = it.callbackQueryData.data,
+                    ),
                 )
             }
     }
