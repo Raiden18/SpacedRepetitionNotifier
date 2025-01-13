@@ -4,10 +4,9 @@ import com.google.gson.Gson
 import kotlinx.coroutines.delay
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.danceofvalkyries.app.data.persistance.notion.database.NotionDatabaseDataBaseTable
 import org.danceofvalkyries.app.data.persistance.notion.database.NotionDatabaseDataBaseTableImpl
 import org.danceofvalkyries.app.data.repositories.flashcards.FlashCardsRepositoryImpl
-import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.dao.FlashCardDaoImpl
+import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.dao.NotionPageFlashCardDaoImpl
 import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
 import org.danceofvalkyries.app.domain.models.FlashCard
 import org.danceofvalkyries.app.domain.usecases.GetAllFlashCardsUseCase
@@ -62,7 +61,7 @@ class TestApp(
         val notionDbsRepository = NotionDataBaseApiImpl(notionApi)
 
         val flashCardsRepository = FlashCardsRepositoryImpl(
-            FlashCardDaoImpl(dbConnection),
+            NotionPageFlashCardDaoImpl(dbConnection),
             notionApi,
             config,
         )

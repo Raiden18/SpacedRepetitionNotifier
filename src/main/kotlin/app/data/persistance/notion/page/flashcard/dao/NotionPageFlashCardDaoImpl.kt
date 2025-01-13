@@ -6,9 +6,9 @@ import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
 import java.sql.Connection
 import java.sql.Statement
 
-class FlashCardDaoImpl(
+class NotionPageFlashCardDaoImpl(
     private val connection: Connection,
-) : FlashCardDao {
+) : NotionPageFlashCardDao {
 
     companion object {
         private const val TABLE_NAME = "flash_cards_to_revise"
@@ -21,10 +21,10 @@ class FlashCardDaoImpl(
     private val example = TextTableColumn("example")
     private val answer = TextTableColumn("answer")
     private val imageUrl = TextTableColumn("image_url")
-    private val memorizedInfo = TextTableColumn("memorized_info")
+    private val memorizedInfo = TextTableColumn("name")
     private val notionDbId = TextTableColumn("notion_db_id")
 
-    private val sqlQueries = FlashCardSqlQueries(
+    private val sqlQueries = NotionPageFlashCardSqlQueries(
         tableName = TABLE_NAME,
         example = example,
         answer = answer,
@@ -34,31 +34,31 @@ class FlashCardDaoImpl(
         id = id,
     )
 
-    override suspend fun insert(entity: FlashCardDbEntity) {
+    override suspend fun insert(entity: NotionPageFlashCardDbEntity) {
         createTableIfNotExist()
             .also { it.execute(sqlQueries.insert(entity)) }
             .also { it.close() }
     }
 
-    override suspend fun getAllFor(notionDataBaseId: String): List<FlashCardDbEntity> {
+    override suspend fun getAllFor(notionDataBaseId: String): List<NotionPageFlashCardDbEntity> {
         return createTableIfNotExist()
             .executeQuery(sqlQueries.selectAll(notionDataBaseId))
             .asSequence()
             .map {
-                FlashCardDbEntity(
-                    memorizedInfo = memorizedInfo.getValue(it)!!,
+                NotionPageFlashCardDbEntity(
+                    name = memorizedInfo.getValue(it)!!,
                     example = example.getValue(it),
-                    answer = answer.getValue(it),
+                    explanation = answer.getValue(it),
                     imageUrl = imageUrl.getValue(it),
-                    cardId = id.getValue(it)!!,
+                    id = id.getValue(it)!!,
                     notionDbId = notionDbId.getValue(it)!!
                 )
             }.toList()
     }
 
-    override suspend fun delete(entity: FlashCardDbEntity) {
+    override suspend fun delete(notionPageId: String) {
         createTableIfNotExist()
-            .also { it.execute(sqlQueries.delete(entity.cardId)) }
+            .also { it.execute(sqlQueries.delete(notionPageId)) }
             .also { it.close() }
     }
 

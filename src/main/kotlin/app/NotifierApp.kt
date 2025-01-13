@@ -5,7 +5,7 @@ import notion.impl.client.NotionApi
 import okhttp3.OkHttpClient
 import org.danceofvalkyries.app.data.persistance.notion.database.NotionDatabaseDataBaseTableImpl
 import org.danceofvalkyries.app.data.persistance.notion.database.dao.NotionDataBaseDaoImpl
-import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.dao.FlashCardDaoImpl
+import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.dao.NotionPageFlashCardDaoImpl
 import org.danceofvalkyries.app.data.persistance.telegram.messages.dao.TelegramMessageDaoImpl
 import org.danceofvalkyries.app.data.repositories.flashcards.FlashCardsRepositoryImpl
 import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
@@ -100,7 +100,7 @@ class NotifierApp(
 
     private fun FlashCardsRepository(connection: Connection): FlashCardsRepository {
         return FlashCardsRepositoryImpl(
-            FlashCardDaoImpl(connection),
+            NotionPageFlashCardDaoImpl(connection),
             NotionApi(),
             config,
         )

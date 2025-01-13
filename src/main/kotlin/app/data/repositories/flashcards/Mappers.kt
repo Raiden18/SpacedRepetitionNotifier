@@ -1,6 +1,6 @@
 package org.danceofvalkyries.app.data.repositories.flashcards
 
-import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.dao.FlashCardDbEntity
+import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.dao.NotionPageFlashCardDbEntity
 import org.danceofvalkyries.app.domain.models.FlashCard
 import org.danceofvalkyries.app.domain.models.OnlineDictionary
 import org.danceofvalkyries.notion.impl.restapi.models.NotionPageData
@@ -22,27 +22,27 @@ fun NotionPageData.toFlashCard(): FlashCard {
     )
 }
 
-fun FlashCardDbEntity.toFlashCard(onlineDictionaries: List<OnlineDictionary>): FlashCard {
+fun NotionPageFlashCardDbEntity.toFlashCard(onlineDictionaries: List<OnlineDictionary>): FlashCard {
     return FlashCard(
-        memorizedInfo = memorizedInfo!!,
+        memorizedInfo = name!!,
         example = example,
-        answer = answer,
+        answer = explanation,
         telegramImageUrl = imageUrl,
         onlineDictionaries = onlineDictionaries,
         metaInfo = FlashCard.MetaInfo(
-            id = cardId,
+            id = id,
             notionDbId = notionDbId!!
         )
     )
 }
 
-fun FlashCard.toEntity(): FlashCardDbEntity {
-    return FlashCardDbEntity(
-        memorizedInfo = memorizedInfo,
+fun FlashCard.toEntity(): NotionPageFlashCardDbEntity {
+    return NotionPageFlashCardDbEntity(
+        name = memorizedInfo,
         example = example,
-        answer = answer,
+        explanation = answer,
         imageUrl = telegramImageUrl,
-        cardId = metaInfo.id,
+        id = metaInfo.id,
         notionDbId = metaInfo.notionDbId,
     )
 }

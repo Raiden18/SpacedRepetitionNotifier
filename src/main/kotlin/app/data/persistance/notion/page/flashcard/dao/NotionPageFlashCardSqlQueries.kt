@@ -4,7 +4,7 @@ import org.danceofvalkyries.utils.db.SqlQuery
 import org.danceofvalkyries.utils.db.tables.columns.TableColumn
 import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
 
-class FlashCardSqlQueries(
+class NotionPageFlashCardSqlQueries(
     private val tableName: String,
     private val id: TextTableColumn,
     private val example: TextTableColumn,
@@ -22,19 +22,17 @@ class FlashCardSqlQueries(
         }
     }
 
-    fun insert(
-        flashCardDbEntity: FlashCardDbEntity
-    ): String {
+    fun insert(notionPageFlashCardDbEntity: NotionPageFlashCardDbEntity): String {
         return SqlQuery {
             insert(
                 into = tableName,
                 values = listOf(
-                    id to flashCardDbEntity.cardId,
-                    example to flashCardDbEntity.example,
-                    answer to flashCardDbEntity.answer,
-                    imageUrl to flashCardDbEntity.imageUrl,
-                    memorizedInfo to flashCardDbEntity.memorizedInfo,
-                    notionDbId to flashCardDbEntity.notionDbId,
+                    id to notionPageFlashCardDbEntity.id,
+                    example to notionPageFlashCardDbEntity.example,
+                    answer to notionPageFlashCardDbEntity.explanation,
+                    imageUrl to notionPageFlashCardDbEntity.imageUrl,
+                    memorizedInfo to notionPageFlashCardDbEntity.name,
+                    notionDbId to notionPageFlashCardDbEntity.notionDbId,
                 )
             )
         }
@@ -53,7 +51,7 @@ class FlashCardSqlQueries(
         return SqlQuery {
             delete()
             from(tableName)
-            where(this@FlashCardSqlQueries.id to id)
+            where(this@NotionPageFlashCardSqlQueries.id to id)
         }
     }
 
