@@ -1,8 +1,8 @@
-package org.danceofvalkyries.telegram.impl.client.request.bodies
+package org.danceofvalkyries.telegram.impl.client.models
 
 import com.google.gson.annotations.SerializedName
 
-data class ButtonRequest(
+data class ButtonData(
     @SerializedName("text")
     val text: String,
     @SerializedName("callback_data")

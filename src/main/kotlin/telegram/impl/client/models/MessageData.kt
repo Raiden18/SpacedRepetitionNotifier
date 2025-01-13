@@ -1,4 +1,4 @@
-package org.danceofvalkyries.telegram.impl.client.request.bodies
+package org.danceofvalkyries.telegram.impl.client.models
 
 import com.google.gson.annotations.SerializedName
 
@@ -11,13 +11,13 @@ import com.google.gson.annotations.SerializedName
  * @property caption
  * @property text
  */
-data class SendMessageRequest(
+data class MessageData(
     @SerializedName("chat_id")
     val chatId: String,
     @SerializedName("parse_mode")
     val parseMode: String,
     @SerializedName("reply_markup")
-    val replyMarkup: ReplyMarkupResponse?,
+    val replyMarkup: ReplyMarkupData?,
     @SerializedName("photo")
     val photo: String?,
     @SerializedName("caption")

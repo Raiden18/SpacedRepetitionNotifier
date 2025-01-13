@@ -26,7 +26,6 @@ import org.danceofvalkyries.telegram.impl.client.TelegramChatRestApiImpl
 import org.danceofvalkyries.utils.Dispatchers
 import org.danceofvalkyries.utils.db.DataBase
 import java.util.concurrent.TimeUnit
-import kotlin.time.Duration.Companion.seconds
 
 class TestApp(
     private val db: DataBase,
@@ -46,7 +45,7 @@ class TestApp(
     }
 
     override suspend fun run() {
-        val telegramChatRepository = createTelegramChatRepository()
+        val telegramChatApi = createTelegramChatRepository()
         val messageFactory = MessageFactoryImpl()
         val dbConnection = db.establishConnection()
         val notionApi = NotionApiImpl(
@@ -63,9 +62,16 @@ class TestApp(
         val notionPageFlashCardDataBaseTable = NotionPageFlashCardDataBaseTableImpl(
             notionPageFlashCardDao
         )
+        val tgApi = TelegramChatApiImpl(
+            api = TelegramChatRestApiImpl(
+                client = createHttpClient(),
+                gson = createGson(),
+                apiKey = config.telegram.apiKey
+            ),
+            chatId = config.telegram.chatId,
+        )
 
         realApp.run()
-return
 
         /*  notionDatabaseDataBaseTable.getAll()
               .forEach {
@@ -82,12 +88,7 @@ return
 
 
         /* while (true){
-             val tgApi = TelegramChatApiImpl(
-                 client = createHttpClient(),
-                 gson = createGson(),
-                 apiKey = config.telegram.apiKey,
-                 chatId = config.telegram.chatId,
-             )
+
              tgApi.getUpdate()
              delay(2.seconds)
          }*/
@@ -97,20 +98,23 @@ return
         GetAllFlashCardsUseCase(
             NotionDatabaseDataBaseTableImpl(flashCardsTablesDbTable),
             NotionPageFlashCardDataBaseTableImpl(NotionPageFlashCardDaoImpl(dbConnection))
-        ).execute()
-            .forEach {
-                delay(5.seconds)
-                //UpdatePageInNotion(flashCardNotionPageApi).execute(it.recalled())
-                ReplaceFlashCardInChatUseCase(
-                    telegramMessagesDataBaseTable,
-                    DeleteMessageFromTelegramChat(telegramChatRepository),
-                    SendMessageToTelegramChat(telegramChatRepository),
-                    GetOnlineDictionariesForFlashCard(config.notion.observedDatabases),
-                    messageFactory,
-                    dispatchers
-                ).execute(it)
+        ).execute().forEach {
+            ReplaceFlashCardInChatUseCase(
+                telegramMessagesDataBaseTable,
+                DeleteMessageFromTelegramChat(telegramChatApi),
+                SendMessageToTelegramChat(telegramChatApi),
+                GetOnlineDictionariesForFlashCard(config.notion.observedDatabases),
+                messageFactory,
+                dispatchers
+            ).execute(it)
+        }
 
-            }
+        //TODO: Надо полность спасрсить джосн сообщения
+        while (true) {
+            val updates = telegramChatApi.getUpdates()
+            println(updates)
+            delay(5)
+        }
     }
 
     private fun createTelegramChatRepository(): TelegramChatApi {

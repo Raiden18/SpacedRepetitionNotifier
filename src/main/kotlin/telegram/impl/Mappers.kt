@@ -1,26 +1,27 @@
 package org.danceofvalkyries.telegram.impl
 
-import org.danceofvalkyries.telegram.impl.client.request.bodies.ButtonRequest
-import org.danceofvalkyries.telegram.impl.client.request.bodies.ReplyMarkupResponse
-import org.danceofvalkyries.telegram.impl.client.request.bodies.SendMessageRequest
-import org.danceofvalkyries.telegram.api.models.TelegramMessageBody
+import org.danceofvalkyries.telegram.api.models.*
+import org.danceofvalkyries.telegram.api.models.TelegramMessageBody.Type
+import org.danceofvalkyries.telegram.impl.client.models.ButtonData
+import org.danceofvalkyries.telegram.impl.client.models.MessageData
+import org.danceofvalkyries.telegram.impl.client.models.ReplyMarkupData
 
 // TODO: Add Unit tests when I've figured out what to do with callbackData
 fun TelegramMessageBody.toRequest(
     chatId: String,
     messageId: Long? = null,
-): SendMessageRequest {
-    return SendMessageRequest(
+): MessageData {
+    return MessageData(
         chatId = chatId,
         text = text.get().takeIf { imageUrl == null },
         caption = text.get().takeIf { imageUrl != null },
         parseMode = "MarkdownV2",
-        replyMarkup = ReplyMarkupResponse(
+        replyMarkup = ReplyMarkupData(
             nestedButtons.map {
                 it.map {
-                    ButtonRequest(
+                    ButtonData(
                         text = it.text,
-                        callbackData = "1",
+                        callbackData = "Злоебучий коллбек",
                         url = it.url
                     )
                 }
@@ -28,5 +29,28 @@ fun TelegramMessageBody.toRequest(
         ),
         photo = imageUrl?.get(),
         messageId = messageId
+    )
+}
+
+fun MessageData.toDomain(): TelegramMessage {
+    val imageUrl = photo
+    val text = if (imageUrl == null) text!! else caption!!
+    return TelegramMessage(
+        id = messageId!!,
+        body = TelegramMessageBody(
+            text = TelegramText(text),
+            nestedButtons = replyMarkup
+                ?.inlineKeyboards
+                ?.map {
+                    it.map {
+                        TelegramButton(
+                            text = it.text,
+                            url = it.url.orEmpty()
+                        )
+                    }
+                } ?: emptyList(),
+            imageUrl = imageUrl?.let(::TelegramImageUrl),
+            type = Type.UNKNOWN,
+        )
     )
 }
