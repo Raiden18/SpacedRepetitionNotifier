@@ -5,26 +5,22 @@ import kotlinx.coroutines.delay
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.danceofvalkyries.app.data.persistance.notion.database.NotionDatabaseDataBaseTableImpl
-import org.danceofvalkyries.app.data.repositories.flashcards.FlashCardsRepositoryImpl
+import org.danceofvalkyries.app.data.persistance.notion.database.dao.NotionDataBaseDaoImpl
+import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.NotionPageFlashCardDataBaseTableImpl
 import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.dao.NotionPageFlashCardDaoImpl
+import org.danceofvalkyries.app.data.persistance.telegram.messages.dao.TelegramMessageDaoImpl
 import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
-import org.danceofvalkyries.app.domain.models.FlashCard
 import org.danceofvalkyries.app.domain.usecases.GetAllFlashCardsUseCase
 import org.danceofvalkyries.app.domain.usecases.ReplaceFlashCardInChatUseCase
 import org.danceofvalkyries.config.data.TestConfigRepository
 import org.danceofvalkyries.config.domain.Config
-import org.danceofvalkyries.notion.impl.restapi.NotionApiImpl
-import org.danceofvalkyries.notion.impl.database.NotionDataBaseApiImpl
-import org.danceofvalkyries.app.data.persistance.notion.database.dao.NotionDataBaseDaoImpl
-import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.NotionPageFlashCardDataBaseTableImpl
 import org.danceofvalkyries.notion.impl.flashcardpage.FlashCardNotionPageApiImpl
-import org.danceofvalkyries.notion.api.models.NotionId
-import org.danceofvalkyries.telegram.impl.restapi.TelegramChatRestApiImpl
-import org.danceofvalkyries.app.data.persistance.telegram.messages.dao.TelegramMessageDaoImpl
+import org.danceofvalkyries.notion.impl.restapi.NotionApiImpl
 import org.danceofvalkyries.telegram.impl.DeleteMessageFromTelegramChat
 import org.danceofvalkyries.telegram.impl.SendMessageToTelegramChat
-import org.danceofvalkyries.telegram.impl.TelegramChatApiImpl
 import org.danceofvalkyries.telegram.impl.TelegramChatApi
+import org.danceofvalkyries.telegram.impl.TelegramChatApiImpl
+import org.danceofvalkyries.telegram.impl.restapi.TelegramChatRestApiImpl
 import org.danceofvalkyries.utils.Dispatchers
 import org.danceofvalkyries.utils.db.DataBase
 import java.util.concurrent.TimeUnit
@@ -59,12 +55,6 @@ class TestApp(
         )
         val flashCardsTablesDbTable = NotionDataBaseDaoImpl(dbConnection)
         val notionDatabaseDataBaseTable = NotionDatabaseDataBaseTableImpl(flashCardsTablesDbTable)
-
-        val flashCardsRepository = FlashCardsRepositoryImpl(
-            NotionPageFlashCardDaoImpl(dbConnection),
-            notionApi,
-            config,
-        )
 
         realApp.run()
 

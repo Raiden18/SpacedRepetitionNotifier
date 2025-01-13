@@ -1,25 +1,23 @@
 package org.danceofvalkyries.app
-
 import com.google.gson.Gson
 import notion.impl.client.NotionApi
 import okhttp3.OkHttpClient
 import org.danceofvalkyries.app.data.persistance.notion.database.NotionDatabaseDataBaseTableImpl
 import org.danceofvalkyries.app.data.persistance.notion.database.dao.NotionDataBaseDaoImpl
-import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.NotionPageFlashCardDataBaseTable
 import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.NotionPageFlashCardDataBaseTableImpl
 import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.dao.NotionPageFlashCardDaoImpl
 import org.danceofvalkyries.app.data.persistance.telegram.messages.dao.TelegramMessageDaoImpl
-import org.danceofvalkyries.app.data.repositories.flashcards.FlashCardsRepositoryImpl
 import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
-import org.danceofvalkyries.app.domain.repositories.FlashCardsRepository
 import org.danceofvalkyries.app.domain.usecases.*
 import org.danceofvalkyries.config.data.LocalFileConfigRepository
 import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.config.domain.ConfigRepository
 import org.danceofvalkyries.notion.api.models.NotionId
+import org.danceofvalkyries.notion.impl.GetAllPagesFromNotionDataBase
 import org.danceofvalkyries.notion.impl.GetDataBaseFromNotion
 import org.danceofvalkyries.notion.impl.database.NotionDataBaseApi
 import org.danceofvalkyries.notion.impl.database.NotionDataBaseApiImpl
+import org.danceofvalkyries.notion.impl.flashcardpage.FlashCardNotionPageApiImpl
 import org.danceofvalkyries.notion.impl.restapi.NotionApiImpl
 import org.danceofvalkyries.telegram.impl.*
 import org.danceofvalkyries.telegram.impl.restapi.TelegramChatRestApiImpl
@@ -45,7 +43,10 @@ class NotifierApp(
         val notionDataBaseDao = NotionDataBaseDaoImpl(dbConnection)
         val notionDatabaseDataBaseTable = NotionDatabaseDataBaseTableImpl(notionDataBaseDao)
         val notionDbsRepository = NotionDbRepository()
-        val flashCardsRepository = FlashCardsRepository(dbConnection)
+        val flashCardNotionPageApi = FlashCardNotionPageApiImpl(
+            NotionApi()
+        )
+
         val notionPageFlashCardDataBaseTable = NotionPageFlashCardDataBaseTableImpl(
             NotionPageFlashCardDaoImpl(dbConnection)
         )
@@ -56,7 +57,8 @@ class NotifierApp(
         ReplaceAllNotionCacheUseCase(
             ReplaceFlashCardsInCacheUseCase(
                 ids,
-                flashCardsRepository,
+                notionPageFlashCardDataBaseTable,
+                GetAllPagesFromNotionDataBase(flashCardNotionPageApi),
                 dispatchers,
             ),
             ReplaceNotionDbsInCacheUseCase(
@@ -100,14 +102,6 @@ class NotifierApp(
     private fun NotionDbRepository(): NotionDataBaseApi {
         return NotionDataBaseApiImpl(
             NotionApi()
-        )
-    }
-
-    private fun FlashCardsRepository(connection: Connection): FlashCardsRepository {
-        return FlashCardsRepositoryImpl(
-            NotionPageFlashCardDaoImpl(connection),
-            NotionApi(),
-            config,
         )
     }
 

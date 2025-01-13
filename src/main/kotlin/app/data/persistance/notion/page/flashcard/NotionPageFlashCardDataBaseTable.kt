@@ -5,6 +5,7 @@ import org.danceofvalkyries.notion.api.models.NotionId
 
 interface NotionPageFlashCardDataBaseTable {
     suspend fun insert(flashCardPage: FlashCardNotionPage)
+    suspend fun insert(flashCardPages: List<FlashCardNotionPage>)
     // TODO: MUST REMOVE ONLY PAGE IDS
     suspend fun getAllFor(notionDataBaseId: NotionId): List<FlashCardNotionPage>
     suspend fun delete(flashCardPage: FlashCardNotionPage)

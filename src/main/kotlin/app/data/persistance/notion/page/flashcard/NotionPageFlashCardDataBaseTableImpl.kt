@@ -22,6 +22,10 @@ class NotionPageFlashCardDataBaseTableImpl(
         notionPageFlashCardDao.insert(entity)
     }
 
+    override suspend fun insert(flashCardPages: List<FlashCardNotionPage>) {
+        flashCardPages.forEach { insert(it) }
+    }
+
     override suspend fun getAllFor(notionDataBaseId: NotionId): List<FlashCardNotionPage> {
         return notionPageFlashCardDao.getAllFor(
             notionDataBaseId.get(NotionId.Modifier.AS_IS)
