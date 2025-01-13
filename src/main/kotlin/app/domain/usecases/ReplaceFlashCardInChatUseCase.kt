@@ -20,6 +20,7 @@ fun ReplaceFlashCardInChatUseCase(
     telegramMessagesDataBaseTable: TelegramMessagesDataBaseTable,
     deleteMessageFromTelegramChat: DeleteMessageFromTelegramChat,
     sendMessageToTelegramChat: SendMessageToTelegramChat,
+    getOnlineDictionariesForFlashCard: GetOnlineDictionariesForFlashCard,
     messageFactory: MessageFactory,
     dispatchers: Dispatchers,
 ): ReplaceFlashCardInChatUseCase {
@@ -36,7 +37,8 @@ fun ReplaceFlashCardInChatUseCase(
                 asyncTasks.add(deleteOldAsyncTask)
             }
             val sendNewMessageAsyncTask = async(dispatchers.io) {
-                val messageBody = messageFactory.createFlashCardMessage(it)
+                val onlineDictionaries = getOnlineDictionariesForFlashCard.execute(it)
+                val messageBody = messageFactory.createFlashCardMessage(it, onlineDictionaries)
                 val chatMessage = sendMessageToTelegramChat.execute(messageBody)
                 telegramMessagesDataBaseTable.save(chatMessage)
             }

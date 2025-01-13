@@ -43,7 +43,7 @@ class MessageFactoryKtTest : FunSpec() {
                  ),*/
             )
 
-            messageFactory.createFlashCardMessage(flashCard) shouldBe TelegramMessageBody(
+            messageFactory.createFlashCardMessage(flashCard, emptyList()) shouldBe TelegramMessageBody(
                 text = TelegramText(
                     """
                     *Expect*
@@ -66,7 +66,7 @@ class MessageFactoryKtTest : FunSpec() {
                 //onlineDictionaries = emptyList(),
             )
             messageFactory
-                .createFlashCardMessage(flashCard)
+                .createFlashCardMessage(flashCard, emptyList())
                 .nestedButtons shouldBe buttonsWithoutDictionary()
         }
 
@@ -80,7 +80,7 @@ class MessageFactoryKtTest : FunSpec() {
                     OnlineDictionary("https://dictionary.cambridge.org/dictionary/english/")
                 )*/
             )
-            messageFactory.createFlashCardMessage(flashCard) shouldBe TelegramMessageBody(
+            messageFactory.createFlashCardMessage(flashCard, emptyList()) shouldBe TelegramMessageBody(
                 text = TelegramText(
                     """
                     *Expect*

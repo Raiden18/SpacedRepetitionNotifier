@@ -1,4 +1,4 @@
-package org.danceofvalkyries.app.domain.models
+package org.danceofvalkyries.dictionary.api
 
 import okhttp3.HttpUrl.Companion.toHttpUrl
 

@@ -1,5 +1,6 @@
 package org.danceofvalkyries.app.domain.message
 
+import org.danceofvalkyries.dictionary.api.OnlineDictionary
 import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
 import org.danceofvalkyries.notion.api.models.NotionDataBase
 import org.danceofvalkyries.telegram.api.models.TelegramMessageBody
@@ -11,5 +12,8 @@ interface MessageFactory {
         notionDataBases: List<NotionDataBase>,
     ): TelegramMessageBody
 
-    fun createFlashCardMessage(flashCard: FlashCardNotionPage): TelegramMessageBody
+    fun createFlashCardMessage(
+        flashCard: FlashCardNotionPage,
+        onlineDictionaries: List<OnlineDictionary>
+    ): TelegramMessageBody
 }

@@ -14,6 +14,7 @@ import org.danceofvalkyries.app.data.persistance.telegram.messages.dao.TelegramM
 import org.danceofvalkyries.app.data.persistance.telegram.messages.dao.TelegramMessageDaoImpl
 import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
 import org.danceofvalkyries.app.domain.usecases.GetAllFlashCardsUseCase
+import org.danceofvalkyries.app.domain.usecases.GetOnlineDictionariesForFlashCard
 import org.danceofvalkyries.app.domain.usecases.ReplaceFlashCardInChatUseCase
 import org.danceofvalkyries.config.data.TestConfigRepository
 import org.danceofvalkyries.config.domain.Config
@@ -63,16 +64,18 @@ class TestApp(
         realApp.run()
 
 
-
-        notionDatabaseDataBaseTable.getAll()
+      /*  notionDatabaseDataBaseTable.getAll()
             .forEach {
                 val repo = FlashCardNotionPageApiImpl(notionApi)
                 repo.getAllFromDb(it.id)
-                    .map { messageFactory.createFlashCardMessage(it) }
+                    .map {
+                        val dictionaries = GetOnlineDictionariesForFlashCard(config.notion.observedDatabases).execute(it)
+                        messageFactory.createFlashCardMessage(it, dictionaries)
+                    }
                     .forEach {
                         SendMessageToTelegramChat(telegramChatRepository).execute(it)
                     }
-            }
+            }*/
 
 
         /* while (true){
@@ -97,6 +100,7 @@ class TestApp(
                     telegramMessagesDataBaseTable,
                     DeleteMessageFromTelegramChat(telegramChatRepository),
                     SendMessageToTelegramChat(telegramChatRepository),
+                    GetOnlineDictionariesForFlashCard(config.notion.observedDatabases),
                     messageFactory,
                     dispatchers
                 ).execute(it)

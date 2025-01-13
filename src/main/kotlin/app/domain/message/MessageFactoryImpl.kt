@@ -1,8 +1,8 @@
 package org.danceofvalkyries.app.domain.message
 
+import org.danceofvalkyries.dictionary.api.OnlineDictionary
 import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
 import org.danceofvalkyries.notion.api.models.NotionDataBase
-import org.danceofvalkyries.notion.api.models.NotionId
 import org.danceofvalkyries.telegram.api.models.TelegramButton
 import org.danceofvalkyries.telegram.api.models.TelegramImageUrl
 import org.danceofvalkyries.telegram.api.models.TelegramMessageBody
@@ -43,6 +43,7 @@ class MessageFactoryImpl : MessageFactory {
 
     override fun createFlashCardMessage(
         flashCard: FlashCardNotionPage,
+        onlineDictionaries: List<OnlineDictionary>,
     ): TelegramMessageBody {
         val memorizedInfo = flashCard.name
         val example = flashCard.example
@@ -62,20 +63,20 @@ class MessageFactoryImpl : MessageFactory {
             .append("Choose:")
 
         val recallActions = listOf(TelegramButton("Forgot  ❌", ""), TelegramButton("Recalled  ✅", ""))
-        // Add online dictionaries
-        /*val dictionaryTelegramButtons = flashCard.onlineDictionaries
+
+        val dictionaryTelegramButtons = onlineDictionaries
             .map {
                 TelegramButton(
                     text = "Look it up",
                     url = it.getWordUrl(memorizedInfo)
                 )
-            }*/
+            }
 
         return TelegramMessageBody(
             text = TelegramText(body.toString()),
             nestedButtons = listOf(
                 recallActions,
-                emptyList()
+                dictionaryTelegramButtons
             ),
             imageUrl = flashCard.coverUrl?.let(::TelegramImageUrl),
             type = TelegramMessageBody.Type.FLASH_CARD,
