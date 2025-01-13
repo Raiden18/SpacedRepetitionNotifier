@@ -2,7 +2,7 @@ package app.domain.models
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.telegram.domain.models.TelegramImageUrl
+import org.danceofvalkyries.telegram.api.models.TelegramImageUrl
 
 class ImageUrlTest : FunSpec() {
 

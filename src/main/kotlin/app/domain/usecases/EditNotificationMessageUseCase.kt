@@ -1,19 +1,21 @@
 package org.danceofvalkyries.app.domain.usecases
 
-import org.danceofvalkyries.telegram.domain.TelegramChatRepository
-import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
+import org.danceofvalkyries.telegram.api.EditMessageInTelegramChat
+import org.danceofvalkyries.telegram.impl.TelegramChatApi
+import org.danceofvalkyries.telegram.api.models.TelegramMessageBody
 
 fun interface EditNotificationMessageUseCase {
     suspend fun execute(text: TelegramMessageBody)
 }
 
 fun EditNotificationMessageUseCase(
-    telegramChatRepository: TelegramChatRepository
+    telegramChatApi: TelegramChatApi,
+    editMessageInTelegramChat: EditMessageInTelegramChat,
 ): EditNotificationMessageUseCase {
     return EditNotificationMessageUseCase {
-        telegramChatRepository.getAllFromDb().forEach { message ->
-            telegramChatRepository.updateInDb(it, message.id)
-            telegramChatRepository.editInChat(it, message.id)
+        telegramChatApi.getAllFromDb().forEach { message ->
+            telegramChatApi.updateInDb(it, message.id)
+            editMessageInTelegramChat.execute(it, message.id)
         }
     }
 }

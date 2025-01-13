@@ -4,22 +4,21 @@ import com.google.gson.Gson
 import okhttp3.OkHttpClient
 import org.danceofvalkyries.app.data.repositories.flashcards.FlashCardsRepositoryImpl
 import org.danceofvalkyries.app.data.repositories.flashcards.db.FlashCardDbTableImpl
+import org.danceofvalkyries.app.data.repositories.telegram.db.TelegramNotificationMessageDbImpl
 import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
 import org.danceofvalkyries.app.domain.repositories.FlashCardsRepository
 import org.danceofvalkyries.app.domain.usecases.*
 import org.danceofvalkyries.config.data.LocalFileConfigRepository
 import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.config.domain.ConfigRepository
-import org.danceofvalkyries.notion.data.repositories.api.NotionApi
-import org.danceofvalkyries.notion.data.repositories.api.NotionApiImpl
-import org.danceofvalkyries.notion.data.repositories.database.NotionDataBaseRepositoryImpl
-import org.danceofvalkyries.notion.data.repositories.database.db.NotionDataBaseDbTableImpl
-import org.danceofvalkyries.notion.domain.models.NotionId
-import org.danceofvalkyries.notion.domain.repositories.NotionDataBaseRepository
-import org.danceofvalkyries.telegram.data.api.TelegramChatApiImpl
-import org.danceofvalkyries.telegram.data.db.TelegramNotificationMessageDbImpl
-import org.danceofvalkyries.telegram.data.repositories.TelegramChatRepositoryImpl
-import org.danceofvalkyries.telegram.domain.TelegramChatRepository
+import org.danceofvalkyries.notion.impl.restapi.NotionApi
+import org.danceofvalkyries.notion.impl.restapi.NotionApiImpl
+import org.danceofvalkyries.notion.impl.database.NotionDataBaseApiImpl
+import org.danceofvalkyries.app.data.repositories.notion.db.NotionDataBaseDbTableImpl
+import org.danceofvalkyries.notion.api.models.NotionId
+import org.danceofvalkyries.notion.impl.database.NotionDataBaseApi
+import org.danceofvalkyries.telegram.impl.*
+import org.danceofvalkyries.telegram.impl.restapi.TelegramChatRestApiImpl
 import org.danceofvalkyries.utils.Dispatchers
 import org.danceofvalkyries.utils.db.DataBase
 import java.sql.Connection
@@ -64,28 +63,32 @@ class NotifierApp(
                 flashCardsRepository,
             ),
             GetAllNotionDatabasesUseCase(notionDbsRepository),
-            EditNotificationMessageUseCase(telegramChatRepository),
+            EditNotificationMessageUseCase(
+                telegramChatRepository,
+                EditMessageInTelegramChat(telegramChatRepository)
+                ),
             DeleteOldAndSendNewNotificationUseCase(
-                telegramChatRepository
+                telegramChatRepository,
+                DeleteFromTelegramChat(telegramChatRepository),
+                SendMessageToTelegramChat(telegramChatRepository)
             ),
             messageFactory,
             config.flashCardsThreshold,
         ).execute()
     }
 
-    private fun createTelegramChatRepository(dbConnection: Connection): TelegramChatRepository {
-        val api = TelegramChatApiImpl(
+    private fun createTelegramChatRepository(dbConnection: Connection): TelegramChatApi {
+        val api = TelegramChatRestApiImpl(
             client = createHttpClient(),
             gson = createGson(),
             apiKey = config.telegram.apiKey,
-            chatId = config.telegram.chatId,
         )
         val db = TelegramNotificationMessageDbImpl(dbConnection)
-        return TelegramChatRepositoryImpl(api, db)
+        return TelegramChatApiImpl(api, db, config.telegram.chatId)
     }
 
-    private fun NotionDbRepository(dbConnection: Connection): NotionDataBaseRepository {
-        return NotionDataBaseRepositoryImpl(
+    private fun NotionDbRepository(dbConnection: Connection): NotionDataBaseApi {
+        return NotionDataBaseApiImpl(
             NotionApi(),
             NotionDataBaseDbTableImpl(dbConnection)
         )

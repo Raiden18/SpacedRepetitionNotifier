@@ -1,8 +1,8 @@
 package org.danceofvalkyries.app.domain.message
 
 import org.danceofvalkyries.app.domain.models.FlashCard
-import org.danceofvalkyries.notion.domain.models.NotionDataBase
-import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
+import org.danceofvalkyries.notion.api.models.NotionDataBase
+import org.danceofvalkyries.telegram.api.models.TelegramMessageBody
 
 interface MessageFactory {
     fun createDone(): TelegramMessageBody

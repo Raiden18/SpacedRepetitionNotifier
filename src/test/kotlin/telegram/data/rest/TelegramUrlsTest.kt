@@ -2,7 +2,7 @@ package telegram.data.rest
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.telegram.data.api.rest.TelegramChatUrls
+import org.danceofvalkyries.telegram.impl.restapi.TelegramChatUrls
 
 class TelegramUrlsTest : FunSpec() {
     private val apiKey = "228"
@@ -10,7 +10,6 @@ class TelegramUrlsTest : FunSpec() {
 
     private val telegramChatUrl = TelegramChatUrls(
         apiKey = apiKey,
-        chatId = chatId,
     )
 
     init {
@@ -29,7 +28,10 @@ class TelegramUrlsTest : FunSpec() {
         test("Should return url for deleteMessages") {
             val messageId = 1L
             telegramChatUrl
-                .deleteMessage(messageId)
+                .deleteMessage(
+                    messageId = messageId,
+                    chatId = chatId.toLong(),
+                )
                 .toString() shouldBe "https://api.telegram.org/bot$apiKey/deleteMessage?chat_id=$chatId&message_id=$messageId"
         }
 

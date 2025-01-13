@@ -5,8 +5,8 @@ import org.danceofvalkyries.app.domain.models.FlashCard
 import org.danceofvalkyries.app.domain.models.OnlineDictionary
 import org.danceofvalkyries.app.domain.repositories.FlashCardsRepository
 import org.danceofvalkyries.config.domain.Config
-import org.danceofvalkyries.notion.data.repositories.api.NotionApi
-import org.danceofvalkyries.notion.domain.models.NotionId
+import org.danceofvalkyries.notion.impl.restapi.NotionApi
+import org.danceofvalkyries.notion.api.models.NotionId
 
 class FlashCardsRepositoryImpl(
     private val flashCardTable: FlashCardDbTable,

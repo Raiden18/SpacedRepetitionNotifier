@@ -2,19 +2,19 @@ package notion.data.repositories.api
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.notion.data.repositories.api.models.NotionPageData
-import org.danceofvalkyries.notion.data.repositories.api.models.PropertyData
-import org.danceofvalkyries.notion.data.repositories.api.models.response.CoverBody
-import org.danceofvalkyries.notion.data.repositories.api.models.response.CoverResponse
-import org.danceofvalkyries.notion.data.repositories.api.models.response.ParentResponse
-import org.danceofvalkyries.notion.data.repositories.api.models.response.properties.RichTextResponse
-import org.danceofvalkyries.notion.data.repositories.api.models.response.properties.TextContentResponse
-import org.danceofvalkyries.notion.data.repositories.api.models.response.properties.TextResponse
-import org.danceofvalkyries.notion.data.repositories.api.toDomain
-import org.danceofvalkyries.notion.data.repositories.api.toUpdateKnowLevels
-import org.danceofvalkyries.notion.domain.models.FlashCardNotionPage
-import org.danceofvalkyries.notion.domain.models.KnowLevels
-import org.danceofvalkyries.notion.domain.models.NotionId
+import org.danceofvalkyries.notion.impl.restapi.models.NotionPageData
+import org.danceofvalkyries.notion.impl.restapi.models.PropertyData
+import org.danceofvalkyries.notion.impl.restapi.models.response.CoverBody
+import org.danceofvalkyries.notion.impl.restapi.models.response.CoverResponse
+import org.danceofvalkyries.notion.impl.restapi.models.response.ParentResponse
+import org.danceofvalkyries.notion.impl.restapi.models.response.properties.RichTextResponse
+import org.danceofvalkyries.notion.impl.restapi.models.response.properties.TextContentResponse
+import org.danceofvalkyries.notion.impl.restapi.models.response.properties.TextResponse
+import org.danceofvalkyries.notion.impl.toDomain
+import org.danceofvalkyries.notion.impl.toUpdateKnowLevels
+import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
+import org.danceofvalkyries.notion.api.models.KnowLevels
+import org.danceofvalkyries.notion.api.models.NotionId
 
 class MappersKtTest : FunSpec() {
 

@@ -1,23 +1,27 @@
 package org.danceofvalkyries.app.domain.usecases
 
-import org.danceofvalkyries.telegram.domain.TelegramChatRepository
-import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
+import org.danceofvalkyries.telegram.api.DeleteFromTelegramChat
+import org.danceofvalkyries.telegram.api.SendMessageToTelegramChat
+import org.danceofvalkyries.telegram.api.models.TelegramMessageBody
+import org.danceofvalkyries.telegram.impl.TelegramChatApi
 
 fun interface DeleteOldAndSendNewNotificationUseCase {
     suspend fun execute(textBody: TelegramMessageBody)
 }
 
 fun DeleteOldAndSendNewNotificationUseCase(
-    telegramChatRepository: TelegramChatRepository,
+    telegramChatApi: TelegramChatApi,
+    deleteFromTelegramChat: DeleteFromTelegramChat,
+    sendMessageToTelegramChat: SendMessageToTelegramChat,
 ): DeleteOldAndSendNewNotificationUseCase {
     return DeleteOldAndSendNewNotificationUseCase {
-        telegramChatRepository.getAllFromDb()
+        telegramChatApi.getAllFromDb()
             .filter { it.body.type == TelegramMessageBody.Type.NOTIFICATION }
             .forEach { oldMessage ->
-                telegramChatRepository.deleteFromChat(oldMessage)
-                telegramChatRepository.deleteFromDb(oldMessage)
+                deleteFromTelegramChat.execute(oldMessage)
+                telegramChatApi.deleteFromDb(oldMessage)
             }
-        val telegramMessage = telegramChatRepository.sendToChat(it)
-        telegramChatRepository.saveToDb(telegramMessage)
+        val telegramMessage = sendMessageToTelegramChat.execute(it)
+        telegramChatApi.saveToDb(telegramMessage)
     }
 }

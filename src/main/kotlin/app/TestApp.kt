@@ -12,16 +12,17 @@ import org.danceofvalkyries.app.domain.usecases.GetAllFlashCardsUseCase
 import org.danceofvalkyries.app.domain.usecases.ReplaceFlashCardInChatUseCase
 import org.danceofvalkyries.config.data.TestConfigRepository
 import org.danceofvalkyries.config.domain.Config
-import org.danceofvalkyries.notion.data.repositories.api.NotionApiImpl
-import org.danceofvalkyries.notion.data.repositories.database.NotionDataBaseRepositoryImpl
-import org.danceofvalkyries.notion.data.repositories.database.db.NotionDataBaseDbTableImpl
-import org.danceofvalkyries.notion.data.repositories.page.FlashCardNotionPageRepositoryImpl
-import org.danceofvalkyries.notion.domain.models.NotionId
-import org.danceofvalkyries.telegram.data.api.TelegramChatApiImpl
-import org.danceofvalkyries.telegram.data.db.TelegramNotificationMessageDbImpl
-import org.danceofvalkyries.telegram.data.repositories.TelegramChatRepositoryImpl
-import org.danceofvalkyries.telegram.domain.TelegramChatRepository
-import org.danceofvalkyries.telegram.domain.models.TelegramImageUrl
+import org.danceofvalkyries.notion.impl.restapi.NotionApiImpl
+import org.danceofvalkyries.notion.impl.database.NotionDataBaseApiImpl
+import org.danceofvalkyries.app.data.repositories.notion.db.NotionDataBaseDbTableImpl
+import org.danceofvalkyries.notion.impl.flashcardpage.FlashCardNotionPageApiImpl
+import org.danceofvalkyries.notion.api.models.NotionId
+import org.danceofvalkyries.telegram.impl.restapi.TelegramChatRestApiImpl
+import org.danceofvalkyries.app.data.repositories.telegram.db.TelegramNotificationMessageDbImpl
+import org.danceofvalkyries.telegram.impl.DeleteFromTelegramChat
+import org.danceofvalkyries.telegram.impl.SendMessageToTelegramChat
+import org.danceofvalkyries.telegram.impl.TelegramChatApiImpl
+import org.danceofvalkyries.telegram.impl.TelegramChatApi
 import org.danceofvalkyries.utils.Dispatchers
 import org.danceofvalkyries.utils.db.DataBase
 import java.util.concurrent.TimeUnit
@@ -55,7 +56,7 @@ class TestApp(
             apiKey = config.notion.apiKey,
         )
         val flashCardsTablesDbTable = NotionDataBaseDbTableImpl(dbConnection)
-        val notionDbsRepository = NotionDataBaseRepositoryImpl(notionApi, flashCardsTablesDbTable)
+        val notionDbsRepository = NotionDataBaseApiImpl(notionApi, flashCardsTablesDbTable)
 
         val flashCardsRepository = FlashCardsRepositoryImpl(
             FlashCardDbTableImpl(dbConnection),
@@ -69,8 +70,8 @@ class TestApp(
 
         notionDbsRepository.getFromCache()
             .forEach {
-                val repo = FlashCardNotionPageRepositoryImpl(notionApi)
-                repo.getAllFromDb(it.id.get(NotionId.Modifier.URL_FRIENDLY))
+                val repo = FlashCardNotionPageApiImpl(notionApi)
+                repo.getAllFromDb(it.id)
                     .map {
                         FlashCard(
                             memorizedInfo = it.name,
@@ -85,7 +86,7 @@ class TestApp(
                         )
                     }.map { messageFactory.createFlashCardMessage(it) }
                     .forEach {
-                        telegramChatRepository.sendToChat(it)
+                        telegramChatRepository.sendTextMessage(it)
                     }
             }
 
@@ -110,6 +111,8 @@ class TestApp(
             .forEach {
                 ReplaceFlashCardInChatUseCase(
                     telegramChatRepository,
+                    DeleteFromTelegramChat(telegramChatRepository),
+                    SendMessageToTelegramChat(telegramChatRepository),
                     messageFactory,
                     dispatchers
                 ).execute(it)
@@ -117,16 +120,15 @@ class TestApp(
             }
     }
 
-    private fun createTelegramChatRepository(): TelegramChatRepository {
-        val api = TelegramChatApiImpl(
+    private fun createTelegramChatRepository(): TelegramChatApi {
+        val api = TelegramChatRestApiImpl(
             client = createHttpClient(),
             gson = createGson(),
             apiKey = config.telegram.apiKey,
-            chatId = config.telegram.chatId,
         )
         val connection = db.establishConnection()
         val db = TelegramNotificationMessageDbImpl(connection)
-        return TelegramChatRepositoryImpl(api, db)
+        return TelegramChatApiImpl(api, db,  config.telegram.chatId)
     }
 
     private fun createHttpClient(): OkHttpClient {

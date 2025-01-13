@@ -4,7 +4,7 @@ import io.kotest.core.spec.style.FunSpec
 import io.mockk.*
 import org.danceofvalkyries.app.domain.message.MessageFactory
 import org.danceofvalkyries.app.domain.usecases.*
-import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
+import org.danceofvalkyries.telegram.api.models.TelegramMessageBody
 
 class AnalyzeFlashCardsAndSendNotificationUseCaseKtTest : FunSpec() {
 

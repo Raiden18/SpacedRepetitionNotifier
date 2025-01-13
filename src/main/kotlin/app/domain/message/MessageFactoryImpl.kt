@@ -1,12 +1,12 @@
 package org.danceofvalkyries.app.domain.message
 
 import org.danceofvalkyries.app.domain.models.FlashCard
-import org.danceofvalkyries.notion.domain.models.NotionDataBase
-import org.danceofvalkyries.notion.domain.models.NotionId
-import org.danceofvalkyries.telegram.domain.models.TelegramButton
-import org.danceofvalkyries.telegram.domain.models.TelegramImageUrl
-import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
-import org.danceofvalkyries.telegram.domain.models.TelegramText
+import org.danceofvalkyries.notion.api.models.NotionDataBase
+import org.danceofvalkyries.notion.api.models.NotionId
+import org.danceofvalkyries.telegram.api.models.TelegramButton
+import org.danceofvalkyries.telegram.api.models.TelegramImageUrl
+import org.danceofvalkyries.telegram.api.models.TelegramMessageBody
+import org.danceofvalkyries.telegram.api.models.TelegramText
 
 class MessageFactoryImpl : MessageFactory {
 
@@ -78,7 +78,7 @@ class MessageFactoryImpl : MessageFactory {
                 recallActions,
                 dictionaryTelegramButtons
             ),
-            telegramImageUrl = imageUrl?.let(::TelegramImageUrl),
+            imageUrl = imageUrl?.let(::TelegramImageUrl),
             type = TelegramMessageBody.Type.FLASH_CARD,
         )
     }

@@ -2,7 +2,7 @@ package notion.domain.models
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.notion.domain.models.KnowLevels
+import org.danceofvalkyries.notion.api.models.KnowLevels
 
 class KnowLevelsTest : FunSpec() {
 

@@ -8,7 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import org.danceofvalkyries.app.domain.models.FlashCard
 import org.danceofvalkyries.app.domain.repositories.FlashCardsRepository
 import org.danceofvalkyries.app.domain.usecases.ReplaceFlashCardsInCacheUseCase
-import org.danceofvalkyries.notion.domain.models.NotionId
+import org.danceofvalkyries.notion.api.models.NotionId
 import org.danceofvalkyries.utils.DispatchersImpl
 
 class ReplaceFlashCardsInCacheUseCaseKtTest : FunSpec() {

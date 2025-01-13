@@ -2,9 +2,9 @@ package notion.data.repositories.db.table
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.notion.data.repositories.database.db.NotionDbSqlQueries
-import org.danceofvalkyries.notion.domain.models.NotionDataBase
-import org.danceofvalkyries.notion.domain.models.NotionId
+import org.danceofvalkyries.app.data.repositories.notion.db.NotionDbSqlQueries
+import org.danceofvalkyries.notion.api.models.NotionDataBase
+import org.danceofvalkyries.notion.api.models.NotionId
 import org.danceofvalkyries.utils.db.tables.columns.PrimaryKey
 import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
 

@@ -4,7 +4,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.danceofvalkyries.app.domain.repositories.FlashCardsRepository
-import org.danceofvalkyries.notion.domain.models.NotionId
+import org.danceofvalkyries.notion.api.models.NotionId
 import org.danceofvalkyries.utils.Dispatchers
 
 fun interface ReplaceFlashCardsInCacheUseCase {

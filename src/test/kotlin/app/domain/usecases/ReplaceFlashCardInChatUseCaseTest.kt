@@ -7,15 +7,19 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import org.danceofvalkyries.app.domain.models.FlashCard
 import org.danceofvalkyries.app.domain.usecases.ReplaceFlashCardInChatUseCase
-import org.danceofvalkyries.telegram.domain.TelegramChatRepository
-import org.danceofvalkyries.telegram.domain.models.TelegramMessage
-import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
+import org.danceofvalkyries.telegram.api.DeleteFromTelegramChat
+import org.danceofvalkyries.telegram.api.SendMessageToTelegramChat
+import org.danceofvalkyries.telegram.impl.TelegramChatApi
+import org.danceofvalkyries.telegram.api.models.TelegramMessage
+import org.danceofvalkyries.telegram.api.models.TelegramMessageBody
 import org.danceofvalkyries.utils.DispatchersImpl
 import testutils.MessageFactoryFake
 
 class ReplaceFlashCardInChatUseCaseTest : FunSpec() {
 
-    private val telegramChatRepository: TelegramChatRepository = mockk(relaxed = true)
+    private val telegramChatApi: TelegramChatApi = mockk(relaxed = true)
+    private val deleteFromTelegramChat: DeleteFromTelegramChat = mockk(relaxed = true)
+    private val sendMessageToTelegramChat: SendMessageToTelegramChat = mockk(relaxed = true)
 
     private lateinit var messageFactoryFake: MessageFactoryFake
 
@@ -60,37 +64,39 @@ class ReplaceFlashCardInChatUseCaseTest : FunSpec() {
             clearAllMocks()
             messageFactoryFake = MessageFactoryFake()
             replaceFlashCardInChatUseCase = ReplaceFlashCardInChatUseCase(
-                telegramChatRepository,
+                telegramChatApi,
+                deleteFromTelegramChat,
+                sendMessageToTelegramChat,
                 messageFactoryFake,
                 DispatchersImpl(kotlinx.coroutines.Dispatchers.Unconfined)
             )
 
-            coEvery { telegramChatRepository.sendToChat(flashCardMessage.body) } returns flashCardMessage
+            coEvery { sendMessageToTelegramChat.execute(flashCardMessage.body) } returns flashCardMessage
 
         }
 
         test("Should send FlashCard message to TG if there is no flashcard message in chat") {
-            coEvery { telegramChatRepository.getAllFromDb() } returns listOf(notification)
+            coEvery { telegramChatApi.getAllFromDb() } returns listOf(notification)
             messageFactoryFake.flashCardBody = flashCardMessage.body
 
             replaceFlashCardInChatUseCase.execute(flashCard)
 
-            coVerify(exactly = 1) { telegramChatRepository.sendToChat(flashCardMessage.body) }
-            coVerify(exactly = 1) { telegramChatRepository.saveToDb(flashCardMessage) }
+            coVerify(exactly = 1) { sendMessageToTelegramChat.execute(flashCardMessage.body) }
+            coVerify(exactly = 1) { telegramChatApi.saveToDb(flashCardMessage) }
         }
 
         test("Should update FlashCard message if it already presents") {
-            coEvery { telegramChatRepository.getAllFromDb() } returns listOf(flashCardMessage, notification)
-            coEvery { telegramChatRepository.sendToChat(anotherFlashCardMessage.body) } returns anotherFlashCardMessage
+            coEvery { telegramChatApi.getAllFromDb() } returns listOf(flashCardMessage, notification)
+            coEvery { sendMessageToTelegramChat.execute(anotherFlashCardMessage.body) } returns anotherFlashCardMessage
             messageFactoryFake.flashCardBody = anotherFlashCardMessage.body
 
             replaceFlashCardInChatUseCase.execute(anotherFlashCard)
 
-            coVerify(exactly = 1) { telegramChatRepository.deleteFromChat(flashCardMessage) }
-            coVerify(exactly = 1) { telegramChatRepository.deleteFromDb(flashCardMessage) }
+            coVerify(exactly = 1) { deleteFromTelegramChat.execute(flashCardMessage) }
+            coVerify(exactly = 1) { telegramChatApi.deleteFromDb(flashCardMessage) }
 
-            coVerify(exactly = 1) { telegramChatRepository.sendToChat(anotherFlashCardMessage.body) }
-            coVerify(exactly = 1) { telegramChatRepository.saveToDb(anotherFlashCardMessage) }
+            coVerify(exactly = 1) { sendMessageToTelegramChat.execute(anotherFlashCardMessage.body) }
+            coVerify(exactly = 1) { telegramChatApi.saveToDb(anotherFlashCardMessage) }
         }
     }
 }

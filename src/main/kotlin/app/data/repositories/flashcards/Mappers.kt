@@ -2,9 +2,8 @@ package org.danceofvalkyries.app.data.repositories.flashcards
 
 import org.danceofvalkyries.app.data.repositories.flashcards.db.FlashCardDbEntity
 import org.danceofvalkyries.app.domain.models.FlashCard
-import org.danceofvalkyries.telegram.domain.models.TelegramImageUrl
 import org.danceofvalkyries.app.domain.models.OnlineDictionary
-import org.danceofvalkyries.notion.data.repositories.api.models.NotionPageData
+import org.danceofvalkyries.notion.impl.restapi.models.NotionPageData
 
 fun NotionPageData.toFlashCard(): FlashCard {
     val memorizedInfo = properties?.get("Name")?.title?.firstOrNull()?.text?.content.orEmpty()

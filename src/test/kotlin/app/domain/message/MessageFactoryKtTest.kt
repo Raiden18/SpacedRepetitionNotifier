@@ -6,12 +6,12 @@ import org.danceofvalkyries.app.domain.message.MessageFactory
 import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
 import org.danceofvalkyries.app.domain.models.FlashCard
 import org.danceofvalkyries.app.domain.models.OnlineDictionary
-import org.danceofvalkyries.notion.domain.models.NotionDataBase
-import org.danceofvalkyries.notion.domain.models.NotionId
-import org.danceofvalkyries.telegram.domain.models.TelegramButton
-import org.danceofvalkyries.telegram.domain.models.TelegramImageUrl
-import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
-import org.danceofvalkyries.telegram.domain.models.TelegramText
+import org.danceofvalkyries.notion.api.models.NotionDataBase
+import org.danceofvalkyries.notion.api.models.NotionId
+import org.danceofvalkyries.telegram.api.models.TelegramButton
+import org.danceofvalkyries.telegram.api.models.TelegramImageUrl
+import org.danceofvalkyries.telegram.api.models.TelegramMessageBody
+import org.danceofvalkyries.telegram.api.models.TelegramText
 
 class MessageFactoryKtTest : FunSpec() {
 
@@ -53,7 +53,7 @@ class MessageFactoryKtTest : FunSpec() {
                 """.trimIndent()
                 ),
                 nestedButtons = buttonsWithDictionary("Expect"),
-                telegramImageUrl = TelegramImageUrl(imageUrl),
+                imageUrl = TelegramImageUrl(imageUrl),
                 type = TelegramMessageBody.Type.FLASH_CARD,
             )
         }
@@ -93,7 +93,7 @@ class MessageFactoryKtTest : FunSpec() {
                     Choose:""".trimIndent()
                 ),
                 nestedButtons = buttonsWithDictionary("Expect"),
-                telegramImageUrl = TelegramImageUrl("url"),
+                imageUrl = TelegramImageUrl("url"),
                 type = TelegramMessageBody.Type.FLASH_CARD,
             )
         }
@@ -166,7 +166,7 @@ class MessageFactoryKtTest : FunSpec() {
                         )
                     )
                 ),
-                telegramImageUrl = null,
+                imageUrl = null,
                 type = TelegramMessageBody.Type.NOTIFICATION,
             )
         }

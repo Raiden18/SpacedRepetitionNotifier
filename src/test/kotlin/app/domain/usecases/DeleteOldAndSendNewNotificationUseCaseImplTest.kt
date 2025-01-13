@@ -6,13 +6,18 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import org.danceofvalkyries.app.domain.usecases.DeleteOldAndSendNewNotificationUseCase
-import org.danceofvalkyries.telegram.domain.TelegramChatRepository
-import org.danceofvalkyries.telegram.domain.models.TelegramMessage
-import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
+import org.danceofvalkyries.telegram.api.DeleteFromTelegramChat
+import org.danceofvalkyries.telegram.api.SendMessageToTelegramChat
+import org.danceofvalkyries.telegram.impl.TelegramChatApi
+import org.danceofvalkyries.telegram.api.models.TelegramMessage
+import org.danceofvalkyries.telegram.api.models.TelegramMessageBody
 
 class DeleteOldAndSendNewNotificationUseCaseImplTest : FunSpec() {
 
-    private val telegramChatRepository: TelegramChatRepository = mockk(relaxed = true)
+    private val telegramChatApi: TelegramChatApi = mockk(relaxed = true)
+    private val deleteFromTelegramChat: DeleteFromTelegramChat = mockk(relaxed = true)
+    private val sendMessageToTelegramChat: SendMessageToTelegramChat = mockk(relaxed = true)
+
     private val text = "Message to telegram"
 
     private val telegramNotification = TelegramMessage(
@@ -46,24 +51,26 @@ class DeleteOldAndSendNewNotificationUseCaseImplTest : FunSpec() {
         beforeTest {
             clearAllMocks()
             useCase = DeleteOldAndSendNewNotificationUseCase(
-                telegramChatRepository
+                telegramChatApi,
+                deleteFromTelegramChat,
+                sendMessageToTelegramChat,
             )
-            coEvery { telegramChatRepository.sendToChat(telegramNotification.body) } returns telegramNotification
-            coEvery { telegramChatRepository.getAllFromDb() } returns listOf(oldTelegramNotification, flashCardMessage)
+            coEvery { sendMessageToTelegramChat.execute(telegramNotification.body) } returns telegramNotification
+            coEvery { telegramChatApi.getAllFromDb() } returns listOf(oldTelegramNotification, flashCardMessage)
         }
 
         test("Should replace old tg message with new one") {
 
             useCase.execute(telegramNotification.body)
 
-            coVerify(exactly = 1) { telegramChatRepository.deleteFromDb(oldTelegramNotification) }
-            coVerify(exactly = 1) { telegramChatRepository.deleteFromChat(oldTelegramNotification) }
+            coVerify(exactly = 1) { telegramChatApi.deleteFromDb(oldTelegramNotification) }
+            coVerify(exactly = 1) { deleteFromTelegramChat.execute(oldTelegramNotification) }
 
-            coVerify(exactly = 1) { telegramChatRepository.saveToDb(telegramNotification) }
-            coVerify(exactly = 1) { telegramChatRepository.sendToChat(telegramNotification.body) }
+            coVerify(exactly = 1) { telegramChatApi.saveToDb(telegramNotification) }
+            coVerify(exactly = 1) { sendMessageToTelegramChat.execute(telegramNotification.body) }
 
-            coVerify(exactly = 0) { telegramChatRepository.deleteFromDb(flashCardMessage) }
-            coVerify(exactly = 0) { telegramChatRepository.deleteFromChat(flashCardMessage) }
+            coVerify(exactly = 0) { telegramChatApi.deleteFromDb(flashCardMessage) }
+            coVerify(exactly = 0) { deleteFromTelegramChat.execute(flashCardMessage) }
         }
     }
 }

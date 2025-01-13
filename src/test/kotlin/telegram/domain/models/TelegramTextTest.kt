@@ -2,7 +2,7 @@ package telegram.domain.models
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.telegram.domain.models.TelegramText
+import org.danceofvalkyries.telegram.api.models.TelegramText
 
 class TelegramTextTest : FunSpec() {
 

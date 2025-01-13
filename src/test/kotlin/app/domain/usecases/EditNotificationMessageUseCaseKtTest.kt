@@ -6,13 +6,15 @@ import io.mockk.coEvery
 import io.mockk.coVerifyOrder
 import io.mockk.mockk
 import org.danceofvalkyries.app.domain.usecases.EditNotificationMessageUseCase
-import org.danceofvalkyries.telegram.domain.TelegramChatRepository
-import org.danceofvalkyries.telegram.domain.models.TelegramMessage
-import org.danceofvalkyries.telegram.domain.models.TelegramMessageBody
+import org.danceofvalkyries.telegram.api.EditMessageInTelegramChat
+import org.danceofvalkyries.telegram.impl.TelegramChatApi
+import org.danceofvalkyries.telegram.api.models.TelegramMessage
+import org.danceofvalkyries.telegram.api.models.TelegramMessageBody
 
 class EditNotificationMessageUseCaseKtTest : FunSpec() {
 
-    private val telegramChatRepository: TelegramChatRepository = mockk(relaxed = true)
+    private val telegramChatApi: TelegramChatApi = mockk(relaxed = true)
+    private val editMessageInTelegramChat: EditMessageInTelegramChat = mockk(relaxed = true)
     private lateinit var editNotificationMessageUseCase: EditNotificationMessageUseCase
 
     private val oldTelegramMessage = TelegramMessage(
@@ -29,8 +31,8 @@ class EditNotificationMessageUseCaseKtTest : FunSpec() {
 
         beforeTest {
             clearAllMocks()
-            editNotificationMessageUseCase = EditNotificationMessageUseCase(telegramChatRepository)
-            coEvery { telegramChatRepository.getAllFromDb() } returns listOf(oldTelegramMessage)
+            editNotificationMessageUseCase = EditNotificationMessageUseCase(telegramChatApi, editMessageInTelegramChat)
+            coEvery { telegramChatApi.getAllFromDb() } returns listOf(oldTelegramMessage)
         }
 
         test("Should update message") {
@@ -44,8 +46,8 @@ class EditNotificationMessageUseCaseKtTest : FunSpec() {
             editNotificationMessageUseCase.execute(newMessageBody)
 
             coVerifyOrder {
-                telegramChatRepository.updateInDb(newMessageBody, oldTelegramMessage.id)
-                telegramChatRepository.editInChat(newMessageBody, oldTelegramMessage.id)
+                telegramChatApi.updateInDb(newMessageBody, oldTelegramMessage.id)
+                editMessageInTelegramChat.execute(newMessageBody, oldTelegramMessage.id)
             }
         }
     }
