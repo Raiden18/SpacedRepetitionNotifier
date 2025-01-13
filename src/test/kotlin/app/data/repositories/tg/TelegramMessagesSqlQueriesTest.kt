@@ -1,4 +1,4 @@
-package telegram.data.db
+package app.data.repositories.tg
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe

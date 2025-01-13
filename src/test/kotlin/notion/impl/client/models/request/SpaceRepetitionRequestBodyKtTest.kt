@@ -1,4 +1,4 @@
-package notion.data.repositories.api.request
+package notion.impl.client.models.request
 
 import com.google.gson.GsonBuilder
 import io.kotest.core.spec.style.FunSpec

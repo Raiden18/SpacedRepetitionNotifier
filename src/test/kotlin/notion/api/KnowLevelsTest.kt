@@ -1,4 +1,4 @@
-package notion.domain.models
+package notion.api
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe

@@ -1,4 +1,4 @@
-package telegram.domain.models
+package telegram.api.models
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe

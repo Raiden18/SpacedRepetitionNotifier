@@ -1,4 +1,4 @@
-package notion.data.repositories.db.table
+package app.data.repositories.db.table
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe

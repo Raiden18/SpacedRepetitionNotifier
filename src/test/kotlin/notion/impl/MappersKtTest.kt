@@ -1,4 +1,4 @@
-package notion.data.repositories.api
+package notion.impl
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe

@@ -1,4 +1,4 @@
-package telegram.data.rest
+package telegram.impl.client
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
