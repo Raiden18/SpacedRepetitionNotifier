@@ -6,7 +6,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.danceofvalkyries.app.domain.message.MessageFactory
 import org.danceofvalkyries.app.domain.models.FlashCard
-import org.danceofvalkyries.telegram.api.DeleteFromTelegramChat
+import org.danceofvalkyries.telegram.api.DeleteMessageFromTelegramChat
 import org.danceofvalkyries.telegram.api.SendMessageToTelegramChat
 import org.danceofvalkyries.telegram.impl.TelegramChatApi
 import org.danceofvalkyries.telegram.api.models.TelegramMessageBody
@@ -18,7 +18,7 @@ fun interface ReplaceFlashCardInChatUseCase {
 
 fun ReplaceFlashCardInChatUseCase(
     telegramChatApi: TelegramChatApi,
-    deleteFromTelegramChat: DeleteFromTelegramChat,
+    deleteMessageFromTelegramChat: DeleteMessageFromTelegramChat,
     sendMessageToTelegramChat: SendMessageToTelegramChat,
     messageFactory: MessageFactory,
     dispatchers: Dispatchers,
@@ -30,7 +30,7 @@ fun ReplaceFlashCardInChatUseCase(
             val asyncTasks = mutableListOf<Deferred<Unit>>()
             if (flashCardFromChat != null) {
                 val deleteOldAsyncTask = async(dispatchers.io) {
-                    deleteFromTelegramChat.execute(flashCardFromChat)
+                    deleteMessageFromTelegramChat.execute(flashCardFromChat)
                     telegramChatApi.deleteFromDb(flashCardFromChat)
                 }
                 asyncTasks.add(deleteOldAsyncTask)

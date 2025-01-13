@@ -1,6 +1,6 @@
 package org.danceofvalkyries.app.domain.usecases
 
-import org.danceofvalkyries.telegram.api.DeleteFromTelegramChat
+import org.danceofvalkyries.telegram.api.DeleteMessageFromTelegramChat
 import org.danceofvalkyries.telegram.api.SendMessageToTelegramChat
 import org.danceofvalkyries.telegram.api.models.TelegramMessageBody
 import org.danceofvalkyries.telegram.impl.TelegramChatApi
@@ -11,14 +11,14 @@ fun interface DeleteOldAndSendNewNotificationUseCase {
 
 fun DeleteOldAndSendNewNotificationUseCase(
     telegramChatApi: TelegramChatApi,
-    deleteFromTelegramChat: DeleteFromTelegramChat,
+    deleteMessageFromTelegramChat: DeleteMessageFromTelegramChat,
     sendMessageToTelegramChat: SendMessageToTelegramChat,
 ): DeleteOldAndSendNewNotificationUseCase {
     return DeleteOldAndSendNewNotificationUseCase {
         telegramChatApi.getAllFromDb()
             .filter { it.body.type == TelegramMessageBody.Type.NOTIFICATION }
             .forEach { oldMessage ->
-                deleteFromTelegramChat.execute(oldMessage)
+                deleteMessageFromTelegramChat.execute(oldMessage)
                 telegramChatApi.deleteFromDb(oldMessage)
             }
         val telegramMessage = sendMessageToTelegramChat.execute(it)

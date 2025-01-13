@@ -7,7 +7,7 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import org.danceofvalkyries.app.domain.models.FlashCard
 import org.danceofvalkyries.app.domain.usecases.ReplaceFlashCardInChatUseCase
-import org.danceofvalkyries.telegram.api.DeleteFromTelegramChat
+import org.danceofvalkyries.telegram.api.DeleteMessageFromTelegramChat
 import org.danceofvalkyries.telegram.api.SendMessageToTelegramChat
 import org.danceofvalkyries.telegram.impl.TelegramChatApi
 import org.danceofvalkyries.telegram.api.models.TelegramMessage
@@ -18,7 +18,7 @@ import testutils.MessageFactoryFake
 class ReplaceFlashCardInChatUseCaseTest : FunSpec() {
 
     private val telegramChatApi: TelegramChatApi = mockk(relaxed = true)
-    private val deleteFromTelegramChat: DeleteFromTelegramChat = mockk(relaxed = true)
+    private val deleteMessageFromTelegramChat: DeleteMessageFromTelegramChat = mockk(relaxed = true)
     private val sendMessageToTelegramChat: SendMessageToTelegramChat = mockk(relaxed = true)
 
     private lateinit var messageFactoryFake: MessageFactoryFake
@@ -65,7 +65,7 @@ class ReplaceFlashCardInChatUseCaseTest : FunSpec() {
             messageFactoryFake = MessageFactoryFake()
             replaceFlashCardInChatUseCase = ReplaceFlashCardInChatUseCase(
                 telegramChatApi,
-                deleteFromTelegramChat,
+                deleteMessageFromTelegramChat,
                 sendMessageToTelegramChat,
                 messageFactoryFake,
                 DispatchersImpl(kotlinx.coroutines.Dispatchers.Unconfined)
@@ -92,7 +92,7 @@ class ReplaceFlashCardInChatUseCaseTest : FunSpec() {
 
             replaceFlashCardInChatUseCase.execute(anotherFlashCard)
 
-            coVerify(exactly = 1) { deleteFromTelegramChat.execute(flashCardMessage) }
+            coVerify(exactly = 1) { deleteMessageFromTelegramChat.execute(flashCardMessage) }
             coVerify(exactly = 1) { telegramChatApi.deleteFromDb(flashCardMessage) }
 
             coVerify(exactly = 1) { sendMessageToTelegramChat.execute(anotherFlashCardMessage.body) }

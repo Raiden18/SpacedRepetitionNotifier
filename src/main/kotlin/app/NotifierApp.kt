@@ -15,7 +15,9 @@ import org.danceofvalkyries.notion.impl.restapi.NotionApi
 import org.danceofvalkyries.notion.impl.restapi.NotionApiImpl
 import org.danceofvalkyries.notion.impl.database.NotionDataBaseApiImpl
 import org.danceofvalkyries.app.data.repositories.notion.db.NotionDataBaseDbTableImpl
+import org.danceofvalkyries.notion.api.GetDataBaseFromNotion
 import org.danceofvalkyries.notion.api.models.NotionId
+import org.danceofvalkyries.notion.impl.GetDataBaseFromNotion
 import org.danceofvalkyries.notion.impl.database.NotionDataBaseApi
 import org.danceofvalkyries.telegram.impl.*
 import org.danceofvalkyries.telegram.impl.restapi.TelegramChatRestApiImpl
@@ -53,6 +55,7 @@ class NotifierApp(
             ReplaceNotionDbsInCacheUseCase(
                 ids,
                 notionDbsRepository,
+                GetDataBaseFromNotion(notionDbsRepository),
                 dispatchers,
             ),
             dispatchers
@@ -69,7 +72,7 @@ class NotifierApp(
                 ),
             DeleteOldAndSendNewNotificationUseCase(
                 telegramChatRepository,
-                DeleteFromTelegramChat(telegramChatRepository),
+                DeleteMessageFromTelegramChat(telegramChatRepository),
                 SendMessageToTelegramChat(telegramChatRepository)
             ),
             messageFactory,

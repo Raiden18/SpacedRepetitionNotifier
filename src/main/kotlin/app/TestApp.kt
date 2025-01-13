@@ -19,7 +19,7 @@ import org.danceofvalkyries.notion.impl.flashcardpage.FlashCardNotionPageApiImpl
 import org.danceofvalkyries.notion.api.models.NotionId
 import org.danceofvalkyries.telegram.impl.restapi.TelegramChatRestApiImpl
 import org.danceofvalkyries.app.data.repositories.telegram.db.TelegramNotificationMessageDbImpl
-import org.danceofvalkyries.telegram.impl.DeleteFromTelegramChat
+import org.danceofvalkyries.telegram.impl.DeleteMessageFromTelegramChat
 import org.danceofvalkyries.telegram.impl.SendMessageToTelegramChat
 import org.danceofvalkyries.telegram.impl.TelegramChatApiImpl
 import org.danceofvalkyries.telegram.impl.TelegramChatApi
@@ -111,7 +111,7 @@ class TestApp(
             .forEach {
                 ReplaceFlashCardInChatUseCase(
                     telegramChatRepository,
-                    DeleteFromTelegramChat(telegramChatRepository),
+                    DeleteMessageFromTelegramChat(telegramChatRepository),
                     SendMessageToTelegramChat(telegramChatRepository),
                     messageFactory,
                     dispatchers
