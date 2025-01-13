@@ -26,7 +26,6 @@ import org.danceofvalkyries.utils.db.DataBase
 import java.util.concurrent.TimeUnit
 import kotlin.time.Duration.Companion.seconds
 
-// TODO: Remove notion id from here
 class TestApp(
     private val db: DataBase,
     private val dispatchers: Dispatchers,
