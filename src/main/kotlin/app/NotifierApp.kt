@@ -14,8 +14,7 @@ import org.danceofvalkyries.config.domain.ConfigRepository
 import org.danceofvalkyries.notion.impl.restapi.NotionApi
 import org.danceofvalkyries.notion.impl.restapi.NotionApiImpl
 import org.danceofvalkyries.notion.impl.database.NotionDataBaseApiImpl
-import org.danceofvalkyries.app.data.repositories.notion.db.NotionDataBaseDbTableImpl
-import org.danceofvalkyries.notion.api.GetDataBaseFromNotion
+import org.danceofvalkyries.app.data.persistance.notion.database.NotionDataBaseDbTableImpl
 import org.danceofvalkyries.notion.api.models.NotionId
 import org.danceofvalkyries.notion.impl.GetDataBaseFromNotion
 import org.danceofvalkyries.notion.impl.database.NotionDataBaseApi

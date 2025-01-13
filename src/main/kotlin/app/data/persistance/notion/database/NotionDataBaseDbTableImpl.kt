@@ -1,7 +1,5 @@
-package org.danceofvalkyries.app.data.repositories.notion.db
+package org.danceofvalkyries.app.data.persistance.notion.database
 
-import org.danceofvalkyries.notion.api.models.NotionDataBase
-import org.danceofvalkyries.notion.api.models.NotionId
 import org.danceofvalkyries.utils.db.asSequence
 import org.danceofvalkyries.utils.db.tables.columns.PrimaryKey
 import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
@@ -25,19 +23,19 @@ class NotionDataBaseDbTableImpl(
         name = name,
     )
 
-    override suspend fun insert(notionDataBase: NotionDataBase) {
+    override suspend fun insert(notionDataBaseEntity: NotionDataBaseEntity) {
         createTableIfNotExist()
-            .also { it.execute(sqlQueries.insert(notionDataBase)) }
+            .also { it.execute(sqlQueries.insert(notionDataBaseEntity)) }
             .also { it.close() }
     }
 
-    override suspend fun getAll(): List<NotionDataBase> {
+    override suspend fun getAll(): List<NotionDataBaseEntity> {
         return createTableIfNotExist()
             .executeQuery(sqlQueries.selectAll())
             .asSequence()
             .map {
-                NotionDataBase(
-                    id = NotionId(id.getValue(it)!!),
+                NotionDataBaseEntity(
+                    id = id.getValue(it)!!,
                     name = name.getValue(it)!!,
                 )
             }.toList()

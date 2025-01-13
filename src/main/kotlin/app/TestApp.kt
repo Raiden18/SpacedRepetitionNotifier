@@ -14,7 +14,7 @@ import org.danceofvalkyries.config.data.TestConfigRepository
 import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.notion.impl.restapi.NotionApiImpl
 import org.danceofvalkyries.notion.impl.database.NotionDataBaseApiImpl
-import org.danceofvalkyries.app.data.repositories.notion.db.NotionDataBaseDbTableImpl
+import org.danceofvalkyries.app.data.persistance.notion.database.NotionDataBaseDbTableImpl
 import org.danceofvalkyries.notion.impl.flashcardpage.FlashCardNotionPageApiImpl
 import org.danceofvalkyries.notion.api.models.NotionId
 import org.danceofvalkyries.telegram.impl.restapi.TelegramChatRestApiImpl
