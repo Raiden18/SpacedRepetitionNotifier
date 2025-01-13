@@ -1,6 +1,5 @@
-package org.danceofvalkyries.app.data.repositories.telegram.db
+package org.danceofvalkyries.app.data.persistance.telegram
 
-import org.danceofvalkyries.telegram.api.models.TelegramMessage
 import org.danceofvalkyries.utils.db.SqlQuery
 import org.danceofvalkyries.utils.db.tables.columns.TableColumn
 import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
@@ -19,16 +18,14 @@ data class TelegramMessagesSqlQueries(
         }
     }
 
-    fun insert(
-        telegramMessage: TelegramMessage
-    ): String {
+    fun insert(entity: TelegramMessageEntity): String {
         return SqlQuery {
             insert(
                 into = tableName,
                 values = listOf(
-                    idColumn to telegramMessage.id.toString(),
-                    textColumn to telegramMessage.body.text.get(),
-                    typeColumn to telegramMessage.body.type.toString(),
+                    idColumn to entity.id.toString(),
+                    textColumn to entity.text,
+                    typeColumn to entity.type,
                 )
             )
         }

@@ -1,10 +1,9 @@
-package app.data.repositories.tg
+package app.data.persistance.telegram
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.app.data.repositories.telegram.db.TelegramMessagesSqlQueries
-import org.danceofvalkyries.telegram.api.models.TelegramMessage
-import org.danceofvalkyries.telegram.api.models.TelegramMessageBody
+import org.danceofvalkyries.app.data.persistance.telegram.TelegramMessageEntity
+import org.danceofvalkyries.app.data.persistance.telegram.TelegramMessagesSqlQueries
 import org.danceofvalkyries.utils.db.tables.columns.LongTableColumn
 import org.danceofvalkyries.utils.db.tables.columns.PrimaryKey
 import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
@@ -36,14 +35,10 @@ class TelegramMessagesSqlQueriesTest : FunSpec() {
 
         test("Should insert into table") {
             telegramMessagesSqlQueries.insert(
-                TelegramMessage(
+                TelegramMessageEntity(
                     id = 12,
-                    body = TelegramMessageBody(
-                        text = "something",
-                        telegramButtons = emptyList(),
-                        telegramImageUrl = null,
-                        type = TelegramMessageBody.Type.NOTIFICATION,
-                    ),
+                    text = "something",
+                    type = "NOTIFICATION"
                 )
             ) shouldBe "INSERT INTO $tableName (id, text, type) VALUES (12, 'something', 'NOTIFICATION');"
         }

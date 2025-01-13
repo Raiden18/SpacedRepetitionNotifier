@@ -6,9 +6,9 @@ import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
 import java.sql.Connection
 import java.sql.Statement
 
-class FlashCardDbTableImpl(
+class FlashCardDaoImpl(
     private val connection: Connection,
-) : FlashCardDbTable {
+) : FlashCardDao {
 
     companion object {
         private const val TABLE_NAME = "flash_cards_to_revise"

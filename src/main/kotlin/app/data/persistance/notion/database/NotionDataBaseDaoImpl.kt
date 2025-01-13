@@ -6,9 +6,9 @@ import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
 import java.sql.Connection
 import java.sql.Statement
 
-class NotionDataBaseDbTableImpl(
+class NotionDataBaseDaoImpl(
     private val connection: Connection
-) : NotionDataBaseDbTable {
+) : NotionDataBaseDao {
 
     private companion object {
         const val TABLE_NAME = "notion_data_bases"

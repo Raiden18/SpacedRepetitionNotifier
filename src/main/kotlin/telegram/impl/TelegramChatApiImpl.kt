@@ -1,13 +1,13 @@
 package org.danceofvalkyries.telegram.impl
 
-import org.danceofvalkyries.app.data.repositories.telegram.db.TelegramNotificationMessageDb
+import org.danceofvalkyries.app.data.persistance.telegram.TelegramMessageDao
 import org.danceofvalkyries.telegram.api.models.TelegramMessage
 import org.danceofvalkyries.telegram.api.models.TelegramMessageBody
 import org.danceofvalkyries.telegram.impl.restapi.TelegramChatRestApi
 
 class TelegramChatApiImpl(
     private val api: TelegramChatRestApi,
-    private val db: TelegramNotificationMessageDb,
+    private val db: TelegramMessageDao,
     private val chatId: String,
 ) : TelegramChatApi {
 

@@ -1,6 +1,6 @@
 package org.danceofvalkyries.app.data.repositories.flashcards
 
-import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.FlashCardDbTable
+import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.FlashCardDao
 import org.danceofvalkyries.app.domain.models.FlashCard
 import org.danceofvalkyries.app.domain.models.OnlineDictionary
 import org.danceofvalkyries.app.domain.repositories.FlashCardsRepository
@@ -9,7 +9,7 @@ import notion.impl.client.NotionApi
 import org.danceofvalkyries.notion.api.models.NotionId
 
 class FlashCardsRepositoryImpl(
-    private val flashCardTable: FlashCardDbTable,
+    private val flashCardTable: FlashCardDao,
     private val notionApi: NotionApi,
     private val config: Config,
 ) : FlashCardsRepository {

@@ -1,9 +1,9 @@
-package org.danceofvalkyries.app.data.repositories.telegram.db
+package org.danceofvalkyries.app.data.persistance.telegram
 
 import org.danceofvalkyries.telegram.api.models.TelegramMessage
 import org.danceofvalkyries.telegram.api.models.TelegramMessageBody
 
-interface TelegramNotificationMessageDb {
+interface TelegramMessageDao {
     suspend fun save(telegramMessage: TelegramMessage)
     suspend fun delete(oldTelegramMessage: TelegramMessage)
     suspend fun update(text: TelegramMessageBody, messageId: Long)

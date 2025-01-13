@@ -1,4 +1,4 @@
-package org.danceofvalkyries.app.data.repositories.telegram.db
+package org.danceofvalkyries.app.data.persistance.telegram
 
 import org.danceofvalkyries.telegram.api.models.TelegramMessage
 import org.danceofvalkyries.telegram.api.models.TelegramMessageBody
@@ -10,9 +10,9 @@ import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
 import java.sql.Connection
 import java.sql.Statement
 
-class TelegramNotificationMessageDbImpl(
+class TelegramMessageDaoImpl(
     private val connection: Connection,
-) : TelegramNotificationMessageDb {
+) : TelegramMessageDao {
 
     private companion object {
         const val TABLE_NAME = "telegram_messages"
@@ -39,8 +39,13 @@ class TelegramNotificationMessageDbImpl(
     )
 
     override suspend fun save(telegramMessage: TelegramMessage) {
+        val entity = TelegramMessageEntity(
+            id = telegramMessage.id,
+            text = telegramMessage.body.text.get(),
+            type = telegramMessage.body.type.toString()
+        )
         createTableIfNotExist()
-            .also { it.execute(sqlQueries.insert(telegramMessage)) }
+            .also { it.execute(sqlQueries.insert(entity)) }
             .also { it.close() }
     }
 
