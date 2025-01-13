@@ -4,6 +4,8 @@ import com.google.gson.Gson
 import kotlinx.coroutines.delay
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.danceofvalkyries.app.data.persistance.notion.database.NotionDatabaseDataBaseTable
+import org.danceofvalkyries.app.data.persistance.notion.database.NotionDatabaseDataBaseTableImpl
 import org.danceofvalkyries.app.data.repositories.flashcards.FlashCardsRepositoryImpl
 import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.dao.FlashCardDaoImpl
 import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
@@ -56,7 +58,8 @@ class TestApp(
             apiKey = config.notion.apiKey,
         )
         val flashCardsTablesDbTable = NotionDataBaseDaoImpl(dbConnection)
-        val notionDbsRepository = NotionDataBaseApiImpl(notionApi, flashCardsTablesDbTable)
+        val notionDatabaseDataBaseTable = NotionDatabaseDataBaseTableImpl(flashCardsTablesDbTable)
+        val notionDbsRepository = NotionDataBaseApiImpl(notionApi)
 
         val flashCardsRepository = FlashCardsRepositoryImpl(
             FlashCardDaoImpl(dbConnection),
@@ -68,7 +71,7 @@ class TestApp(
 
 
 
-        notionDbsRepository.getFromCache()
+        notionDatabaseDataBaseTable.getAll()
             .forEach {
                 val repo = FlashCardNotionPageApiImpl(notionApi)
                 repo.getAllFromDb(it.id)
@@ -105,7 +108,7 @@ class TestApp(
         //notionApi.recall()
 
         GetAllFlashCardsUseCase(
-            notionDbsRepository,
+            NotionDatabaseDataBaseTableImpl(flashCardsTablesDbTable),
             flashCardsRepository
         ).execute()
             .forEach {
@@ -128,7 +131,7 @@ class TestApp(
         )
         val connection = db.establishConnection()
         val db = TelegramMessageDaoImpl(connection)
-        return TelegramChatApiImpl(api, db,  config.telegram.chatId)
+        return TelegramChatApiImpl(api, db, config.telegram.chatId)
     }
 
     private fun createHttpClient(): OkHttpClient {

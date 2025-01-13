@@ -1,19 +1,19 @@
 package org.danceofvalkyries.app.domain.usecases
 
+import org.danceofvalkyries.app.data.persistance.notion.database.NotionDatabaseDataBaseTable
 import org.danceofvalkyries.app.domain.models.FlashCard
 import org.danceofvalkyries.app.domain.repositories.FlashCardsRepository
-import org.danceofvalkyries.notion.impl.database.NotionDataBaseApi
 
 fun interface GetAllFlashCardsUseCase {
     suspend fun execute(): List<FlashCard>
 }
 
 fun GetAllFlashCardsUseCase(
-    notionDataBaseApi: NotionDataBaseApi,
-    flashCardsRepository: FlashCardsRepository
+    notionDatabaseDataBaseTable: NotionDatabaseDataBaseTable,
+    flashCardsRepository: FlashCardsRepository,
 ): GetAllFlashCardsUseCase {
     return GetAllFlashCardsUseCase {
-        notionDataBaseApi.getFromCache()
+        notionDatabaseDataBaseTable.getAll()
             .map { it.id }
             .flatMap { flashCardsRepository.getFromDbForTable(it) }
     }
