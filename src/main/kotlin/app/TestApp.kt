@@ -18,6 +18,8 @@ import org.danceofvalkyries.config.data.TestConfigRepository
 import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.notion.impl.flashcardpage.FlashCardNotionPageApiImpl
 import org.danceofvalkyries.notion.impl.restapi.NotionApiImpl
+import org.danceofvalkyries.telegram.api.models.TelegramMessageBody
+import org.danceofvalkyries.telegram.api.models.TelegramText
 import org.danceofvalkyries.telegram.impl.DeleteMessageFromTelegramChat
 import org.danceofvalkyries.telegram.impl.SendMessageToTelegramChat
 import org.danceofvalkyries.telegram.impl.TelegramChatApi
@@ -80,7 +82,7 @@ class TestApp(
         )
 
         realApp.run()
-        telegramButtonsListener.run()
+        //telegramButtonsListener.run()
 
         /*  notionDatabaseDataBaseTable.getAll()
               .forEach {
@@ -102,13 +104,21 @@ class TestApp(
              delay(2.seconds)
          }*/
 
-        while (true) {
-            telegramButtonsListener.run()
-            delay(1000)
-        }
         val getAllFlashCards = GetAllFlashCardsUseCase(
             NotionDatabaseDataBaseTableImpl(flashCardsTablesDbTable),
             NotionPageFlashCardDataBaseTableImpl(NotionPageFlashCardDaoImpl(dbConnection))
+        ).execute().forEach {
+            val message = messageFactory.createFlashCardMessage(it, emptyList())
+            telegramChatApi.sendTextMessage(message)
+        }
+
+        telegramChatApi.sendTextMessage(
+            TelegramMessageBody(
+                text = TelegramText("Received message"),
+                nestedButtons = emptyList(),
+                imageUrl = null,
+                type = TelegramMessageBody.Type.UNKNOWN,
+            )
         )
         val replaceMessage = ReplaceFlashCardInChatUseCase(
             telegramMessagesDataBaseTable,
@@ -118,6 +128,7 @@ class TestApp(
             messageFactory,
             dispatchers
         )
+
         /* GetAllFlashCardsUseCase(
              NotionDatabaseDataBaseTableImpl(flashCardsTablesDbTable),
              NotionPageFlashCardDataBaseTableImpl(NotionPageFlashCardDaoImpl(dbConnection))

@@ -15,6 +15,7 @@ fun AppFactory(): AppFactory {
         val dispatchers = DispatchersImpl(Dispatchers.IO)
         val db = DataBaseImpl(environment)
         NotifierApp(dispatchers, db)
+        //TelegramButtonListenerApp(dispatchers, db)
         TestApp(db, dispatchers)
     }
 }
