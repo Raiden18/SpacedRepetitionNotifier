@@ -4,7 +4,7 @@ import kotlinx.coroutines.Dispatchers
 import org.danceofvalkyries.environment.Environment
 import org.danceofvalkyries.utils.DispatchersImpl
 
-fun interface AppFactory {
+interface AppFactory {
     fun create(): App
 }
 
