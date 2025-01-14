@@ -1,7 +1,7 @@
 package org.danceofvalkyries.app
 
 import com.google.gson.Gson
-import notion.impl.client.NotionApi
+import notion.impl.client.NotionClientApiImpl
 import org.danceofvalkyries.app.data.persistance.notion.database.NotionDatabaseDataBaseTableImpl
 import org.danceofvalkyries.app.data.persistance.notion.database.dao.NotionDataBaseDaoImpl
 import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.NotionPageFlashCardDataBaseTableImpl
@@ -10,14 +10,13 @@ import org.danceofvalkyries.app.data.persistance.telegram.messages.TelegramMessa
 import org.danceofvalkyries.app.data.persistance.telegram.messages.dao.TelegramMessageDaoImpl
 import org.danceofvalkyries.app.domain.usecases.*
 import org.danceofvalkyries.environment.Environment
+import org.danceofvalkyries.notion.api.NotionApi
 import org.danceofvalkyries.notion.api.models.NotionId
-import org.danceofvalkyries.notion.impl.GetAllPagesFromNotionDataBase
-import org.danceofvalkyries.notion.impl.GetDataBaseFromNotion
-import org.danceofvalkyries.notion.impl.database.NotionDataBaseApi
-import org.danceofvalkyries.notion.impl.database.NotionDataBaseApiImpl
-import org.danceofvalkyries.notion.impl.flashcardpage.FlashCardNotionPageApiImpl
-import org.danceofvalkyries.notion.impl.restapi.NotionApiImpl
-import org.danceofvalkyries.telegram.impl.*
+import org.danceofvalkyries.notion.impl.NotionApiImpl
+import org.danceofvalkyries.telegram.impl.EditMessageInTelegramChat
+import org.danceofvalkyries.telegram.impl.SendMessageToTelegramChat
+import org.danceofvalkyries.telegram.impl.TelegramChatApi
+import org.danceofvalkyries.telegram.impl.TelegramChatApiImpl
 import org.danceofvalkyries.telegram.impl.client.TelegramChatRestApiImpl
 import org.danceofvalkyries.utils.Dispatchers
 
@@ -34,10 +33,7 @@ class NotifierApp(
         val telegramChatRepository = createTelegramChatApi()
         val notionDataBaseDao = NotionDataBaseDaoImpl(dbConnection)
         val notionDatabaseDataBaseTable = NotionDatabaseDataBaseTableImpl(notionDataBaseDao)
-        val notionDbsRepository = NotionDbRepository()
-        val flashCardNotionPageApi = FlashCardNotionPageApiImpl(
-            NotionApi()
-        )
+        val notionApi = NotionApi()
 
         val notionPageFlashCardDataBaseTable = NotionPageFlashCardDataBaseTableImpl(
             NotionPageFlashCardDaoImpl(dbConnection)
@@ -52,13 +48,13 @@ class NotifierApp(
             ReplaceFlashCardsInCacheUseCase(
                 ids,
                 notionPageFlashCardDataBaseTable,
-                GetAllPagesFromNotionDataBase(flashCardNotionPageApi),
+                notionApi,
                 dispatchers,
             ),
             ReplaceNotionDbsInCacheUseCase(
                 ids,
                 notionDatabaseDataBaseTable,
-                GetDataBaseFromNotion(notionDbsRepository),
+                notionApi,
                 dispatchers,
             ),
             dispatchers
@@ -91,21 +87,17 @@ class NotifierApp(
         return TelegramChatApiImpl(api, config.telegram.chatId)
     }
 
-    private fun NotionDbRepository(): NotionDataBaseApi {
-        return NotionDataBaseApiImpl(
-            NotionApi()
-        )
-    }
-
     private fun createGson(): Gson {
         return Gson()
     }
 
     private fun NotionApi(): NotionApi {
         return NotionApiImpl(
-            gson = createGson(),
-            client = httpClient,
-            apiKey = config.notion.apiKey,
+            NotionClientApiImpl(
+                gson = createGson(),
+                client = httpClient,
+                apiKey = config.notion.apiKey,
+            )
         )
     }
 }

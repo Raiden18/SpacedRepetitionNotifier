@@ -16,9 +16,8 @@ import org.danceofvalkyries.app.domain.srs.SpaceRepetitionSessionImpl
 import org.danceofvalkyries.app.domain.usecases.GetOnlineDictionariesForFlashCard
 import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.environment.Environment
-import org.danceofvalkyries.notion.impl.database.NotionDataBaseApiImpl
-import org.danceofvalkyries.notion.impl.flashcardpage.FlashCardNotionPageApiImpl
-import org.danceofvalkyries.notion.impl.restapi.NotionApiImpl
+import notion.impl.client.NotionClientApiImpl
+import org.danceofvalkyries.notion.impl.NotionApiImpl
 import org.danceofvalkyries.telegram.impl.SendMessageToTelegramChat
 import org.danceofvalkyries.telegram.impl.TelegramChatApiImpl
 import org.danceofvalkyries.telegram.impl.client.TelegramChatRestApiImpl
@@ -43,18 +42,19 @@ class TelegramButtonListenerApp(
             config.telegram.chatId
         )
 
-        val notionApi = NotionApiImpl(
-            gson = createGson(),
-            client = environment.httpClient,
-            apiKey = config.notion.apiKey,
-        )
+
         val notionDatabaseDataBaseTable = NotionDatabaseDataBaseTableImpl(NotionDataBaseDaoImpl(dbConnection))
-        val notionDataBaseApi = NotionDataBaseApiImpl(notionApi)
+
+        val notionApi = NotionApiImpl(
+            NotionClientApiImpl(
+                gson = createGson(),
+                client = environment.httpClient,
+                apiKey = config.notion.apiKey,
+            )
+        )
 
         val notionPageFlashCardDao = NotionPageFlashCardDaoImpl(dbConnection)
         val notionPageFlashCardDataBaseTable = NotionPageFlashCardDataBaseTableImpl(notionPageFlashCardDao)
-
-        val flashCardNotionPageApi = FlashCardNotionPageApiImpl(notionApi)
 
         val telegramMessageDao = TelegramMessageDaoImpl(dbConnection)
         val telegramMessagesDataBaseTable = TelegramMessagesDataBaseTableImpl(telegramMessageDao)
@@ -71,7 +71,7 @@ class TelegramButtonListenerApp(
 
         val spaceRepetitionSession = SpaceRepetitionSessionImpl(
             notionPageFlashCardDataBaseTable,
-            flashCardNotionPageApi,
+            notionApi,
         )
 
         val flashCardsController = FlashCardsController(

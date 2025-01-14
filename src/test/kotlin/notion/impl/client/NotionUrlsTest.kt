@@ -2,7 +2,6 @@ package notion.impl.client
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.notion.impl.restapi.NotionUrls
 
 class NotionUrlsTest : FunSpec() {
 

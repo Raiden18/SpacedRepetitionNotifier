@@ -1,4 +1,4 @@
-package org.danceofvalkyries.notion.impl.restapi
+package notion.impl.client
 
 import okhttp3.HttpUrl
 

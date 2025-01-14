@@ -1,7 +1,6 @@
-package org.danceofvalkyries.notion.impl.restapi
+package notion.impl.client
 
 import com.google.gson.Gson
-import notion.impl.client.NotionApi
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.danceofvalkyries.utils.rest.AuthorizationBearerHeader
@@ -13,11 +12,11 @@ import notion.impl.client.models.request.SpacedRepetitionRequestBody
 import notion.impl.client.models.response.NotionDbResponse
 import org.danceofvalkyries.utils.rest.*
 
-class NotionApiImpl(
+class NotionClientApiImpl(
     private val gson: Gson,
     private val client: OkHttpClient,
     private val apiKey: String,
-) : NotionApi {
+) : NotionClientApi {
 
     private val headers = listOf(
         AuthorizationBearerHeader(apiKey),

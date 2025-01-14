@@ -5,13 +5,13 @@ import io.mockk.clearAllMocks
 import io.mockk.mockk
 import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.NotionPageFlashCardDataBaseTable
 import org.danceofvalkyries.app.domain.srs.SpaceRepetitionSessionImpl
+import org.danceofvalkyries.notion.api.NotionApi
 import org.danceofvalkyries.notion.api.models.NotionId
-import org.danceofvalkyries.notion.impl.flashcardpage.FlashCardNotionPageApi
 
 class SpaceRepetitionSessionImplTest : BehaviorSpec() {
 
     private val flashCardDatabase: NotionPageFlashCardDataBaseTable = mockk(relaxed = true)
-    private val flashCardNotionPageApi: FlashCardNotionPageApi = mockk(relaxed = true)
+    private val notionApi: NotionApi = mockk(relaxed = true)
     private lateinit var spaceRepetitionSessionImpl: SpaceRepetitionSessionImpl
 
     init {
@@ -24,15 +24,14 @@ class SpaceRepetitionSessionImplTest : BehaviorSpec() {
             val notionDbId = NotionId("228")
             beforeTest {
                 spaceRepetitionSessionImpl = SpaceRepetitionSessionImpl(
-                    notionDbId,
                     flashCardDatabase,
-                    flashCardNotionPageApi,
+                    notionApi,
                 )
             }
 
             When("When next flash card is required to show") {
                 beforeTest {
-                    spaceRepetitionSessionImpl.getNextFlashCard()
+                    spaceRepetitionSessionImpl.getNextFlashCard(TODO())
                 }
 
                 Then("Should fetch message from "){
