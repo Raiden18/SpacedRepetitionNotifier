@@ -9,12 +9,11 @@ import org.danceofvalkyries.app.apps.buttonslistener.domain.usecases.GetOnlineDi
 import org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.FlashCardsController
 import org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.srs.SpaceRepetitionSessionImpl
 import org.danceofvalkyries.app.apps.buttonslistener.presentation.view.TelegramChatFlashCardView
-import org.danceofvalkyries.app.data.persistance.notion.database.NotionDatabaseDataBaseTableImpl
-import org.danceofvalkyries.app.data.persistance.notion.database.dao.NotionDataBaseDaoImpl
 import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.NotionPageFlashCardDataBaseTableImpl
 import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.dao.NotionPageFlashCardDaoImpl
 import org.danceofvalkyries.app.data.persistance.telegram.messages.TelegramMessagesDataBaseTableImpl
 import org.danceofvalkyries.app.data.persistance.telegram.messages.dao.TelegramMessageDaoImpl
+import org.danceofvalkyries.app.data.persistance.telegram_and_notion.TelegramAndNotionIdDaoImpl
 import org.danceofvalkyries.app.domain.message.ButtonAction
 import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.environment.Environment
@@ -61,10 +60,12 @@ class TelegramButtonListenerApp(
 
         val sendMessageToTelegramChat = SendMessageToTelegramChat(telegramApi)
 
+        val telegramAndNotionIdDao = TelegramAndNotionIdDaoImpl(dbConnection)
         val telegramChatFlashCardView = TelegramChatFlashCardView(
             sendMessageToTelegramChat,
             telegramApi,
             getOnlineDictionariesForFlashCard,
+            telegramAndNotionIdDao
         )
 
         val spaceRepetitionSession = SpaceRepetitionSessionImpl(
@@ -76,13 +77,14 @@ class TelegramButtonListenerApp(
             spaceRepetitionSession,
             telegramChatFlashCardView
         )
+
         telegramApi.getUpdates()
             .onEach {
                 val messageId = it.telegramUpdateCallbackQuery.message.id
                 when (val action = ButtonAction.parse(it.callback.value)) {
                     is ButtonAction.DataBase -> flashCardsController.onDataBaseClicked(action.notionDbId)
-                    is ButtonAction.Forgotten -> flashCardsController.onForgottenClicked(action.flashCardId, messageId)
-                    is ButtonAction.Recalled -> flashCardsController.onRecalledClicked(action.flashCardId, messageId)
+                    is ButtonAction.Forgotten -> flashCardsController.onForgottenClicked(action.flashCardId)
+                    is ButtonAction.Recalled -> flashCardsController.onRecalledClicked(action.flashCardId)
                 }
             }.collectLatest(::println)
     }

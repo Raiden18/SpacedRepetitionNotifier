@@ -17,21 +17,23 @@ class FlashCardsController(
         flashCardView.show(flashCard!!)
     }
 
-    suspend fun onForgottenClicked(flashCardId: NotionId, messageId: Long) {
+    suspend fun onForgottenClicked(flashCardId: NotionId) {
+        val currentFlashCard = spaceRepetitionSession.getCurrentFlashCard(flashCardId)
         spaceRepetitionSession.forget(flashCardId)
         val flashCard = spaceRepetitionSession.getNextFlashCard(notionDb)
         if (flashCard != null) {
             flashCardView.show(flashCard)
         }
-        flashCardView.hide(messageId)
+        flashCardView.hide(currentFlashCard)
     }
 
-    suspend fun onRecalledClicked(flashCardId: NotionId, messageId: Long) {
+    suspend fun onRecalledClicked(flashCardId: NotionId) {
+        val currentFlashCard = spaceRepetitionSession.getCurrentFlashCard(flashCardId)
         spaceRepetitionSession.recall(flashCardId)
         val flashCard = spaceRepetitionSession.getNextFlashCard(notionDb)
         if (flashCard != null) {
             flashCardView.show(flashCard)
         }
-        flashCardView.hide(messageId)
+        flashCardView.hide(currentFlashCard)
     }
 }

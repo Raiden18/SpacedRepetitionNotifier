@@ -11,6 +11,10 @@ class SpaceRepetitionSessionImpl(
     private val notionFlashCardPage: NotionApi,
 ) : SpaceRepetitionSession {
 
+    override suspend fun getCurrentFlashCard(flashCardId: NotionId): FlashCardNotionPage {
+        return notionFlashCardPage.getFlashCardPage(flashCardId)
+    }
+
     override suspend fun getNextFlashCard(databaseId: NotionId): FlashCardNotionPage? {
         return flashCardDatabase.getFirstFor(databaseId)
     }
