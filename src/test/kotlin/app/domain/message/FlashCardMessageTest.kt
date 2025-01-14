@@ -5,6 +5,7 @@ import io.kotest.matchers.shouldBe
 import org.danceofvalkyries.app.domain.message.FlashCardMessage
 import org.danceofvalkyries.dictionary.api.OnlineDictionary
 import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
+import org.danceofvalkyries.notion.api.models.NotionId
 import org.danceofvalkyries.telegram.api.models.TelegramButton
 import org.danceofvalkyries.telegram.api.models.TelegramMessageBody
 import org.danceofvalkyries.telegram.api.models.TelegramText
@@ -13,11 +14,13 @@ class FlashCardMessageTest : BehaviorSpec() {
 
     init {
         Given("FlashCard with full data") {
+            val flashCardId = "228"
             val flashCard = FlashCardNotionPage.EMPTY.copy(
                 name = "Expect",
                 example = "I expected you to come",
                 explanation = "to wait to happen in the future",
                 coverUrl = "url",
+                id = NotionId(flashCardId)
             )
 
             And("With Dictionary") {
@@ -44,7 +47,7 @@ class FlashCardMessageTest : BehaviorSpec() {
                     }
 
                     Then("Action Buttons Should be Shown") {
-                        messageBody.nestedButtons.first() shouldBe actonButtons()
+                        messageBody.nestedButtons.first() shouldBe actonButtons(flashCardId)
                     }
 
                     Then("Dictionary Buttons should be shown") {
@@ -72,11 +75,13 @@ class FlashCardMessageTest : BehaviorSpec() {
         }
 
         Given("FlashCard with minimum data") {
+            val flashCardId = "228"
             val flashCard = FlashCardNotionPage.EMPTY.copy(
                 name = "Expect",
                 example = null,
                 explanation = null,
                 coverUrl = null,
+                id = NotionId(flashCardId),
             )
 
             When("Creates FlashCardMessage") {
@@ -96,20 +101,25 @@ class FlashCardMessageTest : BehaviorSpec() {
                 }
 
                 Then("Action Buttons Should be Shown") {
-                    messageBody.nestedButtons.first() shouldBe actonButtons()
+                    messageBody.nestedButtons.first() shouldBe actonButtons(flashCardId)
                 }
             }
         }
     }
 
-    private fun actonButtons(): List<TelegramButton> {
-        return listOf(TelegramButton("Forgot  ❌", null, "callback_data"), TelegramButton("Recalled  ✅", null, "callback_data"))
+    private fun actonButtons(
+        flashCardIs: String
+    ): List<TelegramButton> {
+        return listOf(
+            TelegramButton("Forgot  ❌", TelegramButton.Action.CallBackData("forgottenFlashCardId=$flashCardIs")),
+            TelegramButton("Recalled  ✅", TelegramButton.Action.CallBackData("recalledFlashCardId=$flashCardIs")),
+        )
     }
 
     private fun DictionaryButton(name: String): TelegramButton {
         return TelegramButton(
             text = "Look it up",
-            url = "https://dictionary.cambridge.org/dictionary/english/${name}"
+            action = TelegramButton.Action.Url("https://dictionary.cambridge.org/dictionary/english/${name}"),
         )
     }
 }

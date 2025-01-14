@@ -1,5 +1,6 @@
 package org.danceofvalkyries.app.domain.message.notification
 
+import org.danceofvalkyries.app.domain.message.ButtonAction
 import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
 import org.danceofvalkyries.notion.api.models.NotionDataBase
 import org.danceofvalkyries.telegram.api.models.TelegramButton
@@ -24,8 +25,7 @@ data class NeedRevisingNotificationMessage(
                     val db = notionDataBases.first { it.id == dbId }
                     TelegramButton(
                         text = "${db.name}: ${flashCards.count()}",
-                        url = null,
-                        callback = "123123",
+                        action = TelegramButton.Action.CallBackData(ButtonAction.DataBase(db.id).rawValue),
                     )
                 }
 

@@ -7,6 +7,7 @@ fun ResultSet.asSequence(): Sequence<ResultSet> {
         while (next()) {
             yield(this@asSequence)
         }
+        close()
     }
 }
 

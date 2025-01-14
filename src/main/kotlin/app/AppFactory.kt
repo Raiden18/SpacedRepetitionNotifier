@@ -27,7 +27,7 @@ private class AppFactoryImpl(
             "notifier" -> NotifierApp(dispatchers, environment)
             "button_listener" -> TelegramButtonListenerApp(dispatchers, environment)
             "sand_box" -> SandBoxApp(dispatchers, environment)
-            else -> error("Unknown App kind argument")
+            else -> error("Unknown App kind argument: $appKindArgument")
         }
     }
 }

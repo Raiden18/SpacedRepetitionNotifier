@@ -55,24 +55,21 @@ class NeedRevisingNotificationMessageTest : BehaviorSpec() {
                 Then("English Grammar Button should be shown") {
                     telegramMessage.nestedButtons[0][0] shouldBe TelegramButton(
                         text = "English vocabulary: 1",
-                        url = null,
-                        callback = "123123"
+                        action = TelegramButton.Action.CallBackData("dbId=1")
                     )
                 }
 
                 Then("Greek Vocabulary Button should be shown") {
                     telegramMessage.nestedButtons[1][0] shouldBe TelegramButton(
                         text = "Greek vocabulary: 1",
-                        url = null,
-                        callback = "123123"
+                       action = TelegramButton.Action.CallBackData("dbId=2")
                     )
                 }
 
                 Then("English Vocabulary Button should be shown") {
                     telegramMessage.nestedButtons[2][0] shouldBe TelegramButton(
                         text = "English grammar: 1",
-                        url = null,
-                        callback = "123123"
+                        action = TelegramButton.Action.CallBackData("dbId=3")
                     )
                 }
             }

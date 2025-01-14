@@ -49,6 +49,27 @@ class NotionPageFlashCardDataBaseTableImpl(
         notionPageFlashCardDao.delete(flashCardPage.id.rawValue)
     }
 
+    override suspend fun getFirstFor(notionDataBaseId: NotionId): FlashCardNotionPage? {
+        return getAllFor(notionDataBaseId).firstOrNull()
+    }
+
+    override suspend fun getBy(id: NotionId): FlashCardNotionPage? {
+        val response = notionPageFlashCardDao.getBy(id.rawValue) ?: return null
+        return FlashCardNotionPage(
+            id = NotionId(response.id),
+            coverUrl = response.imageUrl,
+            notionDbID = NotionId(response.notionDbId),
+            name = response.name,
+            example = response.example,
+            explanation = response.explanation,
+            knowLevels = KnowLevels(
+                response.knowLevels
+                    .filterValues { it != null }
+                    .mapValues { it.value!! }
+            )
+        )
+    }
+
     override suspend fun clear() {
         notionPageFlashCardDao.clear()
     }

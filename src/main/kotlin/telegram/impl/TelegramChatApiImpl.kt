@@ -1,9 +1,8 @@
 package org.danceofvalkyries.telegram.impl
 
-import org.danceofvalkyries.telegram.api.models.TelegramMessage
-import org.danceofvalkyries.telegram.api.models.TelegramMessageBody
-import org.danceofvalkyries.telegram.api.models.TelegramUpdate
-import org.danceofvalkyries.telegram.api.models.TelegramUpdateCallbackQuery
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import org.danceofvalkyries.telegram.api.models.*
 import org.danceofvalkyries.telegram.impl.client.TelegramChatRestApi
 
 class TelegramChatApiImpl(
@@ -41,7 +40,7 @@ class TelegramChatApiImpl(
         api.editMessageText(messageId, request)
     }
 
-    override suspend fun getUpdates(): List<TelegramUpdate> {
+    override suspend fun getUpdates(): Flow<TelegramUpdate> {
         return api.getUpdates()
             .map {
                 TelegramUpdate(
@@ -49,7 +48,7 @@ class TelegramChatApiImpl(
                     telegramUpdateCallbackQuery = TelegramUpdateCallbackQuery(
                         id = it.callbackQueryData.id,
                         message = it.callbackQueryData.message.toDomain(),
-                        callback = it.callbackQueryData.data,
+                        callback = TelegramButton.Action.CallBackData(it.callbackQueryData.data),
                     ),
                 )
             }

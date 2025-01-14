@@ -22,11 +22,11 @@ data class FlashCardNotionPage(
         )
     }
 
-    fun forgot(): FlashCardNotionPage {
+    fun forget(): FlashCardNotionPage {
         return copy(knowLevels = knowLevels.disableAll())
     }
 
-    fun recalled(): FlashCardNotionPage {
+    fun recall(): FlashCardNotionPage {
         return copy(knowLevels = knowLevels.next())
     }
 }

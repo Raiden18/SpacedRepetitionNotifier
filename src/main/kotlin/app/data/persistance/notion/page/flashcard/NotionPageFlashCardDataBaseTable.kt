@@ -6,7 +6,12 @@ import org.danceofvalkyries.notion.api.models.NotionId
 interface NotionPageFlashCardDataBaseTable {
     suspend fun insert(flashCardPage: FlashCardNotionPage)
     suspend fun insert(flashCardPages: List<FlashCardNotionPage>)
+
     suspend fun getAllFor(notionDataBaseId: NotionId): List<FlashCardNotionPage>
     suspend fun delete(flashCardPage: FlashCardNotionPage)
+
+    suspend fun getFirstFor(notionDataBaseId: NotionId): FlashCardNotionPage?
+
+    suspend fun getBy(id: NotionId): FlashCardNotionPage?
     suspend fun clear()
 }

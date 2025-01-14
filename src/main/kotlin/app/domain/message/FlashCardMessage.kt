@@ -39,14 +39,16 @@ data class FlashCardMessage(
             body.appendLine()
                 .append("Choose:")
 
-            val recallActions = listOf(TelegramButton("Forgot  ❌", null, "callback_data"), TelegramButton("Recalled  ✅", null, "callback_data"))
+            val recallActions = listOf(
+                TelegramButton("Forgot  ❌", TelegramButton.Action.CallBackData(ButtonAction.Forgotten(flashCard.id).rawValue)),
+                TelegramButton("Recalled  ✅", TelegramButton.Action.CallBackData(ButtonAction.Recalled(flashCard.id).rawValue))
+            )
 
             val dictionaryTelegramButtons = onlineDictionaries
                 .map {
                     TelegramButton(
                         text = "Look it up",
-                        url = it.getWordUrl(memorizedInfo),
-                        callback = null,
+                        action = TelegramButton.Action.Url(it.getWordUrl(memorizedInfo)),
                     )
                 }
 

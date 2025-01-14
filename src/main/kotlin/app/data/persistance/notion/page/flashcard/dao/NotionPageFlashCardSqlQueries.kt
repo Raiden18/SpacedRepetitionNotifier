@@ -69,6 +69,14 @@ class NotionPageFlashCardSqlQueries(
         }
     }
 
+    fun selectById(id: String): String {
+        return SqlQuery {
+            select("*")
+                .from(tableName)
+                .where(this@NotionPageFlashCardSqlQueries.id to id)
+        }
+    }
+
     fun deleteAll(): String {
         return SqlQuery {
             delete()

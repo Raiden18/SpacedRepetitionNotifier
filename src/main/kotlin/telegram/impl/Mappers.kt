@@ -10,6 +10,7 @@ fun TelegramMessageBody.toRequest(
     chatId: String,
     messageId: Long? = null,
 ): MessageData {
+
     return MessageData(
         chatId = chatId,
         text = text.get().takeIf { imageUrl == null },
@@ -17,11 +18,11 @@ fun TelegramMessageBody.toRequest(
         parseMode = "MarkdownV2",
         replyMarkup = ReplyMarkupData(
             nestedButtons.map {
-                it.map {
+                it.map { button ->
                     ButtonData(
-                        text = it.text,
-                        callbackData = it.callback,
-                        url = it.url
+                        text = button.text,
+                        callbackData = button.action.value.takeIf { button.action is TelegramButton.Action.CallBackData },
+                        url = button.action.value.takeIf { button.action is TelegramButton.Action.Url }
                     )
                 }
             }
@@ -42,10 +43,15 @@ fun MessageData.toDomain(): TelegramMessage {
                 ?.inlineKeyboards
                 ?.map {
                     it.map {
+                        val action = if (it.url != null) {
+                            TelegramButton.Action.Url(it.url)
+                        } else {
+                            TelegramButton.Action.CallBackData(it.callbackData!!)
+
+                        }
                         TelegramButton(
                             text = it.text,
-                            url = it.url.orEmpty(),
-                            callback = it.callbackData
+                            action = action,
                         )
                     }
                 } ?: emptyList(),

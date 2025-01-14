@@ -59,6 +59,24 @@ class NotionPageFlashCardDaoImpl(
             }.toList()
     }
 
+    override suspend fun getBy(notionPageId: String): NotionPageFlashCardDbEntity? {
+        return createTableIfNotExist()
+            .executeQuery(sqlQueries.selectById(notionPageId))
+            .asSequence()
+            .map { resultSet ->
+                NotionPageFlashCardDbEntity(
+                    name = memorizedInfo.getValue(resultSet)!!,
+                    example = example.getValue(resultSet),
+                    explanation = answer.getValue(resultSet),
+                    imageUrl = imageUrl.getValue(resultSet),
+                    id = id.getValue(resultSet)!!,
+                    notionDbId = notionDbId.getValue(resultSet)!!,
+                    knowLevels = knowLevels.map { it.key to it.value.getValue(resultSet)?.toBoolean() }.toMap()
+                )
+            }.firstOrNull()
+    }
+
+
     override suspend fun delete(notionPageId: String) {
         createTableIfNotExist()
             .also { it.execute(sqlQueries.delete(notionPageId)) }
