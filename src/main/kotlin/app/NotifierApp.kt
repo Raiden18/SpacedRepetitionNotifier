@@ -2,7 +2,6 @@ package org.danceofvalkyries.app
 
 import com.google.gson.Gson
 import notion.impl.client.NotionApi
-import okhttp3.OkHttpClient
 import org.danceofvalkyries.app.data.persistance.notion.database.NotionDatabaseDataBaseTableImpl
 import org.danceofvalkyries.app.data.persistance.notion.database.dao.NotionDataBaseDaoImpl
 import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.NotionPageFlashCardDataBaseTableImpl
@@ -11,9 +10,7 @@ import org.danceofvalkyries.app.data.persistance.telegram.messages.TelegramMessa
 import org.danceofvalkyries.app.data.persistance.telegram.messages.dao.TelegramMessageDaoImpl
 import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
 import org.danceofvalkyries.app.domain.usecases.*
-import org.danceofvalkyries.config.data.LocalFileConfigRepository
-import org.danceofvalkyries.config.domain.Config
-import org.danceofvalkyries.config.domain.ConfigRepository
+import org.danceofvalkyries.environment.Environment
 import org.danceofvalkyries.notion.api.models.NotionId
 import org.danceofvalkyries.notion.impl.GetAllPagesFromNotionDataBase
 import org.danceofvalkyries.notion.impl.GetDataBaseFromNotion
@@ -24,21 +21,17 @@ import org.danceofvalkyries.notion.impl.restapi.NotionApiImpl
 import org.danceofvalkyries.telegram.impl.*
 import org.danceofvalkyries.telegram.impl.client.TelegramChatRestApiImpl
 import org.danceofvalkyries.utils.Dispatchers
-import org.danceofvalkyries.utils.db.DataBase
 
 class NotifierApp(
     private val dispatchers: Dispatchers,
-    private val dataBase: DataBase,
-    private val httpClient: OkHttpClient,
-    private val configRepository: ConfigRepository = LocalFileConfigRepository()
+    private val environment: Environment,
 ) : App {
 
-    private val config: Config by lazy {
-        configRepository.getConfig()
-    }
+    private val config by lazy { environment.config }
+    private val httpClient by lazy { environment.httpClient }
 
     override suspend fun run() {
-        val dbConnection = dataBase.establishConnection()
+        val dbConnection = environment.dataBase.establishConnection()
         val telegramChatRepository = createTelegramChatApi()
         val messageFactory = MessageFactoryImpl()
         val notionDataBaseDao = NotionDataBaseDaoImpl(dbConnection)

@@ -5,7 +5,7 @@ import io.kotest.matchers.shouldBe
 import org.danceofvalkyries.app.AppFactory
 import org.danceofvalkyries.app.NotifierApp
 import org.danceofvalkyries.app.TelegramButtonListenerApp
-import org.danceofvalkyries.app.TestApp
+import org.danceofvalkyries.app.SandBoxApp
 
 class AppFactoryKtTest : FunSpec() {
 
@@ -22,10 +22,10 @@ class AppFactoryKtTest : FunSpec() {
             isTgButtonListenerApp shouldBe true
         }
 
-        test("Should return Test App") {
-            val isTestApp = AppFactory(arrayOf("test"))
-                .create() is TestApp
-            isTestApp shouldBe true
+        test("Should return SandBoxApp") {
+            val isSandBoxApp = AppFactory(arrayOf("sand_box"))
+                .create() is SandBoxApp
+            isSandBoxApp shouldBe true
         }
     }
 }

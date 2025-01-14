@@ -1,7 +1,6 @@
 package org.danceofvalkyries.app
 
 import com.google.gson.Gson
-import kotlinx.coroutines.delay
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.danceofvalkyries.app.data.persistance.notion.database.NotionDatabaseDataBaseTableImpl
@@ -14,8 +13,7 @@ import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
 import org.danceofvalkyries.app.domain.usecases.GetAllFlashCardsUseCase
 import org.danceofvalkyries.app.domain.usecases.GetOnlineDictionariesForFlashCard
 import org.danceofvalkyries.app.domain.usecases.ReplaceFlashCardInChatUseCase
-import org.danceofvalkyries.config.data.TestConfigRepository
-import org.danceofvalkyries.config.domain.Config
+import org.danceofvalkyries.environment.Environment
 import org.danceofvalkyries.notion.impl.flashcardpage.FlashCardNotionPageApiImpl
 import org.danceofvalkyries.notion.impl.restapi.NotionApiImpl
 import org.danceofvalkyries.telegram.api.models.TelegramMessageBody
@@ -26,41 +24,21 @@ import org.danceofvalkyries.telegram.impl.TelegramChatApi
 import org.danceofvalkyries.telegram.impl.TelegramChatApiImpl
 import org.danceofvalkyries.telegram.impl.client.TelegramChatRestApiImpl
 import org.danceofvalkyries.utils.Dispatchers
-import org.danceofvalkyries.utils.db.DataBase
 import java.util.concurrent.TimeUnit
 
-class TestApp(
+class SandBoxApp(
     private val dispatchers: Dispatchers,
-    private val db: DataBase,
-    private val httpClient: OkHttpClient,
+    private val environment: Environment,
 ) : App {
 
-    private val config: Config by lazy {
-        TestConfigRepository().getConfig()
-    }
-
-    private val realApp by lazy {
-        NotifierApp(
-            dispatchers,
-            db,
-            httpClient,
-            TestConfigRepository()
-        )
-    }
-
-    private val telegramButtonsListener by lazy {
-        TelegramButtonListenerApp(
-            dispatchers,
-            db,
-            httpClient,
-            TestConfigRepository()
-        )
-    }
+    private val realApp by lazy { NotifierApp(dispatchers, environment) }
+    private val telegramButtonsListener by lazy { TelegramButtonListenerApp(dispatchers, environment) }
+    private val config by lazy { environment.config }
 
     override suspend fun run() {
         val telegramChatApi = createTelegramChatRepository()
         val messageFactory = MessageFactoryImpl()
-        val dbConnection = db.establishConnection()
+        val dbConnection = environment.dataBase.establishConnection()
         val notionApi = NotionApiImpl(
             gson = createGson(),
             client = createHttpClient(),

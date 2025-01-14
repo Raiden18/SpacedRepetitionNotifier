@@ -1,15 +1,19 @@
 package org.danceofvalkyries.environment
 
+import okhttp3.OkHttpClient
+import org.danceofvalkyries.config.domain.Config
+import org.danceofvalkyries.utils.db.DataBase
+
 interface Environment {
-    val homeDirectory: String
-    val pathToDb: String
+    val dataBase: DataBase
+    val httpClient: OkHttpClient
+    val config: Config
 }
 
-class EnvironmentImpl : Environment {
-
-    override val homeDirectory: String
-        get() = System.getProperty("user.home")
-
-    override val pathToDb: String
-        get() = "$homeDirectory/spaced_repetition.db"
+fun Environment(parameter: String): Environment {
+    return when (parameter) {
+        "prod" -> ProductionEnvironment()
+        "test" -> TestEnvironment()
+        else -> error("Unknown environment: $parameter")
+    }
 }

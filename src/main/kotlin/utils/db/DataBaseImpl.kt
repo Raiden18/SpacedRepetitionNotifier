@@ -1,16 +1,13 @@
 package org.danceofvalkyries.utils.db
 
-import org.danceofvalkyries.environment.Environment
 import java.sql.Connection
 import java.sql.DriverManager
 
 class DataBaseImpl(
-    private val environment: Environment
+    private val path: String
 ) : DataBase {
 
-    private val connection = DriverManager.getConnection("jdbc:sqlite:${environment.pathToDb}")
-
     override fun establishConnection(): Connection {
-        return connection
+        return DriverManager.getConnection("jdbc:sqlite:${path}")
     }
 }
