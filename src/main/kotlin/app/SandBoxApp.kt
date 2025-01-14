@@ -9,7 +9,7 @@ import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.NotionPag
 import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.dao.NotionPageFlashCardDaoImpl
 import org.danceofvalkyries.app.data.persistance.telegram.messages.TelegramMessagesDataBaseTableImpl
 import org.danceofvalkyries.app.data.persistance.telegram.messages.dao.TelegramMessageDaoImpl
-import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
+import org.danceofvalkyries.app.domain.message.FlashCardMessage
 import org.danceofvalkyries.app.domain.usecases.GetAllFlashCardsUseCase
 import org.danceofvalkyries.app.domain.usecases.GetOnlineDictionariesForFlashCard
 import org.danceofvalkyries.app.domain.usecases.ReplaceFlashCardInChatUseCase
@@ -37,7 +37,6 @@ class SandBoxApp(
 
     override suspend fun run() {
         val telegramChatApi = createTelegramChatRepository()
-        val messageFactory = MessageFactoryImpl()
         val dbConnection = environment.dataBase.establishConnection()
         val notionApi = NotionApiImpl(
             gson = createGson(),
@@ -89,8 +88,8 @@ class SandBoxApp(
             NotionDatabaseDataBaseTableImpl(flashCardsTablesDbTable),
             NotionPageFlashCardDataBaseTableImpl(NotionPageFlashCardDaoImpl(dbConnection))
         ).execute().forEach {
-            val message = messageFactory.createFlashCardMessage(it, emptyList())
-            telegramChatApi.sendTextMessage(message)
+            val message = FlashCardMessage(0, it, emptyList())
+            telegramChatApi.sendTextMessage(message.telegramBody)
         }
 
         telegramChatApi.sendTextMessage(
@@ -98,7 +97,6 @@ class SandBoxApp(
                 text = TelegramText("Received message"),
                 nestedButtons = emptyList(),
                 imageUrl = null,
-                type = TelegramMessageBody.Type.UNKNOWN,
             )
         )
         val replaceMessage = ReplaceFlashCardInChatUseCase(
@@ -106,7 +104,6 @@ class SandBoxApp(
             DeleteMessageFromTelegramChat(telegramChatApi),
             SendMessageToTelegramChat(telegramChatApi),
             GetOnlineDictionariesForFlashCard(config.notion.observedDatabases),
-            messageFactory,
             dispatchers
         )
 

@@ -6,6 +6,7 @@ import io.mockk.coEvery
 import io.mockk.coVerifyOrder
 import io.mockk.mockk
 import org.danceofvalkyries.app.data.persistance.telegram.messages.TelegramMessagesDataBaseTable
+import org.danceofvalkyries.app.domain.message.notification.DoneMessage
 import org.danceofvalkyries.app.domain.usecases.EditNotificationMessageUseCase
 import org.danceofvalkyries.telegram.api.EditMessageInTelegramChat
 import org.danceofvalkyries.telegram.api.models.TelegramMessage
@@ -23,7 +24,6 @@ class EditNotificationMessageUseCaseKtTest : FunSpec() {
             text = "old",
             telegramButtons = emptyList(),
             telegramImageUrl = null,
-            type = TelegramMessageBody.Type.NOTIFICATION,
         )
     )
 
@@ -36,18 +36,14 @@ class EditNotificationMessageUseCaseKtTest : FunSpec() {
         }
 
         test("Should update message") {
-            val newMessageBody = TelegramMessageBody(
-                text = "Something new",
-                telegramButtons = emptyList(),
-                telegramImageUrl = null,
-                type = TelegramMessageBody.Type.NOTIFICATION,
-            )
+            val oldMessage = DoneMessage()
+            val newMessage = DoneMessage()
 
-            editNotificationMessageUseCase.execute(newMessageBody)
+            editNotificationMessageUseCase.execute(newMessage)
 
             coVerifyOrder {
-                telegramMessagesDataBaseTable.update(newMessageBody, oldTelegramMessage.id)
-                editMessageInTelegramChat.execute(newMessageBody, oldTelegramMessage.id)
+                telegramMessagesDataBaseTable.update(newMessage.telegramBody, oldTelegramMessage.id)
+                editMessageInTelegramChat.execute(newMessage.telegramBody, oldTelegramMessage.id)
             }
         }
     }

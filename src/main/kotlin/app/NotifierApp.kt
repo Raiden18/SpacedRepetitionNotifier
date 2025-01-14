@@ -8,7 +8,6 @@ import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.NotionPag
 import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.dao.NotionPageFlashCardDaoImpl
 import org.danceofvalkyries.app.data.persistance.telegram.messages.TelegramMessagesDataBaseTableImpl
 import org.danceofvalkyries.app.data.persistance.telegram.messages.dao.TelegramMessageDaoImpl
-import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
 import org.danceofvalkyries.app.domain.usecases.*
 import org.danceofvalkyries.environment.Environment
 import org.danceofvalkyries.notion.api.models.NotionId
@@ -33,7 +32,6 @@ class NotifierApp(
     override suspend fun run() {
         val dbConnection = environment.dataBase.establishConnection()
         val telegramChatRepository = createTelegramChatApi()
-        val messageFactory = MessageFactoryImpl()
         val notionDataBaseDao = NotionDataBaseDaoImpl(dbConnection)
         val notionDatabaseDataBaseTable = NotionDatabaseDataBaseTableImpl(notionDataBaseDao)
         val notionDbsRepository = NotionDbRepository()
@@ -77,10 +75,9 @@ class NotifierApp(
             ),
             DeleteOldAndSendNewNotificationUseCase(
                 telegramMessagesDataBaseTable,
-                DeleteMessageFromTelegramChat(telegramChatRepository),
+                telegramChatRepository,
                 SendMessageToTelegramChat(telegramChatRepository)
             ),
-            messageFactory,
             config.flashCardsThreshold,
         ).execute()
     }

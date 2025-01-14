@@ -7,7 +7,6 @@ import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
 data class TelegramMessagesSqlQueries(
     private val tableName: String,
     private val idColumn: TableColumn,
-    private val textColumn: TableColumn,
     private val typeColumn: TextTableColumn,
 ) {
 
@@ -24,7 +23,6 @@ data class TelegramMessagesSqlQueries(
                 into = tableName,
                 values = listOf(
                     idColumn to entity.id.toString(),
-                    textColumn to entity.text,
                     typeColumn to entity.type,
                 )
             )
@@ -45,18 +43,17 @@ data class TelegramMessagesSqlQueries(
                 tableName = tableName,
                 columns = listOf(
                     idColumn,
-                    textColumn,
                     typeColumn,
                 )
             )
         }
     }
 
-    fun update(message: String, messageId: Long): String {
+    fun selectBy(id: Long): String {
         return SqlQuery {
-            update(tableName)
-            set(textColumn to message)
-            where(idColumn to messageId.toString())
+            select("*")
+            from(tableName)
+            where(idColumn to id.toString())
         }
     }
 }

@@ -15,7 +15,6 @@ import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.NotionPag
 import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.dao.NotionPageFlashCardDaoImpl
 import org.danceofvalkyries.app.data.persistance.telegram.messages.TelegramMessagesDataBaseTableImpl
 import org.danceofvalkyries.app.data.persistance.telegram.messages.dao.TelegramMessageDaoImpl
-import org.danceofvalkyries.app.domain.message.MessageFactoryImpl
 import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.environment.Environment
 import org.danceofvalkyries.notion.impl.database.NotionDataBaseApiImpl
@@ -36,7 +35,7 @@ class TelegramButtonListenerApp(
         val dbConnection = environment.dataBase.establishConnection()
         val telegramApi = TelegramChatApiImpl(
             TelegramChatRestApiImpl(
-                client = createHttpClient(),
+                client = environment.httpClient,
                 gson = createGson(),
                 apiKey = config.telegram.apiKey,
             ),
@@ -45,7 +44,7 @@ class TelegramButtonListenerApp(
 
         val notionApi = NotionApiImpl(
             gson = createGson(),
-            client = createHttpClient(),
+            client = environment.httpClient,
             apiKey = config.notion.apiKey,
         )
         val notionDatabaseDataBaseTable = NotionDatabaseDataBaseTableImpl(NotionDataBaseDaoImpl(dbConnection))
@@ -53,9 +52,6 @@ class TelegramButtonListenerApp(
 
         val notionPageFlashCardDao = NotionPageFlashCardDaoImpl(dbConnection)
         val notionPageFlashCardDataBaseTable = NotionPageFlashCardDataBaseTableImpl(notionPageFlashCardDao)
-
-
-        val messageFactory = MessageFactoryImpl()
 
         val telegramMessageDao = TelegramMessageDaoImpl(dbConnection)
         val telegramMessagesDataBaseTable = TelegramMessagesDataBaseTableImpl(telegramMessageDao)
@@ -69,21 +65,6 @@ class TelegramButtonListenerApp(
                 }
             }
         }.start(wait = true)
-    }
-
-    private fun createHttpClient(): OkHttpClient {
-        val logger = HttpLoggingInterceptor.Logger { message -> println(message) }
-        val interceptor = HttpLoggingInterceptor(logger).apply {
-            level = HttpLoggingInterceptor.Level.BODY
-        }
-        val timeOut = 60_000L
-        return OkHttpClient.Builder()
-            .callTimeout(timeOut, TimeUnit.MILLISECONDS)
-            .readTimeout(timeOut, TimeUnit.MILLISECONDS)
-            .writeTimeout(timeOut, TimeUnit.MILLISECONDS)
-            .connectTimeout(timeOut, TimeUnit.MILLISECONDS)
-            .addInterceptor(interceptor)
-            .build()
     }
 
     private fun createGson(): Gson {

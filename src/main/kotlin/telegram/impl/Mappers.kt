@@ -1,7 +1,6 @@
 package org.danceofvalkyries.telegram.impl
 
 import org.danceofvalkyries.telegram.api.models.*
-import org.danceofvalkyries.telegram.api.models.TelegramMessageBody.Type
 import org.danceofvalkyries.telegram.impl.client.models.ButtonData
 import org.danceofvalkyries.telegram.impl.client.models.MessageData
 import org.danceofvalkyries.telegram.impl.client.models.ReplyMarkupData
@@ -51,7 +50,6 @@ fun MessageData.toDomain(): TelegramMessage {
                     }
                 } ?: emptyList(),
             imageUrl = imageUrl?.let(::TelegramImageUrl),
-            type = Type.UNKNOWN,
         )
     )
 }

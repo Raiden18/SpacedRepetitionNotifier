@@ -1,49 +1,37 @@
 package app.domain.usecases
 
-import io.kotest.core.spec.style.FunSpec
+import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import org.danceofvalkyries.app.data.persistance.telegram.messages.TelegramMessagesDataBaseTable
+import org.danceofvalkyries.app.domain.message.notification.DoneMessage
+import org.danceofvalkyries.app.domain.message.notification.NeedRevisingNotificationMessage
 import org.danceofvalkyries.app.domain.usecases.DeleteOldAndSendNewNotificationUseCase
 import org.danceofvalkyries.telegram.api.DeleteMessageFromTelegramChat
 import org.danceofvalkyries.telegram.api.SendMessageToTelegramChat
-import org.danceofvalkyries.telegram.impl.TelegramChatApi
 import org.danceofvalkyries.telegram.api.models.TelegramMessage
-import org.danceofvalkyries.telegram.api.models.TelegramMessageBody
+import org.danceofvalkyries.telegram.impl.TelegramChatApi
 
-class DeleteOldAndSendNewNotificationUseCaseImplTest : FunSpec() {
+class DeleteOldAndSendNewNotificationUseCaseImplTest : BehaviorSpec() {
 
     private val telegramMessagesDataBaseTable: TelegramMessagesDataBaseTable = mockk(relaxed = true)
     private val deleteMessageFromTelegramChat: DeleteMessageFromTelegramChat = mockk(relaxed = true)
     private val sendMessageToTelegramChat: SendMessageToTelegramChat = mockk(relaxed = true)
+    private val telegramChatApi: TelegramChatApi = mockk(relaxed = true)
 
-    private val text = "Message to telegram"
-
-    private val telegramNotification = TelegramMessage(
-        id = 228,
-        body = TelegramMessageBody(
-            text = text,
-            telegramButtons = emptyList(),
-            telegramImageUrl = null,
-            type = TelegramMessageBody.Type.NOTIFICATION
-        )
+    private val doneMessage = DoneMessage(
+        id = 1
     )
-    private val oldTelegramNotification = TelegramMessage(
-        id = 322,
-        body = TelegramMessageBody(
-            text = text,
-            telegramButtons = emptyList(),
-            telegramImageUrl = null,
-            type = TelegramMessageBody.Type.NOTIFICATION
-        )
+    private val notificationMessage = NeedRevisingNotificationMessage(
+        id = 2,
+        emptyList(),
+        emptyList()
     )
-    private val flashCardMessage = TelegramMessage(
-        id = 1,
-        body = TelegramMessageBody.EMPTY.copy(
-            type = TelegramMessageBody.Type.FLASH_CARD,
-        )
+    private val newTgMessageResponse = TelegramMessage(
+        id = notificationMessage.id,
+        body = notificationMessage.telegramBody
     )
 
     private lateinit var useCase: DeleteOldAndSendNewNotificationUseCase
@@ -53,25 +41,39 @@ class DeleteOldAndSendNewNotificationUseCaseImplTest : FunSpec() {
             clearAllMocks()
             useCase = DeleteOldAndSendNewNotificationUseCase(
                 telegramMessagesDataBaseTable,
-                deleteMessageFromTelegramChat,
+                telegramChatApi,
                 sendMessageToTelegramChat,
             )
-            coEvery { sendMessageToTelegramChat.execute(telegramNotification.body) } returns telegramNotification
-            coEvery { telegramMessagesDataBaseTable.getAll() } returns listOf(oldTelegramNotification, flashCardMessage)
+            coEvery { telegramMessagesDataBaseTable.getTypeFor(doneMessage.id) } returns doneMessage.type
+            coEvery { sendMessageToTelegramChat.execute(notificationMessage.telegramBody) } returns newTgMessageResponse
         }
 
-        test("Should replace old tg message with new one") {
+        Given("Done Message is saved in DB") {
+            beforeTest {
+                coEvery { telegramMessagesDataBaseTable.getMessagesIds() } returns listOf(doneMessage.id)
+            }
 
-            useCase.execute(telegramNotification.body)
+            When("Tries to replace message") {
+                beforeTest {
+                    useCase.execute(notificationMessage)
+                }
 
-            coVerify(exactly = 1) { telegramMessagesDataBaseTable.delete(oldTelegramNotification) }
-            coVerify(exactly = 1) { deleteMessageFromTelegramChat.execute(oldTelegramNotification) }
+                Then("Should delete DoneMessage from DB") {
+                    coVerify(exactly = 1) { telegramMessagesDataBaseTable.deleteFor(doneMessage.id) }
+                }
 
-            coVerify(exactly = 1) { telegramMessagesDataBaseTable.save(telegramNotification) }
-            coVerify(exactly = 1) { sendMessageToTelegramChat.execute(telegramNotification.body) }
+                Then("Should delete DoneMessage From Tg Chat") {
+                    coVerify(exactly = 1) { telegramChatApi.deleteFromChat(doneMessage.id) }
+                }
 
-            coVerify(exactly = 0) { telegramMessagesDataBaseTable.delete(flashCardMessage) }
-            coVerify(exactly = 0) { deleteMessageFromTelegramChat.execute(flashCardMessage) }
+                Then("Should send new message to TG") {
+                    coVerify(exactly = 1) { sendMessageToTelegramChat.execute(notificationMessage.telegramBody) }
+                }
+
+                Then("Should Save Tg Message to DB") {
+                    coVerify(exactly = 1) { telegramMessagesDataBaseTable.save(newTgMessageResponse, notificationMessage.type) }
+                }
+            }
         }
     }
 }

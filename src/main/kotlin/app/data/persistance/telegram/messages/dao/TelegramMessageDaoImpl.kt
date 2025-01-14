@@ -20,10 +20,7 @@ class TelegramMessageDaoImpl(
         name = "id",
         primaryKey = PrimaryKey(),
     )
-    private val textColumn = TextTableColumn(
-        name = "text",
-        primaryKey = NoPrimaryKey()
-    )
+
     private val typeColumn = TextTableColumn(
         name = "type",
         primaryKey = NoPrimaryKey()
@@ -32,7 +29,6 @@ class TelegramMessageDaoImpl(
     private val sqlQueries = TelegramMessagesSqlQueries(
         tableName = TABLE_NAME,
         idColumn = idTableColumn,
-        textColumn = textColumn,
         typeColumn = typeColumn,
     )
 
@@ -42,17 +38,13 @@ class TelegramMessageDaoImpl(
             .also { it.close() }
     }
 
-    override suspend fun delete(entity: TelegramMessageEntity) {
+    override suspend fun delete(id: Long) {
         connection.createStatement()
-            .also { it.execute(sqlQueries.delete(entity.id)) }
+            .also { it.execute(sqlQueries.delete(id)) }
             .also { it.close() }
     }
 
-    override suspend fun update(entity: TelegramMessageEntity, messageId: Long) {
-        connection.createStatement()
-            .also { it.execute(sqlQueries.update(entity.text, messageId)) }
-            .also { it.close() }
-    }
+    override suspend fun update(entity: TelegramMessageEntity, messageId: Long) = Unit
 
     override suspend fun getAll(): List<TelegramMessageEntity> {
         return createTableIfNotExist()
@@ -60,11 +52,25 @@ class TelegramMessageDaoImpl(
             .asSequence()
             .map {
                 TelegramMessageEntity(
-                    id = idTableColumn.getValue(it),
-                    text = textColumn.getValue(it)!!,
-                    type = typeColumn.getValue(it)!!,
+                    it,
+                    idTableColumn,
+                    typeColumn,
                 )
             }.toList()
+    }
+
+    override suspend fun getBy(id: Long): TelegramMessageEntity? {
+        return createTableIfNotExist()
+            .executeQuery(sqlQueries.selectBy(id))
+            .asSequence()
+            .map {
+                TelegramMessageEntity(
+                    it,
+                    idTableColumn,
+                    typeColumn,
+                )
+            }.toList()
+            .firstOrNull()
     }
 
     private fun createTableIfNotExist(): Statement {

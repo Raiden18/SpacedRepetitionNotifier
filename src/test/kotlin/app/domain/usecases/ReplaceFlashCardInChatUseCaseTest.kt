@@ -15,7 +15,6 @@ import org.danceofvalkyries.telegram.api.SendMessageToTelegramChat
 import org.danceofvalkyries.telegram.api.models.TelegramMessage
 import org.danceofvalkyries.telegram.api.models.TelegramMessageBody
 import org.danceofvalkyries.utils.DispatchersImpl
-import testutils.MessageFactoryFake
 
 class ReplaceFlashCardInChatUseCaseTest : FunSpec() {
 
@@ -24,26 +23,18 @@ class ReplaceFlashCardInChatUseCaseTest : FunSpec() {
     private val getOnlineDictionariesForFlashCard: GetOnlineDictionariesForFlashCard = mockk(relaxed = true)
     private val sendMessageToTelegramChat: SendMessageToTelegramChat = mockk(relaxed = true)
 
-    private lateinit var messageFactoryFake: MessageFactoryFake
-
     private val notification = TelegramMessage(
         id = 1,
-        body = TelegramMessageBody.EMPTY.copy(
-            type = TelegramMessageBody.Type.NOTIFICATION
-        )
+        body = TelegramMessageBody.EMPTY
     )
 
     private val flashCardMessage = TelegramMessage(
         id = 2,
-        body = TelegramMessageBody.EMPTY.copy(
-            type = TelegramMessageBody.Type.FLASH_CARD
-        )
+        body = TelegramMessageBody.EMPTY
     )
     private val anotherFlashCardMessage = TelegramMessage(
         id = 3,
-        body = TelegramMessageBody.EMPTY.copy(
-            type = TelegramMessageBody.Type.FLASH_CARD
-        )
+        body = TelegramMessageBody.EMPTY
     )
 
     private val flashCard = FlashCardNotionPage.EMPTY.copy(
@@ -61,13 +52,11 @@ class ReplaceFlashCardInChatUseCaseTest : FunSpec() {
     init {
         beforeTest {
             clearAllMocks()
-            messageFactoryFake = MessageFactoryFake()
             replaceFlashCardInChatUseCase = ReplaceFlashCardInChatUseCase(
                 telegramMessagesDataBaseTable,
                 deleteMessageFromTelegramChat,
                 sendMessageToTelegramChat,
                 getOnlineDictionariesForFlashCard,
-                messageFactoryFake,
                 DispatchersImpl(kotlinx.coroutines.Dispatchers.Unconfined)
             )
 
@@ -77,18 +66,16 @@ class ReplaceFlashCardInChatUseCaseTest : FunSpec() {
 
         test("Should send FlashCard message to TG if there is no flashcard message in chat") {
             coEvery { telegramMessagesDataBaseTable.getAll() } returns listOf(notification)
-            messageFactoryFake.flashCardBody = flashCardMessage.body
 
             replaceFlashCardInChatUseCase.execute(flashCard)
 
             coVerify(exactly = 1) { sendMessageToTelegramChat.execute(flashCardMessage.body) }
-            coVerify(exactly = 1) { telegramMessagesDataBaseTable.save(flashCardMessage) }
+            coVerify(exactly = 1) { telegramMessagesDataBaseTable.save(flashCardMessage, TODO()) }
         }
 
         test("Should update FlashCard message if it already presents") {
             coEvery { telegramMessagesDataBaseTable.getAll() } returns listOf(flashCardMessage, notification)
             coEvery { sendMessageToTelegramChat.execute(anotherFlashCardMessage.body) } returns anotherFlashCardMessage
-            messageFactoryFake.flashCardBody = anotherFlashCardMessage.body
 
             replaceFlashCardInChatUseCase.execute(anotherFlashCard)
 
@@ -96,7 +83,7 @@ class ReplaceFlashCardInChatUseCaseTest : FunSpec() {
             coVerify(exactly = 1) { telegramMessagesDataBaseTable.delete(flashCardMessage) }
 
             coVerify(exactly = 1) { sendMessageToTelegramChat.execute(anotherFlashCardMessage.body) }
-            coVerify(exactly = 1) { telegramMessagesDataBaseTable.save(anotherFlashCardMessage) }
+            coVerify(exactly = 1) { telegramMessagesDataBaseTable.save(anotherFlashCardMessage, TODO()) }
         }
     }
 }

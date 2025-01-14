@@ -12,13 +12,11 @@ class TelegramMessagesSqlQueriesTest : FunSpec() {
 
     private val tableName = "table_name"
     private val idColumn = LongTableColumn("id", PrimaryKey())
-    private val textColumn = TextTableColumn("text")
     private val typeColumn = TextTableColumn("type")
 
     private val telegramMessagesSqlQueries = TelegramMessagesSqlQueries(
         tableName,
         idColumn,
-        textColumn,
         typeColumn,
     )
 
@@ -37,24 +35,17 @@ class TelegramMessagesSqlQueriesTest : FunSpec() {
             telegramMessagesSqlQueries.insert(
                 TelegramMessageEntity(
                     id = 12,
-                    text = "something",
                     type = "NOTIFICATION"
                 )
-            ) shouldBe "INSERT INTO $tableName (id, text, type) VALUES (12, 'something', 'NOTIFICATION');"
+            ) shouldBe "INSERT INTO $tableName (id, type) VALUES (12, 'NOTIFICATION');"
         }
 
         test("Should create table if not exist") {
-            telegramMessagesSqlQueries.createTableIfNotExist() shouldBe "CREATE TABLE IF NOT EXISTS $tableName (id LONG PRIMARY KEY, text TEXT, type TEXT);"
+            telegramMessagesSqlQueries.createTableIfNotExist() shouldBe "CREATE TABLE IF NOT EXISTS $tableName (id LONG PRIMARY KEY, type TEXT);"
         }
 
-        test("Should update message by message id") {
-            val message = "new message"
-            val id = 228L
-
-            telegramMessagesSqlQueries.update(
-                message,
-                id
-            ) shouldBe "UPDATE $tableName SET text = '$message' WHERE id = $id;"
+        test("Query to get Message by id") {
+            telegramMessagesSqlQueries.selectBy(228) shouldBe "SELECT * FROM $tableName WHERE id = 228;"
         }
     }
 }
