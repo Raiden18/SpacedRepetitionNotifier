@@ -25,11 +25,11 @@ import org.danceofvalkyries.telegram.impl.*
 import org.danceofvalkyries.telegram.impl.client.TelegramChatRestApiImpl
 import org.danceofvalkyries.utils.Dispatchers
 import org.danceofvalkyries.utils.db.DataBase
-import java.util.concurrent.TimeUnit
 
 class NotifierApp(
     private val dispatchers: Dispatchers,
     private val dataBase: DataBase,
+    private val httpClient: OkHttpClient,
     private val configRepository: ConfigRepository = LocalFileConfigRepository()
 ) : App {
 
@@ -94,7 +94,7 @@ class NotifierApp(
 
     private fun createTelegramChatApi(): TelegramChatApi {
         val api = TelegramChatRestApiImpl(
-            client = createHttpClient(),
+            client = httpClient,
             gson = createGson(),
             apiKey = config.telegram.apiKey,
         )
@@ -107,16 +107,6 @@ class NotifierApp(
         )
     }
 
-    private fun createHttpClient(): OkHttpClient {
-        val timeOut = 60_000L
-        return OkHttpClient.Builder()
-            .callTimeout(timeOut, TimeUnit.MILLISECONDS)
-            .readTimeout(timeOut, TimeUnit.MILLISECONDS)
-            .writeTimeout(timeOut, TimeUnit.MILLISECONDS)
-            .connectTimeout(timeOut, TimeUnit.MILLISECONDS)
-            .build()
-    }
-
     private fun createGson(): Gson {
         return Gson()
     }
@@ -124,7 +114,7 @@ class NotifierApp(
     private fun NotionApi(): NotionApi {
         return NotionApiImpl(
             gson = createGson(),
-            client = createHttpClient(),
+            client = httpClient,
             apiKey = config.notion.apiKey,
         )
     }

@@ -32,7 +32,6 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.4.11")
 
     testImplementation("io.mockk:mockk:1.13.14")
-
 }
 
 tasks.test {

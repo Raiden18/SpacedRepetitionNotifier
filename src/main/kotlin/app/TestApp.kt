@@ -30,8 +30,9 @@ import org.danceofvalkyries.utils.db.DataBase
 import java.util.concurrent.TimeUnit
 
 class TestApp(
-    private val db: DataBase,
     private val dispatchers: Dispatchers,
+    private val db: DataBase,
+    private val httpClient: OkHttpClient,
 ) : App {
 
     private val config: Config by lazy {
@@ -42,6 +43,7 @@ class TestApp(
         NotifierApp(
             dispatchers,
             db,
+            httpClient,
             TestConfigRepository()
         )
     }
@@ -50,6 +52,7 @@ class TestApp(
         TelegramButtonListenerApp(
             dispatchers,
             db,
+            httpClient,
             TestConfigRepository()
         )
     }
