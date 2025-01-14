@@ -80,7 +80,6 @@ class TelegramButtonListenerApp(
 
         telegramApi.getUpdates()
             .onEach {
-                val messageId = it.telegramUpdateCallbackQuery.message.id
                 when (val action = ButtonAction.parse(it.callback.value)) {
                     is ButtonAction.DataBase -> flashCardsController.onDataBaseClicked(action.notionDbId)
                     is ButtonAction.Forgotten -> flashCardsController.onForgottenClicked(action.flashCardId)
