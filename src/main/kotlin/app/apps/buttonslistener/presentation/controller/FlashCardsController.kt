@@ -1,6 +1,6 @@
-package org.danceofvalkyries.app.domain
+package org.danceofvalkyries.app.apps.buttonslistener.presentation.controller
 
-import org.danceofvalkyries.app.domain.srs.SpaceRepetitionSession
+import org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.srs.SpaceRepetitionSession
 import org.danceofvalkyries.notion.api.models.NotionId
 
 //TODO: Add tests

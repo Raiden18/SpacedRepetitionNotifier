@@ -1,11 +1,13 @@
-package org.danceofvalkyries.app.domain
+package org.danceofvalkyries.app.apps.buttonslistener.presentation.view
 
+import org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.FlashCardView
 import org.danceofvalkyries.app.domain.message.FlashCardMessage
-import org.danceofvalkyries.app.domain.usecases.GetOnlineDictionariesForFlashCard
+import org.danceofvalkyries.app.apps.buttonslistener.domain.usecases.GetOnlineDictionariesForFlashCard
 import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
 import org.danceofvalkyries.telegram.api.SendMessageToTelegramChat
 import org.danceofvalkyries.telegram.impl.TelegramChatApi
 
+//TODO: Add tests
 class TelegramChatFlashCardView(
     private val sendMessageToTelegramChat: SendMessageToTelegramChat,
     private val telegramChatApi: TelegramChatApi,
@@ -21,10 +23,6 @@ class TelegramChatFlashCardView(
     }
 
     override suspend fun hide(messageId: Long) {
-        telegramChatApi.deleteFromChat(messageId)
-    }
-
-    override suspend fun finish(messageId: Long) {
         telegramChatApi.deleteFromChat(messageId)
     }
 }

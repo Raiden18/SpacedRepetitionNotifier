@@ -1,4 +1,4 @@
-package org.danceofvalkyries.app.domain
+package org.danceofvalkyries.app.apps.buttonslistener.presentation.controller
 
 import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
 
@@ -6,5 +6,4 @@ import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
 interface FlashCardView {
     suspend fun show(flashCard: FlashCardNotionPage)
     suspend fun hide(messageId: Long)
-    suspend fun finish(messageId: Long)
 }

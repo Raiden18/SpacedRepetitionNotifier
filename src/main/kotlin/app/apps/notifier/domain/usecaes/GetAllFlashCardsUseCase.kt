@@ -1,4 +1,4 @@
-package org.danceofvalkyries.app.domain.usecases
+package org.danceofvalkyries.app.apps.notifier.domain.usecaes
 
 import org.danceofvalkyries.app.data.persistance.notion.database.NotionDatabaseDataBaseTable
 import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.NotionPageFlashCardDataBaseTable

@@ -1,4 +1,4 @@
-package org.danceofvalkyries.app.domain.usecases
+package org.danceofvalkyries.app.apps.buttonslistener.domain.usecases
 
 import org.danceofvalkyries.config.domain.ObservedDatabase
 import org.danceofvalkyries.dictionary.api.OnlineDictionary

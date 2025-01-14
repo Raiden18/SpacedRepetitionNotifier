@@ -5,10 +5,10 @@ import io.mockk.*
 import org.danceofvalkyries.app.data.persistance.notion.database.NotionDatabaseDataBaseTable
 import org.danceofvalkyries.app.domain.message.notification.DoneMessage
 import org.danceofvalkyries.app.domain.message.notification.NeedRevisingNotificationMessage
-import org.danceofvalkyries.app.domain.usecases.AnalyzeFlashCardsAndSendNotificationUseCase
-import org.danceofvalkyries.app.domain.usecases.DeleteOldAndSendNewNotificationUseCase
-import org.danceofvalkyries.app.domain.usecases.EditNotificationMessageUseCase
-import org.danceofvalkyries.app.domain.usecases.GetAllFlashCardsUseCase
+import org.danceofvalkyries.app.apps.notifier.domain.usecaes.AnalyzeFlashCardsAndSendNotificationUseCase
+import org.danceofvalkyries.app.apps.notifier.domain.usecaes.DeleteOldAndSendNewNotificationUseCase
+import org.danceofvalkyries.app.apps.notifier.domain.usecaes.EditNotificationMessageUseCase
+import org.danceofvalkyries.app.apps.notifier.domain.usecaes.GetAllFlashCardsUseCase
 import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
 import org.danceofvalkyries.notion.api.models.NotionDataBase
 

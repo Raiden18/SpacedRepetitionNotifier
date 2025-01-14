@@ -1,22 +1,23 @@
-package org.danceofvalkyries.app
+package org.danceofvalkyries.app.apps.buttonslistener
 
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.onEach
+import notion.impl.client.NotionClientApiImpl
+import org.danceofvalkyries.app.App
+import org.danceofvalkyries.app.apps.buttonslistener.domain.usecases.GetOnlineDictionariesForFlashCard
+import org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.FlashCardsController
+import org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.srs.SpaceRepetitionSessionImpl
+import org.danceofvalkyries.app.apps.buttonslistener.presentation.view.TelegramChatFlashCardView
 import org.danceofvalkyries.app.data.persistance.notion.database.NotionDatabaseDataBaseTableImpl
 import org.danceofvalkyries.app.data.persistance.notion.database.dao.NotionDataBaseDaoImpl
 import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.NotionPageFlashCardDataBaseTableImpl
 import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.dao.NotionPageFlashCardDaoImpl
 import org.danceofvalkyries.app.data.persistance.telegram.messages.TelegramMessagesDataBaseTableImpl
 import org.danceofvalkyries.app.data.persistance.telegram.messages.dao.TelegramMessageDaoImpl
-import org.danceofvalkyries.app.domain.FlashCardsController
-import org.danceofvalkyries.app.domain.TelegramChatFlashCardView
 import org.danceofvalkyries.app.domain.message.ButtonAction
-import org.danceofvalkyries.app.domain.srs.SpaceRepetitionSessionImpl
-import org.danceofvalkyries.app.domain.usecases.GetOnlineDictionariesForFlashCard
 import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.environment.Environment
-import notion.impl.client.NotionClientApiImpl
 import org.danceofvalkyries.notion.impl.NotionApiImpl
 import org.danceofvalkyries.telegram.impl.SendMessageToTelegramChat
 import org.danceofvalkyries.telegram.impl.TelegramChatApiImpl
@@ -41,9 +42,6 @@ class TelegramButtonListenerApp(
             ),
             config.telegram.chatId
         )
-
-
-        val notionDatabaseDataBaseTable = NotionDatabaseDataBaseTableImpl(NotionDataBaseDaoImpl(dbConnection))
 
         val notionApi = NotionApiImpl(
             NotionClientApiImpl(

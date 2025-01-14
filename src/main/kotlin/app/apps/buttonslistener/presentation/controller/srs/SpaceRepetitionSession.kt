@@ -1,4 +1,4 @@
-package org.danceofvalkyries.app.domain.srs
+package org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.srs
 
 import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
 import org.danceofvalkyries.notion.api.models.NotionId

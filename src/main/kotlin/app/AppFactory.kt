@@ -1,6 +1,9 @@
 package org.danceofvalkyries.app
 
 import kotlinx.coroutines.Dispatchers
+import org.danceofvalkyries.app.apps.SandBoxApp
+import org.danceofvalkyries.app.apps.notifier.NotifierApp
+import org.danceofvalkyries.app.apps.buttonslistener.TelegramButtonListenerApp
 import org.danceofvalkyries.environment.Environment
 import org.danceofvalkyries.utils.DispatchersImpl
 

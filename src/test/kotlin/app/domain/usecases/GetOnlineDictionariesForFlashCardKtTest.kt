@@ -2,7 +2,7 @@ package app.domain.usecases
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.app.domain.usecases.GetOnlineDictionariesForFlashCard
+import org.danceofvalkyries.app.apps.buttonslistener.domain.usecases.GetOnlineDictionariesForFlashCard
 import org.danceofvalkyries.config.domain.ObservedDatabase
 import org.danceofvalkyries.dictionary.api.OnlineDictionary
 import org.danceofvalkyries.notion.api.models.FlashCardNotionPage

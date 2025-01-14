@@ -3,9 +3,9 @@ package app
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import org.danceofvalkyries.app.AppFactory
-import org.danceofvalkyries.app.NotifierApp
-import org.danceofvalkyries.app.SandBoxApp
-import org.danceofvalkyries.app.TelegramButtonListenerApp
+import org.danceofvalkyries.app.apps.notifier.NotifierApp
+import org.danceofvalkyries.app.apps.SandBoxApp
+import org.danceofvalkyries.app.apps.buttonslistener.TelegramButtonListenerApp
 
 class AppFactoryKtTest : FunSpec() {
 

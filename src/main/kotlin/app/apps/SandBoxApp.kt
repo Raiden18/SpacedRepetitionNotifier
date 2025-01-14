@@ -1,5 +1,6 @@
-package org.danceofvalkyries.app
+package org.danceofvalkyries.app.apps
 
+import org.danceofvalkyries.app.App
 import org.danceofvalkyries.environment.Environment
 import org.danceofvalkyries.utils.Dispatchers
 

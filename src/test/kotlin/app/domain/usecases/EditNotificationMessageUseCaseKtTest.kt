@@ -7,7 +7,7 @@ import io.mockk.coVerifyOrder
 import io.mockk.mockk
 import org.danceofvalkyries.app.data.persistance.telegram.messages.TelegramMessagesDataBaseTable
 import org.danceofvalkyries.app.domain.message.notification.DoneMessage
-import org.danceofvalkyries.app.domain.usecases.EditNotificationMessageUseCase
+import org.danceofvalkyries.app.apps.notifier.domain.usecaes.EditNotificationMessageUseCase
 import org.danceofvalkyries.telegram.api.EditMessageInTelegramChat
 import org.danceofvalkyries.telegram.api.models.TelegramMessage
 import org.danceofvalkyries.telegram.api.models.TelegramMessageBody

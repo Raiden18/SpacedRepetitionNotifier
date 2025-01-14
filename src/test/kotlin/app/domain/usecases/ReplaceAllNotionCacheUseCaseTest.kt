@@ -5,9 +5,9 @@ import io.mockk.clearAllMocks
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
-import org.danceofvalkyries.app.domain.usecases.ReplaceAllNotionCacheUseCase
-import org.danceofvalkyries.app.domain.usecases.ReplaceFlashCardsInCacheUseCase
-import org.danceofvalkyries.app.domain.usecases.ReplaceNotionDbsInCacheUseCase
+import org.danceofvalkyries.app.apps.notifier.domain.usecaes.ReplaceAllNotionCacheUseCase
+import org.danceofvalkyries.app.apps.notifier.domain.usecaes.ReplaceFlashCardsInCacheUseCase
+import org.danceofvalkyries.app.apps.notifier.domain.usecaes.ReplaceNotionDbsInCacheUseCase
 import org.danceofvalkyries.utils.DispatchersImpl
 
 class ReplaceAllNotionCacheUseCaseTest : FunSpec() {

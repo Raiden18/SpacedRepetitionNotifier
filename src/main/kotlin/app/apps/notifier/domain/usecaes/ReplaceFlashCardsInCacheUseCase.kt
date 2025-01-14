@@ -1,4 +1,4 @@
-package org.danceofvalkyries.app.domain.usecases
+package org.danceofvalkyries.app.apps.notifier.domain.usecaes
 
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll

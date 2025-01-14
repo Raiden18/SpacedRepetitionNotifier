@@ -1,4 +1,4 @@
-package org.danceofvalkyries.app.domain.usecases
+package org.danceofvalkyries.app.apps.notifier.domain.usecaes
 
 import org.danceofvalkyries.app.data.persistance.telegram.messages.TelegramMessagesDataBaseTable
 import org.danceofvalkyries.app.domain.message.notification.NotificationMessage
