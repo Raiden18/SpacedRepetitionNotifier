@@ -1,4 +1,4 @@
-package org.danceofvalkyries.telegram.impl.client.models
+package org.danceofvalkyries.telegram.impl.models
 
 import com.google.gson.annotations.SerializedName
 
@@ -6,7 +6,7 @@ data class CallbackQueryData(
     @SerializedName("id")
     val id: String,
     @SerializedName("message")
-    val message: MessageData,
+    val message: MessageData? = null,
     @SerializedName("data")
-    val data: String
+    val data: String? = null,
 )

@@ -1,8 +1,7 @@
 package org.danceofvalkyries.telegram.impl
 
-import org.danceofvalkyries.telegram.api.DeleteMessageFromTelegramChat
-import org.danceofvalkyries.telegram.api.EditMessageInTelegramChat
 import org.danceofvalkyries.telegram.api.SendMessageToTelegramChat
+import org.danceofvalkyries.telegram.api.TelegramChatApi
 
 fun SendMessageToTelegramChat(
     telegramChatApi: TelegramChatApi
@@ -14,12 +13,4 @@ fun SendMessageToTelegramChat(
             telegramChatApi.sendPhotoMessage(telegramMessageBody)
         }
     }
-}
-
-fun DeleteMessageFromTelegramChat(telegramChatApi: TelegramChatApi): DeleteMessageFromTelegramChat {
-    return DeleteMessageFromTelegramChat { telegramChatApi.deleteFromChat(it.id) }
-}
-
-fun EditMessageInTelegramChat(telegramChatApi: TelegramChatApi): EditMessageInTelegramChat {
-    return EditMessageInTelegramChat { body, messageId -> telegramChatApi.editInChat(body, messageId) }
 }

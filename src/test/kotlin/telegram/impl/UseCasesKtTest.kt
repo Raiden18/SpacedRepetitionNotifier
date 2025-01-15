@@ -9,7 +9,7 @@ import org.danceofvalkyries.telegram.api.SendMessageToTelegramChat
 import org.danceofvalkyries.telegram.api.models.TelegramImageUrl
 import org.danceofvalkyries.telegram.api.models.TelegramMessage
 import org.danceofvalkyries.telegram.api.models.TelegramMessageBody
-import org.danceofvalkyries.telegram.impl.TelegramChatApi
+import org.danceofvalkyries.telegram.api.TelegramChatApi
 import org.danceofvalkyries.telegram.impl.SendMessageToTelegramChat
 
 class UseCasesKtTest : FunSpec() {

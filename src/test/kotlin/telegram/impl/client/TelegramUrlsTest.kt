@@ -2,7 +2,7 @@ package telegram.impl.client
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.telegram.impl.client.TelegramChatUrls
+import org.danceofvalkyries.telegram.impl.TelegramChatUrls
 
 class TelegramUrlsTest : FunSpec() {
     private val apiKey = "228"
@@ -48,6 +48,10 @@ class TelegramUrlsTest : FunSpec() {
         test("Should create getUpdates") {
             telegramChatUrl.getUpdates()
                 .toString() shouldBe "https://api.telegram.org/bot$apiKey/getUpdates"
+        }
+
+        test("Should return answer callback") {
+            telegramChatUrl.answerCallback().toString() shouldBe "https://api.telegram.org/bot$apiKey/answerCallbackQuery"
         }
     }
 }

@@ -1,4 +1,4 @@
-package org.danceofvalkyries.telegram.impl.client
+package org.danceofvalkyries.telegram.impl
 
 import okhttp3.HttpUrl
 
@@ -38,6 +38,10 @@ data class TelegramChatUrls(
 
     fun getUpdates(): HttpUrl = telegramEndpoint {
         addPathSegment("getUpdates")
+    }
+
+    fun answerCallback(): HttpUrl = telegramEndpoint {
+        addPathSegment("answerCallbackQuery")
     }
 
     private fun telegramEndpoint(builder: HttpUrl.Builder.() -> Unit): HttpUrl {

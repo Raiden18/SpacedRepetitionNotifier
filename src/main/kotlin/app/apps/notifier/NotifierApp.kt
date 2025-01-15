@@ -14,11 +14,9 @@ import org.danceofvalkyries.environment.Environment
 import org.danceofvalkyries.notion.api.NotionApi
 import org.danceofvalkyries.notion.api.models.NotionId
 import org.danceofvalkyries.notion.impl.NotionApiImpl
-import org.danceofvalkyries.telegram.impl.EditMessageInTelegramChat
+import org.danceofvalkyries.telegram.api.TelegramChatApi
 import org.danceofvalkyries.telegram.impl.SendMessageToTelegramChat
-import org.danceofvalkyries.telegram.impl.TelegramChatApi
 import org.danceofvalkyries.telegram.impl.TelegramChatApiImpl
-import org.danceofvalkyries.telegram.impl.client.TelegramChatRestApiImpl
 import org.danceofvalkyries.utils.Dispatchers
 
 class NotifierApp(
@@ -31,7 +29,7 @@ class NotifierApp(
 
     override suspend fun run() {
         val dbConnection = environment.dataBase.establishConnection()
-        val telegramChatRepository = createTelegramChatApi()
+        val telegramApi = createTelegramChatApi()
         val notionDataBaseDao = NotionDataBaseDaoImpl(dbConnection)
         val notionDatabaseDataBaseTable = NotionDatabaseDataBaseTableImpl(notionDataBaseDao)
         val notionApi = NotionApi()
@@ -68,24 +66,24 @@ class NotifierApp(
             notionDatabaseDataBaseTable,
             EditNotificationMessageUseCase(
                 telegramMessagesDataBaseTable,
-                EditMessageInTelegramChat(telegramChatRepository)
+                telegramApi
             ),
             DeleteOldAndSendNewNotificationUseCase(
                 telegramMessagesDataBaseTable,
-                telegramChatRepository,
-                SendMessageToTelegramChat(telegramChatRepository)
+                telegramApi,
+                SendMessageToTelegramChat(telegramApi)
             ),
             config.flashCardsThreshold,
         ).execute()
     }
 
     private fun createTelegramChatApi(): TelegramChatApi {
-        val api = TelegramChatRestApiImpl(
-            client = httpClient,
+        return TelegramChatApiImpl(
+            client = environment.httpClient,
             gson = createGson(),
             apiKey = config.telegram.apiKey,
+            chatId = config.telegram.chatId
         )
-        return TelegramChatApiImpl(api, config.telegram.chatId)
     }
 
     private fun createGson(): Gson {

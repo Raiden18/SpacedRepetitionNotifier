@@ -9,6 +9,9 @@ import org.danceofvalkyries.app.apps.buttonslistener.domain.usecases.GetOnlineDi
 import org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.FlashCardsController
 import org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.srs.SpaceRepetitionSessionImpl
 import org.danceofvalkyries.app.apps.buttonslistener.presentation.view.TelegramChatFlashCardView
+import org.danceofvalkyries.app.data.persistance.notion.database.NotionDatabaseDataBaseTableImpl
+import org.danceofvalkyries.app.data.persistance.notion.database.dao.NotionDataBaseDao
+import org.danceofvalkyries.app.data.persistance.notion.database.dao.NotionDataBaseDaoImpl
 import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.NotionPageFlashCardDataBaseTableImpl
 import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.dao.NotionPageFlashCardDaoImpl
 import org.danceofvalkyries.app.data.persistance.telegram.messages.TelegramMessagesDataBaseTableImpl
@@ -20,7 +23,6 @@ import org.danceofvalkyries.environment.Environment
 import org.danceofvalkyries.notion.impl.NotionApiImpl
 import org.danceofvalkyries.telegram.impl.SendMessageToTelegramChat
 import org.danceofvalkyries.telegram.impl.TelegramChatApiImpl
-import org.danceofvalkyries.telegram.impl.client.TelegramChatRestApiImpl
 import org.danceofvalkyries.utils.Dispatchers
 
 //TODO: Fix: Make query for only one request
@@ -34,12 +36,10 @@ class TelegramButtonListenerApp(
     override suspend fun run() {
         val dbConnection = environment.dataBase.establishConnection()
         val telegramApi = TelegramChatApiImpl(
-            TelegramChatRestApiImpl(
-                client = environment.httpClient,
-                gson = createGson(),
-                apiKey = config.telegram.apiKey,
-            ),
-            config.telegram.chatId
+            client = environment.httpClient,
+            gson = createGson(),
+            apiKey = config.telegram.apiKey,
+            chatId = config.telegram.chatId
         )
 
         val notionApi = NotionApiImpl(
@@ -48,6 +48,10 @@ class TelegramButtonListenerApp(
                 client = environment.httpClient,
                 apiKey = config.notion.apiKey,
             )
+        )
+
+        val notionDatabaseDataBaseTable = NotionDatabaseDataBaseTableImpl(
+            NotionDataBaseDaoImpl(dbConnection)
         )
 
         val notionPageFlashCardDao = NotionPageFlashCardDaoImpl(dbConnection)
@@ -65,7 +69,10 @@ class TelegramButtonListenerApp(
             sendMessageToTelegramChat,
             telegramApi,
             getOnlineDictionariesForFlashCard,
-            telegramAndNotionIdDao
+            telegramAndNotionIdDao,
+            telegramMessagesDataBaseTable,
+            notionPageFlashCardDataBaseTable,
+            notionDatabaseDataBaseTable,
         )
 
         val spaceRepetitionSession = SpaceRepetitionSessionImpl(
@@ -85,7 +92,8 @@ class TelegramButtonListenerApp(
                     is ButtonAction.Forgotten -> flashCardsController.onForgottenClicked(action.flashCardId)
                     is ButtonAction.Recalled -> flashCardsController.onRecalledClicked(action.flashCardId)
                 }
-            }.collectLatest(::println)
+            }.onEach { telegramApi.answerCallbackQuery(it.telegramUpdateCallbackQuery) }
+            .collectLatest(::println)
     }
 
     private fun createGson(): Gson {

@@ -9,15 +9,13 @@ import org.danceofvalkyries.app.data.persistance.telegram.messages.TelegramMessa
 import org.danceofvalkyries.app.domain.message.notification.DoneMessage
 import org.danceofvalkyries.app.domain.message.notification.NeedRevisingNotificationMessage
 import org.danceofvalkyries.app.apps.notifier.domain.usecaes.DeleteOldAndSendNewNotificationUseCase
-import org.danceofvalkyries.telegram.api.DeleteMessageFromTelegramChat
 import org.danceofvalkyries.telegram.api.SendMessageToTelegramChat
 import org.danceofvalkyries.telegram.api.models.TelegramMessage
-import org.danceofvalkyries.telegram.impl.TelegramChatApi
+import org.danceofvalkyries.telegram.api.TelegramChatApi
 
 class DeleteOldAndSendNewNotificationUseCaseImplTest : BehaviorSpec() {
 
     private val telegramMessagesDataBaseTable: TelegramMessagesDataBaseTable = mockk(relaxed = true)
-    private val deleteMessageFromTelegramChat: DeleteMessageFromTelegramChat = mockk(relaxed = true)
     private val sendMessageToTelegramChat: SendMessageToTelegramChat = mockk(relaxed = true)
     private val telegramChatApi: TelegramChatApi = mockk(relaxed = true)
 
