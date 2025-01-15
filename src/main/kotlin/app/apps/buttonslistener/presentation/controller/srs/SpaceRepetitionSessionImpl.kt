@@ -13,7 +13,19 @@ class SpaceRepetitionSessionImpl(
 ) : SpaceRepetitionSession {
 
     override suspend fun getCurrentFlashCard(flashCardId: NotionId): FlashCardNotionPage {
-        return notionFlashCardPage.getFlashCardPage(flashCardId)
+        return notionPageFlashCards.iterate()
+            .map {
+                FlashCardNotionPage(
+                    name = it.name,
+                    coverUrl = it.coverUrl,
+                    notionDbID = NotionId(it.notionDbID),
+                    id = NotionId(it.id),
+                    example = it.example,
+                    explanation = it.explanation,
+                    knowLevels = KnowLevels(it.knowLevels.levels)
+                )
+            }
+            .first { it.id.rawValue == flashCardId.rawValue }
     }
 
     override suspend fun getNextFlashCard(databaseId: NotionId): FlashCardNotionPage? {
