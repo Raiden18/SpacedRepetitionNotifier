@@ -1,4 +1,4 @@
-package org.danceofvalkyries.app.data.sqlite
+package org.danceofvalkyries.app.data.sqlite.telegram.messages
 
 import org.danceofvalkyries.app.domain.telegram.TelegramMessage
 import org.danceofvalkyries.app.domain.telegram.TelegramMessages
@@ -21,8 +21,8 @@ class SqlLiteTelegramMessages(
     private val idColumn = LongTableColumn("id", PrimaryKey())
     private val typeColumn = TextTableColumn("type")
 
-    override fun iterate(): Sequence<TelegramMessage> {
-        return createTableIfNotExist()
+    override suspend fun iterate(): Sequence<TelegramMessage> {
+        return createStatement()
             .let {
                 it.executeQuery(
                     SqlQuery {
@@ -41,8 +41,8 @@ class SqlLiteTelegramMessages(
             }
     }
 
-    override fun add(id: Long, type: String): TelegramMessage {
-        createTableIfNotExist()
+    override suspend fun add(id: Long, type: String): TelegramMessage {
+        createStatement()
             .execute(
                 SqlQuery {
                     insert(
@@ -62,7 +62,20 @@ class SqlLiteTelegramMessages(
         )
     }
 
-    private fun createTableIfNotExist(): Statement {
+    override suspend fun delete(id: Long) {
+        connection.createStatement()
+            .also {
+                it.execute(
+                    SqlQuery {
+                        delete()
+                        from(TABLE_NAME)
+                        where(idColumn to id.toString())
+                    }
+                )
+            }
+    }
+
+    private fun createStatement(): Statement {
         return connection.createStatement()
             .also {
                 it.execute(

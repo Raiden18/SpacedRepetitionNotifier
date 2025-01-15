@@ -1,23 +1,23 @@
-package org.danceofvalkyries.app.data.sqlite
+package org.danceofvalkyries.app.data.sqlite.notion.database
 
-import org.danceofvalkyries.app.domain.telegram.TelegramMessage
+import org.danceofvalkyries.app.domain.notion.NotionDataBase
 import org.danceofvalkyries.utils.db.SqlQuery
 import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
 import java.sql.Connection
 
-class SqlLiteTelegramMessage(
-    override val id: Long,
+class SqlLiteNotionDataBase(
+    override val id: String,
     private val tableName: String,
+    private val nameColumn: TextTableColumn,
     private val connection: Connection,
-    private val typeColumn: TextTableColumn,
-) : TelegramMessage {
+) : NotionDataBase {
 
-    override val type: String
+    override val name: String
         get() = connection.createStatement()
             .executeQuery(
                 SqlQuery {
-                    select(typeColumn)
+                    select(nameColumn)
                     from(tableName)
                 }
-            )?.let(typeColumn::getValue)!!
+            )?.let(nameColumn::getValue)!!
 }

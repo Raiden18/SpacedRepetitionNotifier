@@ -1,8 +1,10 @@
 package org.danceofvalkyries.app.apps.notifier.domain.usecaes
 
-import org.danceofvalkyries.app.data.persistance.notion.database.NotionDatabaseDataBaseTable
 import org.danceofvalkyries.app.domain.message.notification.DoneMessage
 import org.danceofvalkyries.app.domain.message.notification.NeedRevisingNotificationMessage
+import org.danceofvalkyries.app.domain.notion.NotionDataBases
+import org.danceofvalkyries.notion.api.models.NotionDataBase
+import org.danceofvalkyries.notion.api.models.NotionId
 
 fun interface AnalyzeFlashCardsAndSendNotificationUseCase {
     suspend fun execute()
@@ -10,14 +12,21 @@ fun interface AnalyzeFlashCardsAndSendNotificationUseCase {
 
 fun AnalyzeFlashCardsAndSendNotificationUseCase(
     getAllFlashCardsUseCase: GetAllFlashCardsUseCase,
-    notionDatabaseDataBaseTable: NotionDatabaseDataBaseTable,
+    notionDatabases: NotionDataBases,
     editNotificationMessageUseCase: EditNotificationMessageUseCase,
     deleteOldAndSendNewNotificationUseCase: DeleteOldAndSendNewNotificationUseCase,
     threshold: Int,
 ): AnalyzeFlashCardsAndSendNotificationUseCase {
     return AnalyzeFlashCardsAndSendNotificationUseCase {
         val flashCards = getAllFlashCardsUseCase.execute()
-        val dataBases = notionDatabaseDataBaseTable.getAll()
+        val dataBases = notionDatabases.iterate()
+            .map {
+                NotionDataBase(
+                    id = NotionId(it.id),
+                    name = it.name,
+                )
+            }
+            .toList()
         if (flashCards.count() >= threshold) {
             val notificationMessage = NeedRevisingNotificationMessage(flashCards, dataBases)
             deleteOldAndSendNewNotificationUseCase.execute(notificationMessage)

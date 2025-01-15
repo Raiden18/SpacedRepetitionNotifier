@@ -4,13 +4,11 @@ import com.google.gson.Gson
 import notion.impl.client.NotionClientApiImpl
 import org.danceofvalkyries.app.App
 import org.danceofvalkyries.app.apps.notifier.domain.usecaes.*
-import org.danceofvalkyries.app.data.persistance.notion.database.NotionDatabaseDataBaseTableImpl
-import org.danceofvalkyries.app.data.persistance.notion.database.dao.NotionDataBaseDaoImpl
 import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.NotionPageFlashCardDataBaseTableImpl
 import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.dao.NotionPageFlashCardDaoImpl
-import org.danceofvalkyries.app.data.persistance.telegram.messages.TelegramMessagesDataBaseTableImpl
-import org.danceofvalkyries.app.data.persistance.telegram.messages.dao.TelegramMessageDaoImpl
-import org.danceofvalkyries.app.data.sqlite.SqlLiteTelegramMessages
+import org.danceofvalkyries.app.data.sqlite.notion.database.SqlLiteNotionDataBases
+import org.danceofvalkyries.app.data.sqlite.telegram.messages.SqlLiteTelegramMessages
+import org.danceofvalkyries.app.domain.notion.NotionDataBases
 import org.danceofvalkyries.environment.Environment
 import org.danceofvalkyries.notion.api.NotionApi
 import org.danceofvalkyries.notion.api.models.NotionId
@@ -31,19 +29,18 @@ class NotifierApp(
     override suspend fun run() {
         val dbConnection = environment.dataBase.establishConnection()
         val telegramApi = createTelegramChatApi()
-        val notionDataBaseDao = NotionDataBaseDaoImpl(dbConnection)
-        val notionDatabaseDataBaseTable = NotionDatabaseDataBaseTableImpl(notionDataBaseDao)
+
         val notionApi = NotionApi()
+        val notionDatabases = SqlLiteNotionDataBases(dbConnection)
 
         val notionPageFlashCardDataBaseTable = NotionPageFlashCardDataBaseTableImpl(
             NotionPageFlashCardDaoImpl(dbConnection)
         )
-        val telegramMessageDao = TelegramMessageDaoImpl(dbConnection)
-        val telegramMessagesDataBaseTable = TelegramMessagesDataBaseTableImpl(telegramMessageDao)
         val ids = config
             .notion
             .observedDatabases
             .map { NotionId(it.id) }
+        val telegramMessages = SqlLiteTelegramMessages(dbConnection)
         ReplaceAllNotionCacheUseCase(
             ReplaceFlashCardsInCacheUseCase(
                 ids,
@@ -53,7 +50,7 @@ class NotifierApp(
             ),
             ReplaceNotionDbsInCacheUseCase(
                 ids,
-                notionDatabaseDataBaseTable,
+                notionDatabases,
                 notionApi,
                 dispatchers,
             ),
@@ -61,16 +58,15 @@ class NotifierApp(
         ).execute()
         AnalyzeFlashCardsAndSendNotificationUseCase(
             GetAllFlashCardsUseCase(
-                notionDatabaseDataBaseTable,
+                notionDatabases,
                 notionPageFlashCardDataBaseTable,
             ),
-            notionDatabaseDataBaseTable,
+            notionDatabases,
             EditNotificationMessageUseCase(
-                telegramMessagesDataBaseTable,
+                telegramMessages,
                 telegramApi
             ),
             DeleteOldAndSendNewNotificationUseCase(
-                telegramMessagesDataBaseTable,
                 telegramApi,
                 SendMessageToTelegramChat(telegramApi),
                 SqlLiteTelegramMessages(dbConnection)

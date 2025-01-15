@@ -1,20 +1,22 @@
 package org.danceofvalkyries.app.apps.notifier.domain.usecaes
 
-import org.danceofvalkyries.app.data.persistance.notion.database.NotionDatabaseDataBaseTable
 import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.NotionPageFlashCardDataBaseTable
+import org.danceofvalkyries.app.domain.notion.NotionDataBases
 import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
+import org.danceofvalkyries.notion.api.models.NotionId
 
 fun interface GetAllFlashCardsUseCase {
     suspend fun execute(): List<FlashCardNotionPage>
 }
 
 fun GetAllFlashCardsUseCase(
-    notionDatabaseDataBaseTable: NotionDatabaseDataBaseTable,
+    notionDatabases: NotionDataBases,
     notionPageFlashCardDataBaseTable: NotionPageFlashCardDataBaseTable,
 ): GetAllFlashCardsUseCase {
     return GetAllFlashCardsUseCase {
-        notionDatabaseDataBaseTable.getAll()
-            .map { it.id }
+        notionDatabases.iterate()
+            .map { NotionId(it.id) }
+            .toList()
             .flatMap { notionPageFlashCardDataBaseTable.getAllFor(it) }
     }
 }

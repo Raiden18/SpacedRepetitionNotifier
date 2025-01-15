@@ -10,15 +10,12 @@ import org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.Fla
 import org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.srs.SpaceRepetitionSessionImpl
 import org.danceofvalkyries.app.apps.buttonslistener.presentation.view.TelegramChatFlashCardView
 import org.danceofvalkyries.app.apps.buttonslistener.presentation.view.TelegramNotificationView
-import org.danceofvalkyries.app.data.persistance.notion.database.NotionDatabaseDataBaseTableImpl
-import org.danceofvalkyries.app.data.persistance.notion.database.dao.NotionDataBaseDaoImpl
 import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.NotionPageFlashCardDataBaseTableImpl
 import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.dao.NotionPageFlashCardDaoImpl
-import org.danceofvalkyries.app.data.persistance.telegram.messages.TelegramMessagesDataBaseTableImpl
-import org.danceofvalkyries.app.data.persistance.telegram.messages.dao.TelegramMessageDaoImpl
 import org.danceofvalkyries.app.data.persistance.telegram_and_notion.TelegramAndNotionIdDaoImpl
+import org.danceofvalkyries.app.data.sqlite.notion.database.SqlLiteNotionDataBases
 import org.danceofvalkyries.app.domain.message.ButtonAction
-import org.danceofvalkyries.app.data.sqlite.SqlLiteTelegramMessages
+import org.danceofvalkyries.app.data.sqlite.telegram.messages.SqlLiteTelegramMessages
 import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.environment.Environment
 import org.danceofvalkyries.notion.impl.NotionApiImpl
@@ -51,15 +48,10 @@ class TelegramButtonListenerApp(
             )
         )
 
-        val notionDatabaseDataBaseTable = NotionDatabaseDataBaseTableImpl(
-            NotionDataBaseDaoImpl(dbConnection)
-        )
+        val notionDataBases = SqlLiteNotionDataBases(dbConnection)
 
         val notionPageFlashCardDao = NotionPageFlashCardDaoImpl(dbConnection)
         val notionPageFlashCardDataBaseTable = NotionPageFlashCardDataBaseTableImpl(notionPageFlashCardDao)
-
-        val telegramMessageDao = TelegramMessageDaoImpl(dbConnection)
-        val telegramMessagesDataBaseTable = TelegramMessagesDataBaseTableImpl(telegramMessageDao)
 
         val getOnlineDictionariesForFlashCard = GetOnlineDictionariesForFlashCard(config.notion.observedDatabases)
 
@@ -76,7 +68,7 @@ class TelegramButtonListenerApp(
 
         val telegramNotificationView = TelegramNotificationView(
             notionPageFlashCardDataBaseTable,
-            notionDatabaseDataBaseTable,
+            notionDataBases,
             telegramApi,
             SqlLiteTelegramMessages(dbConnection),
         )

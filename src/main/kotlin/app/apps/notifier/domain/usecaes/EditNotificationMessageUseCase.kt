@@ -1,7 +1,7 @@
 package org.danceofvalkyries.app.apps.notifier.domain.usecaes
 
-import org.danceofvalkyries.app.data.persistance.telegram.messages.TelegramMessagesDataBaseTable
 import org.danceofvalkyries.app.domain.message.notification.NotificationMessage
+import org.danceofvalkyries.app.domain.telegram.TelegramMessages
 import org.danceofvalkyries.telegram.api.TelegramChatApi
 
 fun interface EditNotificationMessageUseCase {
@@ -9,12 +9,11 @@ fun interface EditNotificationMessageUseCase {
 }
 
 fun EditNotificationMessageUseCase(
-    telegramMessagesDataBaseTable: TelegramMessagesDataBaseTable,
+    telegramMessages: TelegramMessages,
     telegramChatApi: TelegramChatApi,
 ): EditNotificationMessageUseCase {
     return EditNotificationMessageUseCase {
-        telegramMessagesDataBaseTable.getAll().forEach { message ->
-            telegramMessagesDataBaseTable.update(it.telegramBody, message.id)
+        telegramMessages.iterate().forEach { message ->
             telegramChatApi.editInChat(it.telegramBody, message.id)
         }
     }

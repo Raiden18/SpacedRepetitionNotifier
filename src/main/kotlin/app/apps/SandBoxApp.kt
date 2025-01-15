@@ -1,7 +1,7 @@
 package org.danceofvalkyries.app.apps
 
 import org.danceofvalkyries.app.App
-import org.danceofvalkyries.app.data.sqlite.SqlLiteTelegramMessages
+import org.danceofvalkyries.app.data.sqlite.telegram.messages.SqlLiteTelegramMessages
 import org.danceofvalkyries.app.domain.telegram.TelegramMessages
 import org.danceofvalkyries.environment.Environment
 import org.danceofvalkyries.utils.Dispatchers

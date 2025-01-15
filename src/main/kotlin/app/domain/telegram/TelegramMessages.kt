@@ -1,6 +1,7 @@
 package org.danceofvalkyries.app.domain.telegram
 
 interface TelegramMessages {
-    fun iterate(): Sequence<TelegramMessage>
-    fun add(id: Long, type: String): TelegramMessage
+    suspend fun iterate(): Sequence<TelegramMessage>
+    suspend fun add(id: Long, type: String): TelegramMessage
+    suspend fun delete(id: Long)
 }
