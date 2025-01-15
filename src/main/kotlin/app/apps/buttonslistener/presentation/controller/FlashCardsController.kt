@@ -7,6 +7,7 @@ import org.danceofvalkyries.notion.api.models.NotionId
 class FlashCardsController(
     private val spaceRepetitionSession: SpaceRepetitionSession,
     private val flashCardView: FlashCardView,
+    private val notificationView: NotificationView,
 ) {
 
     private var notionDb = NotionId.EMPTY
@@ -20,6 +21,7 @@ class FlashCardsController(
     suspend fun onForgottenClicked(flashCardId: NotionId) {
         val currentFlashCard = spaceRepetitionSession.getCurrentFlashCard(flashCardId)
         spaceRepetitionSession.forget(flashCardId)
+        notificationView.update()
         val nextFlashCard = spaceRepetitionSession.getNextFlashCard(notionDb)
         if (nextFlashCard != null) {
             flashCardView.show(nextFlashCard)
@@ -30,6 +32,7 @@ class FlashCardsController(
     suspend fun onRecalledClicked(flashCardId: NotionId) {
         val currentFlashCard = spaceRepetitionSession.getCurrentFlashCard(flashCardId)
         spaceRepetitionSession.recall(flashCardId)
+        notificationView.update()
         val nextFlashCard = spaceRepetitionSession.getNextFlashCard(notionDb)
         if (nextFlashCard != null) {
             flashCardView.show(nextFlashCard)

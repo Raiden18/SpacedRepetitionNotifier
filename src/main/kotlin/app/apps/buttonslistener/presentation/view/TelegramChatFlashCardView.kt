@@ -19,9 +19,6 @@ class TelegramChatFlashCardView(
     private val telegramChatApi: TelegramChatApi,
     private val getOnlineDictionariesForFlashCard: GetOnlineDictionariesForFlashCard,
     private val telegramAndNotionIdDao: TelegramAndNotionIdDao,
-    private val telegramMessagesDataBaseTable: TelegramMessagesDataBaseTable,
-    private val notionPageFlashCardDataBaseTable: NotionPageFlashCardDataBaseTable,
-    private val notionDatabaseDataBaseTable: NotionDatabaseDataBaseTable,
 ) : FlashCardView {
 
     override suspend fun show(flashCard: FlashCardNotionPage) {
@@ -37,18 +34,5 @@ class TelegramChatFlashCardView(
         val messageId = telegramAndNotionIdDao.getMessageIdBy(flashCard.id)
         telegramChatApi.deleteFromChat(messageId)
         telegramAndNotionIdDao.deleteBy(messageId)
-
-        val notificationMessage = telegramMessagesDataBaseTable.getMessagesIds().first { telegramMessagesDataBaseTable.getTypeFor(it) == NotificationMessage.TYPE_NAME }
-
-        // TODO: Add Notification View?
-        telegramChatApi.editInChat(
-            NeedRevisingNotificationMessage(
-                flashCards =  notionDatabaseDataBaseTable.getAll()
-                    .map { it.id }
-                    .flatMap { notionPageFlashCardDataBaseTable.getAllFor(it) },
-                notionDataBases = notionDatabaseDataBaseTable.getAll()
-            ).telegramBody,
-            notificationMessage
-        )
     }
 }

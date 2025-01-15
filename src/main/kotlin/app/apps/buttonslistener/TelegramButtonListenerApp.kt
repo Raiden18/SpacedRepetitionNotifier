@@ -9,8 +9,8 @@ import org.danceofvalkyries.app.apps.buttonslistener.domain.usecases.GetOnlineDi
 import org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.FlashCardsController
 import org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.srs.SpaceRepetitionSessionImpl
 import org.danceofvalkyries.app.apps.buttonslistener.presentation.view.TelegramChatFlashCardView
+import org.danceofvalkyries.app.apps.buttonslistener.presentation.view.TelegramNotificationView
 import org.danceofvalkyries.app.data.persistance.notion.database.NotionDatabaseDataBaseTableImpl
-import org.danceofvalkyries.app.data.persistance.notion.database.dao.NotionDataBaseDao
 import org.danceofvalkyries.app.data.persistance.notion.database.dao.NotionDataBaseDaoImpl
 import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.NotionPageFlashCardDataBaseTableImpl
 import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.dao.NotionPageFlashCardDaoImpl
@@ -70,9 +70,14 @@ class TelegramButtonListenerApp(
             telegramApi,
             getOnlineDictionariesForFlashCard,
             telegramAndNotionIdDao,
+
+        )
+
+        val telegramNotificationView = TelegramNotificationView(
             telegramMessagesDataBaseTable,
             notionPageFlashCardDataBaseTable,
             notionDatabaseDataBaseTable,
+            telegramApi,
         )
 
         val spaceRepetitionSession = SpaceRepetitionSessionImpl(
@@ -82,7 +87,8 @@ class TelegramButtonListenerApp(
 
         val flashCardsController = FlashCardsController(
             spaceRepetitionSession,
-            telegramChatFlashCardView
+            telegramChatFlashCardView,
+            telegramNotificationView,
         )
 
         telegramApi.getUpdates()
