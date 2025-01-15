@@ -8,6 +8,7 @@ import java.sql.Connection
 class SqlLiteNotionDataBase(
     override val id: String,
     private val tableName: String,
+    private val idColumn: TextTableColumn,
     private val nameColumn: TextTableColumn,
     private val connection: Connection,
 ) : NotionDataBase {
@@ -18,6 +19,7 @@ class SqlLiteNotionDataBase(
                 SqlQuery {
                     select(nameColumn)
                     from(tableName)
+                    where(idColumn to id)
                 }
             )?.let(nameColumn::getValue)!!
 }

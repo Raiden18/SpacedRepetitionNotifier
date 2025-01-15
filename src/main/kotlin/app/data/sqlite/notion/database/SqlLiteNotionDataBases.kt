@@ -33,6 +33,7 @@ class SqlLiteNotionDataBases(
                 SqlLiteNotionDataBase(
                     id = idColumn.getValue(it)!!,
                     tableName = TABLE_NAME,
+                    idColumn = idColumn,
                     nameColumn = nameColumn,
                     connection = connection,
                 )
@@ -57,6 +58,7 @@ class SqlLiteNotionDataBases(
         return SqlLiteNotionDataBase(
             id = id,
             tableName = TABLE_NAME,
+            idColumn = idColumn,
             nameColumn = nameColumn,
             connection = connection,
         )
