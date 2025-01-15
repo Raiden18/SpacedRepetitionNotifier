@@ -6,7 +6,7 @@ import io.mockk.coVerifyOrder
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import org.danceofvalkyries.app.apps.notifier.domain.usecaes.ReplaceNotionDbsInCacheUseCase
-import org.danceofvalkyries.app.domain.notion.NotionDataBases
+import app.domain.notion.databases.NotionDataBases
 import org.danceofvalkyries.notion.api.NotionApi
 import org.danceofvalkyries.notion.api.models.NotionDataBase
 import org.danceofvalkyries.notion.api.models.NotionId

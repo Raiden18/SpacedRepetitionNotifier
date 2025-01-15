@@ -11,7 +11,7 @@ import org.danceofvalkyries.app.apps.notifier.domain.usecaes.EditNotificationMes
 import org.danceofvalkyries.app.apps.notifier.domain.usecaes.GetAllFlashCardsUseCase
 import org.danceofvalkyries.app.domain.message.notification.DoneMessage
 import org.danceofvalkyries.app.domain.message.notification.NeedRevisingNotificationMessage
-import org.danceofvalkyries.app.domain.notion.NotionDataBases
+import app.domain.notion.databases.NotionDataBases
 import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
 import org.danceofvalkyries.notion.api.models.NotionDataBase
 import org.danceofvalkyries.notion.api.models.NotionId

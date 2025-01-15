@@ -1,14 +1,12 @@
 package org.danceofvalkyries.app.apps.notifier
 
+import app.data.sqlite.notion.databases.SqlLiteNotionDataBases
 import com.google.gson.Gson
 import notion.impl.client.NotionClientApiImpl
 import org.danceofvalkyries.app.App
 import org.danceofvalkyries.app.apps.notifier.domain.usecaes.*
-import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.NotionPageFlashCardDataBaseTableImpl
-import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.dao.NotionPageFlashCardDaoImpl
-import org.danceofvalkyries.app.data.sqlite.notion.database.SqlLiteNotionDataBases
+import org.danceofvalkyries.app.data.sqlite.notion.pages.flashcard.SqlLiteNotionPageFlashCards
 import org.danceofvalkyries.app.data.sqlite.telegram.messages.SqlLiteTelegramMessages
-import org.danceofvalkyries.app.domain.notion.NotionDataBases
 import org.danceofvalkyries.environment.Environment
 import org.danceofvalkyries.notion.api.NotionApi
 import org.danceofvalkyries.notion.api.models.NotionId
@@ -33,9 +31,6 @@ class NotifierApp(
         val notionApi = NotionApi()
         val notionDatabases = SqlLiteNotionDataBases(dbConnection)
 
-        val notionPageFlashCardDataBaseTable = NotionPageFlashCardDataBaseTableImpl(
-            NotionPageFlashCardDaoImpl(dbConnection)
-        )
         val ids = config
             .notion
             .observedDatabases
@@ -44,7 +39,7 @@ class NotifierApp(
         ReplaceAllNotionCacheUseCase(
             ReplaceFlashCardsInCacheUseCase(
                 ids,
-                notionPageFlashCardDataBaseTable,
+                SqlLiteNotionPageFlashCards(dbConnection),
                 notionApi,
                 dispatchers,
             ),
@@ -59,7 +54,7 @@ class NotifierApp(
         AnalyzeFlashCardsAndSendNotificationUseCase(
             GetAllFlashCardsUseCase(
                 notionDatabases,
-                notionPageFlashCardDataBaseTable,
+                SqlLiteNotionPageFlashCards(dbConnection),
             ),
             notionDatabases,
             EditNotificationMessageUseCase(

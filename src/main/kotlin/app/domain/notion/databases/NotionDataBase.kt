@@ -1,4 +1,4 @@
-package org.danceofvalkyries.app.domain.notion
+package app.domain.notion.databases
 
 interface NotionDataBase {
     val id: String

@@ -22,6 +22,11 @@ class SqlQueryBuilder {
         return this
     }
 
+    fun select(columns: Collection<TableColumn>): SqlQueryBuilder {
+        stringBuilder.add("SELECT ${columns.joinToString(",") { it.name }}")
+        return this
+    }
+
     fun from(table: String): SqlQueryBuilder {
         stringBuilder.add("FROM $table")
         return this

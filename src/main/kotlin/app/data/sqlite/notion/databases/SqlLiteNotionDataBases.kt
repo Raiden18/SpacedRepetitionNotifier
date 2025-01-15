@@ -1,7 +1,7 @@
-package org.danceofvalkyries.app.data.sqlite.notion.database
+package app.data.sqlite.notion.databases
 
-import org.danceofvalkyries.app.domain.notion.NotionDataBase
-import org.danceofvalkyries.app.domain.notion.NotionDataBases
+import app.domain.notion.databases.NotionDataBase
+import app.domain.notion.databases.NotionDataBases
 import org.danceofvalkyries.utils.db.SqlQuery
 import org.danceofvalkyries.utils.db.asSequence
 import org.danceofvalkyries.utils.db.tables.columns.PrimaryKey

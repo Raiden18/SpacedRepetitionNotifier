@@ -1,6 +1,6 @@
-package org.danceofvalkyries.app.data.sqlite.notion.database
+package app.data.sqlite.notion.databases
 
-import org.danceofvalkyries.app.domain.notion.NotionDataBase
+import app.domain.notion.databases.NotionDataBase
 import org.danceofvalkyries.utils.db.SqlQuery
 import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
 import java.sql.Connection

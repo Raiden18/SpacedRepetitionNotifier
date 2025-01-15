@@ -1,6 +1,6 @@
 package utils
 
-import org.danceofvalkyries.app.domain.notion.NotionDataBase
+import app.domain.notion.databases.NotionDataBase
 
 data class NotionDataBaseFake(
     override val id: String,

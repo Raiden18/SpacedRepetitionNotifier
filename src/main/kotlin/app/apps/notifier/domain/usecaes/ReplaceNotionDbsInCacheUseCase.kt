@@ -3,7 +3,7 @@ package org.danceofvalkyries.app.apps.notifier.domain.usecaes
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import org.danceofvalkyries.app.domain.notion.NotionDataBases
+import app.domain.notion.databases.NotionDataBases
 import org.danceofvalkyries.notion.api.NotionApi
 import org.danceofvalkyries.notion.api.models.NotionId
 import org.danceofvalkyries.utils.Dispatchers

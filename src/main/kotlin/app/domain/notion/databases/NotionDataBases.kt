@@ -1,4 +1,4 @@
-package org.danceofvalkyries.app.domain.notion
+package app.domain.notion.databases
 
 interface NotionDataBases {
     suspend fun iterate(): Sequence<NotionDataBase>

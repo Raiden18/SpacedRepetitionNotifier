@@ -1,15 +1,15 @@
 package org.danceofvalkyries.notion.impl
 
+import notion.impl.client.models.NotionPageData
+import notion.impl.client.models.PropertyData
 import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
 import org.danceofvalkyries.notion.api.models.KnowLevels
 import org.danceofvalkyries.notion.api.models.NotionId
-import notion.impl.client.models.NotionPageData
-import notion.impl.client.models.PropertyData
 
 fun NotionPageData.toDomain(): FlashCardNotionPage {
     return FlashCardNotionPage(
         id = NotionId(id!!),
-        notionDbID = NotionId(parent?.databaseId!!),
+        notionDbID = NotionId(NotionId(parent?.databaseId!!).get()),
         name = name,
         example = example,
         explanation = explanation,

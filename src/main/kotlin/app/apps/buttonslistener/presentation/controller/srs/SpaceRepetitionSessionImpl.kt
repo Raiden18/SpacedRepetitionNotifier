@@ -1,13 +1,14 @@
 package org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.srs
 
-import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.NotionPageFlashCardDataBaseTable
+import org.danceofvalkyries.app.domain.notion.pages.flashcard.NotionPageFlashCards
 import org.danceofvalkyries.notion.api.NotionApi
 import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
+import org.danceofvalkyries.notion.api.models.KnowLevels
 import org.danceofvalkyries.notion.api.models.NotionId
 
 //TODO: Add unit tests
 class SpaceRepetitionSessionImpl(
-    private val flashCardDatabase: NotionPageFlashCardDataBaseTable,
+    private val notionPageFlashCards: NotionPageFlashCards,
     private val notionFlashCardPage: NotionApi,
 ) : SpaceRepetitionSession {
 
@@ -16,20 +17,57 @@ class SpaceRepetitionSessionImpl(
     }
 
     override suspend fun getNextFlashCard(databaseId: NotionId): FlashCardNotionPage? {
-        return flashCardDatabase.getFirstFor(databaseId)
+        return notionPageFlashCards.iterate()
+            .map {
+                FlashCardNotionPage(
+                    name = it.name,
+                    coverUrl = it.coverUrl,
+                    notionDbID = NotionId(it.notionDbID),
+                    id = NotionId(it.id),
+                    example = it.example,
+                    explanation = it.explanation,
+                    knowLevels = KnowLevels(it.knowLevels.levels)
+                )
+            }
+            .firstOrNull { it.notionDbID.rawValue == databaseId.rawValue }
     }
 
     override suspend fun recall(flashCardId: NotionId) {
-        val flashCard = flashCardDatabase.getBy(flashCardId)!!
+        val flashCard = notionPageFlashCards.iterate()
+            .map {
+                FlashCardNotionPage(
+                    name = it.name,
+                    coverUrl = it.coverUrl,
+                    notionDbID = NotionId(it.notionDbID),
+                    id = NotionId(it.id),
+                    example = it.example,
+                    explanation = it.explanation,
+                    knowLevels = KnowLevels(it.knowLevels.levels)
+                )
+            }
+            .filter { it.id.rawValue == flashCardId.rawValue }
+            .first()
         val recalledFlashCard = flashCard.recall()
-        flashCardDatabase.delete(recalledFlashCard)
+        notionPageFlashCards.delete(recalledFlashCard.id.rawValue)
         notionFlashCardPage.update(recalledFlashCard)
     }
 
     override suspend fun forget(flashCardId: NotionId) {
-        val flashCard = flashCardDatabase.getBy(flashCardId)!!
+        val flashCard = notionPageFlashCards.iterate()
+            .map {
+                FlashCardNotionPage(
+                    name = it.name,
+                    coverUrl = it.coverUrl,
+                    notionDbID = NotionId(it.notionDbID),
+                    id = NotionId(it.id),
+                    example = it.example,
+                    explanation = it.explanation,
+                    knowLevels = KnowLevels(it.knowLevels.levels)
+                )
+            }
+            .first { it.id.rawValue == flashCardId.rawValue }
         val recalledFlashCard = flashCard.forget()
-        flashCardDatabase.delete(recalledFlashCard)
+        notionPageFlashCards.delete(recalledFlashCard.id.rawValue)
         notionFlashCardPage.update(recalledFlashCard)
     }
 }

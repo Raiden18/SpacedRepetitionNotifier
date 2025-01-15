@@ -5,8 +5,8 @@ import io.mockk.coEvery
 import io.mockk.coVerifyOrder
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
-import org.danceofvalkyries.app.data.persistance.notion.page.flashcard.NotionPageFlashCardDataBaseTable
 import org.danceofvalkyries.app.apps.notifier.domain.usecaes.ReplaceFlashCardsInCacheUseCase
+import org.danceofvalkyries.app.domain.notion.pages.flashcard.NotionPageFlashCards
 import org.danceofvalkyries.notion.api.NotionApi
 import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
 import org.danceofvalkyries.notion.api.models.NotionId
@@ -14,7 +14,7 @@ import org.danceofvalkyries.utils.DispatchersImpl
 
 class ReplaceFlashCardsInCacheUseCaseKtTest : FunSpec() {
 
-    private val notionPageFlashCardDataBaseTable: NotionPageFlashCardDataBaseTable = mockk(relaxed = true)
+    private val notionPageFlashCards: NotionPageFlashCards = mockk(relaxed = true)
     private val notionApi: NotionApi = mockk(relaxed = true)
     private val id = NotionId("1")
     private val dbIds = listOf(id)
@@ -24,7 +24,7 @@ class ReplaceFlashCardsInCacheUseCaseKtTest : FunSpec() {
         beforeTest {
             replaceFlashCardsInCacheUseCase = ReplaceFlashCardsInCacheUseCase(
                 dbIds,
-                notionPageFlashCardDataBaseTable,
+                notionPageFlashCards,
                 notionApi,
                 DispatchersImpl(Dispatchers.Unconfined)
             )
@@ -37,8 +37,16 @@ class ReplaceFlashCardsInCacheUseCaseKtTest : FunSpec() {
             replaceFlashCardsInCacheUseCase.execute()
 
             coVerifyOrder {
-                notionPageFlashCardDataBaseTable.clear()
-                notionPageFlashCardDataBaseTable.insert(listOf(newFlashCard))
+                notionPageFlashCards.clear()
+                notionPageFlashCards.add(
+                    id = newFlashCard.id.rawValue,
+                    coverUrl = newFlashCard.coverUrl,
+                    notionDbId = newFlashCard.notionDbID.rawValue,
+                    name = newFlashCard.name,
+                    explanation = newFlashCard.explanation,
+                    example = newFlashCard.example,
+                    knowLevels = newFlashCard.knowLevels.levels
+                )
             }
         }
     }
