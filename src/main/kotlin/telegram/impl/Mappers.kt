@@ -10,7 +10,6 @@ fun TelegramMessageBody.toRequest(
     chatId: String,
     messageId: Long? = null,
 ): MessageData {
-
     return MessageData(
         chatId = chatId,
         text = text.get().takeIf { imageUrl == null },
@@ -55,7 +54,7 @@ fun MessageData.toDomain(): TelegramMessage {
                         )
                     }
                 } ?: emptyList(),
-            imageUrl = imageUrl?.let(::TelegramImageUrl),
+            imageUrl = imageUrl.takeIf { it is String }?.let { it as String }?.let(::TelegramImageUrl),
         )
     )
 }

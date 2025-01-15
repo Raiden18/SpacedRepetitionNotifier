@@ -19,7 +19,7 @@ data class MessageData(
     @SerializedName("reply_markup")
     val replyMarkup: ReplyMarkupData?,
     @SerializedName("photo")
-    val photo: String?,
+    val photo: Any?,
     @SerializedName("caption")
     val caption: String?,
     @SerializedName("text")
