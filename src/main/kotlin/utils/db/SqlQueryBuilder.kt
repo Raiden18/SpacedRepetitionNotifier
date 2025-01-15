@@ -17,6 +17,11 @@ class SqlQueryBuilder {
         return this
     }
 
+    fun select(column: TableColumn): SqlQueryBuilder {
+        stringBuilder.add("SELECT ${column.name}")
+        return this
+    }
+
     fun from(table: String): SqlQueryBuilder {
         stringBuilder.add("FROM $table")
         return this

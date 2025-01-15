@@ -5,19 +5,21 @@ import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import org.danceofvalkyries.app.apps.notifier.domain.usecaes.DeleteOldAndSendNewNotificationUseCase
 import org.danceofvalkyries.app.data.persistance.telegram.messages.TelegramMessagesDataBaseTable
 import org.danceofvalkyries.app.domain.message.notification.DoneMessage
 import org.danceofvalkyries.app.domain.message.notification.NeedRevisingNotificationMessage
-import org.danceofvalkyries.app.apps.notifier.domain.usecaes.DeleteOldAndSendNewNotificationUseCase
+import org.danceofvalkyries.app.domain.telegram.TelegramMessages
 import org.danceofvalkyries.telegram.api.SendMessageToTelegramChat
-import org.danceofvalkyries.telegram.api.models.TelegramMessage
 import org.danceofvalkyries.telegram.api.TelegramChatApi
+import org.danceofvalkyries.telegram.api.models.TelegramMessage
 
 class DeleteOldAndSendNewNotificationUseCaseImplTest : BehaviorSpec() {
 
     private val telegramMessagesDataBaseTable: TelegramMessagesDataBaseTable = mockk(relaxed = true)
     private val sendMessageToTelegramChat: SendMessageToTelegramChat = mockk(relaxed = true)
     private val telegramChatApi: TelegramChatApi = mockk(relaxed = true)
+    private val telegramMessages: TelegramMessages = mockk(relaxed = true)
 
     private val doneMessage = DoneMessage(
         id = 1
@@ -41,8 +43,8 @@ class DeleteOldAndSendNewNotificationUseCaseImplTest : BehaviorSpec() {
                 telegramMessagesDataBaseTable,
                 telegramChatApi,
                 sendMessageToTelegramChat,
+                telegramMessages,
             )
-            coEvery { telegramMessagesDataBaseTable.getTypeFor(doneMessage.id) } returns doneMessage.type
             coEvery { sendMessageToTelegramChat.execute(notificationMessage.telegramBody) } returns newTgMessageResponse
         }
 
@@ -69,7 +71,12 @@ class DeleteOldAndSendNewNotificationUseCaseImplTest : BehaviorSpec() {
                 }
 
                 Then("Should Save Tg Message to DB") {
-                    coVerify(exactly = 1) { telegramMessagesDataBaseTable.save(newTgMessageResponse, notificationMessage.type) }
+                    coVerify(exactly = 1) {
+                        telegramMessages.add(
+                            id = newTgMessageResponse.id,
+                            type = notificationMessage.type
+                        )
+                    }
                 }
             }
         }

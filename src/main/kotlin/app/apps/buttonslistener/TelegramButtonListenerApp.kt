@@ -18,6 +18,7 @@ import org.danceofvalkyries.app.data.persistance.telegram.messages.TelegramMessa
 import org.danceofvalkyries.app.data.persistance.telegram.messages.dao.TelegramMessageDaoImpl
 import org.danceofvalkyries.app.data.persistance.telegram_and_notion.TelegramAndNotionIdDaoImpl
 import org.danceofvalkyries.app.domain.message.ButtonAction
+import org.danceofvalkyries.app.data.sqlite.SqlLiteTelegramMessages
 import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.environment.Environment
 import org.danceofvalkyries.notion.impl.NotionApiImpl
@@ -74,10 +75,10 @@ class TelegramButtonListenerApp(
         )
 
         val telegramNotificationView = TelegramNotificationView(
-            telegramMessagesDataBaseTable,
             notionPageFlashCardDataBaseTable,
             notionDatabaseDataBaseTable,
             telegramApi,
+            SqlLiteTelegramMessages(dbConnection),
         )
 
         val spaceRepetitionSession = SpaceRepetitionSessionImpl(

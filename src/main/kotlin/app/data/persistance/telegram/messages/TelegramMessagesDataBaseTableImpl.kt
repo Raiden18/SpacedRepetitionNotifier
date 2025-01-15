@@ -9,14 +9,6 @@ class TelegramMessagesDataBaseTableImpl(
     private val db: TelegramMessageDao,
 ) : TelegramMessagesDataBaseTable {
 
-    override suspend fun save(telegramMessage: TelegramMessage, type: String) {
-        val entity = TelegramMessageEntity(
-            id = telegramMessage.id,
-            type = type
-        )
-        db.save(entity)
-    }
-
     override suspend fun delete(telegramMessage: TelegramMessage) {
         db.delete(telegramMessage.id)
     }
@@ -49,9 +41,5 @@ class TelegramMessagesDataBaseTableImpl(
 
     override suspend fun getMessagesIds(): List<Long> {
         return db.getAll().map { it.id }
-    }
-
-    override suspend fun getTypeFor(messageId: Long): String? {
-        return db.getBy(messageId)?.type
     }
 }

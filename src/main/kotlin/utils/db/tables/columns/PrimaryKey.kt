@@ -4,9 +4,11 @@ interface PrimaryKey {
     fun declare(value: String): String
 }
 
-fun PrimaryKey(): PrimaryKey {
+fun PrimaryKey(autoIncrement: AutoIncrement = NoAutoIncrement()): PrimaryKey {
     return object : PrimaryKey {
-        override fun declare(value: String): String = "$value PRIMARY KEY"
+        override fun declare(value: String): String {
+            return autoIncrement.declare("$value PRIMARY KEY")
+        }
     }
 }
 

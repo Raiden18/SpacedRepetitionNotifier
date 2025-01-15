@@ -2,6 +2,7 @@ package org.danceofvalkyries.app.apps.notifier.domain.usecaes
 
 import org.danceofvalkyries.app.data.persistance.telegram.messages.TelegramMessagesDataBaseTable
 import org.danceofvalkyries.app.domain.message.notification.NotificationMessage
+import org.danceofvalkyries.app.domain.telegram.TelegramMessages
 import org.danceofvalkyries.telegram.api.SendMessageToTelegramChat
 import org.danceofvalkyries.telegram.api.TelegramChatApi
 
@@ -13,6 +14,7 @@ fun DeleteOldAndSendNewNotificationUseCase(
     telegramMessagesDataBaseTable: TelegramMessagesDataBaseTable,
     telegramChatApi: TelegramChatApi,
     sendMessageToTelegramChat: SendMessageToTelegramChat,
+    telegramMessages: TelegramMessages,
 ): DeleteOldAndSendNewNotificationUseCase {
     return DeleteOldAndSendNewNotificationUseCase {
         telegramMessagesDataBaseTable.getMessagesIds().forEach { savedMessageId ->
@@ -20,6 +22,9 @@ fun DeleteOldAndSendNewNotificationUseCase(
             telegramChatApi.deleteFromChat(savedMessageId)
         }
         val telegramMessage = sendMessageToTelegramChat.execute(it.telegramBody)
-        telegramMessagesDataBaseTable.save(telegramMessage, it.type)
+        telegramMessages.add(
+            id = telegramMessage.id,
+            type = it.type
+        )
     }
 }
