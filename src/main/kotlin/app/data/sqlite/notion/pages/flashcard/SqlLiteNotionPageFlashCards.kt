@@ -78,6 +78,7 @@ class SqlLiteNotionPageFlashCards(
                         exampleColumn to example,
                         imageUrlColumn to coverUrl,
                         notionDbIdColumn to notionDbId,
+                        answerColumn to explanation,
                     ) + knowLevelDbValues
                 )
             }
