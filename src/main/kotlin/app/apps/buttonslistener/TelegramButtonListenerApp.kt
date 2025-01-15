@@ -11,9 +11,9 @@ import org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.Fla
 import org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.srs.SpaceRepetitionSessionImpl
 import org.danceofvalkyries.app.apps.buttonslistener.presentation.view.TelegramChatFlashCardView
 import org.danceofvalkyries.app.apps.buttonslistener.presentation.view.TelegramNotificationView
-import org.danceofvalkyries.app.data.persistance.telegram_and_notion.TelegramAndNotionIdDaoImpl
 import org.danceofvalkyries.app.data.sqlite.notion.pages.flashcard.SqlLiteNotionPageFlashCards
 import org.danceofvalkyries.app.data.sqlite.telegram.messages.SqlLiteTelegramMessages
+import org.danceofvalkyries.app.data.sqlite.telegram_and_notion.SqlLiteSentNotionPageFlashCardsToTelegram
 import org.danceofvalkyries.app.domain.message.ButtonAction
 import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.environment.Environment
@@ -53,14 +53,13 @@ class TelegramButtonListenerApp(
         val getOnlineDictionariesForFlashCard = GetOnlineDictionariesForFlashCard(config.notion.observedDatabases)
 
         val sendMessageToTelegramChat = SendMessageToTelegramChat(telegramApi)
+        val sentNotionPageFlashCardsToTelegram = SqlLiteSentNotionPageFlashCardsToTelegram(dbConnection)
 
-        val telegramAndNotionIdDao = TelegramAndNotionIdDaoImpl(dbConnection)
         val telegramChatFlashCardView = TelegramChatFlashCardView(
             sendMessageToTelegramChat,
             telegramApi,
             getOnlineDictionariesForFlashCard,
-            telegramAndNotionIdDao,
-
+            sentNotionPageFlashCardsToTelegram,
         )
 
         val telegramNotificationView = TelegramNotificationView(

@@ -13,7 +13,7 @@ class SqlLiteNotionDataBases(
     private val connection: Connection
 ) : NotionDataBases {
 
-    companion object {
+    private companion object {
         const val TABLE_NAME = "notion_data_bases"
     }
 

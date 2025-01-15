@@ -14,7 +14,7 @@ class SqlLiteTelegramMessages(
     private val connection: Connection
 ) : TelegramMessages {
 
-    companion object {
+    private companion object {
         const val TABLE_NAME = "telegram_messages"
     }
 
@@ -63,7 +63,7 @@ class SqlLiteTelegramMessages(
     }
 
     override suspend fun delete(id: Long) {
-        connection.createStatement()
+        createStatement()
             .also {
                 it.execute(
                     SqlQuery {

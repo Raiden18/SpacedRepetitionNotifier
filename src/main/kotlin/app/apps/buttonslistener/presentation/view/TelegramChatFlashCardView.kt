@@ -2,10 +2,8 @@ package org.danceofvalkyries.app.apps.buttonslistener.presentation.view
 
 import org.danceofvalkyries.app.apps.buttonslistener.domain.usecases.GetOnlineDictionariesForFlashCard
 import org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.FlashCardView
-import org.danceofvalkyries.app.data.persistance.telegram_and_notion.TelegramAndNotionIdDao
 import org.danceofvalkyries.app.domain.message.FlashCardMessage
-import org.danceofvalkyries.app.domain.message.notification.NeedRevisingNotificationMessage
-import org.danceofvalkyries.app.domain.message.notification.NotificationMessage
+import org.danceofvalkyries.app.domain.telegram_and_notion.SentNotionPageFlashCardsToTelegram
 import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
 import org.danceofvalkyries.telegram.api.SendMessageToTelegramChat
 import org.danceofvalkyries.telegram.api.TelegramChatApi
@@ -15,7 +13,7 @@ class TelegramChatFlashCardView(
     private val sendMessageToTelegramChat: SendMessageToTelegramChat,
     private val telegramChatApi: TelegramChatApi,
     private val getOnlineDictionariesForFlashCard: GetOnlineDictionariesForFlashCard,
-    private val telegramAndNotionIdDao: TelegramAndNotionIdDao,
+    private val sentNotionPageFlashCardsToTelegram: SentNotionPageFlashCardsToTelegram,
 ) : FlashCardView {
 
     override suspend fun show(flashCard: FlashCardNotionPage) {
@@ -24,12 +22,18 @@ class TelegramChatFlashCardView(
             getOnlineDictionariesForFlashCard.execute(flashCard)
         )
         val telegramMessage = sendMessageToTelegramChat.execute(message.telegramBody)
-        telegramAndNotionIdDao.save(flashCard.id, telegramMessage.id)
+        sentNotionPageFlashCardsToTelegram.add(
+            telegramMessage.id,
+            flashCard.id.rawValue
+        )
     }
 
     override suspend fun hide(flashCard: FlashCardNotionPage) {
-        val messageId = telegramAndNotionIdDao.getMessageIdBy(flashCard.id)
+        val messageId = sentNotionPageFlashCardsToTelegram.iterate()
+            .first { it.notionPageId == flashCard.id.rawValue }
+            .messageId
+
         telegramChatApi.deleteFromChat(messageId)
-        telegramAndNotionIdDao.deleteBy(messageId)
+        sentNotionPageFlashCardsToTelegram.delete(messageId)
     }
 }
