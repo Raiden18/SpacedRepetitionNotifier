@@ -5,9 +5,7 @@ import okio.Path.Companion.toPath
 import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.config.domain.ConfigRepository
 
-class LocalFileConfigRepository(
-    private val gson: Gson
-) : ConfigRepository {
+class LocalFileConfigRepository : ConfigRepository {
 
     private companion object {
         private const val SPACED_REPETITION_CONFIG_PATH = "./spaced_repetition.config"
@@ -15,7 +13,7 @@ class LocalFileConfigRepository(
 
     override fun getConfig(): Config {
         return ConfigData(
-            gson,
+            Gson(),
             getConfigJson()
         )
     }

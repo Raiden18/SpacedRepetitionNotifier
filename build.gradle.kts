@@ -16,6 +16,7 @@ dependencies {
     implementation(kotlin("stdlib"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
     implementation("com.google.code.gson:gson:2.11.0")
     implementation("org.xerial:sqlite-jdbc:3.39.2.0")
 
@@ -23,8 +24,14 @@ dependencies {
     testImplementation("io.kotest:kotest-runner-junit5:$kotest")
     testImplementation("io.kotest:kotest-assertions-core:$kotest")
 
-    testImplementation("io.mockk:mockk:1.13.14")
+    val ktor = "3.0.3"
+    implementation("io.ktor:ktor-server-core:$ktor")
+    implementation("io.ktor:ktor-server-netty:$ktor")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor")
+    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.20.0")
+    implementation("ch.qos.logback:logback-classic:1.4.11")
 
+    testImplementation("io.mockk:mockk:1.13.14")
 }
 
 tasks.test {

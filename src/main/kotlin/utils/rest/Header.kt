@@ -1,4 +1,4 @@
-package org.danceofvalkyries.json
+package org.danceofvalkyries.utils.rest
 
 interface Header {
     val name: String

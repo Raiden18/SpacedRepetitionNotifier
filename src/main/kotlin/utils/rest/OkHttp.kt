@@ -1,4 +1,4 @@
-package org.danceofvalkyries.json
+package org.danceofvalkyries.utils.rest
 
 import com.google.gson.Gson
 import okhttp3.Headers
@@ -17,6 +17,11 @@ fun Request.request(client: OkHttpClient) = client.newCall(this).execute()
 fun Request.Builder.post(body: String): Request.Builder {
     val applicationJson = ContentType(ContentTypes.ApplicationJson)
     return post(body.toRequestBody(applicationJson.value.toMediaType()))
+}
+
+fun Request.Builder.patch(body: String): Request.Builder {
+    val applicationJson = ContentType(ContentTypes.ApplicationJson)
+    return patch(body.toRequestBody(applicationJson.value.toMediaType()))
 }
 
 fun Request.Builder.headers(headers: List<Header>): Request.Builder {

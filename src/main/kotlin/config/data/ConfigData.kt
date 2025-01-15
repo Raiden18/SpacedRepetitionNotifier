@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.config.domain.NotionConfig
+import org.danceofvalkyries.config.domain.ObservedDatabase
 import org.danceofvalkyries.config.domain.TelegramConfig
 
 fun ConfigData(
@@ -26,7 +27,7 @@ data class NotionData(
     @SerializedName("api_key")
     override val apiKey: String,
     @SerializedName("observed_databases")
-    override val observedDatabases: List<String>,
+    override val observedDatabases: List<ObservedDatabaseData>,
     @SerializedName("delay_between_requests")
     override val delayBetweenRequests: Int,
 ) : NotionConfig
@@ -37,3 +38,10 @@ data class TelegramData(
     @SerializedName("chat_id")
     override val chatId: String,
 ) : TelegramConfig
+
+data class ObservedDatabaseData(
+    @SerializedName("id")
+    override val id: String,
+    @SerializedName("dictionaries")
+    override val dictionaries: List<String>,
+) : ObservedDatabase

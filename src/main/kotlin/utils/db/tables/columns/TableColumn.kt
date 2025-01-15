@@ -6,5 +6,5 @@ interface TableColumn {
     val primaryKey: PrimaryKey
     val declaration: String
 
-    fun sqlRequestValue(value: String): String
+    fun sqlRequestValue(value: String?): String
 }

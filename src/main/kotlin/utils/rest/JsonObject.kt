@@ -1,6 +1,6 @@
 package org.danceofvalkyries.utils.rest
 
-fun `object`(
+fun jsonObject(
     block: JsonObject.() -> Unit
 ): Map<String, Any> {
     val jsonObject = JsonObject()
