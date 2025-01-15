@@ -1,16 +1,21 @@
 package app.domain.usecases
 
 import io.kotest.core.spec.style.FunSpec
-import io.mockk.*
-import org.danceofvalkyries.app.domain.message.notification.DoneMessage
-import org.danceofvalkyries.app.domain.message.notification.NeedRevisingNotificationMessage
+import io.mockk.clearAllMocks
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.mockk
 import org.danceofvalkyries.app.apps.notifier.domain.usecaes.AnalyzeFlashCardsAndSendNotificationUseCase
 import org.danceofvalkyries.app.apps.notifier.domain.usecaes.DeleteOldAndSendNewNotificationUseCase
 import org.danceofvalkyries.app.apps.notifier.domain.usecaes.EditNotificationMessageUseCase
 import org.danceofvalkyries.app.apps.notifier.domain.usecaes.GetAllFlashCardsUseCase
+import org.danceofvalkyries.app.domain.message.notification.DoneMessage
+import org.danceofvalkyries.app.domain.message.notification.NeedRevisingNotificationMessage
 import org.danceofvalkyries.app.domain.notion.NotionDataBases
 import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
 import org.danceofvalkyries.notion.api.models.NotionDataBase
+import org.danceofvalkyries.notion.api.models.NotionId
+import utils.NotionDataBaseFake
 
 class AnalyzeFlashCardsAndSendNotificationUseCaseKtTest : FunSpec() {
 
@@ -40,7 +45,7 @@ class AnalyzeFlashCardsAndSendNotificationUseCaseKtTest : FunSpec() {
                 mockk(relaxed = true),
             )
             val dataBases = sequenceOf(
-                org.danceofvalkyries.app.domain.notion.NotionDataBaseFake(
+                NotionDataBaseFake(
                     id = "228",
                     name = "322",
                 )
@@ -51,7 +56,12 @@ class AnalyzeFlashCardsAndSendNotificationUseCaseKtTest : FunSpec() {
             analyzeFlashCardsAndSendNotificationUseCase.execute()
 
             coVerify(exactly = 1) {
-                deleteOldAndSendNewNotificationUseCase.execute(NeedRevisingNotificationMessage(flashCards, dataBases))
+                deleteOldAndSendNewNotificationUseCase.execute(
+                    NeedRevisingNotificationMessage(
+                        flashCards,
+                        listOf(NotionDataBase(NotionId("228"), "322"))
+                    )
+                )
             }
         }
 
