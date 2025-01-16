@@ -2,6 +2,7 @@ package org.danceofvalkyries.notion.impl
 
 import notion.impl.client.models.NotionPageData
 import notion.impl.client.models.PropertyData
+import org.danceofvalkyries.app.domain.notion.pages.flashcard.NotionPageFlashCard
 import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
 import org.danceofvalkyries.notion.api.models.KnowLevels
 import org.danceofvalkyries.notion.api.models.NotionId
@@ -22,9 +23,9 @@ fun NotionPageData.toDomain(): FlashCardNotionPage {
     )
 }
 
-fun FlashCardNotionPage.toUpdateKnowLevels(): NotionPageData {
+fun NotionPageFlashCard.toUpdateKnowLevels(): NotionPageData {
     return NotionPageData(
-        id = id.rawValue,
+        id = id,
         properties = knowLevels.levels
             .filterValues { it != null }
             .mapKeys { "Know Level ${it.key}" }

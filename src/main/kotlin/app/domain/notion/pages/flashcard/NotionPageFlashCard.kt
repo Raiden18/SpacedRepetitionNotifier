@@ -12,4 +12,6 @@ interface NotionPageFlashCard {
     interface KnowLevels {
         val levels: Map<Int, Boolean>
     }
+
+    fun setLevels(levels: KnowLevels): NotionPageFlashCard
 }

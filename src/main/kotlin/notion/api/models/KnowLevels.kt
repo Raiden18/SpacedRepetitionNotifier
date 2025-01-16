@@ -4,10 +4,6 @@ data class KnowLevels(
     val levels: Map<Int, Boolean>,
 ) {
 
-    companion object {
-        val EMPTY = KnowLevels(emptyMap())
-    }
-
     fun disableAll(): KnowLevels {
         return copy(levels.mapValues { false })
     }
@@ -17,9 +13,5 @@ data class KnowLevels(
         return copy(
             levels = levels.mapValues { it.key <= nextChecked }
         )
-    }
-
-    fun isLevelChecked(level: Int): Boolean? {
-        return levels[level]
     }
 }

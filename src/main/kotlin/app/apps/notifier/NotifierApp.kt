@@ -2,7 +2,6 @@ package org.danceofvalkyries.app.apps.notifier
 
 import app.data.sqlite.notion.databases.SqlLiteNotionDataBases
 import com.google.gson.Gson
-import notion.impl.client.NotionClientApiImpl
 import org.danceofvalkyries.app.App
 import org.danceofvalkyries.app.apps.notifier.domain.usecaes.*
 import org.danceofvalkyries.app.data.restful.notion.databases.RestFulNotionDataBases
@@ -10,7 +9,6 @@ import org.danceofvalkyries.app.data.sqlite.telegram.messages.SqlLiteTelegramMes
 import org.danceofvalkyries.environment.Environment
 import org.danceofvalkyries.notion.api.NotionApi
 import org.danceofvalkyries.notion.api.models.NotionId
-import org.danceofvalkyries.notion.impl.NotionApiImpl
 import org.danceofvalkyries.telegram.api.TelegramChatApi
 import org.danceofvalkyries.telegram.impl.SendMessageToTelegramChat
 import org.danceofvalkyries.telegram.impl.TelegramChatApiImpl

@@ -1,5 +1,6 @@
 package org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.srs
 
+import app.domain.notion.databases.NotionDataBase
 import app.domain.notion.databases.NotionDataBases
 import org.danceofvalkyries.app.domain.notion.pages.flashcard.NotionPageFlashCard
 import org.danceofvalkyries.notion.api.NotionApi
@@ -10,6 +11,7 @@ import org.danceofvalkyries.notion.api.models.NotionId
 //TODO: Add unit tests
 class SpaceRepetitionSessionImpl(
     private val notionDataBases: NotionDataBases,
+    private val notionRestfulDataBase: NotionDataBases,
     private val notionFlashCardPage: NotionApi,
 ) : SpaceRepetitionSession {
 
@@ -45,6 +47,7 @@ class SpaceRepetitionSessionImpl(
         notionDataBases.iterate().forEach {
             it.delete(recalledFlashCard.id.rawValue)
         }
+
         notionFlashCardPage.update(recalledFlashCard)
     }
 

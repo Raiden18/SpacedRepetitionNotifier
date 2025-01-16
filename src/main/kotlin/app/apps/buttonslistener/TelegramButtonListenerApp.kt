@@ -4,7 +4,6 @@ import app.data.sqlite.notion.databases.SqlLiteNotionDataBases
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.onEach
-import notion.impl.client.NotionClientApiImpl
 import org.danceofvalkyries.app.App
 import org.danceofvalkyries.app.apps.buttonslistener.domain.usecases.GetOnlineDictionariesForFlashCard
 import org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.FlashCardsController
@@ -16,7 +15,6 @@ import org.danceofvalkyries.app.data.sqlite.telegram_and_notion.SqlLiteSentNotio
 import org.danceofvalkyries.app.domain.message.ButtonAction
 import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.environment.Environment
-import org.danceofvalkyries.notion.impl.NotionApiImpl
 import org.danceofvalkyries.telegram.impl.SendMessageToTelegramChat
 import org.danceofvalkyries.telegram.impl.TelegramChatApiImpl
 import org.danceofvalkyries.utils.Dispatchers
@@ -74,6 +72,7 @@ class TelegramButtonListenerApp(
             telegramNotificationView,
         )
 
+        
         telegramApi.getUpdates()
             .onEach {
                 when (val action = ButtonAction.parse(it.callback.value)) {

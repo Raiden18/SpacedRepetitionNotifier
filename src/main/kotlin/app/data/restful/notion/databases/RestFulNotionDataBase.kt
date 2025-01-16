@@ -2,13 +2,14 @@ package org.danceofvalkyries.app.data.restful.notion.databases
 
 import app.domain.notion.databases.NotionDataBase
 import com.google.gson.Gson
-import notion.impl.client.NotionClientApiImpl.NotionPagesResponse
+import notion.impl.client.models.NotionPageData
 import notion.impl.client.models.request.NotionApiVersionHeader
 import notion.impl.client.models.request.SpacedRepetitionRequestBody
 import notion.impl.client.models.response.NotionDbResponse
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.danceofvalkyries.app.domain.notion.pages.flashcard.NotionPageFlashCard
+import org.danceofvalkyries.notion.impl.toUpdateKnowLevels
 import org.danceofvalkyries.utils.rest.*
 
 class RestFulNotionDataBase(
@@ -63,9 +64,30 @@ class RestFulNotionDataBase(
         knowLevels: Map<Int, Boolean>
     ): NotionPageFlashCard = error("Adding a page to Notion is not supported")
 
-    override fun add(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard = error("Adding a page to Notion is not supported")
+    override fun add(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard =
+        error("Adding a page to Notion is not supported")
+
+    override fun update(notionPageFlashCard: NotionPageFlashCard) {
+        val request = notionPageFlashCard.toUpdateKnowLevels()
+        Request.Builder()
+            .headers(
+                listOf(
+                    AuthorizationBearerHeader(apiKey),
+                    NotionApiVersionHeader("2022-06-28"),
+                    ContentType(ContentTypes.ApplicationJson),
+                )
+            )
+            .url("https://api.notion.com/v1/pages/${notionPageFlashCard.id}")
+            .patch(gson.toJson(request))
+            .build()
+            .request(client)
+    }
 
     override fun clear() = error("Clearing pages from Notion is not supported")
 
     override fun delete(pageId: String) = error("Deleting pages from Notion is not supported")
+
+    private data class NotionPagesResponse(
+        val results: List<NotionPageData>
+    )
 }
