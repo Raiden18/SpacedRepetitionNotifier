@@ -10,6 +10,7 @@ import org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.Fla
 import org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.srs.SpaceRepetitionSessionImpl
 import org.danceofvalkyries.app.apps.buttonslistener.presentation.view.TelegramChatFlashCardView
 import org.danceofvalkyries.app.apps.buttonslistener.presentation.view.TelegramNotificationView
+import org.danceofvalkyries.app.data.restful.notion.databases.RestFulNotionDataBases
 import org.danceofvalkyries.app.data.sqlite.telegram.messages.SqlLiteTelegramMessages
 import org.danceofvalkyries.app.data.sqlite.telegram_and_notion.SqlLiteSentNotionPageFlashCardsToTelegram
 import org.danceofvalkyries.app.domain.message.ButtonAction
@@ -36,8 +37,13 @@ class TelegramButtonListenerApp(
             chatId = config.telegram.chatId
         )
 
-        val notionDataBases = SqlLiteNotionDataBases(dbConnection)
-
+        val sqlLiteNotionDataBases = SqlLiteNotionDataBases(dbConnection)
+        val restfulNotionDataBases = RestFulNotionDataBases(
+            environment.config.notion.observedDatabases.map { it.id },
+            environment.config.notion.apiKey,
+            environment.httpClient,
+            createGson(),
+        )
         val getOnlineDictionariesForFlashCard = GetOnlineDictionariesForFlashCard(config.notion.observedDatabases)
 
         val sendMessageToTelegramChat = SendMessageToTelegramChat(telegramApi)
@@ -51,16 +57,14 @@ class TelegramButtonListenerApp(
         )
 
         val telegramNotificationView = TelegramNotificationView(
-            notionDataBases,
+            sqlLiteNotionDataBases,
             telegramApi,
             SqlLiteTelegramMessages(dbConnection),
         )
 
         val spaceRepetitionSession = SpaceRepetitionSessionImpl(
-            notionDataBases = notionDataBases,
-            apiKey = config.notion.apiKey,
-            gson = createGson(),
-            client = environment.httpClient,
+            notionDataBases = sqlLiteNotionDataBases,
+            restfullNotionDataBase = restfulNotionDataBases,
         )
 
         val flashCardsController = FlashCardsController(
@@ -72,10 +76,7 @@ class TelegramButtonListenerApp(
         telegramApi.getUpdates()
             .onEach {
                 when (val action = ButtonAction.parse(it.callback.value)) {
-                    is ButtonAction.DataBase -> {
-                        flashCardsController.onDataBaseClicked(action.notionDbId)
-                    }
-
+                    is ButtonAction.DataBase -> flashCardsController.onDataBaseClicked(action.notionDbId)
                     is ButtonAction.Forgotten -> flashCardsController.onForgottenClicked(action.flashCardId)
                     is ButtonAction.Recalled -> flashCardsController.onRecalledClicked(action.flashCardId)
                 }

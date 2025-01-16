@@ -32,16 +32,13 @@ class RestfulNotionPageFlashCard(
     override val explanation: String?
         get() = responseData!!.explanation
 
-    override val knowLevels: NotionPageFlashCard.KnowLevels
-        get() = object : NotionPageFlashCard.KnowLevels {
-            override val levels: Map<Int, Boolean>
-                get() = responseData!!.knowLevels.levels
-        }
+    override val knowLevels: Map<Int, Boolean>
+        get() = responseData!!.knowLevels
 
-    override fun setKnowLevels(knowLevels: NotionPageFlashCard.KnowLevels) {
+    override fun setKnowLevels(knowLevels: Map<Int, Boolean>) {
         val updatedNotionPage = RestFulNotionPage(
             id = null,
-            properties = knowLevels.levels
+            properties = knowLevels
                 .filterValues { it != null }
                 .mapKeys { "Know Level ${it.key}" }
                 .mapValues { PropertyData(checkbox = it.value) }

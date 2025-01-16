@@ -96,6 +96,21 @@ class SqlLiteNotionDataBase(
                 )
             }
         )
+        return getPageBy(id)
+    }
+
+    override fun add(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard {
+        return add(
+            id = notionPageFlashCard.id,
+            coverUrl = notionPageFlashCard.coverUrl,
+            name = notionPageFlashCard.name,
+            explanation = notionPageFlashCard.explanation,
+            example = notionPageFlashCard.example,
+            knowLevels = notionPageFlashCard.knowLevels
+        )
+    }
+
+    override fun getPageBy(pageId: String): NotionPageFlashCard {
         return SqlLiteNotionPageFlashCard(
             id = id,
             tableName = getPageTableName(),
@@ -107,17 +122,6 @@ class SqlLiteNotionDataBase(
             notionDbIdColumn = pageNotionDbIdColumn,
             knowLevelsColumns = pageKnowLevelsColumns,
             connection = connection
-        )
-    }
-
-    override fun add(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard {
-        return add(
-            id = notionPageFlashCard.id,
-            coverUrl = notionPageFlashCard.coverUrl,
-            name = notionPageFlashCard.name,
-            explanation = notionPageFlashCard.explanation,
-            example = notionPageFlashCard.example,
-            knowLevels = notionPageFlashCard.knowLevels.levels
         )
     }
 

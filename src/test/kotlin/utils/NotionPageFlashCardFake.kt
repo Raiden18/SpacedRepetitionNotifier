@@ -9,10 +9,8 @@ data class NotionPageFlashCardFake(
     override val name: String = "",
     override val example: String? = null,
     override val explanation: String? = null,
-    override val knowLevels: NotionPageFlashCard.KnowLevels,
+    override val knowLevels: Map<Int, Boolean> = emptyMap(),
 ) : NotionPageFlashCard {
 
-    data class KnowLevels(override val levels: Map<Int, Boolean>) : NotionPageFlashCard.KnowLevels
-
-    override fun setKnowLevels(knowLevels: NotionPageFlashCard.KnowLevels) = Unit
+    override fun setKnowLevels(knowLevels: Map<Int, Boolean>) = Unit
 }

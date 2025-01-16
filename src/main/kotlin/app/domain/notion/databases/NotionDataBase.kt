@@ -18,6 +18,7 @@ interface NotionDataBase {
     ): NotionPageFlashCard
 
     fun add(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard
+    fun getPageBy(pageId: String): NotionPageFlashCard
 
     fun clear()
     fun delete(pageId: String)

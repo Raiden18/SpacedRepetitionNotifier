@@ -28,16 +28,17 @@ class SqlLiteNotionDataBases(
                     from(TABLE_NAME)
                 }
             )
-        }.asSequence()
-            .map {
-                SqlLiteNotionDataBase(
-                    id = idColumn.getValue(it)!!,
-                    tableName = TABLE_NAME,
-                    idColumn = idColumn,
-                    nameColumn = nameColumn,
-                    connection = connection,
-                )
-            }
+        }.asSequence().map { getBy(idColumn.getValue(it)!!) }
+    }
+
+    override fun getBy(id: String): NotionDataBase {
+        return SqlLiteNotionDataBase(
+            id = id,
+            tableName = TABLE_NAME,
+            idColumn = idColumn,
+            nameColumn = nameColumn,
+            connection = connection,
+        )
     }
 
     override suspend fun add(notionDataBase: NotionDataBase): NotionDataBase {

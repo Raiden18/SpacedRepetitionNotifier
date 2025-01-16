@@ -21,7 +21,6 @@ class FlashCardMessageTest : BehaviorSpec() {
                 example = "I expected you to come",
                 explanation = "to wait to happen in the future",
                 coverUrl = "url",
-                id = flashCardId
             )
 
             And("With Dictionary") {

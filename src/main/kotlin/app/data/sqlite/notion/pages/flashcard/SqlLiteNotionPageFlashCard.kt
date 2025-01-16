@@ -68,39 +68,20 @@ class SqlLiteNotionPageFlashCard(
                 }
             )?.let(answerColumn::getValue)
 
-    override val knowLevels: NotionPageFlashCard.KnowLevels
-        get() = object : NotionPageFlashCard.KnowLevels {
-            override val levels: Map<Int, Boolean>
-                get() {
-                    val sqlQuery = SqlQuery {
-                        select(knowLevelsColumns.values)
-                        from(tableName)
-                        where(idColumn to id)
-                    }
-                    return connection.createStatement()
-                        .executeQuery(sqlQuery).let { resultSet ->
-                            knowLevelsColumns.map { it.key to it.value.getValue(resultSet)?.toBoolean() }.toMap()
-                                .filterValues { it != null }
-                                .mapValues { it.value!! }
-                        }
+    override val knowLevels: Map<Int, Boolean>
+        get() {
+            val sqlQuery = SqlQuery {
+                select(knowLevelsColumns.values)
+                from(tableName)
+                where(idColumn to id)
+            }
+            return connection.createStatement()
+                .executeQuery(sqlQuery).let { resultSet ->
+                    knowLevelsColumns.map { it.key to it.value.getValue(resultSet)?.toBoolean() }.toMap()
+                        .filterValues { it != null }
+                        .mapValues { it.value!! }
                 }
         }
 
-    override fun setKnowLevels(knowLevels: NotionPageFlashCard.KnowLevels) {
-        error("Now supported")
-    }
-
-    /*override fun setKnowLevels(knowLevels: NotionPageFlashCard.KnowLevels) {
-        val sqlQuery = SqlQuery {
-            update(tableName)
-            knowLevels.levels
-            set(
-                values = knowLevels.levels.map { (lvl, vl) ->
-                    val column = knowLevelsColumns[lvl]!!
-                    column to vl.toString()
-                }.toList()
-            )
-        }
-        connection.createStatement().execute(sqlQuery)
-    }*/
+    override fun setKnowLevels(knowLevels: Map<Int, Boolean>) = error("Now supported")
 }

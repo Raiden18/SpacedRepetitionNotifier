@@ -5,10 +5,6 @@ import org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.Not
 import org.danceofvalkyries.app.domain.message.notification.NeedRevisingNotificationMessage
 import org.danceofvalkyries.app.domain.message.notification.NotificationMessage
 import org.danceofvalkyries.app.domain.telegram.TelegramMessages
-import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
-import org.danceofvalkyries.notion.api.models.KnowLevels
-import org.danceofvalkyries.notion.api.models.NotionDataBase
-import org.danceofvalkyries.notion.api.models.NotionId
 import org.danceofvalkyries.telegram.api.TelegramChatApi
 
 class TelegramNotificationView(

@@ -14,14 +14,16 @@ class RestFulNotionDataBases(
 
     override suspend fun iterate(): Sequence<NotionDataBase> {
         return desiredDbIds.asSequence()
-            .map {
-                RestFulNotionDataBase(
-                    id = it,
-                    apiKey = apiKey,
-                    client = client,
-                    gson = gson,
-                )
-            }
+            .map { getBy(it) }
+    }
+
+    override fun getBy(id: String): NotionDataBase {
+        return RestFulNotionDataBase(
+            id = id,
+            apiKey = apiKey,
+            client = client,
+            gson = gson,
+        )
     }
 
     override suspend fun add(notionDataBase: NotionDataBase) =

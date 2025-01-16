@@ -10,6 +10,10 @@ data class NotionDataBasesFake(
         return dataBases.asSequence()
     }
 
+    override fun getBy(id: String): NotionDataBase {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun add(notionDataBase: NotionDataBase): NotionDataBase {
         TODO("Not yet implemented")
     }

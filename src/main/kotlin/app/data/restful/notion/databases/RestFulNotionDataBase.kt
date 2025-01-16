@@ -75,6 +75,16 @@ class RestFulNotionDataBase(
     override fun add(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard =
         error("Adding a page to Notion is not supported")
 
+    override fun getPageBy(pageId: String): NotionPageFlashCard {
+        return RestfulNotionPageFlashCard(
+            apiKey = apiKey,
+            responseData = null,
+            client = client,
+            gson = gson,
+            id = pageId
+        )
+    }
+
     override fun clear() = error("Clearing pages from Notion is not supported")
 
     override fun delete(pageId: String) = error("Deleting pages from Notion is not supported")

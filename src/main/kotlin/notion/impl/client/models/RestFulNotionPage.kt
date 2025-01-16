@@ -1,13 +1,9 @@
 package notion.impl.client.models
 
 import com.google.gson.annotations.SerializedName
-import notion.impl.client.models.request.NotionApiVersionHeader
 import notion.impl.client.models.response.CoverResponse
 import notion.impl.client.models.response.ParentResponse
 import notion.impl.client.models.response.UserResponse
-import okhttp3.Request
-import org.danceofvalkyries.app.domain.notion.pages.flashcard.NotionPageFlashCard
-import org.danceofvalkyries.utils.rest.*
 
 data class RestFulNotionPage(
     @SerializedName("object") val objectType: String? = null,
@@ -51,14 +47,10 @@ data class RestFulNotionPage(
             ?.text
             ?.content
 
-    val knowLevels: NotionPageFlashCard.KnowLevels
-        get() = object : NotionPageFlashCard.KnowLevels {
-            override val levels: Map<Int, Boolean>
-                get() = (1..13).associate { getKnowLevel(it) }
-                    .filterValues { it != null }
-                    .mapValues { it.value!! }
-
-        }
+    val knowLevels: Map<Int, Boolean>
+        get() = (1..13).associate { getKnowLevel(it) }
+            .filterValues { it != null }
+            .mapValues { it.value!! }
 
     val coverUrl: String?
         get() = cover?.external?.url

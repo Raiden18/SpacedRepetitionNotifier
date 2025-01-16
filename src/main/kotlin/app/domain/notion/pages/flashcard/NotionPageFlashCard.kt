@@ -7,11 +7,7 @@ interface NotionPageFlashCard {
     val name: String
     val example: String?
     val explanation: String?
-    val knowLevels: KnowLevels
+    val knowLevels: Map<Int, Boolean>
 
-    interface KnowLevels {
-        val levels: Map<Int, Boolean>
-    }
-
-    fun setKnowLevels(knowLevels: KnowLevels)
+    fun setKnowLevels(knowLevels: Map<Int, Boolean>)
 }

@@ -28,6 +28,10 @@ data class NotionDataBaseFake(
         TODO("Not yet implemented")
     }
 
+    override fun getPageBy(pageId: String): NotionPageFlashCard {
+        TODO("Not yet implemented")
+    }
+
     override fun clear() {
         TODO("Not yet implemented")
     }
