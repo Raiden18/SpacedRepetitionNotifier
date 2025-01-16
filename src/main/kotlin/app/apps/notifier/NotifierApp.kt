@@ -5,6 +5,7 @@ import com.google.gson.Gson
 import notion.impl.client.NotionClientApiImpl
 import org.danceofvalkyries.app.App
 import org.danceofvalkyries.app.apps.notifier.domain.usecaes.*
+import org.danceofvalkyries.app.data.restful.notion.databases.RestFulNotionDataBases
 import org.danceofvalkyries.app.data.sqlite.telegram.messages.SqlLiteTelegramMessages
 import org.danceofvalkyries.environment.Environment
 import org.danceofvalkyries.notion.api.NotionApi
@@ -28,33 +29,26 @@ class NotifierApp(
         val telegramApi = createTelegramChatApi()
 
         val notionApi = NotionApi()
-        val notionDatabases = SqlLiteNotionDataBases(dbConnection)
 
-        val ids = config
-            .notion
-            .observedDatabases
-            .map { NotionId(it.id) }
+        val sqlLiteNotionDatabases = SqlLiteNotionDataBases(dbConnection)
+        val restfulNotionDatabases = RestFulNotionDataBases(
+            desiredDbIds = environment.config.notion.observedDatabases.map { it.id },
+            apiKey = environment.config.notion.apiKey,
+            client = environment.httpClient,
+            gson = Gson()
+        )
+
+        sqlLiteNotionDatabases.clear()
+        restfulNotionDatabases.iterate().forEach { restfulNotionDb ->
+            val sqlLiteNotionDb = sqlLiteNotionDatabases.add(restfulNotionDb)
+            restfulNotionDb.iterate().forEach { restfulNotionPage ->
+                sqlLiteNotionDb.add(restfulNotionPage)
+            }
+        }
+
         val telegramMessages = SqlLiteTelegramMessages(dbConnection)
-        ReplaceAllNotionCacheUseCase(
-            ReplaceFlashCardsInCacheUseCase(
-                ids,
-                SqlLiteNotionDataBases(dbConnection),
-                notionApi,
-                dispatchers,
-            ),
-            ReplaceNotionDbsInCacheUseCase(
-                ids,
-                notionDatabases,
-                notionApi,
-                dispatchers,
-            ),
-            dispatchers
-        ).execute()
         AnalyzeFlashCardsAndSendNotificationUseCase(
-            GetAllFlashCardsUseCase(
-                notionDatabases,
-            ),
-            notionDatabases,
+            sqlLiteNotionDatabases,
             EditNotificationMessageUseCase(
                 telegramMessages,
                 telegramApi

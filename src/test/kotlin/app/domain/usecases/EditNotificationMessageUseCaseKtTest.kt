@@ -36,7 +36,7 @@ class EditNotificationMessageUseCaseKtTest : FunSpec() {
             editNotificationMessageUseCase.execute(newMessage)
 
             coVerifyOrder {
-                telegramApi.editInChat(newMessage.telegramBody, oldTelegramMessage.id)
+                telegramApi.editInChat(newMessage.asTelegramBody(), oldTelegramMessage.id)
             }
         }
     }

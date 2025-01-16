@@ -11,19 +11,19 @@ class ButtonActionTest : FunSpec() {
         test("Should return Forgotten Action") {
             ButtonAction.parse(
                 "forgottenFlashCardId=228"
-            ) shouldBe ButtonAction.Forgotten(NotionId("228"))
+            ) shouldBe ButtonAction.Forgotten("228")
         }
 
         test("Should return Recalled Action") {
             ButtonAction.parse(
                 "recalledFlashCardId=228"
-            ) shouldBe ButtonAction.Recalled(NotionId("228"))
+            ) shouldBe ButtonAction.Recalled("228")
         }
 
         test("Should return DataBase Action") {
             ButtonAction.parse(
                 "dbId=228"
-            ) shouldBe ButtonAction.DataBase(NotionId("228"))
+            ) shouldBe ButtonAction.DataBase("228")
         }
     }
 }

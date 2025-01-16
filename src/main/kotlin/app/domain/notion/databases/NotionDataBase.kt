@@ -17,6 +17,8 @@ interface NotionDataBase {
         knowLevels: Map<Int, Boolean>
     ): NotionPageFlashCard
 
+    fun add(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard
+
     fun clear()
     fun delete(pageId: String)
 }

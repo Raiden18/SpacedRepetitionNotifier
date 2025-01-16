@@ -9,7 +9,7 @@ class DoneMessageTest : FunSpec() {
 
     init {
         test("Should return Done message") {
-            DoneMessage().telegramBody shouldBe TelegramMessageBody(
+            DoneMessage().asTelegramBody() shouldBe TelegramMessageBody(
                 text = """Good Job! 😎 Everything is revised! ✅""",
                 telegramButtons = emptyList(),
                 telegramImageUrl = null,

@@ -5,8 +5,7 @@ import io.kotest.matchers.shouldBe
 import org.danceofvalkyries.app.apps.buttonslistener.domain.usecases.GetOnlineDictionariesForFlashCard
 import org.danceofvalkyries.config.domain.ObservedDatabase
 import org.danceofvalkyries.dictionary.api.OnlineDictionary
-import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
-import org.danceofvalkyries.notion.api.models.NotionId
+import utils.NotionPageFlashCardFake
 
 class GetOnlineDictionariesForFlashCardKtTest : FunSpec() {
 
@@ -16,9 +15,7 @@ class GetOnlineDictionariesForFlashCardKtTest : FunSpec() {
     init {
 
         test("Should return Online dictionaries for flash card if they exist") {
-            val flashCardWithRequiredDictionary = FlashCardNotionPage.EMPTY.copy(
-                notionDbID = NotionId("1")
-            )
+            val flashCardWithRequiredDictionary = NotionPageFlashCardFake(notionDbID = "1")
             GetOnlineDictionariesForFlashCard(
                 listOf(dbWithDictionary, dbWithNoDictionary)
             ).execute(flashCardWithRequiredDictionary) shouldBe listOf(
@@ -27,9 +24,7 @@ class GetOnlineDictionariesForFlashCardKtTest : FunSpec() {
         }
 
         test("Should return empty list if there are no dictionaries for flash card") {
-            val flashCardWithRequiredDictionary = FlashCardNotionPage.EMPTY.copy(
-                notionDbID = NotionId("2")
-            )
+            val flashCardWithRequiredDictionary = NotionPageFlashCardFake(notionDbID = "2")
             GetOnlineDictionariesForFlashCard(
                 listOf(dbWithDictionary, dbWithNoDictionary)
             ).execute(flashCardWithRequiredDictionary) shouldBe emptyList()

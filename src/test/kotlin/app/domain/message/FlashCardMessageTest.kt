@@ -3,24 +3,25 @@ package app.domain.message
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import org.danceofvalkyries.app.domain.message.FlashCardMessage
+import org.danceofvalkyries.app.domain.notion.pages.flashcard.NotionPageFlashCard
 import org.danceofvalkyries.dictionary.api.OnlineDictionary
-import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
 import org.danceofvalkyries.notion.api.models.NotionId
 import org.danceofvalkyries.telegram.api.models.TelegramButton
 import org.danceofvalkyries.telegram.api.models.TelegramMessageBody
 import org.danceofvalkyries.telegram.api.models.TelegramText
+import utils.NotionPageFlashCardFake
 
 class FlashCardMessageTest : BehaviorSpec() {
 
     init {
         Given("FlashCard with full data") {
             val flashCardId = "228"
-            val flashCard = FlashCardNotionPage.EMPTY.copy(
+            val flashCard = NotionPageFlashCardFake(
                 name = "Expect",
                 example = "I expected you to come",
                 explanation = "to wait to happen in the future",
                 coverUrl = "url",
-                id = NotionId(flashCardId)
+                id = flashCardId
             )
 
             And("With Dictionary") {
@@ -30,7 +31,7 @@ class FlashCardMessageTest : BehaviorSpec() {
                     lateinit var messageBody: TelegramMessageBody
 
                     beforeTest {
-                        messageBody = FlashCardMessage(flashCard, listOf(dictionary)).telegramBody
+                        messageBody = FlashCardMessage(flashCard, listOf(dictionary)).asTelegramBody()
                     }
 
                     Then("Should create formatted text") {
@@ -63,7 +64,7 @@ class FlashCardMessageTest : BehaviorSpec() {
                     lateinit var messageBody: TelegramMessageBody
 
                     beforeTest {
-                        messageBody = FlashCardMessage(flashCard, emptyList()).telegramBody
+                        messageBody = FlashCardMessage(flashCard, emptyList()).asTelegramBody()
                     }
 
                     Then("Dictionary Buttons should be hidden") {
@@ -76,18 +77,18 @@ class FlashCardMessageTest : BehaviorSpec() {
 
         Given("FlashCard with minimum data") {
             val flashCardId = "228"
-            val flashCard = FlashCardNotionPage.EMPTY.copy(
+            val flashCard = NotionPageFlashCardFake(
                 name = "Expect",
                 example = null,
                 explanation = null,
                 coverUrl = null,
-                id = NotionId(flashCardId),
+                id = flashCardId,
             )
 
             When("Creates FlashCardMessage") {
                 lateinit var messageBody: TelegramMessageBody
                 beforeTest {
-                    messageBody = FlashCardMessage(flashCard, emptyList()).telegramBody
+                    messageBody = FlashCardMessage(flashCard, emptyList()).asTelegramBody()
                 }
 
                 Then("Should Create Text") {

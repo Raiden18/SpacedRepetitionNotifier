@@ -110,6 +110,17 @@ class SqlLiteNotionDataBase(
         )
     }
 
+    override fun add(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard {
+        return add(
+            id = notionPageFlashCard.id,
+            coverUrl = notionPageFlashCard.coverUrl,
+            name = notionPageFlashCard.name,
+            explanation = notionPageFlashCard.explanation,
+            example = notionPageFlashCard.example,
+            knowLevels = notionPageFlashCard.knowLevels.levels
+        )
+    }
+
     override fun clear() {
         createStatement().execute(
             SqlQuery {
@@ -159,7 +170,7 @@ class SqlLiteNotionDataBase(
     }
 
 
-    private fun getPageTableName(): String{
+    private fun getPageTableName(): String {
         return "flash_cards_to_revise_${name.lowercase(Locale.getDefault()).replace(" ", "_")} "
     }
 }

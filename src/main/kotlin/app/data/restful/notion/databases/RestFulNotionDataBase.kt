@@ -11,7 +11,7 @@ import okhttp3.Request
 import org.danceofvalkyries.app.domain.notion.pages.flashcard.NotionPageFlashCard
 import org.danceofvalkyries.utils.rest.*
 
-class RestNotionDataBase(
+class RestFulNotionDataBase(
     override val id: String,
     private val apiKey: String,
     private val client: OkHttpClient,
@@ -62,6 +62,8 @@ class RestNotionDataBase(
         explanation: String?,
         knowLevels: Map<Int, Boolean>
     ): NotionPageFlashCard = error("Adding a page to Notion is not supported")
+
+    override fun add(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard = error("Adding a page to Notion is not supported")
 
     override fun clear() = error("Clearing pages from Notion is not supported")
 

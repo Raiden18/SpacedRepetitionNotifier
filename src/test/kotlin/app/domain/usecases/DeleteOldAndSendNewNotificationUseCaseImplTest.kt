@@ -11,6 +11,7 @@ import org.danceofvalkyries.app.domain.telegram.TelegramMessages
 import org.danceofvalkyries.telegram.api.SendMessageToTelegramChat
 import org.danceofvalkyries.telegram.api.TelegramChatApi
 import org.danceofvalkyries.telegram.api.models.TelegramMessage
+import utils.NotionDataBasesFake
 import utils.TelegramMessageFake
 
 class DeleteOldAndSendNewNotificationUseCaseImplTest : BehaviorSpec() {
@@ -25,13 +26,9 @@ class DeleteOldAndSendNewNotificationUseCaseImplTest : BehaviorSpec() {
     )
     private val notificationMessage = NeedRevisingNotificationMessage(
         id = 2,
-        emptyList(),
-        emptyList()
+        NotionDataBasesFake(emptyList())
     )
-    private val newTgMessageResponse = TelegramMessage(
-        id = notificationMessage.id,
-        body = notificationMessage.telegramBody
-    )
+    private lateinit var newTgMessageResponse: TelegramMessage
 
     private lateinit var useCase: DeleteOldAndSendNewNotificationUseCase
 
@@ -43,7 +40,11 @@ class DeleteOldAndSendNewNotificationUseCaseImplTest : BehaviorSpec() {
                 sendMessageToTelegramChat,
                 telegramMessages,
             )
-            coEvery { sendMessageToTelegramChat.execute(notificationMessage.telegramBody) } returns newTgMessageResponse
+            newTgMessageResponse = TelegramMessage(
+                id = notificationMessage.id,
+                body = notificationMessage.asTelegramBody()
+            )
+            coEvery { sendMessageToTelegramChat.execute(notificationMessage.asTelegramBody()) } returns newTgMessageResponse
         }
 
         Given("Done Message is saxved in DB") {
@@ -65,7 +66,7 @@ class DeleteOldAndSendNewNotificationUseCaseImplTest : BehaviorSpec() {
                 }
 
                 Then("Should send new message to TG") {
-                    coVerify(exactly = 1) { sendMessageToTelegramChat.execute(notificationMessage.telegramBody) }
+                    coVerify(exactly = 1) { sendMessageToTelegramChat.execute(notificationMessage.asTelegramBody()) }
                 }
 
                 Then("Should Save Tg Message to DB") {

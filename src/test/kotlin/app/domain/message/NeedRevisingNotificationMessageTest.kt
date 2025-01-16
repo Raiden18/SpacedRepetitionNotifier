@@ -3,50 +3,48 @@ package app.domain.message
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import org.danceofvalkyries.app.domain.message.notification.NeedRevisingNotificationMessage
-import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
-import org.danceofvalkyries.notion.api.models.NotionDataBase
-import org.danceofvalkyries.notion.api.models.NotionId
 import org.danceofvalkyries.telegram.api.models.TelegramButton
 import org.danceofvalkyries.telegram.api.models.TelegramText
+import utils.NotionDataBaseFake
+import utils.NotionDataBasesFake
+import utils.NotionPageFlashCardFake
 
 class NeedRevisingNotificationMessageTest : BehaviorSpec() {
 
     init {
         Given("Dbs and Flash Cards form them") {
-            val englishVocabularyDb = NotionDataBase.EMPTY.copy(
-                id = NotionId("1"),
-                name = "English vocabulary"
+            val englishVocabularyDb = NotionDataBaseFake(
+                id = "1",
+                name = "English vocabulary",
+                pages = listOf(
+                    NotionPageFlashCardFake(
+                        notionDbID = "1"
+                    )
+                )
             )
-            val greekVocabularyDb = NotionDataBase.EMPTY.copy(
-                id = NotionId("2"),
-                name = "Greek vocabulary"
-            )
-
-            val englishGrammarDb = NotionDataBase.EMPTY.copy(
-                id = NotionId("3"),
-                name = "English grammar"
-            )
-            val flashCards = listOf(
-                FlashCardNotionPage.EMPTY.copy(
-                    notionDbID = englishVocabularyDb.id
-                ),
-                FlashCardNotionPage.EMPTY.copy(
-                    notionDbID = greekVocabularyDb.id
-                ),
-                FlashCardNotionPage.EMPTY.copy(
-                    notionDbID = englishGrammarDb.id
+            val greekVocabularyDb = NotionDataBaseFake(
+                id = "2",
+                name = "Greek vocabulary",
+                pages = listOf(
+                    NotionPageFlashCardFake(
+                        notionDbID = "2"
+                    )
                 )
             )
 
+            val englishGrammarDb = NotionDataBaseFake(
+                id = "3",
+                name = "English grammar",
+                pages = listOf(
+                    NotionPageFlashCardFake(
+                        notionDbID = "3"
+                    )
+                )
+            )
             When("Creates Telegram Message") {
                 val telegramMessage = NeedRevisingNotificationMessage(
-                    flashCards = flashCards,
-                    notionDataBases = listOf(
-                        englishVocabularyDb,
-                        greekVocabularyDb,
-                        englishGrammarDb,
-                    )
-                ).telegramBody
+                    NotionDataBasesFake(listOf(englishVocabularyDb, greekVocabularyDb, englishGrammarDb))
+                ).asTelegramBody()
 
                 Then("Should Show text with total count of unrevised flashcards") {
                     telegramMessage.text shouldBe TelegramText("""You have 3 flashcards to revise 🧠""".trimIndent())
@@ -62,7 +60,7 @@ class NeedRevisingNotificationMessageTest : BehaviorSpec() {
                 Then("Greek Vocabulary Button should be shown") {
                     telegramMessage.nestedButtons[1][0] shouldBe TelegramButton(
                         text = "Greek vocabulary: 1",
-                       action = TelegramButton.Action.CallBackData("dbId=2")
+                        action = TelegramButton.Action.CallBackData("dbId=2")
                     )
                 }
 

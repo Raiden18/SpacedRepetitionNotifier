@@ -5,11 +5,12 @@ import org.danceofvalkyries.app.domain.notion.pages.flashcard.NotionPageFlashCar
 
 data class NotionDataBaseFake(
     override val id: String,
-    override val name: String
-): NotionDataBase {
+    override val name: String,
+    private val pages: List<NotionPageFlashCard> = emptyList()
+) : NotionDataBase {
 
     override fun iterate(): Sequence<NotionPageFlashCard> {
-        TODO("Not yet implemented")
+        return pages.asSequence()
     }
 
     override fun add(
@@ -20,6 +21,10 @@ data class NotionDataBaseFake(
         explanation: String?,
         knowLevels: Map<Int, Boolean>
     ): NotionPageFlashCard {
+        TODO("Not yet implemented")
+    }
+
+    override fun add(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard {
         TODO("Not yet implemented")
     }
 

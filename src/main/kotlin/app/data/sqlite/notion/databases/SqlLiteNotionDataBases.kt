@@ -40,6 +40,13 @@ class SqlLiteNotionDataBases(
             }
     }
 
+    override suspend fun add(notionDataBase: NotionDataBase): NotionDataBase {
+        return add(
+            id = notionDataBase.id,
+            name = notionDataBase.name,
+        )
+    }
+
     override suspend fun add(
         id: String,
         name: String

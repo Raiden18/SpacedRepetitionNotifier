@@ -12,15 +12,15 @@ class FlashCardsController(
 
     private var notionDb = NotionId.EMPTY
 
-    suspend fun onDataBaseClicked(notionDbId: NotionId) {
-        notionDb = notionDbId
-        val nextFlashCard = spaceRepetitionSession.getNextFlashCard(notionDbId)
+    suspend fun onDataBaseClicked(notionDbId: String) {
+        notionDb = NotionId(notionDbId)
+        val nextFlashCard = spaceRepetitionSession.getNextFlashCard(notionDb)
         flashCardView.show(nextFlashCard!!)
     }
 
-    suspend fun onForgottenClicked(flashCardId: NotionId) {
-        val currentFlashCard = spaceRepetitionSession.getCurrentFlashCard(flashCardId)
-        spaceRepetitionSession.forget(flashCardId)
+    suspend fun onForgottenClicked(flashCardId: String) {
+        val currentFlashCard = spaceRepetitionSession.getCurrentFlashCard(NotionId(flashCardId))
+        spaceRepetitionSession.forget(NotionId(flashCardId))
         notificationView.update()
         val nextFlashCard = spaceRepetitionSession.getNextFlashCard(notionDb)
         if (nextFlashCard != null) {
@@ -29,9 +29,9 @@ class FlashCardsController(
         flashCardView.hide(currentFlashCard)
     }
 
-    suspend fun onRecalledClicked(flashCardId: NotionId) {
-        val currentFlashCard = spaceRepetitionSession.getCurrentFlashCard(flashCardId)
-        spaceRepetitionSession.recall(flashCardId)
+    suspend fun onRecalledClicked(flashCardId: String) {
+        val currentFlashCard = spaceRepetitionSession.getCurrentFlashCard(NotionId(flashCardId))
+        spaceRepetitionSession.recall(NotionId(flashCardId))
         notificationView.update()
         val nextFlashCard = spaceRepetitionSession.getNextFlashCard(notionDb)
         if (nextFlashCard != null) {

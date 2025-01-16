@@ -19,35 +19,8 @@ class TelegramNotificationView(
 
     override suspend fun update() {
         val notificationMessage = messages.iterate().first { it.type == NotificationMessage.TYPE_NAME }
-        val flashCards = notionDataBases.iterate()
-            .toList()
-            .flatMap { notionDb ->
-                notionDb.iterate().filter { it.notionDbID == notionDb.id }
-            }
-            .map {
-                FlashCardNotionPage(
-                    name = it.name,
-                    coverUrl = it.coverUrl,
-                    notionDbID = NotionId(it.notionDbID),
-                    id = NotionId(it.id),
-                    example = it.example,
-                    explanation = it.explanation,
-                    knowLevels = KnowLevels(it.knowLevels.levels)
-                )
-            }
-            .toList()
-        val notionDataBases = notionDataBases.iterate()
-            .map {
-                NotionDataBase(
-                    id = NotionId(it.id),
-                    name = it.name
-                )
-            }.toList()
         telegramChatApi.editInChat(
-            NeedRevisingNotificationMessage(
-                flashCards = flashCards,
-                notionDataBases = notionDataBases
-            ).telegramBody,
+            NeedRevisingNotificationMessage(notionDataBases).asTelegramBody(),
             notificationMessage.id
         )
     }

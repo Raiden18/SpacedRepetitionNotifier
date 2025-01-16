@@ -1,6 +1,7 @@
 package org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.srs
 
 import app.domain.notion.databases.NotionDataBases
+import org.danceofvalkyries.app.domain.notion.pages.flashcard.NotionPageFlashCard
 import org.danceofvalkyries.notion.api.NotionApi
 import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
 import org.danceofvalkyries.notion.api.models.KnowLevels
@@ -12,38 +13,16 @@ class SpaceRepetitionSessionImpl(
     private val notionFlashCardPage: NotionApi,
 ) : SpaceRepetitionSession {
 
-    override suspend fun getCurrentFlashCard(flashCardId: NotionId): FlashCardNotionPage {
+    override suspend fun getCurrentFlashCard(flashCardId: NotionId): NotionPageFlashCard {
         return notionDataBases.iterate()
             .flatMap { it.iterate() }
-            .map {
-                FlashCardNotionPage(
-                    name = it.name,
-                    coverUrl = it.coverUrl,
-                    notionDbID = NotionId(it.notionDbID),
-                    id = NotionId(it.id),
-                    example = it.example,
-                    explanation = it.explanation,
-                    knowLevels = KnowLevels(it.knowLevels.levels)
-                )
-            }
-            .first { it.id.rawValue == flashCardId.rawValue }
+            .first { it.id == flashCardId.rawValue }
     }
 
-    override suspend fun getNextFlashCard(databaseId: NotionId): FlashCardNotionPage? {
+    override suspend fun getNextFlashCard(databaseId: NotionId): NotionPageFlashCard? {
         return notionDataBases.iterate()
             .flatMap { it.iterate() }
-            .map {
-                FlashCardNotionPage(
-                    name = it.name,
-                    coverUrl = it.coverUrl,
-                    notionDbID = NotionId(it.notionDbID),
-                    id = NotionId(it.id),
-                    example = it.example,
-                    explanation = it.explanation,
-                    knowLevels = KnowLevels(it.knowLevels.levels)
-                )
-            }
-            .firstOrNull { it.notionDbID.rawValue == databaseId.rawValue }
+            .firstOrNull { it.notionDbID == databaseId.rawValue }
     }
 
     override suspend fun recall(flashCardId: NotionId) {

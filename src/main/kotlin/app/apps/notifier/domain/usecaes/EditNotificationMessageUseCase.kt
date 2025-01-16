@@ -14,7 +14,7 @@ fun EditNotificationMessageUseCase(
 ): EditNotificationMessageUseCase {
     return EditNotificationMessageUseCase {
         telegramMessages.iterate().forEach { message ->
-            telegramChatApi.editInChat(it.telegramBody, message.id)
+            telegramChatApi.editInChat(it.asTelegramBody(), message.id)
         }
     }
 }

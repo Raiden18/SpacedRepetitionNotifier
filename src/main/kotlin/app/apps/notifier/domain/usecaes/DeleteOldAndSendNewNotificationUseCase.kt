@@ -19,7 +19,7 @@ fun DeleteOldAndSendNewNotificationUseCase(
             telegramMessages.delete(it.id)
             telegramChatApi.deleteFromChat(it.id)
         }
-        val telegramMessage = sendMessageToTelegramChat.execute(it.telegramBody)
+        val telegramMessage = sendMessageToTelegramChat.execute(it.asTelegramBody())
         telegramMessages.add(
             id = telegramMessage.id,
             type = it.type

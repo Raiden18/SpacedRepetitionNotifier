@@ -8,10 +8,11 @@ data class DoneMessage(
 
     constructor() : this(-1)
 
-    override val telegramBody: TelegramMessageBody
-        get() = TelegramMessageBody(
+    override suspend fun asTelegramBody(): TelegramMessageBody {
+        return TelegramMessageBody(
             text = """Good Job! 😎 Everything is revised! ✅""",
             telegramButtons = emptyList(),
             telegramImageUrl = null,
         )
+    }
 }
