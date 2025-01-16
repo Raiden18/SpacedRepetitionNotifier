@@ -9,6 +9,7 @@ import org.danceofvalkyries.utils.db.tables.columns.PrimaryKey
 import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
 import java.sql.Connection
 import java.sql.Statement
+import java.util.*
 
 class SqlLiteNotionDataBase(
     override val id: String,
@@ -17,11 +18,6 @@ class SqlLiteNotionDataBase(
     private val nameColumn: TextTableColumn,
     private val connection: Connection,
 ) : NotionDataBase {
-
-    companion object {
-        //TODO: Make unique table for each DB
-        private const val TABLE_NAME = "flash_cards_to_revise"
-    }
 
     private val pageIdColumn = TextTableColumn(
         name = "page_id",
@@ -50,14 +46,14 @@ class SqlLiteNotionDataBase(
             it.executeQuery(
                 SqlQuery {
                     select(pageIdColumn)
-                    from(TABLE_NAME)
+                    from(getPageTableName())
                 }
             )
         }.asSequence()
             .map {
                 SqlLiteNotionPageFlashCard(
                     id = pageIdColumn.getValue(it)!!,
-                    tableName = TABLE_NAME,
+                    tableName = getPageTableName(),
                     idColumn = pageIdColumn,
                     nameColumn = pageNameColumn,
                     exampleColumn = pageExampleColumn,
@@ -88,7 +84,7 @@ class SqlLiteNotionDataBase(
         createStatement().execute(
             SqlQuery {
                 insert(
-                    into = TABLE_NAME,
+                    into = getPageTableName(),
                     values = listOf(
                         pageIdColumn to id,
                         pageNameColumn to name,
@@ -102,7 +98,7 @@ class SqlLiteNotionDataBase(
         )
         return SqlLiteNotionPageFlashCard(
             id = id,
-            tableName = TABLE_NAME,
+            tableName = getPageTableName(),
             idColumn = pageIdColumn,
             nameColumn = pageNameColumn,
             exampleColumn = pageExampleColumn,
@@ -118,7 +114,7 @@ class SqlLiteNotionDataBase(
         createStatement().execute(
             SqlQuery {
                 delete()
-                from(TABLE_NAME)
+                from(getPageTableName())
             }
         )
     }
@@ -129,7 +125,7 @@ class SqlLiteNotionDataBase(
                 it.execute(
                     SqlQuery {
                         delete()
-                        from(TABLE_NAME)
+                        from(getPageTableName())
                         where(pageIdColumn to pageId)
                     }
                 )
@@ -147,7 +143,7 @@ class SqlLiteNotionDataBase(
                 it.execute(
                     SqlQuery {
                         createIfNotExist(
-                            tableName = TABLE_NAME,
+                            tableName = getPageTableName(),
                             columns = listOf(
                                 pageIdColumn,
                                 pageExampleColumn,
@@ -162,4 +158,8 @@ class SqlLiteNotionDataBase(
             }
     }
 
+
+    private fun getPageTableName(): String{
+        return "flash_cards_to_revise_${name.lowercase(Locale.getDefault()).replace(" ", "_")} "
+    }
 }
