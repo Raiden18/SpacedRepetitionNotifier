@@ -31,19 +31,7 @@ class SandBoxApp(
 
         val sqlLiteNotionDatabases = SqlLiteNotionDataBases(dbConnection)
 
-        restNotionDataBases.iterate().forEach { restNotionDb ->
-            val sqlLiteNotionDataBase = sqlLiteNotionDatabases.add(restNotionDb)
-            restNotionDb.iterate().forEach { restNotionPageFlashCard ->
-                sqlLiteNotionDataBase.add(restNotionPageFlashCard)
-            }
-        }
-
-        sqlLiteNotionDatabases.iterate().forEach {
-            it.iterate().forEach {
-                println("HUI")
-                println(it.name)
-            }
-        }
+        notifier.run()
 
         /*environment.config.notion.observedDatabases.forEach {
             restNotionDataBases.add(it.id)

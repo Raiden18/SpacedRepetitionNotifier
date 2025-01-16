@@ -1,9 +1,10 @@
 package org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.srs
 
-import app.domain.notion.databases.NotionDataBase
 import app.domain.notion.databases.NotionDataBases
+import com.google.gson.Gson
+import okhttp3.OkHttpClient
+import org.danceofvalkyries.app.data.restful.notion.page.RestfulNotionPageFlashCard
 import org.danceofvalkyries.app.domain.notion.pages.flashcard.NotionPageFlashCard
-import org.danceofvalkyries.notion.api.NotionApi
 import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
 import org.danceofvalkyries.notion.api.models.KnowLevels
 import org.danceofvalkyries.notion.api.models.NotionId
@@ -11,8 +12,9 @@ import org.danceofvalkyries.notion.api.models.NotionId
 //TODO: Add unit tests
 class SpaceRepetitionSessionImpl(
     private val notionDataBases: NotionDataBases,
-    private val notionRestfulDataBase: NotionDataBases,
-    private val notionFlashCardPage: NotionApi,
+    private val apiKey: String,
+    private val gson: Gson,
+    private val client: OkHttpClient,
 ) : SpaceRepetitionSession {
 
     override suspend fun getCurrentFlashCard(flashCardId: NotionId): NotionPageFlashCard {
@@ -47,8 +49,18 @@ class SpaceRepetitionSessionImpl(
         notionDataBases.iterate().forEach {
             it.delete(recalledFlashCard.id.rawValue)
         }
+        RestfulNotionPageFlashCard(
+            apiKey = apiKey,
+            responseData = null,
+            client = client,
+            gson = gson,
+            id = flashCardId.get()
+        ).setKnowLevels(
+            object : NotionPageFlashCard.KnowLevels {
+                override val levels: Map<Int, Boolean> = recalledFlashCard.knowLevels.levels
+            }
+        )
 
-        notionFlashCardPage.update(recalledFlashCard)
     }
 
     override suspend fun forget(flashCardId: NotionId) {
@@ -71,6 +83,16 @@ class SpaceRepetitionSessionImpl(
         notionDataBases.iterate().forEach {
             it.delete(forgottenFlashCard.id.rawValue)
         }
-        notionFlashCardPage.update(forgottenFlashCard)
+        RestfulNotionPageFlashCard(
+            apiKey = apiKey,
+            responseData = null,
+            client = client,
+            gson = gson,
+            id = flashCardId.get()
+        ).setKnowLevels(
+            object : NotionPageFlashCard.KnowLevels {
+                override val levels: Map<Int, Boolean> = forgottenFlashCard.knowLevels.levels
+            }
+        )
     }
 }

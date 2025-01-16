@@ -7,8 +7,6 @@ import org.danceofvalkyries.app.apps.notifier.domain.usecaes.*
 import org.danceofvalkyries.app.data.restful.notion.databases.RestFulNotionDataBases
 import org.danceofvalkyries.app.data.sqlite.telegram.messages.SqlLiteTelegramMessages
 import org.danceofvalkyries.environment.Environment
-import org.danceofvalkyries.notion.api.NotionApi
-import org.danceofvalkyries.notion.api.models.NotionId
 import org.danceofvalkyries.telegram.api.TelegramChatApi
 import org.danceofvalkyries.telegram.impl.SendMessageToTelegramChat
 import org.danceofvalkyries.telegram.impl.TelegramChatApiImpl
@@ -25,8 +23,6 @@ class NotifierApp(
     override suspend fun run() {
         val dbConnection = environment.dataBase.establishConnection()
         val telegramApi = createTelegramChatApi()
-
-        val notionApi = NotionApi()
 
         val sqlLiteNotionDatabases = SqlLiteNotionDataBases(dbConnection)
         val restfulNotionDatabases = RestFulNotionDataBases(
@@ -71,15 +67,5 @@ class NotifierApp(
 
     private fun createGson(): Gson {
         return Gson()
-    }
-
-    private fun NotionApi(): NotionApi {
-        return NotionApiImpl(
-            NotionClientApiImpl(
-                gson = createGson(),
-                client = httpClient,
-                apiKey = config.notion.apiKey,
-            )
-        )
     }
 }

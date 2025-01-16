@@ -5,10 +5,10 @@ import org.danceofvalkyries.app.domain.notion.pages.flashcard.NotionPageFlashCar
 class Me {
 
     fun forget(flashCard: NotionPageFlashCard): NotionPageFlashCard {
-        flashCard.setLevels()
+       TODO()
     }
 
     fun recall(flashCard: NotionPageFlashCard): NotionPageFlashCard {
-        flashCard.setLevels()
+        TODO()
     }
 }

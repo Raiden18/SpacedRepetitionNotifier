@@ -121,10 +121,6 @@ class SqlLiteNotionDataBase(
         )
     }
 
-    override fun update(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard {
-        error("Updating page in local DB is not supported")
-    }
-
     override fun clear() {
         createStatement().execute(
             SqlQuery {

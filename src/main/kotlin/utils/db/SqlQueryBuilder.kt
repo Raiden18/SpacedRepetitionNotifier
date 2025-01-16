@@ -67,8 +67,14 @@ class SqlQueryBuilder {
     }
 
     fun set(value: Pair<TableColumn, String>): SqlQueryBuilder {
+        set(listOf(value))
+        return this
+    }
+
+    fun set(values: List<Pair<TableColumn, String>>): SqlQueryBuilder {
+        val setValues = values.joinToString(", ") { "${it.first.name} = ${it.first.sqlRequestValue(it.second)}" }
         stringBuilder.add(
-            "SET ${value.first.name} = ${value.first.sqlRequestValue(value.second)}"
+            "SET $setValues"
         )
         return this
     }

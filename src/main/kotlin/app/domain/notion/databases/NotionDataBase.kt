@@ -19,8 +19,6 @@ interface NotionDataBase {
 
     fun add(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard
 
-    fun update(notionPageFlashCard: NotionPageFlashCard)
-
     fun clear()
     fun delete(pageId: String)
 }

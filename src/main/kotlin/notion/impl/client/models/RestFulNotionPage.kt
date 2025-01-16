@@ -1,14 +1,17 @@
 package notion.impl.client.models
 
 import com.google.gson.annotations.SerializedName
+import notion.impl.client.models.request.NotionApiVersionHeader
 import notion.impl.client.models.response.CoverResponse
 import notion.impl.client.models.response.ParentResponse
 import notion.impl.client.models.response.UserResponse
+import okhttp3.Request
 import org.danceofvalkyries.app.domain.notion.pages.flashcard.NotionPageFlashCard
+import org.danceofvalkyries.utils.rest.*
 
-data class NotionPageData(
+data class RestFulNotionPage(
     @SerializedName("object") val objectType: String? = null,
-    @SerializedName("id") override val id: String,
+    @SerializedName("id") val id: String?,
     @SerializedName("created_time") val createdTime: String? = null,
     @SerializedName("last_edited_time") val lastEditedTime: String? = null,
     @SerializedName("created_by") val createdBy: UserResponse? = null,
@@ -18,12 +21,12 @@ data class NotionPageData(
     @SerializedName("parent") val parent: ParentResponse? = null,
     @SerializedName("archived") val archived: Boolean? = null,
     @SerializedName("in_trash") val inTrash: Boolean? = null,
-    @SerializedName("properties") val properties: Map<String, PropertyData>? = null,
+    @SerializedName("properties") var properties: Map<String, PropertyData>? = null,
     @SerializedName("url") val url: String? = null,
     @SerializedName("public_url") val publicUrl: Any? = null,
-) : NotionPageFlashCard {
+) {
 
-    override val name: String
+    val name: String
         get() = properties
             ?.get("Name")
             ?.title
@@ -32,7 +35,7 @@ data class NotionPageData(
             ?.content
             .orEmpty()
 
-    override val example: String?
+    val example: String?
         get() = properties
             ?.get("Example")
             ?.richText
@@ -40,7 +43,7 @@ data class NotionPageData(
             ?.text
             ?.content
 
-    override val explanation: String?
+    val explanation: String?
         get() = properties
             ?.get("Explanation")
             ?.richText
@@ -48,7 +51,7 @@ data class NotionPageData(
             ?.text
             ?.content
 
-    override val knowLevels: NotionPageFlashCard.KnowLevels
+    val knowLevels: NotionPageFlashCard.KnowLevels
         get() = object : NotionPageFlashCard.KnowLevels {
             override val levels: Map<Int, Boolean>
                 get() = (1..13).associate { getKnowLevel(it) }
@@ -57,10 +60,10 @@ data class NotionPageData(
 
         }
 
-    override val coverUrl: String?
+    val coverUrl: String?
         get() = cover?.external?.url
 
-    override val notionDbID: String
+    val notionDbID: String
         get() = parent?.databaseId!!
 
 

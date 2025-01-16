@@ -28,10 +28,6 @@ data class NotionDataBaseFake(
         TODO("Not yet implemented")
     }
 
-    override fun update(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard {
-        TODO("Not yet implemented")
-    }
-
     override fun clear() {
         TODO("Not yet implemented")
     }

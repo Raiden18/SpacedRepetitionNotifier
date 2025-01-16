@@ -36,14 +36,6 @@ class TelegramButtonListenerApp(
             chatId = config.telegram.chatId
         )
 
-        val notionApi = NotionApiImpl(
-            NotionClientApiImpl(
-                gson = createGson(),
-                client = environment.httpClient,
-                apiKey = config.notion.apiKey,
-            )
-        )
-
         val notionDataBases = SqlLiteNotionDataBases(dbConnection)
 
         val getOnlineDictionariesForFlashCard = GetOnlineDictionariesForFlashCard(config.notion.observedDatabases)
@@ -64,7 +56,12 @@ class TelegramButtonListenerApp(
             SqlLiteTelegramMessages(dbConnection),
         )
 
-        val spaceRepetitionSession = SpaceRepetitionSessionImpl(notionDataBases, notionApi)
+        val spaceRepetitionSession = SpaceRepetitionSessionImpl(
+            notionDataBases = notionDataBases,
+            apiKey = config.notion.apiKey,
+            gson = createGson(),
+            client = environment.httpClient,
+        )
 
         val flashCardsController = FlashCardsController(
             spaceRepetitionSession,
@@ -72,11 +69,13 @@ class TelegramButtonListenerApp(
             telegramNotificationView,
         )
 
-        
         telegramApi.getUpdates()
             .onEach {
                 when (val action = ButtonAction.parse(it.callback.value)) {
-                    is ButtonAction.DataBase -> flashCardsController.onDataBaseClicked(action.notionDbId)
+                    is ButtonAction.DataBase -> {
+                        flashCardsController.onDataBaseClicked(action.notionDbId)
+                    }
+
                     is ButtonAction.Forgotten -> flashCardsController.onForgottenClicked(action.flashCardId)
                     is ButtonAction.Recalled -> flashCardsController.onRecalledClicked(action.flashCardId)
                 }
