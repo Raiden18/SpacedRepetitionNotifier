@@ -1,6 +1,6 @@
 package org.danceofvalkyries.app.apps.buttonslistener.presentation.controller
 
-import org.danceofvalkyries.app.domain.notion.pages.flashcard.NotionPageFlashCard
+import org.danceofvalkyries.app.data.notion.pages.NotionPageFlashCard
 
 interface FlashCardView {
     suspend fun show(flashCard: NotionPageFlashCard)

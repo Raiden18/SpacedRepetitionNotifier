@@ -1,7 +1,7 @@
 package org.danceofvalkyries.app.domain.message
 
-import org.danceofvalkyries.app.domain.notion.pages.flashcard.NotionPageFlashCard
-import org.danceofvalkyries.dictionary.api.OnlineDictionary
+import org.danceofvalkyries.app.data.dictionary.OnlineDictionary
+import org.danceofvalkyries.app.data.notion.pages.NotionPageFlashCard
 import org.danceofvalkyries.telegram.api.models.TelegramButton
 import org.danceofvalkyries.telegram.api.models.TelegramImageUrl
 import org.danceofvalkyries.telegram.api.models.TelegramMessageBody
@@ -47,7 +47,7 @@ data class FlashCardMessage(
             .map {
                 TelegramButton(
                     text = "Look it up",
-                    action = TelegramButton.Action.Url(it.getWordUrl(memorizedInfo)),
+                    action = TelegramButton.Action.Url(it.getUrlFor(memorizedInfo)),
                 )
             }
 

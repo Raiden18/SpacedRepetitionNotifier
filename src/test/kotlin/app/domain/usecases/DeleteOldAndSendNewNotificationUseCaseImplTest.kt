@@ -7,7 +7,7 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import org.danceofvalkyries.app.apps.notifier.domain.usecaes.DeleteOldAndSendNewNotificationUseCase
 import org.danceofvalkyries.app.domain.message.notification.NeedRevisingNotificationMessage
-import org.danceofvalkyries.app.domain.telegram.TelegramMessages
+import org.danceofvalkyries.app.data.telegram.TelegramMessages
 import org.danceofvalkyries.telegram.api.SendMessageToTelegramChat
 import org.danceofvalkyries.telegram.api.TelegramChatApi
 import org.danceofvalkyries.telegram.api.models.TelegramMessage
@@ -20,7 +20,7 @@ class DeleteOldAndSendNewNotificationUseCaseImplTest : BehaviorSpec() {
     private val telegramChatApi: TelegramChatApi = mockk(relaxed = true)
     private val telegramMessages: TelegramMessages = mockk(relaxed = true)
 
-    private val savedMessage1: org.danceofvalkyries.app.domain.telegram.TelegramMessage = TelegramMessageFake(
+    private val savedMessage1: org.danceofvalkyries.app.data.telegram.TelegramMessage = TelegramMessageFake(
         id = 1,
         type = "123"
     )

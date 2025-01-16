@@ -1,6 +1,6 @@
 package org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.srs
 
-import org.danceofvalkyries.app.domain.notion.pages.flashcard.NotionPageFlashCard
+import org.danceofvalkyries.app.data.notion.pages.NotionPageFlashCard
 import org.danceofvalkyries.notion.api.models.NotionId
 
 interface SpaceRepetitionSession {

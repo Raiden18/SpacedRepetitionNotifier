@@ -1,10 +1,10 @@
 package org.danceofvalkyries.app.apps.buttonslistener.presentation.view
 
-import app.domain.notion.databases.NotionDataBases
+import org.danceofvalkyries.app.data.notion.databases.NotionDataBases
 import org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.NotificationView
 import org.danceofvalkyries.app.domain.message.notification.NeedRevisingNotificationMessage
 import org.danceofvalkyries.app.domain.message.notification.NotificationMessage
-import org.danceofvalkyries.app.domain.telegram.TelegramMessages
+import org.danceofvalkyries.app.data.telegram.TelegramMessages
 import org.danceofvalkyries.telegram.api.TelegramChatApi
 
 class TelegramNotificationView(

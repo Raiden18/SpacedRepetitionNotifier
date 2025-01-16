@@ -1,7 +1,7 @@
 package utils
 
-import app.domain.notion.databases.NotionDataBase
-import org.danceofvalkyries.app.domain.notion.pages.flashcard.NotionPageFlashCard
+import org.danceofvalkyries.app.data.notion.databases.NotionDataBase
+import org.danceofvalkyries.app.data.notion.pages.NotionPageFlashCard
 
 data class NotionDataBaseFake(
     override val id: String,

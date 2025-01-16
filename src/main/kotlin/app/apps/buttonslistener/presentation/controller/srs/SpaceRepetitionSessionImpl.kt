@@ -1,7 +1,7 @@
 package org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.srs
 
-import app.domain.notion.databases.NotionDataBases
-import org.danceofvalkyries.app.domain.notion.pages.flashcard.NotionPageFlashCard
+import org.danceofvalkyries.app.data.notion.databases.NotionDataBases
+import org.danceofvalkyries.app.data.notion.pages.NotionPageFlashCard
 import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
 import org.danceofvalkyries.notion.api.models.KnowLevels
 import org.danceofvalkyries.notion.api.models.NotionId

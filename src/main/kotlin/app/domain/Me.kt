@@ -1,6 +1,6 @@
 package org.danceofvalkyries.app.domain
 
-import org.danceofvalkyries.app.domain.notion.pages.flashcard.NotionPageFlashCard
+import org.danceofvalkyries.app.data.notion.pages.NotionPageFlashCard
 
 class Me {
 

@@ -1,12 +1,12 @@
 package org.danceofvalkyries.app.apps
 
-import app.data.sqlite.notion.databases.SqlLiteNotionDataBases
+import org.danceofvalkyries.app.data.notion.databases.sqlite.SqlLiteNotionDataBases
 import com.google.gson.Gson
 import org.danceofvalkyries.app.App
 import org.danceofvalkyries.app.apps.notifier.NotifierApp
-import org.danceofvalkyries.app.data.restful.notion.databases.RestFulNotionDataBases
-import org.danceofvalkyries.app.data.sqlite.telegram.messages.SqlLiteTelegramMessages
-import org.danceofvalkyries.app.domain.telegram.TelegramMessages
+import org.danceofvalkyries.app.data.notion.databases.restful.RestFulNotionDataBases
+import org.danceofvalkyries.app.data.telegram.sqlite.SqlLiteTelegramMessages
+import org.danceofvalkyries.app.data.telegram.TelegramMessages
 import org.danceofvalkyries.environment.Environment
 import org.danceofvalkyries.utils.Dispatchers
 

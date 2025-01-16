@@ -1,6 +1,6 @@
 package org.danceofvalkyries.app.apps.notifier.domain.usecaes
 
-import app.domain.notion.databases.NotionDataBases
+import org.danceofvalkyries.app.data.notion.databases.NotionDataBases
 import org.danceofvalkyries.app.domain.message.notification.DoneMessage
 import org.danceofvalkyries.app.domain.message.notification.NeedRevisingNotificationMessage
 

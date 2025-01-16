@@ -1,6 +1,6 @@
 package org.danceofvalkyries.app.domain.message.notification
 
-import app.domain.notion.databases.NotionDataBases
+import org.danceofvalkyries.app.data.notion.databases.NotionDataBases
 import org.danceofvalkyries.app.domain.message.ButtonAction
 import org.danceofvalkyries.telegram.api.models.TelegramButton
 import org.danceofvalkyries.telegram.api.models.TelegramMessageBody

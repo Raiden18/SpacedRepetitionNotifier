@@ -1,6 +1,6 @@
 package app.domain.usecases
 
-import app.domain.notion.databases.NotionDataBases
+import org.danceofvalkyries.app.data.notion.databases.NotionDataBases
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
 import io.mockk.coVerify
@@ -10,7 +10,7 @@ import org.danceofvalkyries.app.apps.notifier.domain.usecaes.DeleteOldAndSendNew
 import org.danceofvalkyries.app.apps.notifier.domain.usecaes.EditNotificationMessageUseCase
 import org.danceofvalkyries.app.domain.message.notification.DoneMessage
 import org.danceofvalkyries.app.domain.message.notification.NeedRevisingNotificationMessage
-import org.danceofvalkyries.app.domain.notion.pages.flashcard.NotionPageFlashCard
+import org.danceofvalkyries.app.data.notion.pages.NotionPageFlashCard
 import utils.NotionDataBaseFake
 import utils.NotionDataBasesFake
 import utils.NotionPageFlashCardFake

@@ -2,10 +2,8 @@ package app.domain.message
 
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
+import org.danceofvalkyries.app.data.dictionary.ConstantOnlineDictionary
 import org.danceofvalkyries.app.domain.message.FlashCardMessage
-import org.danceofvalkyries.app.domain.notion.pages.flashcard.NotionPageFlashCard
-import org.danceofvalkyries.dictionary.api.OnlineDictionary
-import org.danceofvalkyries.notion.api.models.NotionId
 import org.danceofvalkyries.telegram.api.models.TelegramButton
 import org.danceofvalkyries.telegram.api.models.TelegramMessageBody
 import org.danceofvalkyries.telegram.api.models.TelegramText
@@ -14,6 +12,7 @@ import utils.NotionPageFlashCardFake
 class FlashCardMessageTest : BehaviorSpec() {
 
     init {
+
         Given("FlashCard with full data") {
             val flashCardId = "228"
             val flashCard = NotionPageFlashCardFake(
@@ -21,16 +20,20 @@ class FlashCardMessageTest : BehaviorSpec() {
                 example = "I expected you to come",
                 explanation = "to wait to happen in the future",
                 coverUrl = "url",
+                id = flashCardId,
             )
 
             And("With Dictionary") {
-                val dictionary = OnlineDictionary("https://dictionary.cambridge.org/dictionary/english/")
+                val dictionary = ConstantOnlineDictionary("https://dictionary.cambridge.org/dictionary/english/")
 
                 When("Creates FlashCardMessage") {
                     lateinit var messageBody: TelegramMessageBody
 
                     beforeTest {
-                        messageBody = FlashCardMessage(flashCard, listOf(dictionary)).asTelegramBody()
+                        messageBody = FlashCardMessage(
+                            flashCard,
+                            listOf(dictionary),
+                        ).asTelegramBody()
                     }
 
                     Then("Should create formatted text") {

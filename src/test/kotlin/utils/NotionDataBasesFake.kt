@@ -1,7 +1,7 @@
 package utils
 
-import app.domain.notion.databases.NotionDataBase
-import app.domain.notion.databases.NotionDataBases
+import org.danceofvalkyries.app.data.notion.databases.NotionDataBase
+import org.danceofvalkyries.app.data.notion.databases.NotionDataBases
 
 data class NotionDataBasesFake(
     private val dataBases: List<NotionDataBase>

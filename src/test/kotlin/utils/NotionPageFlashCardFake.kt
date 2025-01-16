@@ -1,6 +1,6 @@
 package utils
 
-import org.danceofvalkyries.app.domain.notion.pages.flashcard.NotionPageFlashCard
+import org.danceofvalkyries.app.data.notion.pages.NotionPageFlashCard
 
 data class NotionPageFlashCardFake(
     override val id: String = "",

@@ -7,7 +7,7 @@ import io.mockk.coVerifyOrder
 import io.mockk.mockk
 import org.danceofvalkyries.app.apps.notifier.domain.usecaes.EditNotificationMessageUseCase
 import org.danceofvalkyries.app.domain.message.notification.DoneMessage
-import org.danceofvalkyries.app.domain.telegram.TelegramMessages
+import org.danceofvalkyries.app.data.telegram.TelegramMessages
 import org.danceofvalkyries.telegram.api.TelegramChatApi
 import utils.TelegramMessageFake
 
