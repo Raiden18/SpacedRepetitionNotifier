@@ -65,6 +65,7 @@ class SqlLiteNotionDataBases(
     }
 
     override suspend fun clear() {
+        iterate().forEach { it.clear() }
         createStatement().execute(
             SqlQuery {
                 delete()

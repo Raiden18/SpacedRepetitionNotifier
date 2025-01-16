@@ -1,15 +1,12 @@
 package notion.impl.client
 
 import com.google.gson.Gson
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import org.danceofvalkyries.utils.rest.AuthorizationBearerHeader
-import org.danceofvalkyries.utils.rest.ContentType
-import org.danceofvalkyries.utils.rest.ContentTypes
 import notion.impl.client.models.NotionPageData
 import notion.impl.client.models.request.NotionApiVersionHeader
 import notion.impl.client.models.request.SpacedRepetitionRequestBody
 import notion.impl.client.models.response.NotionDbResponse
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import org.danceofvalkyries.utils.rest.*
 
 class NotionClientApiImpl(
@@ -48,16 +45,6 @@ class NotionClientApiImpl(
             .results
     }
 
-    override suspend fun getNotionPage(id: String): NotionPageData {
-        return Request.Builder()
-            .url(urls.pages(id))
-            .get()
-            .headers(headers)
-            .build()
-            .request(client)
-            .parse(gson)
-    }
-
     override suspend fun updateInNotion(notionPageData: NotionPageData) {
         Request.Builder()
             .headers(headers)
@@ -67,7 +54,7 @@ class NotionClientApiImpl(
             .request(client)
     }
 
-    private data class NotionPagesResponse(
+    data class NotionPagesResponse(
         val results: List<NotionPageData>
     )
 }

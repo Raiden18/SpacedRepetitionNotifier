@@ -84,7 +84,7 @@ class MappersKtTest : FunSpec() {
         knowLevel1: Boolean? = null
     ) = NotionPageData(
         objectType = null,
-        id = id,
+        id = id!!,
         createdTime = null,
         lastEditedTime = null,
         createdBy = null,

@@ -11,7 +11,6 @@ import org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.Fla
 import org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.srs.SpaceRepetitionSessionImpl
 import org.danceofvalkyries.app.apps.buttonslistener.presentation.view.TelegramChatFlashCardView
 import org.danceofvalkyries.app.apps.buttonslistener.presentation.view.TelegramNotificationView
-import org.danceofvalkyries.app.data.sqlite.notion.pages.flashcard.SqlLiteNotionPageFlashCards
 import org.danceofvalkyries.app.data.sqlite.telegram.messages.SqlLiteTelegramMessages
 import org.danceofvalkyries.app.data.sqlite.telegram_and_notion.SqlLiteSentNotionPageFlashCardsToTelegram
 import org.danceofvalkyries.app.domain.message.ButtonAction
@@ -48,7 +47,6 @@ class TelegramButtonListenerApp(
         )
 
         val notionDataBases = SqlLiteNotionDataBases(dbConnection)
-        val notionPageFlashCards = SqlLiteNotionPageFlashCards(dbConnection)
 
         val getOnlineDictionariesForFlashCard = GetOnlineDictionariesForFlashCard(config.notion.observedDatabases)
 
@@ -66,13 +64,9 @@ class TelegramButtonListenerApp(
             notionDataBases,
             telegramApi,
             SqlLiteTelegramMessages(dbConnection),
-            notionPageFlashCards,
         )
 
-        val spaceRepetitionSession = SpaceRepetitionSessionImpl(
-            notionPageFlashCards,
-            notionApi,
-        )
+        val spaceRepetitionSession = SpaceRepetitionSessionImpl(notionDataBases, notionApi)
 
         val flashCardsController = FlashCardsController(
             spaceRepetitionSession,

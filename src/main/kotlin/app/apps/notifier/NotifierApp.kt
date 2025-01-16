@@ -5,7 +5,6 @@ import com.google.gson.Gson
 import notion.impl.client.NotionClientApiImpl
 import org.danceofvalkyries.app.App
 import org.danceofvalkyries.app.apps.notifier.domain.usecaes.*
-import org.danceofvalkyries.app.data.sqlite.notion.pages.flashcard.SqlLiteNotionPageFlashCards
 import org.danceofvalkyries.app.data.sqlite.telegram.messages.SqlLiteTelegramMessages
 import org.danceofvalkyries.environment.Environment
 import org.danceofvalkyries.notion.api.NotionApi
@@ -39,7 +38,7 @@ class NotifierApp(
         ReplaceAllNotionCacheUseCase(
             ReplaceFlashCardsInCacheUseCase(
                 ids,
-                SqlLiteNotionPageFlashCards(dbConnection),
+                SqlLiteNotionDataBases(dbConnection),
                 notionApi,
                 dispatchers,
             ),
@@ -54,7 +53,6 @@ class NotifierApp(
         AnalyzeFlashCardsAndSendNotificationUseCase(
             GetAllFlashCardsUseCase(
                 notionDatabases,
-                SqlLiteNotionPageFlashCards(dbConnection),
             ),
             notionDatabases,
             EditNotificationMessageUseCase(

@@ -18,11 +18,6 @@ class NotionApiImpl(
         )
     }
 
-    override suspend fun getFlashCardPage(notionId: NotionId): FlashCardNotionPage {
-        val response = clientApi.getNotionPage(notionId.get())
-        return response.toDomain()
-    }
-
     override suspend fun update(flashCardNotionPage: FlashCardNotionPage) {
         val updateRequest = flashCardNotionPage.toUpdateKnowLevels()
         clientApi.updateInNotion(updateRequest)

@@ -13,7 +13,7 @@ fun NotionPageData.toDomain(): FlashCardNotionPage {
         name = name,
         example = example,
         explanation = explanation,
-        coverUrl = urlCover,
+        coverUrl = coverUrl,
         knowLevels = KnowLevels(
             levels = (1..13).associate { getKnowLevel(it) }
                 .filterValues { it != null }
