@@ -1,50 +1,58 @@
 package org.danceofvalkyries.app.data.telegram.users.user
 
-import com.google.gson.Gson
-import io.ktor.http.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.flow.map
-import okhttp3.OkHttpClient
-import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
-import org.danceofvalkyries.app.data.telegram.message.restful.RestfulTelegramUpdateMessageButtonCallback
+import org.danceofvalkyries.app.data.notion.databases.NotionDataBases
 import org.danceofvalkyries.app.data.telegram.users.HumanUser
-import org.danceofvalkyries.app.data.telegram.jsonobjects.TelegramChatUrls
-import org.danceofvalkyries.app.data.telegram.jsons.UpdateResponseData
+import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
+import org.danceofvalkyries.notion.api.models.KnowLevels
+import org.danceofvalkyries.notion.api.models.NotionId
 
 class TelegramHumanUserImpl(
-    private val gson: Gson,
-    private val httpClient: OkHttpClient,
-    private val apiKey: String
+    private val localDbNotionDataBases: NotionDataBases,
+    private val restfulNotionDataBases: NotionDataBases,
 ) : HumanUser {
 
-    private val telegramChatUrls = TelegramChatUrls(apiKey)
-
-    override fun getActions(): Flow<TelegramMessage.Button.Callback> {
-        return channelFlow {
-            embeddedServer(Netty, port = 8080) {
-                routing {
-                    post("/webhook") {
-                        send(call.receiveText())
-                        call.respond(HttpStatusCode.OK)
-                    }
-                }
-            }.start(wait = true)
-        }.map { gson.fromJson(it, UpdateResponseData::class.java) }
+    override suspend fun forget(flashCardId: String) {
+        val flashCard = localDbNotionDataBases
+            .iterate()
+            .flatMap { it.iterate() }
             .map {
-                RestfulTelegramUpdateMessageButtonCallback(
-                    id = it.callbackQueryData.id,
-                    action = TelegramMessage.Button.Action.CallBackData(it.callbackQueryData.data!!),
-                    gson = gson,
-                    client = httpClient,
-                    telegramChatUrls = telegramChatUrls,
+                FlashCardNotionPage(
+                    name = it.name,
+                    coverUrl = it.coverUrl,
+                    notionDbID = NotionId(it.notionDbID),
+                    id = NotionId(it.id),
+                    example = it.example,
+                    explanation = it.explanation,
+                    knowLevels = KnowLevels(it.knowLevels)
+                )
+            }.first { it.id.rawValue == flashCardId }
+        val forgottenFlashCard = flashCard.forget()
+        localDbNotionDataBases.iterate().forEach { it.delete(forgottenFlashCard.id.rawValue) }
+        val restfullDataBase = restfulNotionDataBases.getBy(flashCard.notionDbID.rawValue)
+        restfullDataBase.getPageBy(flashCardId).setKnowLevels(forgottenFlashCard.knowLevels.levels)
+    }
+
+    override suspend fun recall(flashCardId: String) {
+        val flashCard = localDbNotionDataBases.iterate()
+            .flatMap { it.iterate() }
+            .map {
+                FlashCardNotionPage(
+                    name = it.name,
+                    coverUrl = it.coverUrl,
+                    notionDbID = NotionId(it.notionDbID),
+                    id = NotionId(it.id),
+                    example = it.example,
+                    explanation = it.explanation,
+                    knowLevels = KnowLevels(it.knowLevels)
                 )
             }
-
+            .filter { it.id.rawValue == flashCardId }
+            .first()
+        val recalledFlashCard = flashCard.recall()
+        localDbNotionDataBases.iterate().forEach {
+            it.delete(recalledFlashCard.id.rawValue)
+        }
+        val restfullDataBase = restfulNotionDataBases.getBy(flashCard.notionDbID.rawValue)
+        restfullDataBase.getPageBy(flashCardId).setKnowLevels(recalledFlashCard.knowLevels.levels)
     }
 }

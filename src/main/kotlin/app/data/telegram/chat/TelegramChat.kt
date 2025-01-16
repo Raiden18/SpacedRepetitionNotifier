@@ -1,5 +1,6 @@
 package org.danceofvalkyries.app.data.telegram.chat
 
+import kotlinx.coroutines.flow.Flow
 import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
 import org.danceofvalkyries.app.data.telegram.message.TelegramMessage.Button
 
@@ -19,6 +20,8 @@ interface TelegramChat {
     suspend fun delete(messageId: Long)
 
     suspend fun getMessage(messageId: Long): TelegramMessage
+
+    fun getEvents(): Flow<Button.Callback>
 }
 
 suspend fun TelegramChat.sendMessage(

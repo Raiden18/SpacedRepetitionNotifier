@@ -112,6 +112,12 @@ class TelegramBotUserImpl(
         )
     }
 
+    override suspend fun getAnyFlashCardFor(notionDbId: String): NotionPageFlashCard? {
+        return notionDataBases.iterate()
+            .flatMap { it.iterate() }
+            .firstOrNull { it.notionDbID == notionDbId }
+    }
+
     override suspend fun removeFlashCards() {
         telegramMessagesType.iterate().filter { it.type == "FLASH_CARD" }
             .forEach {
