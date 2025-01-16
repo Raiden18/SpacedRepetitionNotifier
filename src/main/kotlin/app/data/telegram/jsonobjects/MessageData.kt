@@ -1,4 +1,4 @@
-package org.danceofvalkyries.telegram.impl.models
+package org.danceofvalkyries.app.data.telegram.jsons
 
 import com.google.gson.annotations.SerializedName
 

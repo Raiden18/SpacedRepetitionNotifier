@@ -40,12 +40,14 @@ data class RestFulNotionPage(
             ?.content
 
     val explanation: String?
-        get() = properties
-            ?.get("Explanation")
-            ?.richText
-            ?.firstOrNull()
-            ?.text
-            ?.content
+        get() {
+            val explanation = properties?.get("Explanation")?.richText?.firstOrNull()
+            val answerProperty = properties?.get("Answers")?.richText?.firstOrNull()
+            return (explanation ?: answerProperty)
+                ?.text
+                ?.content
+
+        }
 
     val knowLevels: Map<Int, Boolean>
         get() = (1..13).associate { getKnowLevel(it) }

@@ -5,13 +5,13 @@ import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.danceofvalkyries.app.data.telegram.chat.TelegramChat
+import org.danceofvalkyries.app.data.telegram.jsonobjects.TelegramChatUrls
+import org.danceofvalkyries.app.data.telegram.jsons.ButtonData
+import org.danceofvalkyries.app.data.telegram.jsons.MessageData
+import org.danceofvalkyries.app.data.telegram.jsons.ReplyMarkupData
+import org.danceofvalkyries.app.data.telegram.jsons.TelegramMessageRootResponse
 import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
-import org.danceofvalkyries.telegram.impl.TelegramChatUrls
-import org.danceofvalkyries.telegram.impl.models.ButtonData
-import org.danceofvalkyries.telegram.impl.models.MessageData
-import org.danceofvalkyries.telegram.impl.models.ReplyMarkupData
-import org.danceofvalkyries.telegram.impl.models.TelegramMessageRootResponse
-import org.danceofvalkyries.utils.rest.jsonObject
+import org.danceofvalkyries.app.data.telegram.message.restful.RestfulTelegramMessage
 import org.danceofvalkyries.utils.rest.parse
 import org.danceofvalkyries.utils.rest.post
 import org.danceofvalkyries.utils.rest.request
@@ -22,6 +22,17 @@ class RestfulTelegramChat(
     private val gson: Gson,
     private val chatId: String,
 ) : TelegramChat {
+
+    private companion object {
+        val NOT_SUPPORTED_BY_TELEGRAM_TAGS = listOf(
+            "shutterstock.com",
+            "base64",
+            "?",
+        )
+
+        const val BLUE_SCREEN =
+            "https://neosmart.net/wiki/wp-content/uploads/sites/5/2013/08/unmountable-boot-volume.png"
+    }
 
     private val telegramChatUrls: TelegramChatUrls
         get() = TelegramChatUrls(
@@ -48,6 +59,7 @@ class RestfulTelegramChat(
                 }
             )
         )
+
         val response = sendMessage(telegramChatUrls.sendMessage(), requestBody)
         return RestfulTelegramMessage(
             chatId = chatId,
@@ -66,10 +78,12 @@ class RestfulTelegramChat(
         imageUrl: String,
         nestedButtons: List<List<TelegramMessage.Button>>
     ): TelegramMessage {
+        val isSupportedByTelegram = NOT_SUPPORTED_BY_TELEGRAM_TAGS.any { imageUrl.contains(it) }.not()
+        val photo = if (isSupportedByTelegram) imageUrl else BLUE_SCREEN
         val requestBody = MessageData(
             chatId = chatId,
             caption = caption,
-            photo = imageUrl,
+            photo = photo,
             parseMode = "MarkdownV2",
             replyMarkup = ReplyMarkupData(
                 nestedButtons.map {
@@ -91,7 +105,7 @@ class RestfulTelegramChat(
             telegramChatUrls = telegramChatUrls,
             id = response.messageId!!,
             text = caption,
-            imageUrl = imageUrl,
+            imageUrl = photo,
             nestedButtons = nestedButtons
         )
     }
@@ -115,19 +129,6 @@ class RestfulTelegramChat(
             imageUrl = null,
             nestedButtons = emptyList()
         )
-    }
-
-    override suspend fun answerCallBack(
-        callBackId: String
-    ) {
-        Request.Builder()
-            .url(telegramChatUrls.answerCallback())
-            .post(
-                jsonObject {
-                    "callback_query_id" to callBackId
-                }.let(gson::toJson)
-            ).build()
-            .request(client)
     }
 
     private fun sendMessage(url: HttpUrl, textBody: MessageData): MessageData {

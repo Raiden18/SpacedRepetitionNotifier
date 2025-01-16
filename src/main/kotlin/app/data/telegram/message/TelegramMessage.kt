@@ -14,6 +14,13 @@ interface TelegramMessage {
             data class Url(override val value: String) : Action(value)
             data class CallBackData(override val value: String) : Action(value)
         }
+
+        interface Callback {
+            val id: String
+            val action: Action
+
+            suspend fun answer()
+        }
     }
 
     fun edit(

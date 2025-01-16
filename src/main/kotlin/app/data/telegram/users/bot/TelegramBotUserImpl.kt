@@ -1,4 +1,4 @@
-package org.danceofvalkyries.app.data.users.bot
+package org.danceofvalkyries.app.data.telegram.users.bot
 
 import org.danceofvalkyries.app.data.dictionary.OnlineDictionaries
 import org.danceofvalkyries.app.data.notion.databases.NotionDataBases
@@ -8,6 +8,7 @@ import org.danceofvalkyries.app.data.telegram.chat.sendMessage
 import org.danceofvalkyries.app.data.telegram.message.ConstantTelegramMessageButton
 import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
 import org.danceofvalkyries.app.data.telegram.message_types.TelegramMessagesType
+import org.danceofvalkyries.app.data.telegram.users.TelegramBotUser
 import org.danceofvalkyries.app.domain.message.ButtonAction
 
 class TelegramBotUserImpl(
@@ -60,9 +61,9 @@ class TelegramBotUserImpl(
     }
 
     override suspend fun sendFlashCardMessage(flashCard: NotionPageFlashCard) {
-        val memorizedInfo = flashCard.name
-        val example = flashCard.example
-        val answer = flashCard.explanation
+        val memorizedInfo = flashCard.name.escapeCharacters()
+        val example = flashCard.example?.escapeCharacters()
+        val answer = flashCard.explanation?.escapeCharacters()
 
         val body = StringBuilder()
             .appendLine("*${memorizedInfo}*")
@@ -78,8 +79,14 @@ class TelegramBotUserImpl(
             .append("Choose:")
 
         val recallActions = listOf(
-            ConstantTelegramMessageButton("Forgot  ❌", TelegramMessage.Button.Action.CallBackData(ButtonAction.Forgotten(flashCard.id).rawValue)),
-            ConstantTelegramMessageButton("Recalled  ✅", TelegramMessage.Button.Action.CallBackData(ButtonAction.Recalled(flashCard.id).rawValue))
+            ConstantTelegramMessageButton(
+                "Forgot  ❌",
+                TelegramMessage.Button.Action.CallBackData(ButtonAction.Forgotten(flashCard.id).rawValue)
+            ),
+            ConstantTelegramMessageButton(
+                "Recalled  ✅",
+                TelegramMessage.Button.Action.CallBackData(ButtonAction.Recalled(flashCard.id).rawValue)
+            )
         )
 
         val dictionaryTelegramButtons = onlineDictionaries.iterate(flashCard.notionDbID)
@@ -111,5 +118,42 @@ class TelegramBotUserImpl(
                 telegramChat.delete(it.id)
                 telegramMessagesType.delete(it.id)
             }
+    }
+
+    override suspend fun updateNotificationMessage() {
+        val notificationMessage = telegramMessagesType.iterate().first { it.type == "NOTIFICATION" }
+
+        // TODO: Code duplication from send message. Eliminate copy-pasted code
+        val flashCards = notionDataBases.iterate()
+            .flatMap { it.iterate() }
+            .toList()
+        val telegramButtons = flashCards
+            .groupBy { it.notionDbID }
+            .map { (dbId, flashCards) ->
+                val db = notionDataBases.iterate().first { it.id == dbId }
+                ConstantTelegramMessageButton(
+                    text = "${db.name}: ${flashCards.count()}",
+                    action = TelegramMessage.Button.Action.CallBackData(ButtonAction.DataBase(db.id).rawValue),
+                )
+            }.map { listOf(it) }
+
+        telegramChat.getMessage(notificationMessage.id)
+            .edit(
+                newText = """You have ${flashCards.count()} flashcards to revise 🧠""".trimIndent(),
+                newImageUrl = null,
+                newNestedButtons = telegramButtons
+            )
+    }
+
+    private fun String.escapeCharacters(): String {
+        return replace("!", "\\!")
+            .replace("(", "\\(")
+            .replace(")", "\\)")
+            .replace("=", "\\=")
+            .replace(".", "\\.")
+            .replace("_", "\\_")
+            .replace("-", "\\-")
+            .replace("+", "\\+")
+            .replace("\\\\", "\\")
     }
 }

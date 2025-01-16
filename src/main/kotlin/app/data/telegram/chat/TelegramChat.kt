@@ -19,8 +19,6 @@ interface TelegramChat {
     suspend fun delete(messageId: Long)
 
     suspend fun getMessage(messageId: Long): TelegramMessage
-
-    suspend fun answerCallBack(callBackId: String)
 }
 
 suspend fun TelegramChat.sendMessage(

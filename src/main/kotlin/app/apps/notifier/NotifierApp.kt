@@ -8,8 +8,8 @@ import org.danceofvalkyries.app.data.notion.databases.restful.RestFulNotionDataB
 import org.danceofvalkyries.app.data.notion.databases.sqlite.SqlLiteNotionDataBases
 import org.danceofvalkyries.app.data.telegram.chat.restful.RestfulTelegramChat
 import org.danceofvalkyries.app.data.telegram.message_types.sqlite.SqlLiteTelegramMessagesType
-import org.danceofvalkyries.app.data.users.bot.TelegramBotUser
-import org.danceofvalkyries.app.data.users.bot.TelegramBotUserImpl
+import org.danceofvalkyries.app.data.telegram.users.TelegramBotUser
+import org.danceofvalkyries.app.data.telegram.users.bot.TelegramBotUserImpl
 import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.environment.Environment
 

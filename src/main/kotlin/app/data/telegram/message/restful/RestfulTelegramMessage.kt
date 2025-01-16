@@ -1,14 +1,14 @@
-package org.danceofvalkyries.app.data.telegram.chat.restful
+package org.danceofvalkyries.app.data.telegram.message.restful
 
 import com.google.gson.Gson
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import org.danceofvalkyries.app.data.telegram.jsonobjects.TelegramChatUrls
+import org.danceofvalkyries.app.data.telegram.jsons.ButtonData
+import org.danceofvalkyries.app.data.telegram.jsons.MessageData
+import org.danceofvalkyries.app.data.telegram.jsons.ReplyMarkupData
 import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
 import org.danceofvalkyries.app.data.telegram.message.TelegramMessage.Button
-import org.danceofvalkyries.telegram.impl.TelegramChatUrls
-import org.danceofvalkyries.telegram.impl.models.ButtonData
-import org.danceofvalkyries.telegram.impl.models.MessageData
-import org.danceofvalkyries.telegram.impl.models.ReplyMarkupData
 import org.danceofvalkyries.utils.rest.post
 import org.danceofvalkyries.utils.rest.request
 
@@ -45,6 +45,7 @@ class RestfulTelegramMessage(
                 }
             )
         )
+
         Request.Builder()
             .url(telegramChatUrls.editMessageText())
             .post(gson.toJson(request))

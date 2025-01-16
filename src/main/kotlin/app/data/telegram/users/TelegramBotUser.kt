@@ -1,4 +1,4 @@
-package org.danceofvalkyries.app.data.users.bot
+package org.danceofvalkyries.app.data.telegram.users
 
 import org.danceofvalkyries.app.data.notion.pages.NotionPageFlashCard
 
@@ -8,4 +8,5 @@ interface TelegramBotUser {
     suspend fun sendNewNotificationMessage()
     suspend fun sendFlashCardMessage(flashCard: NotionPageFlashCard)
     suspend fun removeFlashCards()
+    suspend fun updateNotificationMessage()
 }

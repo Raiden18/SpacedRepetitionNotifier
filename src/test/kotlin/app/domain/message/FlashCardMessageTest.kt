@@ -3,7 +3,6 @@ package app.domain.message
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import org.danceofvalkyries.app.data.dictionary.constant.ConstantOnlineDictionary
-import org.danceofvalkyries.app.domain.message.FlashCardMessage
 import org.danceofvalkyries.telegram.api.models.TelegramButton
 import org.danceofvalkyries.telegram.api.models.TelegramMessageBody
 import org.danceofvalkyries.telegram.api.models.TelegramText

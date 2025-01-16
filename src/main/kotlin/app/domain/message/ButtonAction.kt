@@ -11,7 +11,7 @@ sealed class ButtonAction(val rawValue: String) {
                 "forgottenFlashCardId" -> Forgotten(value)
                 "recalledFlashCardId" -> Recalled(value)
                 "dbId" -> DataBase(value)
-                else -> error("Unknown callback action: $rawValue")
+                else -> Unknown
             }
         }
     }
@@ -27,4 +27,6 @@ sealed class ButtonAction(val rawValue: String) {
     data class DataBase(val notionDbId: String) : ButtonAction(
         "dbId=${notionDbId}"
     )
+
+    data object Unknown : ButtonAction("Unknown")
 }

@@ -1,4 +1,4 @@
-package org.danceofvalkyries.telegram.impl
+package org.danceofvalkyries.app.data.telegram.jsonobjects
 
 import okhttp3.HttpUrl
 
