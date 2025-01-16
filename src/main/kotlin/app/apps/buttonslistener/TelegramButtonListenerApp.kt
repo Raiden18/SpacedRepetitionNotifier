@@ -7,7 +7,6 @@ import org.danceofvalkyries.app.App
 import org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.FlashCardsController
 import org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.srs.SpaceRepetitionSessionImpl
 import org.danceofvalkyries.app.apps.buttonslistener.presentation.view.TelegramNotificationView
-import org.danceofvalkyries.app.data.dictionary.OnlineDictionaries
 import org.danceofvalkyries.app.data.dictionary.constant.ConfigOnlineDictionaries
 import org.danceofvalkyries.app.data.notion.databases.NotionDataBases
 import org.danceofvalkyries.app.data.notion.databases.restful.RestFulNotionDataBases
@@ -16,9 +15,9 @@ import org.danceofvalkyries.app.data.telegram.chat.TelegramChat
 import org.danceofvalkyries.app.data.telegram.chat.restful.RestfulTelegramChat
 import org.danceofvalkyries.app.data.telegram.message_types.TelegramMessagesType
 import org.danceofvalkyries.app.data.telegram.message_types.sqlite.SqlLiteTelegramMessagesType
-import org.danceofvalkyries.app.data.telegram_and_notion.SentNotionPageFlashCardsToTelegram
 import org.danceofvalkyries.app.data.telegram_and_notion.sqlite.SqlLiteSentNotionPageFlashCardsToTelegram
 import org.danceofvalkyries.app.data.users.bot.TelegramBotUser
+import org.danceofvalkyries.app.data.users.bot.TelegramBotUserImpl
 import org.danceofvalkyries.app.domain.message.ButtonAction
 import org.danceofvalkyries.environment.Environment
 import org.danceofvalkyries.telegram.api.TelegramChatApi
@@ -50,7 +49,7 @@ fun TelegramButtonListenerApp(
         gson = Gson(),
         chatId = environment.config.telegram.chatId,
     )
-    val botUser = TelegramBotUser(
+    val botUser = TelegramBotUserImpl(
         telegramChat,
         sqlLiteNotionDataBases,
         sqlLiteTelegramMessages,

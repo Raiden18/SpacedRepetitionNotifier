@@ -9,6 +9,7 @@ import org.danceofvalkyries.app.data.notion.databases.sqlite.SqlLiteNotionDataBa
 import org.danceofvalkyries.app.data.telegram.chat.restful.RestfulTelegramChat
 import org.danceofvalkyries.app.data.telegram.message_types.sqlite.SqlLiteTelegramMessagesType
 import org.danceofvalkyries.app.data.users.bot.TelegramBotUser
+import org.danceofvalkyries.app.data.users.bot.TelegramBotUserImpl
 import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.environment.Environment
 
@@ -31,7 +32,7 @@ fun NotifierApp(
         chatId = environment.config.telegram.chatId,
     )
     val onlineDictionaries = ConfigOnlineDictionaries(environment.config.notion.observedDatabases)
-    val telegramBotUser = TelegramBotUser(
+    val telegramBotUser = TelegramBotUserImpl(
         telegramChat,
         sqlLiteNotionDatabases,
         sqlLiteTelegramMessages,
@@ -54,7 +55,7 @@ class NotifierApp(
 
     override suspend fun run() {
         clearAllCache()
-        downLoadNotionDataBasesAndPagesAndSaveToLocalDb()
+        downLoadNotionDataBasesAndPagesAndSaveThemToLocalDataBase()
         checkFlashCardsAndSendNotificationOrShowDoneMessage()
     }
 
@@ -62,7 +63,7 @@ class NotifierApp(
         sqlLiteNotionDataBases.clear()
     }
 
-    private suspend fun downLoadNotionDataBasesAndPagesAndSaveToLocalDb() {
+    private suspend fun downLoadNotionDataBasesAndPagesAndSaveThemToLocalDataBase() {
         restfulNotionDataBases.iterate().forEach { restfulNotionDb ->
             val sqlLiteNotionDb = sqlLiteNotionDataBases.add(restfulNotionDb)
             restfulNotionDb.iterate().forEach { restfulNotionPage ->
