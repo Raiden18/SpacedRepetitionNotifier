@@ -1,42 +1,30 @@
 package org.danceofvalkyries.app.data.users.bot
 
+import org.danceofvalkyries.app.data.dictionary.OnlineDictionaries
 import org.danceofvalkyries.app.data.notion.databases.NotionDataBases
+import org.danceofvalkyries.app.data.notion.pages.NotionPageFlashCard
 import org.danceofvalkyries.app.data.telegram.chat.TelegramChat
 import org.danceofvalkyries.app.data.telegram.chat.sendMessage
+import org.danceofvalkyries.app.data.telegram.message.ConstantTelegramMessageButton
 import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
 import org.danceofvalkyries.app.data.telegram.message_types.TelegramMessagesType
 import org.danceofvalkyries.app.data.users.User
-import org.danceofvalkyries.app.domain.message.notification.DoneMessage
-import org.danceofvalkyries.app.domain.message.notification.NeedRevisingNotificationMessage
-import org.danceofvalkyries.telegram.api.models.TelegramButton
+import org.danceofvalkyries.app.domain.message.ButtonAction
 
 class TelegramBotUser(
     private val telegramChat: TelegramChat,
     private val notionDataBases: NotionDataBases,
     private val telegramMessagesType: TelegramMessagesType,
+    private val onlineDictionaries: OnlineDictionaries,
 ) : User {
 
     suspend fun editOldNotificationMessageToDoneMessage() {
-        val doneMessage = DoneMessage()
         telegramMessagesType.iterate().forEach { message ->
-            val message = telegramChat.getMessage(messageId = message.id)
-            message.edit(
-                newText = doneMessage.asTelegramBody().text.get(),
-                newImageUrl = doneMessage.asTelegramBody().imageUrl?.get(),
-                newNestedButtons = doneMessage.asTelegramBody().nestedButtons.map {
-                    it.map { button ->
-                        object : TelegramMessage.Button {
-                            override val text: String
-                                get() = button.text
-                            override val action: TelegramMessage.Button.Action
-                                get() = when (val action = button.action) {
-                                    is TelegramButton.Action.Url -> TelegramMessage.Button.Action.Url(action.value)
-                                    is TelegramButton.Action.CallBackData -> TelegramMessage.Button.Action.CallBackData(action.value)
-                                }
-
-                        }
-                    }
-                }
+            val telegramMessage = telegramChat.getMessage(messageId = message.id)
+            telegramMessage.edit(
+                newText = """Good Job! 😎 Everything is revised! ✅""",
+                newImageUrl = null,
+                newNestedButtons = emptyList(),
             )
         }
     }
@@ -49,28 +37,80 @@ class TelegramBotUser(
     }
 
     suspend fun sendNewNotificationMessage() {
-        val notificationMessage = NeedRevisingNotificationMessage(notionDataBases)
+        val flashCards = notionDataBases.iterate()
+            .flatMap { it.iterate() }
+            .toList()
+        val telegramButtons = flashCards
+            .groupBy { it.notionDbID }
+            .map { (dbId, flashCards) ->
+                val db = notionDataBases.iterate().first { it.id == dbId }
+                ConstantTelegramMessageButton(
+                    text = "${db.name}: ${flashCards.count()}",
+                    action = TelegramMessage.Button.Action.CallBackData(ButtonAction.DataBase(db.id).rawValue),
+                )
+            }.map { listOf(it) }
         val sentMessage = telegramChat.sendMessage(
-            text = notificationMessage.asTelegramBody().text.get(),
-            imageUrl = notificationMessage.asTelegramBody().imageUrl?.get(),
-            nestedButtons = notificationMessage.asTelegramBody().nestedButtons.map {
-                it.map { button ->
-                    object : TelegramMessage.Button {
-                        override val text: String
-                            get() = button.text
-                        override val action: TelegramMessage.Button.Action
-                            get() = when (val action = button.action) {
-                                is TelegramButton.Action.Url -> TelegramMessage.Button.Action.Url(action.value)
-                                is TelegramButton.Action.CallBackData -> TelegramMessage.Button.Action.CallBackData(action.value)
-                            }
-
-                    }
-                }
-            }
+            text = """You have ${flashCards.count()} flashcards to revise 🧠""".trimIndent(),
+            imageUrl = null,
+            nestedButtons = telegramButtons
         )
         telegramMessagesType.add(
             id = sentMessage.id,
-            type = notificationMessage.type
+            type = "NOTIFICATION"
         )
+    }
+
+    suspend fun sendFlashCardMessage(flashCard: NotionPageFlashCard) {
+        val memorizedInfo = flashCard.name
+        val example = flashCard.example
+        val answer = flashCard.explanation
+
+        val body = StringBuilder()
+            .appendLine("*${memorizedInfo}*")
+        if (example != null) {
+            body.appendLine()
+                .appendLine("_${example}_")
+        }
+        if (answer != null) {
+            body.appendLine()
+                .appendLine("||${answer}||")
+        }
+        body.appendLine()
+            .append("Choose:")
+
+        val recallActions = listOf(
+            ConstantTelegramMessageButton("Forgot  ❌", TelegramMessage.Button.Action.CallBackData(ButtonAction.Forgotten(flashCard.id).rawValue)),
+            ConstantTelegramMessageButton("Recalled  ✅", TelegramMessage.Button.Action.CallBackData(ButtonAction.Recalled(flashCard.id).rawValue))
+        )
+
+        val dictionaryTelegramButtons = onlineDictionaries.iterate(flashCard.notionDbID)
+            .map {
+                ConstantTelegramMessageButton(
+                    text = "Look it up",
+                    action = TelegramMessage.Button.Action.Url(it.getUrlFor(memorizedInfo)),
+                )
+            }
+
+        val telegramMessage = telegramChat.sendMessage(
+            text = body.toString(),
+            imageUrl = flashCard.coverUrl,
+            nestedButtons = listOf(
+                recallActions,
+                dictionaryTelegramButtons
+            )
+        )
+
+        telegramMessagesType.add(
+            telegramMessage.id,
+            "FLASH_CARD"
+        )
+    }
+
+    suspend fun removeFlashCards() {
+        telegramMessagesType.iterate().filter { it.type == "FLASH_CARD" }
+            .forEach {
+                telegramChat.delete(it.id)
+                telegramMessagesType.delete(it.id)
+            }
     }
 }

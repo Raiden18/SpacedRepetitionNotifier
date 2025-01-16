@@ -2,6 +2,7 @@ package org.danceofvalkyries.app.apps.notifier
 
 import com.google.gson.Gson
 import org.danceofvalkyries.app.App
+import org.danceofvalkyries.app.data.dictionary.constant.ConfigOnlineDictionaries
 import org.danceofvalkyries.app.data.notion.databases.NotionDataBases
 import org.danceofvalkyries.app.data.notion.databases.restful.RestFulNotionDataBases
 import org.danceofvalkyries.app.data.notion.databases.sqlite.SqlLiteNotionDataBases
@@ -29,10 +30,12 @@ fun NotifierApp(
         gson = Gson(),
         chatId = environment.config.telegram.chatId,
     )
+    val onlineDictionaries = ConfigOnlineDictionaries(environment.config.notion.observedDatabases)
     val telegramBotUser = TelegramBotUser(
         telegramChat,
         sqlLiteNotionDatabases,
         sqlLiteTelegramMessages,
+        onlineDictionaries,
     )
     return NotifierApp(
         environment.config,
@@ -46,7 +49,7 @@ class NotifierApp(
     private val config: Config,
     private val restfulNotionDataBases: NotionDataBases,
     private val sqlLiteNotionDataBases: NotionDataBases,
-    private val telegramBotUser: TelegramBotUser,
+    private val telegramBot: TelegramBotUser,
 ) : App {
 
     override suspend fun run() {
@@ -70,10 +73,10 @@ class NotifierApp(
 
     private suspend fun checkFlashCardsAndSendNotificationOrShowDoneMessage() {
         if (getAllFlashCardsNeedRevising().count() >= config.flashCardsThreshold) {
-            telegramBotUser.deleteOldNotificationMessage()
-            telegramBotUser.sendNewNotificationMessage()
+            telegramBot.deleteOldNotificationMessage()
+            telegramBot.sendNewNotificationMessage()
         } else {
-            telegramBotUser.editOldNotificationMessageToDoneMessage()
+            telegramBot.editOldNotificationMessageToDoneMessage()
         }
     }
 

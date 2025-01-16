@@ -31,7 +31,6 @@ class TelegramNotificationView(
                                     is TelegramButton.Action.Url -> TelegramMessage.Button.Action.Url(action.value)
                                     is TelegramButton.Action.CallBackData -> TelegramMessage.Button.Action.CallBackData(action.value)
                                 }
-
                         }
                     }
                 }

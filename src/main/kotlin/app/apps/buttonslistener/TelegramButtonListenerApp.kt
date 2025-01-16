@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.onEach
 import org.danceofvalkyries.app.App
 import org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.FlashCardsController
 import org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.srs.SpaceRepetitionSessionImpl
-import org.danceofvalkyries.app.apps.buttonslistener.presentation.view.TelegramChatFlashCardView
 import org.danceofvalkyries.app.apps.buttonslistener.presentation.view.TelegramNotificationView
 import org.danceofvalkyries.app.data.dictionary.OnlineDictionaries
 import org.danceofvalkyries.app.data.dictionary.constant.ConfigOnlineDictionaries
@@ -19,6 +18,7 @@ import org.danceofvalkyries.app.data.telegram.message_types.TelegramMessagesType
 import org.danceofvalkyries.app.data.telegram.message_types.sqlite.SqlLiteTelegramMessagesType
 import org.danceofvalkyries.app.data.telegram_and_notion.SentNotionPageFlashCardsToTelegram
 import org.danceofvalkyries.app.data.telegram_and_notion.sqlite.SqlLiteSentNotionPageFlashCardsToTelegram
+import org.danceofvalkyries.app.data.users.bot.TelegramBotUser
 import org.danceofvalkyries.app.domain.message.ButtonAction
 import org.danceofvalkyries.environment.Environment
 import org.danceofvalkyries.telegram.api.TelegramChatApi
@@ -50,37 +50,34 @@ fun TelegramButtonListenerApp(
         gson = Gson(),
         chatId = environment.config.telegram.chatId,
     )
+    val botUser = TelegramBotUser(
+        telegramChat,
+        sqlLiteNotionDataBases,
+        sqlLiteTelegramMessages,
+        onlineDictionaries,
+    )
     return TelegramButtonListenerApp(
         dispatchers,
-        environment,
         sqlLiteNotionDataBases,
         restfulNotionDataBases,
-        sentNotionPageFlashCardsToTelegram,
         sqlLiteTelegramMessages,
         telegramApi,
-        onlineDictionaries,
-        telegramChat
+        telegramChat,
+        botUser
     )
 }
 
 class TelegramButtonListenerApp(
     private val dispatchers: Dispatchers,
-    private val environment: Environment,
     private val sqlLiteNotionDataBases: NotionDataBases,
     private val restfulNotionDataBases: NotionDataBases,
-    private val sqlLiteSentNotionPageFlashCardsToTelegram: SentNotionPageFlashCardsToTelegram,
     private val telegramMessagesType: TelegramMessagesType,
     private val telegramChatApi: TelegramChatApi,
-    private val onlineDictionaries: OnlineDictionaries,
     private val telegramChat: TelegramChat,
+    private val botUser: TelegramBotUser,
 ) : App {
 
     override suspend fun run() {
-        val telegramChatFlashCardView = TelegramChatFlashCardView(
-            telegramChat,
-            onlineDictionaries,
-            sqlLiteSentNotionPageFlashCardsToTelegram,
-        )
         val telegramNotificationView = TelegramNotificationView(
             sqlLiteNotionDataBases,
             telegramChat,
@@ -92,8 +89,8 @@ class TelegramButtonListenerApp(
         )
         val flashCardsController = FlashCardsController(
             spaceRepetitionSession,
-            telegramChatFlashCardView,
             telegramNotificationView,
+            botUser,
         )
         telegramChatApi.getUpdates()
             .onEach {
