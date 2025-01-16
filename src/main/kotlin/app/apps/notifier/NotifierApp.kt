@@ -2,22 +2,16 @@ package org.danceofvalkyries.app.apps.notifier
 
 import com.google.gson.Gson
 import org.danceofvalkyries.app.App
-import org.danceofvalkyries.app.apps.notifier.domain.usecaes.AnalyzeFlashCardsAndSendNotificationUseCase
-import org.danceofvalkyries.app.apps.notifier.domain.usecaes.DeleteOldAndSendNewNotificationUseCase
-import org.danceofvalkyries.app.apps.notifier.domain.usecaes.EditNotificationMessageUseCase
 import org.danceofvalkyries.app.data.notion.databases.NotionDataBases
 import org.danceofvalkyries.app.data.notion.databases.restful.RestFulNotionDataBases
 import org.danceofvalkyries.app.data.notion.databases.sqlite.SqlLiteNotionDataBases
-import org.danceofvalkyries.app.data.telegram.TelegramMessages
-import org.danceofvalkyries.app.data.telegram.sqlite.SqlLiteTelegramMessages
+import org.danceofvalkyries.app.data.telegram.chat.restful.RestfulTelegramChat
+import org.danceofvalkyries.app.data.telegram.message_types.sqlite.SqlLiteTelegramMessagesType
+import org.danceofvalkyries.app.data.users.bot.TelegramBotUser
+import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.environment.Environment
-import org.danceofvalkyries.telegram.api.TelegramChatApi
-import org.danceofvalkyries.telegram.impl.SendMessageToTelegramChat
-import org.danceofvalkyries.telegram.impl.TelegramChatApiImpl
-import org.danceofvalkyries.utils.Dispatchers
 
 fun NotifierApp(
-    dispatchers: Dispatchers,
     environment: Environment,
 ): App {
     val dbConnection = environment.dataBase.establishConnection()
@@ -28,57 +22,44 @@ fun NotifierApp(
         client = environment.httpClient,
         gson = Gson()
     )
-    val sqlLiteTelegramMessages = SqlLiteTelegramMessages(dbConnection)
-    val telegramChat = TelegramChatApiImpl(
+    val sqlLiteTelegramMessages = SqlLiteTelegramMessagesType(dbConnection)
+    val telegramChat = RestfulTelegramChat(
+        apiKey = environment.config.telegram.apiKey,
         client = environment.httpClient,
         gson = Gson(),
-        apiKey = environment.config.telegram.apiKey,
-        chatId = environment.config.telegram.chatId
+        chatId = environment.config.telegram.chatId,
     )
-    return NotifierApp(
-        dispatchers,
-        environment,
-        restfulNotionDatabases,
+    val telegramBotUser = TelegramBotUser(
+        telegramChat,
         sqlLiteNotionDatabases,
         sqlLiteTelegramMessages,
-        telegramChat,
+    )
+    return NotifierApp(
+        environment.config,
+        restfulNotionDatabases,
+        sqlLiteNotionDatabases,
+        telegramBotUser,
     )
 }
 
 class NotifierApp(
-    private val dispatchers: Dispatchers,
-    private val environment: Environment,
+    private val config: Config,
     private val restfulNotionDataBases: NotionDataBases,
     private val sqlLiteNotionDataBases: NotionDataBases,
-    private val sqlLiteTelegramMessages: TelegramMessages,
-    private val telegramChat: TelegramChatApi,
+    private val telegramBotUser: TelegramBotUser,
 ) : App {
-
-    private val config by lazy { environment.config }
 
     override suspend fun run() {
         clearAllCache()
-        downLoadNotionDbsAndPagesAndSaveToLocalDb()
-        AnalyzeFlashCardsAndSendNotificationUseCase(
-            sqlLiteNotionDataBases,
-            EditNotificationMessageUseCase(
-                sqlLiteTelegramMessages,
-                telegramChat
-            ),
-            DeleteOldAndSendNewNotificationUseCase(
-                telegramChat,
-                SendMessageToTelegramChat(telegramChat),
-                sqlLiteTelegramMessages
-            ),
-            config.flashCardsThreshold,
-        ).execute()
+        downLoadNotionDataBasesAndPagesAndSaveToLocalDb()
+        checkFlashCardsAndSendNotificationOrShowDoneMessage()
     }
 
     private suspend fun clearAllCache() {
         sqlLiteNotionDataBases.clear()
     }
 
-    private suspend fun downLoadNotionDbsAndPagesAndSaveToLocalDb() {
+    private suspend fun downLoadNotionDataBasesAndPagesAndSaveToLocalDb() {
         restfulNotionDataBases.iterate().forEach { restfulNotionDb ->
             val sqlLiteNotionDb = sqlLiteNotionDataBases.add(restfulNotionDb)
             restfulNotionDb.iterate().forEach { restfulNotionPage ->
@@ -86,4 +67,15 @@ class NotifierApp(
             }
         }
     }
+
+    private suspend fun checkFlashCardsAndSendNotificationOrShowDoneMessage() {
+        if (getAllFlashCardsNeedRevising().count() >= config.flashCardsThreshold) {
+            telegramBotUser.deleteOldNotificationMessage()
+            telegramBotUser.sendNewNotificationMessage()
+        } else {
+            telegramBotUser.editOldNotificationMessageToDoneMessage()
+        }
+    }
+
+    private suspend fun getAllFlashCardsNeedRevising() = sqlLiteNotionDataBases.iterate().flatMap { it.iterate() }
 }

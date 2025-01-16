@@ -19,11 +19,11 @@ data class MessageData(
     @SerializedName("reply_markup")
     val replyMarkup: ReplyMarkupData?,
     @SerializedName("photo")
-    val photo: Any?,
+    val photo: Any? = null,
     @SerializedName("caption")
-    val caption: String?,
+    val caption: String? = null,
     @SerializedName("text")
-    val text: String?,
+    val text: String? = null,
     @SerializedName("message_id")
-    val messageId: Long?,
+    val messageId: Long? = null,
 )

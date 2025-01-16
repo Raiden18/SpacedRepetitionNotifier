@@ -6,7 +6,7 @@ data class ButtonData(
     @SerializedName("text")
     val text: String,
     @SerializedName("callback_data")
-    val callbackData: String?,
+    val callbackData: String? = null,
     @SerializedName("url")
-    val url: String?
+    val url: String? = null,
 )

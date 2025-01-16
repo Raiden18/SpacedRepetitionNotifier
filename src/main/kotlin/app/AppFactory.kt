@@ -2,8 +2,8 @@ package org.danceofvalkyries.app
 
 import kotlinx.coroutines.Dispatchers
 import org.danceofvalkyries.app.apps.SandBoxApp
-import org.danceofvalkyries.app.apps.notifier.NotifierApp
 import org.danceofvalkyries.app.apps.buttonslistener.TelegramButtonListenerApp
+import org.danceofvalkyries.app.apps.notifier.NotifierApp
 import org.danceofvalkyries.environment.Environment
 import org.danceofvalkyries.utils.DispatchersImpl
 
@@ -27,7 +27,7 @@ private class AppFactoryImpl(
         val dispatchers = DispatchersImpl(Dispatchers.IO)
 
         return when (appKindArgument) {
-            "notifier" -> NotifierApp(dispatchers, environment)
+            "notifier" -> NotifierApp(environment)
             "button_listener" -> TelegramButtonListenerApp(dispatchers, environment)
             "sand_box" -> SandBoxApp(dispatchers, environment)
             else -> error("Unknown App kind argument: $appKindArgument")

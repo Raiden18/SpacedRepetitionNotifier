@@ -5,8 +5,8 @@ import com.google.gson.Gson
 import org.danceofvalkyries.app.App
 import org.danceofvalkyries.app.apps.notifier.NotifierApp
 import org.danceofvalkyries.app.data.notion.databases.restful.RestFulNotionDataBases
-import org.danceofvalkyries.app.data.telegram.sqlite.SqlLiteTelegramMessages
-import org.danceofvalkyries.app.data.telegram.TelegramMessages
+import org.danceofvalkyries.app.data.telegram.message_types.sqlite.SqlLiteTelegramMessagesType
+import org.danceofvalkyries.app.data.telegram.message_types.TelegramMessagesType
 import org.danceofvalkyries.environment.Environment
 import org.danceofvalkyries.utils.Dispatchers
 
@@ -15,12 +15,12 @@ class SandBoxApp(
     private val environment: Environment,
 ) : App {
 
-    private val notifier = NotifierApp(dispatchers, environment)
+    private val notifier = NotifierApp(environment)
 
     @Suppress("UNREACHABLE_CODE")
     override suspend fun run() {
         val dbConnection = environment.dataBase.establishConnection()
-        val telegramMessages: TelegramMessages = SqlLiteTelegramMessages(dbConnection)
+        val telegramMessagesType: TelegramMessagesType = SqlLiteTelegramMessagesType(dbConnection)
 
         val restNotionDataBases = RestFulNotionDataBases(
             desiredDbIds = environment.config.notion.observedDatabases.map { it.id },
