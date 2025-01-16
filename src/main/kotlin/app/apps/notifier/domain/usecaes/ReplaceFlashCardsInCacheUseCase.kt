@@ -35,7 +35,6 @@ fun ReplaceFlashCardsInCacheUseCase(
                 db.add(
                     id = flashCard.id.rawValue,
                     coverUrl = flashCard.coverUrl,
-                    notionDbId = flashCard.notionDbID.rawValue,
                     name = flashCard.name,
                     explanation = flashCard.explanation,
                     example = flashCard.example,

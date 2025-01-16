@@ -45,7 +45,6 @@ class ReplaceFlashCardsInCacheUseCaseKtTest : FunSpec() {
                 notionDb.add(
                     id = newFlashCard.id.rawValue,
                     coverUrl = newFlashCard.coverUrl,
-                    notionDbId = newFlashCard.notionDbID.rawValue,
                     name = newFlashCard.name,
                     explanation = newFlashCard.explanation,
                     example = newFlashCard.example,

@@ -15,7 +15,6 @@ data class NotionDataBaseFake(
     override fun add(
         id: String,
         coverUrl: String?,
-        notionDbId: String,
         name: String,
         example: String?,
         explanation: String?,

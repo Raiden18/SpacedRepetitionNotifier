@@ -24,14 +24,14 @@ class SqlLiteNotionDataBase(
     }
 
     private val pageIdColumn = TextTableColumn(
-        name = "id",
+        name = "page_id",
         primaryKey = PrimaryKey(),
     )
     private val pageExampleColumn = TextTableColumn("example")
     private val pageAnswerColumn = TextTableColumn("answer")
     private val pageImageUrlColumn = TextTableColumn("image_url")
     private val pageNameColumn = TextTableColumn("name")
-    private val pageNotionDbIdColumn = TextTableColumn("notion_db_id") // TODO: Remove and reuse from parent??
+    private val pageNotionDbIdColumn = TextTableColumn(idColumn.name)
     private val pageKnowLevelsColumns = (1..13).associateWith { createKnowLevelColumn(it) }
 
     override val name: String
@@ -74,7 +74,6 @@ class SqlLiteNotionDataBase(
     override fun add(
         id: String,
         coverUrl: String?,
-        notionDbId: String,
         name: String,
         example: String?,
         explanation: String?,
@@ -95,7 +94,7 @@ class SqlLiteNotionDataBase(
                         pageNameColumn to name,
                         pageExampleColumn to example,
                         pageImageUrlColumn to coverUrl,
-                        pageNotionDbIdColumn to notionDbId,
+                        pageNotionDbIdColumn to this@SqlLiteNotionDataBase.id,
                         pageAnswerColumn to explanation,
                     ) + knowLevelDbValues
                 )

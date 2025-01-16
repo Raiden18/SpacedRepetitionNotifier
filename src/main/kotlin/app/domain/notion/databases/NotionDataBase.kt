@@ -11,7 +11,6 @@ interface NotionDataBase {
     fun add(
         id: String,
         coverUrl: String?,
-        notionDbId: String, // TODO: Delete??
         name: String,
         example: String?,
         explanation: String?,
