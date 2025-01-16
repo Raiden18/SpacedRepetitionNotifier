@@ -1,6 +1,7 @@
-package org.danceofvalkyries.app.data.dictionary
+package org.danceofvalkyries.app.data.dictionary.constant
 
 import okhttp3.HttpUrl.Companion.toHttpUrl
+import org.danceofvalkyries.app.data.dictionary.OnlineDictionary
 
 data class ConstantOnlineDictionary(
     private val url: String

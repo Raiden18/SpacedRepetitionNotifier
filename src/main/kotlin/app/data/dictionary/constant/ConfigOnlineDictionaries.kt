@@ -1,6 +1,5 @@
-package org.danceofvalkyries.app.data.dictionary.config
+package org.danceofvalkyries.app.data.dictionary.constant
 
-import org.danceofvalkyries.app.data.dictionary.ConstantOnlineDictionary
 import org.danceofvalkyries.app.data.dictionary.OnlineDictionaries
 import org.danceofvalkyries.app.data.dictionary.OnlineDictionary
 import org.danceofvalkyries.config.domain.ObservedDatabase

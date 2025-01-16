@@ -15,8 +15,7 @@ fun AnalyzeFlashCardsAndSendNotificationUseCase(
     threshold: Int,
 ): AnalyzeFlashCardsAndSendNotificationUseCase {
     return AnalyzeFlashCardsAndSendNotificationUseCase {
-        val flashCards = notionDatabases.iterate()
-            .flatMap { it.iterate() }
+        val flashCards = notionDatabases.iterate().flatMap { it.iterate() }
         if (flashCards.count() >= threshold) {
             val notificationMessage = NeedRevisingNotificationMessage(notionDatabases)
             deleteOldAndSendNewNotificationUseCase.execute(notificationMessage)

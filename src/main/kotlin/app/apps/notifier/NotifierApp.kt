@@ -29,12 +29,19 @@ fun NotifierApp(
         gson = Gson()
     )
     val sqlLiteTelegramMessages = SqlLiteTelegramMessages(dbConnection)
+    val telegramChat = TelegramChatApiImpl(
+        client = environment.httpClient,
+        gson = Gson(),
+        apiKey = environment.config.telegram.apiKey,
+        chatId = environment.config.telegram.chatId
+    )
     return NotifierApp(
         dispatchers,
         environment,
         restfulNotionDatabases,
         sqlLiteNotionDatabases,
-        sqlLiteTelegramMessages
+        sqlLiteTelegramMessages,
+        telegramChat,
     )
 }
 
@@ -44,31 +51,30 @@ class NotifierApp(
     private val restfulNotionDataBases: NotionDataBases,
     private val sqlLiteNotionDataBases: NotionDataBases,
     private val sqlLiteTelegramMessages: TelegramMessages,
+    private val telegramChat: TelegramChatApi,
 ) : App {
 
     private val config by lazy { environment.config }
 
     override suspend fun run() {
-        val telegramApi = createTelegramChatApi()
-        clearDataBase()
+        clearAllCache()
         downLoadNotionDbsAndPagesAndSaveToLocalDb()
-
         AnalyzeFlashCardsAndSendNotificationUseCase(
             sqlLiteNotionDataBases,
             EditNotificationMessageUseCase(
                 sqlLiteTelegramMessages,
-                telegramApi
+                telegramChat
             ),
             DeleteOldAndSendNewNotificationUseCase(
-                telegramApi,
-                SendMessageToTelegramChat(telegramApi),
+                telegramChat,
+                SendMessageToTelegramChat(telegramChat),
                 sqlLiteTelegramMessages
             ),
             config.flashCardsThreshold,
         ).execute()
     }
 
-    private suspend fun clearDataBase() {
+    private suspend fun clearAllCache() {
         sqlLiteNotionDataBases.clear()
     }
 
@@ -79,18 +85,5 @@ class NotifierApp(
                 sqlLiteNotionDb.add(restfulNotionPage)
             }
         }
-    }
-
-    private fun createTelegramChatApi(): TelegramChatApi {
-        return TelegramChatApiImpl(
-            client = environment.httpClient,
-            gson = createGson(),
-            apiKey = config.telegram.apiKey,
-            chatId = config.telegram.chatId
-        )
-    }
-
-    private fun createGson(): Gson {
-        return Gson()
     }
 }

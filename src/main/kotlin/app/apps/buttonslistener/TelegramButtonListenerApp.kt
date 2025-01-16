@@ -9,7 +9,7 @@ import org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.srs
 import org.danceofvalkyries.app.apps.buttonslistener.presentation.view.TelegramChatFlashCardView
 import org.danceofvalkyries.app.apps.buttonslistener.presentation.view.TelegramNotificationView
 import org.danceofvalkyries.app.data.dictionary.OnlineDictionaries
-import org.danceofvalkyries.app.data.dictionary.config.ConfigOnlineDictionaries
+import org.danceofvalkyries.app.data.dictionary.constant.ConfigOnlineDictionaries
 import org.danceofvalkyries.app.data.notion.databases.NotionDataBases
 import org.danceofvalkyries.app.data.notion.databases.restful.RestFulNotionDataBases
 import org.danceofvalkyries.app.data.notion.databases.sqlite.SqlLiteNotionDataBases
@@ -18,7 +18,6 @@ import org.danceofvalkyries.app.data.telegram.sqlite.SqlLiteTelegramMessages
 import org.danceofvalkyries.app.data.telegram_and_notion.SentNotionPageFlashCardsToTelegram
 import org.danceofvalkyries.app.data.telegram_and_notion.sqlite.SqlLiteSentNotionPageFlashCardsToTelegram
 import org.danceofvalkyries.app.domain.message.ButtonAction
-import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.environment.Environment
 import org.danceofvalkyries.telegram.api.TelegramChatApi
 import org.danceofvalkyries.telegram.impl.SendMessageToTelegramChat
