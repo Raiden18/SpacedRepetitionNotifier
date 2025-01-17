@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
+import io.kotest.mpp.stacktraces
 import okhttp3.OkHttpClient
 import org.danceofvalkyries.app.apps.notifier.NotifierApp
 import org.danceofvalkyries.app.data.notion.databases.restful.RestFulNotionDataBases
@@ -18,7 +19,7 @@ class NotifierAppTest : BehaviorSpec() {
     private val GREEK_SOUNDS_AND_LETTERS_NOTION_DATA_BASE_ID = "greek_sounds_and_letters_db_id"
 
     private val TELEGRAM_SEND_MESSAGE_URL = "https://api.telegram.org/bot${TestData.TELEGRAM_API_KEY}/sendMessage"
-    private val TELEGRAM_END_MESSAGE_URL = "https://api.telegram.org/bot${TestData.TELEGRAM_API_KEY}/editMessageText"
+    private val TELEGRAM_EDIT_MESSAGE_URL = "https://api.telegram.org/bot${TestData.TELEGRAM_API_KEY}/editMessageText"
     private val GREEK_LETTERS_AND_SOUNDS = "Greek Letters and Sounds"
 
     private val greekSound1 = TestData.Notion.GreekLetterAndSounds.pageResponse(
@@ -45,6 +46,7 @@ class NotifierAppTest : BehaviorSpec() {
 
 
     init {
+        stacktraces
         beforeTest {
             httpClient = HttpClientFake()
             sentTelegramMessagesType = SentTelegramMessagesTypeFake()
@@ -75,7 +77,7 @@ class NotifierAppTest : BehaviorSpec() {
 
             notifierApp = NotifierApp(
                 DispatchersFake(),
-                flashCardsThreshold = 1,
+                flashCardsThreshold = 2,
                 restfulNotionDataBases,
                 sqlLiteNotionDataBases,
                 telegramBot,
@@ -111,12 +113,14 @@ class NotifierAppTest : BehaviorSpec() {
 
                     Then("Should send notification to Telegram") {
 
-                        val expectedNotificationMessage = TestData.Telegram.SendMessage.notificationRequestWithOneButton(
-                            text = """You have 2 flashcards to revise 🧠""",
-                            buttonTitle = "$GREEK_LETTERS_AND_SOUNDS: 2",
-                            notionDataBaseId = GREEK_SOUNDS_AND_LETTERS_NOTION_DATA_BASE_ID
-                        )
-                        val notificationBodyResponse = TestData.Telegram.SendMessage.notificationResponseWithOneButton(messageId = 228)
+                        val expectedNotificationMessage =
+                            TestData.Telegram.SendMessage.notificationRequestWithOneButton(
+                                text = """You have 2 flashcards to revise 🧠""",
+                                buttonTitle = "$GREEK_LETTERS_AND_SOUNDS: 2",
+                                notionDataBaseId = GREEK_SOUNDS_AND_LETTERS_NOTION_DATA_BASE_ID
+                            )
+                        val notificationBodyResponse =
+                            TestData.Telegram.SendMessage.notificationResponseWithOneButton(messageId = 228)
 
                         httpClient.mockPostResponse(
                             url = TELEGRAM_SEND_MESSAGE_URL,
@@ -168,44 +172,47 @@ class NotifierAppTest : BehaviorSpec() {
                         )
                     }
 
-                    And("App is being run") {
-
-                        val expectedNotificationMessage = TestData.Telegram.SendMessage.notificationRequestWithOneButton(
+                    val expectedNotificationMessage =
+                        TestData.Telegram.SendMessage.notificationRequestWithOneButton(
                             text = """You have 2 flashcards to revise 🧠""",
                             buttonTitle = "$GREEK_LETTERS_AND_SOUNDS: 2",
                             notionDataBaseId = GREEK_SOUNDS_AND_LETTERS_NOTION_DATA_BASE_ID
                         )
-                        val notificationBodyResponse = TestData.Telegram.SendMessage.notificationResponseWithOneButton(messageId = 322)
+                    val notificationBodyResponse =
+                        TestData.Telegram.SendMessage.notificationResponseWithOneButton(messageId = 322)
 
-                        beforeTest {
-                            httpClient.mockPostResponse(
-                                url = TELEGRAM_SEND_MESSAGE_URL,
-                                body = expectedNotificationMessage,
-                                response = notificationBodyResponse
-                            )
+                    beforeTest {
+                        httpClient.mockPostResponse(
+                            url = TELEGRAM_SEND_MESSAGE_URL,
+                            body = expectedNotificationMessage,
+                            response = notificationBodyResponse
+                        )
 
-                            notifierApp.run()
-                        }
+                        notifierApp.run()
+                    }
 
-                        Then("Should send NEW notification to Telegram") {
-                            httpClient.postRequests shouldContain PostRequest(
-                                url = TELEGRAM_SEND_MESSAGE_URL,
-                                body = expectedNotificationMessage,
-                            )
-                        }
+                    Then("Should send NEW notification to Telegram") {
+                        httpClient.postRequests shouldContain PostRequest(
+                            url = TELEGRAM_SEND_MESSAGE_URL,
+                            body = expectedNotificationMessage,
+                        )
+                    }
 
-                        Then("Should Delete OLD notification From DB") {
-                            val containsOldMessage = sentTelegramMessagesType.iterate().toList().firstOrNull { it.id == sentNotificationMessageId }
-                            containsOldMessage shouldBe null
-                        }
+                    Then("Should Delete OLD notification From DB") {
+                        val containsOldMessage = sentTelegramMessagesType.iterate().toList()
+                            .firstOrNull { it.id == sentNotificationMessageId }
+                        containsOldMessage shouldBe null
+                    }
 
-                        Then("Should Delete OLD notification from TELEGRAM") {
-                            httpClient.getUrlRequests shouldContain TestData.Telegram.Urls.getDeleteMessageUrl(sentNotificationMessageId)
-                        }
+                    Then("Should Delete OLD notification from Telegram") {
+                        httpClient.getUrlRequests shouldContain TestData.Telegram.Urls.getDeleteMessageUrl(
+                            sentNotificationMessageId
+                        )
                     }
                 }
 
                 When("Number of Flash Cards is less than threshold") {
+
                     beforeTest {
                         httpClient.mockPostResponse(
                             url = "https://api.notion.com/v1/databases/$GREEK_SOUNDS_AND_LETTERS_NOTION_DATA_BASE_ID/query",
@@ -214,27 +221,28 @@ class NotifierAppTest : BehaviorSpec() {
                         )
                     }
 
-                    Then("Then should edit OLD notification to DONE") {
-                        val text = """Good Job! 😎 Everything is revised! ✅"""
-                        val expectedNotificationMessage = TestData.Telegram.SendMessage.notificationDoneRequest(
-                            messageId = sentNotificationMessageId,
-                            text = text
-                        )
-                        val notificationBodyResponse = TestData.Telegram.SendMessage.notificationDoneResponse(
-                            messageId = sentNotificationMessageId,
-                            text = text,
-                        )
+                    val text = """Good Job! 😎 Everything is revised! ✅"""
+                    val expectedNotificationMessage = TestData.Telegram.SendMessage.notificationDoneRequest(
+                        messageId = sentNotificationMessageId,
+                        text = text
+                    )
+                    val notificationBodyResponse = TestData.Telegram.SendMessage.notificationDoneResponse(
+                        messageId = sentNotificationMessageId,
+                        text = text,
+                    )
 
+                    beforeTest {
                         httpClient.mockPostResponse(
-                            url = TELEGRAM_END_MESSAGE_URL,
+                            url = TELEGRAM_EDIT_MESSAGE_URL,
                             body = expectedNotificationMessage,
                             response = notificationBodyResponse
                         )
-
                         notifierApp.run()
+                    }
 
+                    Then("Then should edit PREVIOUS notification to DONE") {
                         httpClient.postRequests shouldContain PostRequest(
-                            url = TELEGRAM_SEND_MESSAGE_URL,
+                            url = TELEGRAM_EDIT_MESSAGE_URL,
                             body = expectedNotificationMessage,
                         )
                     }

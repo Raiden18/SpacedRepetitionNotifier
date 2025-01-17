@@ -1,6 +1,8 @@
 package integrations
 
 import com.google.gson.Gson
+import org.danceofvalkyries.app.data.telegram.jsons.MessageData
+import org.danceofvalkyries.app.data.telegram.jsons.ReplyMarkupData
 import org.danceofvalkyries.utils.rest.jsonObject
 
 object TestData {
@@ -556,14 +558,15 @@ object TestData {
             }
 
             fun notificationDoneRequest(messageId: Long, text: String): String {
-                return jsonObject {
-                    "chat_id" to CHAT_ID
-                    "message_id" to messageId
-                    "reply_markup" to jsonObject {
-                        "inline_keyboard" to emptyList<Any>()
-                    }
-                    "text" to text
-                }.let { Gson().toJson(it) }
+                return MessageData(
+                    chatId = CHAT_ID,
+                    text = text,
+                    replyMarkup = ReplyMarkupData(
+                        emptyList()
+                    ),
+                    parseMode = "MarkdownV2",
+                    messageId = messageId,
+                ).let { Gson().toJson(it) }
             }
 
             fun notificationDoneResponse(messageId: Long, text: String): String {

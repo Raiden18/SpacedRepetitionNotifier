@@ -63,7 +63,7 @@ class RestfulTelegramChat(
         val response = sendMessage(telegramChatUrls.sendMessage(), requestBody)
         return RestfulTelegramMessage(
             chatId = chatId,
-            client = client,
+            client = httpClient,
             gson = gson,
             telegramChatUrls = telegramChatUrls,
             id = response.messageId!!,
@@ -100,7 +100,7 @@ class RestfulTelegramChat(
         val response = sendMessage(telegramChatUrls.sendPhoto(), requestBody)
         return RestfulTelegramMessage(
             chatId = chatId,
-            client = client,
+            client = httpClient,
             gson = gson,
             telegramChatUrls = telegramChatUrls,
             id = response.messageId!!,
@@ -121,7 +121,7 @@ class RestfulTelegramChat(
     override suspend fun getMessage(messageId: Long): TelegramMessage {
         return RestfulTelegramMessage(
             chatId = chatId,
-            client = client,
+            client = httpClient,
             gson = gson,
             telegramChatUrls = telegramChatUrls,
             id = messageId,
