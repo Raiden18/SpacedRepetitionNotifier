@@ -18,7 +18,7 @@ class ButtonsListenersTest : BehaviorSpec() {
     private lateinit var telegramButtonListenerApp: TelegramButtonListenerApp
     private lateinit var ktorWebServer: KtorWebServerFake
     private lateinit var httpClientFake: HttpClientFake
-    private lateinit var notionDataBasesFake: NotionDataBasesFake
+    private lateinit var sqlLiteNotionDataBasesFake: SqlLiteNotionDataBasesFake
 
     init {
 
@@ -26,7 +26,7 @@ class ButtonsListenersTest : BehaviorSpec() {
             val gson = Gson()
             ktorWebServer = KtorWebServerFake(gson)
             httpClientFake = HttpClientFake()
-            notionDataBasesFake = NotionDataBasesFake()
+            sqlLiteNotionDataBasesFake = SqlLiteNotionDataBasesFake()
             val telegramChat = RestfulTelegramChat(
                 apiKey = TestData.TELEGRAM_API_KEY,
                 Gson(),
@@ -34,10 +34,10 @@ class ButtonsListenersTest : BehaviorSpec() {
                 ktorWebServer,
                 httpClientFake
             )
-            val restfulNotionDataBases = NotionDataBasesFake()
+            val restfulNotionDataBases = SqlLiteNotionDataBasesFake()
             val telegramMessagesType = SentTelegramMessagesTypeFake()
             val humanUser = TelegramHumanUserImpl(
-                notionDataBasesFake,
+                sqlLiteNotionDataBasesFake,
                 restfulNotionDataBases,
             )
             val onlineDictionariesFake = OnlineDictionariesFake(
@@ -45,7 +45,7 @@ class ButtonsListenersTest : BehaviorSpec() {
             )
             val botUser = TelegramBotUserImpl(
                 telegramChat,
-                notionDataBasesFake,
+                sqlLiteNotionDataBasesFake,
                 telegramMessagesType,
                 onlineDictionariesFake
             )
@@ -158,7 +158,7 @@ class ButtonsListenersTest : BehaviorSpec() {
                     pages = mutableListOf(word1, word2)
                 )
 
-                notionDataBasesFake.add(notionDataBase)
+                sqlLiteNotionDataBasesFake.add(notionDataBase)
             }
 
             When("User taps on the Button") {

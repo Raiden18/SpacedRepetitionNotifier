@@ -80,10 +80,7 @@ class NotifierApp(
 
     private suspend fun downLoadNotionDataBasesAndPagesAndSaveThemToLocalDataBase() {
         restfulNotionDataBases.iterate().forEach { restfulNotionDb ->
-            val sqlLiteNotionDb = sqlLiteNotionDataBases.add(restfulNotionDb)
-            restfulNotionDb.iterate().forEach { restfulNotionPage ->
-                sqlLiteNotionDb.add(restfulNotionPage)
-            }
+            sqlLiteNotionDataBases.add(restfulNotionDb)
         }
     }
 

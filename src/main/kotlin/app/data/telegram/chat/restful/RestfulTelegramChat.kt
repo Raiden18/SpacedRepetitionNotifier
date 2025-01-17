@@ -145,13 +145,11 @@ class RestfulTelegramChat(
     }
 
     private fun sendMessage(url: HttpUrl, textBody: MessageData): MessageData {
-        println(gson.toJson(textBody))
         val response = httpClient.post(
             url = url.toString(),
             body = gson.toJson(textBody),
             headers = emptyList(),
         )
-        println(response)
         return gson.fromJson(response.responseBody, TelegramMessageRootResponse::class.java).result
     }
 }

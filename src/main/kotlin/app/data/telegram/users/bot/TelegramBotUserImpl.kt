@@ -40,6 +40,7 @@ class TelegramBotUserImpl(
         val flashCards = notionDataBases.iterate()
             .flatMap { it.iterate() }
             .toList()
+        println(flashCards.count())
         val telegramButtons = flashCards
             .groupBy { it.notionDbID }
             .map { (dbId, flashCards) ->
@@ -114,7 +115,6 @@ class TelegramBotUserImpl(
 
     override suspend fun getAnyFlashCardFor(notionDbId: String): NotionPageFlashCard? {
         return notionDataBases.iterate()
-            .onEach { println("QQQ: ${it.id}") }
             .flatMap { it.iterate() }
             .firstOrNull { it.notionDbID == notionDbId }
     }

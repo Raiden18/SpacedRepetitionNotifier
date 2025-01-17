@@ -6,7 +6,7 @@ import org.danceofvalkyries.app.domain.message.notification.NeedRevisingNotifica
 import org.danceofvalkyries.telegram.api.models.TelegramButton
 import org.danceofvalkyries.telegram.api.models.TelegramText
 import utils.NotionDataBaseFake
-import utils.NotionDataBasesFake
+import utils.SqlLiteNotionDataBasesFake
 import utils.NotionPageFlashCardFake
 
 class NeedRevisingNotificationMessageTest : BehaviorSpec() {
@@ -43,7 +43,7 @@ class NeedRevisingNotificationMessageTest : BehaviorSpec() {
             )
             When("Creates Telegram Message") {
                 val telegramMessage = NeedRevisingNotificationMessage(
-                    NotionDataBasesFake(mutableListOf(englishVocabularyDb, greekVocabularyDb, englishGrammarDb))
+                    SqlLiteNotionDataBasesFake(mutableListOf(englishVocabularyDb, greekVocabularyDb, englishGrammarDb))
                 ).asTelegramBody()
 
                 Then("Should Show text with total count of unrevised flashcards") {

@@ -22,7 +22,7 @@ class NotifierAppTest : BehaviorSpec() {
     private lateinit var notifierApp: NotifierApp
     private lateinit var httpClient: HttpClientFake
     private lateinit var sentTelegramMessagesType: SentTelegramMessagesTypeFake
-    private lateinit var sqlLiteNotionDataBases: NotionDataBasesFake
+    private lateinit var sqlLiteNotionDataBases: SqlLiteNotionDataBasesFake
 
 
     init {
@@ -36,7 +36,7 @@ class NotifierAppTest : BehaviorSpec() {
                 KtorWebServerFake(Gson()),
                 httpClient,
             )
-            sqlLiteNotionDataBases = NotionDataBasesFake()
+            sqlLiteNotionDataBases = SqlLiteNotionDataBasesFake()
             val onlineDictionaries = OnlineDictionariesFake(emptyList())
 
             val telegramBot = TelegramBotUserImpl(
