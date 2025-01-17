@@ -2,7 +2,6 @@ package org.danceofvalkyries.app.apps.buttonslistener
 
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.danceofvalkyries.app.App
 import org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.SpaceRepetitionSession
@@ -32,7 +31,6 @@ fun TelegramButtonListenerApp(
     val restfulNotionDataBases = RestFulNotionDataBases(
         desiredDbIds = config.notion.observedDatabases.map { it.id },
         apiKey = config.notion.apiKey,
-        okHttpClient = environment.httpClient,
         httpClient = httpClient,
         gson = Gson(),
     )
@@ -51,6 +49,7 @@ fun TelegramButtonListenerApp(
     val botUser = TelegramBotUserImpl(
         telegramChat,
         sqlLiteNotionDataBases,
+        restfulNotionDataBases,
         sqlLiteTelegramMessages,
         onlineDictionaries,
     )
@@ -82,11 +81,11 @@ class TelegramButtonListenerApp(
             telegramChat
                 .getEvents()
                 .collect {
-                    println(ButtonAction.parse(it.action.value))
                     when (val action = ButtonAction.parse(it.action.value)) {
                         is ButtonAction.DataBase -> spaceRepetitionSession.beginFor(action.notionDbId)
                         is ButtonAction.Forgotten -> spaceRepetitionSession.forget(action.flashCardId)
                         is ButtonAction.Recalled -> spaceRepetitionSession.recall(action.flashCardId)
+
                         is ButtonAction.Unknown -> telegramChat.delete(it.messageId)
                     }
                 }

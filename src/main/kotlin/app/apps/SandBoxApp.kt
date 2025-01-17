@@ -26,7 +26,6 @@ class SandBoxApp(
         val restNotionDataBases = RestFulNotionDataBases(
             desiredDbIds = environment.config.notion.observedDatabases.map { it.id },
             apiKey = environment.config.notion.apiKey,
-            okHttpClient = environment.httpClient,
             httpClient = HttpClientImpl(environment.httpClient),
             gson = Gson()
         )
@@ -43,8 +42,7 @@ class SandBoxApp(
 
         restNotionDataBases.iterate().forEach { notionDataBase ->
             notionDataBase.iterate().forEach { page ->
-                println("HUETS")
-                println(page)
+
             }
         }*/
     }

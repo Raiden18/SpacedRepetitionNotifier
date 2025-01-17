@@ -18,6 +18,12 @@ object TestData {
 
         val NOTION_API_KEY = "NOTION_API_KEY"
 
+        object EnglishVocabulary{
+            val ENGLISH_VOCABULARY = "English Vocabulary"
+            val DATA_BASE_ID = "english_vocabulary_id"
+
+        }
+
         object GreekLetterAndSounds {
 
             val GREEK_LETTERS_AND_SOUNDS = "Greek Letters and Sounds"
@@ -531,6 +537,10 @@ object TestData {
                 }
             }
         }
+
+        object Url {
+            fun getPageUrl(pageId: String): String = "https://api.notion.com/v1/pages/$pageId"
+        }
     }
 
     object Telegram {
@@ -559,7 +569,7 @@ object TestData {
                 }.let { Gson().toJson(it) }
             }
 
-            fun notificationResponseWithOneButton(messageId: Int, text: String = "Undefined"): String {
+            fun notificationResponseWithOneButton(messageId: Long, text: String = "Undefined"): String {
                 return jsonObject {
                     "ok" to true
                     "result" to jsonObject {
@@ -656,7 +666,29 @@ object TestData {
 
         object Callback {
 
-            fun response(
+            fun recalledButtonClickedCallback(
+                callbackQueryId: String,
+                flashCardId: String,
+                messageId: Long
+            ) = jsonObject {
+                "update_id" to 123123123
+                "callback_query" to jsonObject {
+                    "id" to callbackQueryId
+                    "from" to {
+                        // Omitted
+                    }
+                    "message" to jsonObject {
+                        "message_id" to messageId
+                        "reply_markup" to jsonObject {
+                            // Omitted
+                        }
+                    }
+                    "data" to "recalledFlashCardId=$flashCardId"
+                }
+            }
+
+
+            fun notionDbButtonCallback(
                 callbackQueryId: String,
                 notionDbId: String,
             ) = jsonObject {
@@ -669,30 +701,13 @@ object TestData {
                     "message" to jsonObject {
                         "message_id" to OMITTED_INT
                         "reply_markup" to jsonObject {
-                            "inline_keyboard" to listOf(
-                                listOf(
-                                    jsonObject {
-                                        "text" to OMITTED
-                                        "callback_data" to "dbId=$notionDbId"
-                                    }
-                                )
-                            )
+                            // Omitted
                         }
                     }
                     "data" to "dbId=$notionDbId"
                 }
             }
 
-        }
-
-        private fun ActionButton(
-            text: String,
-            flashCardId: String,
-        ): ButtonData {
-            return ButtonData(
-                text = text,
-                callbackData = "flashCardId=$flashCardId",
-            )
         }
 
         object Urls {

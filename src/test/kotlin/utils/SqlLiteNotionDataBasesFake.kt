@@ -11,7 +11,7 @@ data class SqlLiteNotionDataBasesFake(
     }
 
     override fun getBy(id: String): NotionDataBase {
-        return dataBases.first { it.id != id }
+        return dataBases.first { it.id == id }
     }
 
     override suspend fun add(notionDataBase: NotionDataBase): NotionDataBase {

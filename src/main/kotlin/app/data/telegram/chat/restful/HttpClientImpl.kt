@@ -32,7 +32,20 @@ class HttpClientImpl(
             .url(url)
             .headers(headers)
             .post(body.toRequestBody(applicationJson.value.toMediaType()))
-            .get()
+            .build()
+            .request(okHttpClient)
+        return Response(
+            requestUrl = response.request.url.toString(),
+            responseBody = response.body?.string().orEmpty()
+        )
+    }
+
+    override fun patch(url: String, body: String, headers: List<Header>): Response {
+        val applicationJson = ContentType(ContentTypes.ApplicationJson)
+        val response = Request.Builder()
+            .url(url)
+            .headers(headers)
+            .patch(body.toRequestBody(applicationJson.value.toMediaType()))
             .build()
             .request(okHttpClient)
         return Response(

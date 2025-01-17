@@ -33,26 +33,6 @@ class TelegramHumanUserImpl(
     }
 
     override suspend fun recall(flashCardId: String) {
-        val flashCard = localDbNotionDataBases.iterate()
-            .flatMap { it.iterate() }
-            .map {
-                FlashCardNotionPage(
-                    name = it.name,
-                    coverUrl = it.coverUrl,
-                    notionDbID = NotionId(it.notionDbID),
-                    id = NotionId(it.id),
-                    example = it.example,
-                    explanation = it.explanation,
-                    knowLevels = KnowLevels(it.knowLevels)
-                )
-            }
-            .filter { it.id.rawValue == flashCardId }
-            .first()
-        val recalledFlashCard = flashCard.recall()
-        localDbNotionDataBases.iterate().forEach {
-            it.delete(recalledFlashCard.id.rawValue)
-        }
-        val restfullDataBase = restfulNotionDataBases.getBy(flashCard.notionDbID.rawValue)
-        restfullDataBase.getPageBy(flashCardId).setKnowLevels(recalledFlashCard.knowLevels.levels)
+
     }
 }

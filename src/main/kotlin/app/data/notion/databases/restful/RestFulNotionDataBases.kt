@@ -1,7 +1,6 @@
 package org.danceofvalkyries.app.data.notion.databases.restful
 
 import com.google.gson.Gson
-import okhttp3.OkHttpClient
 import org.danceofvalkyries.app.data.notion.databases.NotionDataBase
 import org.danceofvalkyries.app.data.notion.databases.NotionDataBases
 import org.danceofvalkyries.utils.HttpClient
@@ -10,7 +9,6 @@ class RestFulNotionDataBases(
     private val desiredDbIds: List<String>,
     private val apiKey: String,
     private val httpClient: HttpClient,
-    private val okHttpClient: OkHttpClient,
     private val gson: Gson,
 ) : NotionDataBases {
 
@@ -24,7 +22,6 @@ class RestFulNotionDataBases(
             id = id,
             apiKey = apiKey,
             httpClient = httpClient,
-            okHttpClient = okHttpClient,
             gson = gson,
         )
     }

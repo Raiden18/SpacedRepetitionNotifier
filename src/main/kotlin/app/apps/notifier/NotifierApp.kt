@@ -27,7 +27,6 @@ fun NotifierApp(
     val restfulNotionDatabases = RestFulNotionDataBases(
         desiredDbIds = environment.config.notion.observedDatabases.map { it.id },
         apiKey = environment.config.notion.apiKey,
-        okHttpClient = environment.httpClient,
         httpClient = httpClient,
         gson = Gson()
     )
@@ -44,6 +43,7 @@ fun NotifierApp(
     val telegramBotUser = TelegramBotUserImpl(
         telegramChat,
         sqlLiteNotionDatabases,
+        restfulNotionDatabases,
         sqlLiteTelegramMessages,
         onlineDictionaries,
     )

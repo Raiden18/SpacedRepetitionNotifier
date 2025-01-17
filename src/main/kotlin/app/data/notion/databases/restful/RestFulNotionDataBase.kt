@@ -5,7 +5,6 @@ import notion.impl.client.models.RestFulNotionPage
 import notion.impl.client.models.request.NotionApiVersionHeader
 import notion.impl.client.models.request.SpacedRepetitionRequestBody
 import notion.impl.client.models.response.NotionDbResponse
-import okhttp3.OkHttpClient
 import org.danceofvalkyries.app.data.notion.databases.NotionDataBase
 import org.danceofvalkyries.app.data.notion.pages.NotionPageFlashCard
 import org.danceofvalkyries.app.data.notion.pages.restful.RestfulNotionPageFlashCard
@@ -20,7 +19,6 @@ class RestFulNotionDataBase(
     private val apiKey: String,
     private val httpClient: HttpClient,
     private val gson: Gson,
-    private val okHttpClient: OkHttpClient,
 ) : NotionDataBase {
 
     override val name: String
@@ -51,7 +49,7 @@ class RestFulNotionDataBase(
                     id = it.id!!,
                     apiKey = apiKey,
                     responseData = it,
-                    client = okHttpClient,
+                    httpClient = httpClient,
                     gson = gson,
                 )
             }
@@ -64,7 +62,7 @@ class RestFulNotionDataBase(
         return RestfulNotionPageFlashCard(
             apiKey = apiKey,
             responseData = null,
-            client = okHttpClient,
+            httpClient = httpClient,
             gson = gson,
             id = pageId
         )

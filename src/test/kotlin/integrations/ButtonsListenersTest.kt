@@ -3,9 +3,11 @@ package integrations
 import com.google.gson.Gson
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.collections.shouldContain
+import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.runTest
 import org.danceofvalkyries.app.apps.buttonslistener.TelegramButtonListenerApp
 import org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.SpaceRepetitionSession
+import org.danceofvalkyries.app.data.notion.databases.restful.RestFulNotionDataBases
 import org.danceofvalkyries.app.data.telegram.chat.restful.RestfulTelegramChat
 import org.danceofvalkyries.app.data.telegram.users.bot.TelegramBotUserImpl
 import org.danceofvalkyries.app.data.telegram.users.user.TelegramHumanUserImpl
@@ -19,9 +21,9 @@ class ButtonsListenersTest : BehaviorSpec() {
     private lateinit var ktorWebServer: KtorWebServerFake
     private lateinit var httpClientFake: HttpClientFake
     private lateinit var sqlLiteNotionDataBasesFake: SqlLiteNotionDataBasesFake
+    private lateinit var sentTelegramMessagesTypeFake: SentTelegramMessagesTypeFake
 
     init {
-
         beforeTest {
             val gson = Gson()
             ktorWebServer = KtorWebServerFake(gson)
@@ -34,8 +36,13 @@ class ButtonsListenersTest : BehaviorSpec() {
                 ktorWebServer,
                 httpClientFake
             )
-            val restfulNotionDataBases = SqlLiteNotionDataBasesFake()
-            val telegramMessagesType = SentTelegramMessagesTypeFake()
+            val restfulNotionDataBases = RestFulNotionDataBases(
+                desiredDbIds = listOf(TestData.Notion.EnglishVocabulary.DATA_BASE_ID),
+                apiKey = TestData.Notion.NOTION_API_KEY,
+                httpClient = httpClientFake,
+                gson = Gson()
+            )
+            sentTelegramMessagesTypeFake = SentTelegramMessagesTypeFake()
             val humanUser = TelegramHumanUserImpl(
                 sqlLiteNotionDataBasesFake,
                 restfulNotionDataBases,
@@ -46,7 +53,8 @@ class ButtonsListenersTest : BehaviorSpec() {
             val botUser = TelegramBotUserImpl(
                 telegramChat,
                 sqlLiteNotionDataBasesFake,
-                telegramMessagesType,
+                restfulNotionDataBases,
+                sentTelegramMessagesTypeFake,
                 onlineDictionariesFake
             )
             val spaceRepetitionSession = SpaceRepetitionSession(humanUser, botUser)
@@ -95,12 +103,11 @@ class ButtonsListenersTest : BehaviorSpec() {
         }
 
         Given("Flash Cards from English vocabulary are in Date Base") {
-            val englishVocabularyId = "488338833838"
             val callbackQueryId = "3323123"
             val word1 = NotionPageFlashCardFake(
                 id = "00001",
                 coverUrl = null,
-                notionDbID = englishVocabularyId,
+                notionDbID = TestData.Notion.EnglishVocabulary.DATA_BASE_ID,
                 name = "Wine",
                 example = "I do not drink wine at all",
                 explanation = "Alcoholic beverage made of grapes",
@@ -123,7 +130,7 @@ class ButtonsListenersTest : BehaviorSpec() {
             val word2 = NotionPageFlashCardFake(
                 id = "00002",
                 coverUrl = null,
-                notionDbID = englishVocabularyId,
+                notionDbID = TestData.Notion.EnglishVocabulary.DATA_BASE_ID,
                 name = "Dota 2",
                 example = "Dota 2 is the best game in the world.",
                 explanation = "I love Dota 2",
@@ -153,7 +160,7 @@ class ButtonsListenersTest : BehaviorSpec() {
 
             beforeTest {
                 val notionDataBase = NotionDataBaseFake(
-                    id = englishVocabularyId,
+                    id = TestData.Notion.EnglishVocabulary.DATA_BASE_ID,
                     name = "English Vocabulary",
                     pages = mutableListOf(word1, word2)
                 )
@@ -161,28 +168,83 @@ class ButtonsListenersTest : BehaviorSpec() {
                 sqlLiteNotionDataBasesFake.add(notionDataBase)
             }
 
-            When("User taps on the Button") {
+            When("User taps on English Vocabulary Button") {
+
+                val word1FlashCardMessageId = 3123121L
 
                 beforeTest {
                     ktorWebServer.send(
-                        TestData.Telegram.Callback.response(
+                        TestData.Telegram.Callback.notionDbButtonCallback(
                             callbackQueryId = callbackQueryId,
-                            notionDbId = englishVocabularyId
+                            notionDbId = TestData.Notion.EnglishVocabulary.DATA_BASE_ID
                         )
                     )
                     httpClientFake.mockPostResponse(
                         url = TestData.Telegram.Urls.getSendMessage(),
                         body = sendMessageBody,
-                        response = TestData.Telegram.SendMessage.notificationResponseWithOneButton(messageId = 228)
+                        response = TestData.Telegram.SendMessage.notificationResponseWithOneButton(
+                            messageId = word1FlashCardMessageId
+                        )
                     )
+
+                    telegramButtonListenerApp.run()
                 }
 
                 Then("Flash Card Message should be sent") {
                     runTest {
-                        telegramButtonListenerApp.run()
                         httpClientFake.postRequests shouldContain PostRequest(
                             url = TestData.Telegram.Urls.getSendMessage(),
                             body = sendMessageBody
+                        )
+                    }
+                }
+
+                And("User clicks on Recall button") {
+
+                    val word2FlashCardMessageBody = TestData.Telegram.SendMessage.flashCard(
+                        text = word2.name,
+                        example = word2.example!!,
+                        answer = word2.explanation!!,
+                        flashCardId = word2.id
+                    )
+
+                    val word2MessageId = 129387L
+
+                    beforeTest {
+                        httpClientFake.mockPostResponse(
+                            url = TestData.Telegram.Urls.getSendMessage(),
+                            body = word2FlashCardMessageBody,
+                            response = TestData.Telegram.SendMessage.notificationDoneResponse(
+                                messageId = word2MessageId,
+                                text = "Does not Matter"
+                            )
+                        )
+                        ktorWebServer.send(
+                            TestData.Telegram.Callback.recalledButtonClickedCallback(
+                                callbackQueryId = callbackQueryId,
+                                flashCardId = word1.id,
+                                messageId = word1FlashCardMessageId
+                            )
+                        )
+                    }
+
+                    Then("Should remove that FlashCard from Telegram") {
+                        httpClientFake.getUrlRequests shouldContain TestData.Telegram.Urls.getDeleteMessageUrl(
+                            word1FlashCardMessageId
+                        )
+                    }
+
+                    Then("Should remove That FlashCard from Local DB") {
+                        val word1FlashCardFromDB = sqlLiteNotionDataBasesFake.iterate()
+                            .flatMap { it.iterate() }
+                            .firstOrNull { it.id == word1.id }
+                        word1FlashCardFromDB shouldBe null
+                    }
+
+                    Then("Should sent NEW FlashCard to User on Telegram") {
+                        httpClientFake.postRequests shouldContain PostRequest(
+                            url = TestData.Telegram.Urls.getSendMessage(),
+                            body = word2FlashCardMessageBody,
                         )
                     }
                 }

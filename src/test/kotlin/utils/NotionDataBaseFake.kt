@@ -6,7 +6,7 @@ import org.danceofvalkyries.app.data.notion.pages.NotionPageFlashCard
 data class NotionDataBaseFake(
     override val id: String,
     override val name: String,
-    private val pages: MutableList<NotionPageFlashCard> = mutableListOf()
+    private var pages: List<NotionPageFlashCard> = emptyList()
 ) : NotionDataBase {
 
     override fun iterate(): Sequence<NotionPageFlashCard> {
@@ -23,7 +23,7 @@ data class NotionDataBaseFake(
             knowLevels = notionPageFlashCard.knowLevels,
             notionDbID = this@NotionDataBaseFake.id
         )
-        pages.add(notionPageFlashCardFake)
+        pages = pages + listOf(notionPageFlashCardFake)
         return notionPageFlashCardFake
     }
 
@@ -32,10 +32,10 @@ data class NotionDataBaseFake(
     }
 
     override fun clear() {
-        pages.clear()
+        pages = emptyList()
     }
 
     override fun delete(pageId: String) {
-        pages.removeIf { it.id != pageId }
+        pages = pages.filter { it.id != pageId }
     }
 }

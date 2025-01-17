@@ -7,9 +7,11 @@ class HttpClientFake : HttpClient {
 
     val getUrlRequests = mutableListOf<String>()
     val postRequests = mutableListOf<PostRequest>()
+    val patchRequests = mutableListOf<PatchRequest>()
 
     val getUrlAndResponses = mutableMapOf<String, String>()
     val postUrlAndResponse = mutableMapOf<PostRequest, String>()
+    val patchUrlAndResponses = mutableMapOf<PatchRequest, String>()
 
     fun mockGetResponse(url: String, response: String) {
         getUrlAndResponses[url] = response
@@ -25,6 +27,18 @@ class HttpClientFake : HttpClient {
             body = body,
         )
         postUrlAndResponse[postRequest] = response
+    }
+
+    fun mockPatchResponse(
+        url: String,
+        body: String,
+        response: String
+    ) {
+        val patchRequest = PatchRequest(
+            url = url,
+            body = body,
+        )
+        patchUrlAndResponses[patchRequest] = response
     }
 
     override fun get(url: String, headers: List<Header>): HttpClient.Response {
@@ -47,7 +61,24 @@ class HttpClientFake : HttpClient {
         )
     }
 
+    override fun patch(url: String, body: String, headers: List<Header>): HttpClient.Response {
+        val patchRequest = PatchRequest(
+            url = url,
+            body = body
+        )
+        patchRequests.add(patchRequest)
+        return HttpClient.Response(
+            requestUrl = url,
+            responseBody = patchUrlAndResponses[patchRequest],
+        )
+    }
+
     data class PostRequest(
+        val url: String,
+        val body: String,
+    )
+
+    data class PatchRequest(
         val url: String,
         val body: String,
     )

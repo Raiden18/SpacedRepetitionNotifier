@@ -23,16 +23,12 @@ class SpaceRepetitionSession(
     }
 
     suspend fun recall(flashCardId: String) {
-        humanUser.recall(flashCardId)
-        replaceFlashCard()
+        telegramBotUser.removeAllFlashCardsFromChat()
+        telegramBotUser.removeFromDB(flashCardId)
+        telegramBotUser.sendNextFlashCardFrom(notionDb.rawValue)
     }
 
     private suspend fun replaceFlashCard() {
-        telegramBotUser.updateNotificationMessage()
-        val nextFlashCard = telegramBotUser.getAnyFlashCardFor(notionDb.rawValue)
-        if (nextFlashCard != null) {
-            telegramBotUser.sendFlashCardMessage(nextFlashCard)
-        }
-        telegramBotUser.removeFlashCards()
+        //telegramBotUser.updateNotificationMessage()
     }
 }

@@ -10,7 +10,6 @@ import integrations.TestData.Notion.NOTION_API_KEY
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
-import okhttp3.OkHttpClient
 import org.danceofvalkyries.app.apps.notifier.NotifierApp
 import org.danceofvalkyries.app.data.notion.databases.restful.RestFulNotionDataBases
 import org.danceofvalkyries.app.data.telegram.chat.restful.RestfulTelegramChat
@@ -38,19 +37,19 @@ class NotifierAppTest : BehaviorSpec() {
             )
             sqlLiteNotionDataBases = SqlLiteNotionDataBasesFake()
             val onlineDictionaries = OnlineDictionariesFake(emptyList())
-
-            val telegramBot = TelegramBotUserImpl(
-                telegramChat,
-                sqlLiteNotionDataBases,
-                sentTelegramMessagesType,
-                onlineDictionaries,
-            )
             val restfulNotionDataBases = RestFulNotionDataBases(
                 desiredDbIds = listOf(GREEK_SOUNDS_AND_LETTERS_NOTION_DATA_BASE_ID),
                 apiKey = NOTION_API_KEY,
                 httpClient = httpClient,
-                okHttpClient = OkHttpClient(),
                 gson = Gson()
+            )
+
+            val telegramBot = TelegramBotUserImpl(
+                telegramChat,
+                sqlLiteNotionDataBases,
+                restfulNotionDataBases,
+                sentTelegramMessagesType,
+                onlineDictionaries,
             )
 
             notifierApp = NotifierApp(

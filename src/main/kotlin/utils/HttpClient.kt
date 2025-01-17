@@ -7,6 +7,7 @@ interface HttpClient {
 
     fun get(url: String, headers: List<Header>): Response
     fun post(url: String, body: String, headers: List<Header>): Response
+    fun patch(url: String, body: String, headers: List<Header>): Response
 
     data class Response(
         val requestUrl: String,

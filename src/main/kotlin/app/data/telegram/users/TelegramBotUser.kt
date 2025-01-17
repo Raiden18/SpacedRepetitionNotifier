@@ -10,4 +10,9 @@ interface TelegramBotUser {
     suspend fun getAnyFlashCardFor(notionDbId: String): NotionPageFlashCard?
     suspend fun removeFlashCards()
     suspend fun updateNotificationMessage()
+    suspend fun deleteMessage(messageId: Long)
+
+    suspend fun removeFromDB(flashCardId: String)
+    suspend fun removeAllFlashCardsFromChat()
+    suspend fun sendNextFlashCardFrom(notionDbId: String)
 }

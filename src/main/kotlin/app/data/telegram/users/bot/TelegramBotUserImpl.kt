@@ -13,7 +13,8 @@ import org.danceofvalkyries.app.domain.message.ButtonAction
 
 class TelegramBotUserImpl(
     private val telegramChat: TelegramChat,
-    private val notionDataBases: NotionDataBases,
+    private val localDbNotionDataBases: NotionDataBases,
+    private val restfulNotionDataBases: NotionDataBases,
     private val sentTelegramMessagesType: SentTelegramMessagesType,
     private val onlineDictionaries: OnlineDictionaries,
 ) : TelegramBotUser {
@@ -37,14 +38,13 @@ class TelegramBotUserImpl(
     }
 
     override suspend fun sendNewNotificationMessage() {
-        val flashCards = notionDataBases.iterate()
+        val flashCards = localDbNotionDataBases.iterate()
             .flatMap { it.iterate() }
             .toList()
-        println(flashCards.count())
         val telegramButtons = flashCards
             .groupBy { it.notionDbID }
             .map { (dbId, flashCards) ->
-                val db = notionDataBases.iterate().first { it.id == dbId }
+                val db = localDbNotionDataBases.iterate().first { it.id == dbId }
                 ConstantTelegramMessageButton(
                     text = "${db.name}: ${flashCards.count()}",
                     action = TelegramMessage.Button.Action.CallBackData(ButtonAction.DataBase(db.id).rawValue),
@@ -114,7 +114,7 @@ class TelegramBotUserImpl(
     }
 
     override suspend fun getAnyFlashCardFor(notionDbId: String): NotionPageFlashCard? {
-        return notionDataBases.iterate()
+        return localDbNotionDataBases.iterate()
             .flatMap { it.iterate() }
             .firstOrNull { it.notionDbID == notionDbId }
     }
@@ -128,7 +128,8 @@ class TelegramBotUserImpl(
     }
 
     override suspend fun updateNotificationMessage() {
-        val notificationMessage = sentTelegramMessagesType.iterate().first { it.type == "NOTIFICATION" }
+        // TODO
+        /*val notificationMessage = sentTelegramMessagesType.iterate().first { it.type == "NOTIFICATION" }
 
         // TODO: Code duplication from send message. Eliminate copy-pasted code
         val flashCards = notionDataBases.iterate()
@@ -149,7 +150,33 @@ class TelegramBotUserImpl(
                 newText = """You have ${flashCards.count()} flashcards to revise 🧠""".trimIndent(),
                 newImageUrl = null,
                 newNestedButtons = telegramButtons
-            )
+            )*/
+    }
+
+    override suspend fun deleteMessage(messageId: Long) {
+        telegramChat.delete(messageId)
+    }
+
+    override suspend fun removeFromDB(flashCardId: String) {
+        val flashCard = localDbNotionDataBases.iterate()
+            .flatMap { it.iterate() }
+            .first { it.id == flashCardId }
+
+        val flashCardDb = localDbNotionDataBases.getBy(flashCard.notionDbID)
+        flashCardDb.delete(flashCard.id)
+    }
+
+    override suspend fun removeAllFlashCardsFromChat() {
+        val sendMessageType = sentTelegramMessagesType.iterate().first { it.type == "FLASH_CARD" }
+        telegramChat.delete(sendMessageType.id)
+    }
+
+    override suspend fun sendNextFlashCardFrom(notionDbId: String) {
+        val flashCard = localDbNotionDataBases.iterate()
+            .flatMap { it.iterate() }
+            .firstOrNull { it.notionDbID == notionDbId }!!
+        println(flashCard)
+        sendFlashCardMessage(flashCard)
     }
 
     private fun String.escapeCharacters(): String {
