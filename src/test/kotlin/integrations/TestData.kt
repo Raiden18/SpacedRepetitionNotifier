@@ -1,8 +1,10 @@
 package integrations
 
 import com.google.gson.Gson
+import org.danceofvalkyries.app.data.telegram.jsons.ButtonData
 import org.danceofvalkyries.app.data.telegram.jsons.MessageData
 import org.danceofvalkyries.app.data.telegram.jsons.ReplyMarkupData
+import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
 import org.danceofvalkyries.utils.rest.jsonObject
 
 object TestData {
@@ -15,7 +17,31 @@ object TestData {
 
     object Notion {
 
+        val NOTION_API_KEY = "NOTION_API_KEY"
+
         object GreekLetterAndSounds {
+
+            val GREEK_LETTERS_AND_SOUNDS = "Greek Letters and Sounds"
+            val GREEK_SOUNDS_AND_LETTERS_NOTION_DATA_BASE_ID = "greek_sounds_and_letters_db_id"
+
+            val greekLettersAndSoundsTable = dataBaseResponse(
+                id = GREEK_SOUNDS_AND_LETTERS_NOTION_DATA_BASE_ID,
+                name = GREEK_LETTERS_AND_SOUNDS,
+            )
+
+            val greekSound1 = pageResponse(
+                id = "greek_letter_id_1",
+                dataBaseId = GREEK_SOUNDS_AND_LETTERS_NOTION_DATA_BASE_ID,
+                name = "Αα",
+                explanation = "a as in raft",
+            )
+
+            val greekSound2 = pageResponse(
+                id = "greek_letter_id_2",
+                dataBaseId = GREEK_SOUNDS_AND_LETTERS_NOTION_DATA_BASE_ID,
+                name = "Ββ",
+                explanation = "v as in vet",
+            )
 
             fun unrevisedCardBodyRequest(): String {
                 return jsonObject {
@@ -591,10 +617,38 @@ object TestData {
                     }
                 }.let { Gson().toJson(it) }
             }
+
+            fun greekLetterAndSoundFlashCard(
+                text: String,
+                flashCardId: String,
+            ): String {
+                return MessageData(
+                    chatId = CHAT_ID,
+                    parseMode = "MarkdownV2",
+                    text = text,
+                    replyMarkup = ReplyMarkupData(
+                        listOf(
+                            listOf(
+                            )
+                        )
+                    )
+                ).let { Gson().toJson(it) }
+            }
+        }
+
+        private fun ActionButton(
+            text: String,
+            flashCardId: String,
+        ): ButtonData {
+            return ButtonData(
+                text = text,
+                callbackData = "flashCardId=$flashCardId",
+            )
         }
 
         object Urls {
-
+            fun getSendMessage() = "https://api.telegram.org/bot$TELEGRAM_API_KEY/sendMessage"
+            fun getEditMessage(): String = "https://api.telegram.org/bot$TELEGRAM_API_KEY/editMessageText"
             fun getDeleteMessageUrl(messageId: Long): String {
                 return "https://api.telegram.org/bot$TELEGRAM_API_KEY/deleteMessage?chat_id=$CHAT_ID&message_id=$messageId"
             }

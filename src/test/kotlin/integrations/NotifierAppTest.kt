@@ -1,6 +1,12 @@
 package integrations
 
 import com.google.gson.Gson
+import integrations.TestData.Notion.GreekLetterAndSounds.GREEK_LETTERS_AND_SOUNDS
+import integrations.TestData.Notion.GreekLetterAndSounds.GREEK_SOUNDS_AND_LETTERS_NOTION_DATA_BASE_ID
+import integrations.TestData.Notion.GreekLetterAndSounds.greekLettersAndSoundsTable
+import integrations.TestData.Notion.GreekLetterAndSounds.greekSound1
+import integrations.TestData.Notion.GreekLetterAndSounds.greekSound2
+import integrations.TestData.Notion.NOTION_API_KEY
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
@@ -14,32 +20,6 @@ import utils.*
 import utils.HttpClientFake.PostRequest
 
 class NotifierAppTest : BehaviorSpec() {
-    private val NOTION_API_KEY = "NOTION_API_KEY"
-
-    private val GREEK_SOUNDS_AND_LETTERS_NOTION_DATA_BASE_ID = "greek_sounds_and_letters_db_id"
-
-    private val TELEGRAM_SEND_MESSAGE_URL = "https://api.telegram.org/bot${TestData.TELEGRAM_API_KEY}/sendMessage"
-    private val TELEGRAM_EDIT_MESSAGE_URL = "https://api.telegram.org/bot${TestData.TELEGRAM_API_KEY}/editMessageText"
-    private val GREEK_LETTERS_AND_SOUNDS = "Greek Letters and Sounds"
-
-    private val greekSound1 = TestData.Notion.GreekLetterAndSounds.pageResponse(
-        id = "greek_letter_id_1",
-        dataBaseId = GREEK_SOUNDS_AND_LETTERS_NOTION_DATA_BASE_ID,
-        name = "Αα",
-        explanation = "a as in raft",
-    )
-    private val greekSound2 = TestData.Notion.GreekLetterAndSounds.pageResponse(
-        id = "greek_letter_id_2",
-        dataBaseId = GREEK_SOUNDS_AND_LETTERS_NOTION_DATA_BASE_ID,
-        name = "Ββ",
-        explanation = "v as in vet",
-    )
-
-    private val greekLettersAndSoundsTable = TestData.Notion.GreekLetterAndSounds.dataBaseResponse(
-        id = GREEK_SOUNDS_AND_LETTERS_NOTION_DATA_BASE_ID,
-        name = GREEK_LETTERS_AND_SOUNDS,
-    )
-
     private lateinit var notifierApp: NotifierApp
     private lateinit var httpClient: HttpClientFake
     private lateinit var sentTelegramMessagesType: SentTelegramMessagesTypeFake
@@ -123,7 +103,7 @@ class NotifierAppTest : BehaviorSpec() {
                             TestData.Telegram.SendMessage.notificationResponseWithOneButton(messageId = 228)
 
                         httpClient.mockPostResponse(
-                            url = TELEGRAM_SEND_MESSAGE_URL,
+                            url = TestData.Telegram.Urls.getSendMessage(),
                             body = expectedNotificationMessage,
                             response = notificationBodyResponse
                         )
@@ -131,12 +111,11 @@ class NotifierAppTest : BehaviorSpec() {
                         notifierApp.run()
 
                         httpClient.postRequests shouldContain PostRequest(
-                            url = TELEGRAM_SEND_MESSAGE_URL,
+                            url = TestData.Telegram.Urls.getSendMessage(),
                             body = expectedNotificationMessage,
                         )
                     }
                 }
-
             }
         }
 
@@ -183,7 +162,7 @@ class NotifierAppTest : BehaviorSpec() {
 
                     beforeTest {
                         httpClient.mockPostResponse(
-                            url = TELEGRAM_SEND_MESSAGE_URL,
+                            url = TestData.Telegram.Urls.getSendMessage(),
                             body = expectedNotificationMessage,
                             response = notificationBodyResponse
                         )
@@ -193,7 +172,7 @@ class NotifierAppTest : BehaviorSpec() {
 
                     Then("Should send NEW notification to Telegram") {
                         httpClient.postRequests shouldContain PostRequest(
-                            url = TELEGRAM_SEND_MESSAGE_URL,
+                            url = TestData.Telegram.Urls.getSendMessage(),
                             body = expectedNotificationMessage,
                         )
                     }
@@ -233,7 +212,7 @@ class NotifierAppTest : BehaviorSpec() {
 
                     beforeTest {
                         httpClient.mockPostResponse(
-                            url = TELEGRAM_EDIT_MESSAGE_URL,
+                            url = TestData.Telegram.Urls.getEditMessage(),
                             body = expectedNotificationMessage,
                             response = notificationBodyResponse
                         )
@@ -242,7 +221,7 @@ class NotifierAppTest : BehaviorSpec() {
 
                     Then("Then should edit PREVIOUS notification to DONE") {
                         httpClient.postRequests shouldContain PostRequest(
-                            url = TELEGRAM_EDIT_MESSAGE_URL,
+                            url = TestData.Telegram.Urls.getEditMessage(),
                             body = expectedNotificationMessage,
                         )
                     }

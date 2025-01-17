@@ -18,8 +18,7 @@ class ButtonsListenersTest : BehaviorSpec() {
     private lateinit var telegramButtonListenerApp: TelegramButtonListenerApp
     private lateinit var ktorWebServer: KtorWebServerFake
     private lateinit var httpClientFake: HttpClientFake
-    private val CHAT_ID = "123"
-    private val API_KEY = "API_KEY"
+    private lateinit var notionDataBasesFake: NotionDataBasesFake
 
     init {
 
@@ -27,19 +26,19 @@ class ButtonsListenersTest : BehaviorSpec() {
             val gson = Gson()
             ktorWebServer = KtorWebServerFake(gson)
             httpClientFake = HttpClientFake()
+            notionDataBasesFake = NotionDataBasesFake()
             val telegramChat = RestfulTelegramChat(
-                apiKey = API_KEY,
+                apiKey = TestData.TELEGRAM_API_KEY,
                 OkHttpClient(),
                 Gson(),
-                CHAT_ID,
+                TestData.CHAT_ID,
                 ktorWebServer,
                 httpClientFake
             )
             val restfulNotionDataBases = NotionDataBasesFake()
-            val localDbNotionDataBases = NotionDataBasesFake()
             val telegramMessagesType = SentTelegramMessagesTypeFake()
             val humanUser = TelegramHumanUserImpl(
-                localDbNotionDataBases,
+                notionDataBasesFake,
                 restfulNotionDataBases,
             )
             val onlineDictionariesFake = OnlineDictionariesFake(
@@ -47,7 +46,7 @@ class ButtonsListenersTest : BehaviorSpec() {
             )
             val botUser = TelegramBotUserImpl(
                 telegramChat,
-                localDbNotionDataBases,
+                notionDataBasesFake,
                 telegramMessagesType,
                 onlineDictionariesFake
             )
@@ -61,7 +60,7 @@ class ButtonsListenersTest : BehaviorSpec() {
 
         Given("Listener App") {
 
-            val messageId = 2868
+            val messageId = 2868L
 
             When("User types a message in chat") {
                 beforeTest {
@@ -92,7 +91,76 @@ class ButtonsListenersTest : BehaviorSpec() {
 
                 Then("Should delete that message on Telegram").config() {
                     telegramButtonListenerApp.run()
-                    httpClientFake.getUrlRequests shouldContain "https://api.telegram.org/bot$API_KEY/deleteMessage?chat_id=$CHAT_ID&message_id=$messageId"
+                    httpClientFake.getUrlRequests shouldContain TestData.Telegram.Urls.getDeleteMessageUrl(messageId)
+                }
+            }
+        }
+
+        Given("Flash Cards from English vocabulary") {
+            val englishVocabularyId = "488338833838"
+            val word1 = NotionPageFlashCardFake(
+                id = "00001",
+                coverUrl = "https://images.ctfassets.net/8x8155mjsjdj/1af9dvSFEPGCzaKvs8XQ5O/a7d4adc8f9573183394ef2853afeb0b6/Copy_of_Red_Wine_Blog_Post_Header.png",
+                notionDbID = englishVocabularyId,
+                name = "Wine",
+                example = "I do not drink wine at all",
+                explanation = "Alcoholic beverage made of grapes",
+                knowLevels = mapOf(
+                    1 to true,
+                    2 to false,
+                    3 to false,
+                    4 to false,
+                    5 to false,
+                    6 to false,
+                    7 to false,
+                    8 to false,
+                    9 to false,
+                    10 to false,
+                    11 to false,
+                    12 to false,
+                    13 to false,
+                )
+            )
+            val word2 = NotionPageFlashCardFake(
+                id = "00002",
+                coverUrl = "https://chaumette.com/wp-content/uploads/2020/03/wine-gone-bad-900x675.jpg",
+                notionDbID = englishVocabularyId,
+                name = "Dota 2",
+                example = "Dota 2 is the best game in the world.",
+                explanation = "I love Dota 2",
+                knowLevels = mapOf(
+                    1 to true,
+                    2 to true,
+                    3 to false,
+                    4 to false,
+                    5 to false,
+                    6 to false,
+                    7 to false,
+                    8 to false,
+                    9 to false,
+                    10 to false,
+                    11 to false,
+                    12 to false,
+                    13 to false,
+                )
+            )
+
+            beforeTest {
+                val notionDataBase = NotionDataBaseFake(
+                    id = englishVocabularyId,
+                    name = "English Vocabulary",
+                    pages = mutableListOf(word1, word2)
+                )
+                notionDataBasesFake.add(notionDataBase)
+            }
+            When("User taps on Greek Letters and Sounds Button") {
+
+                beforeTest {
+                    ktorWebServer.send()
+                }
+
+                Then("Flash Card Message should be sent") {
+
                 }
             }
         }

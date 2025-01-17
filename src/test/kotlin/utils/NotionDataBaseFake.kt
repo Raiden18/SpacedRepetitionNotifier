@@ -54,6 +54,6 @@ data class NotionDataBaseFake(
     }
 
     override fun delete(pageId: String) {
-        pages.removeIf { it.id == pageId }
+        pages.removeIf { it.id != pageId }
     }
 }
