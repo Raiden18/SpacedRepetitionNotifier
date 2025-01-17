@@ -4,7 +4,7 @@ import org.danceofvalkyries.app.data.notion.databases.NotionDataBase
 import org.danceofvalkyries.app.data.notion.databases.NotionDataBases
 
 data class NotionDataBasesFake(
-    private val dataBases: List<NotionDataBase>
+    private val dataBases: List<NotionDataBase> = emptyList()
 ) : NotionDataBases {
     override suspend fun iterate(): Sequence<NotionDataBase> {
         return dataBases.asSequence()

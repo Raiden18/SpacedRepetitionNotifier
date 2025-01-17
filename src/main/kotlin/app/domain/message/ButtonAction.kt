@@ -4,6 +4,7 @@ sealed class ButtonAction(val rawValue: String) {
 
     companion object {
         fun parse(rawValue: String): ButtonAction {
+            if(rawValue.contains("=").not()) return Unknown // TODO: add unit est
             val parameter = rawValue.split("=")
             val key = parameter[0]
             val value = parameter[1]

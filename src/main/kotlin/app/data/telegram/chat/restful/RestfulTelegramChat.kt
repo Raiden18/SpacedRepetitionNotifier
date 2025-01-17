@@ -1,14 +1,7 @@
 package org.danceofvalkyries.app.data.telegram.chat.restful
 
 import com.google.gson.Gson
-import io.ktor.http.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.map
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
@@ -19,6 +12,7 @@ import org.danceofvalkyries.app.data.telegram.jsons.*
 import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
 import org.danceofvalkyries.app.data.telegram.message.restful.RestfulTelegramMessage
 import org.danceofvalkyries.app.data.telegram.message.restful.RestfulTelegramUpdateMessageButtonCallback
+import org.danceofvalkyries.utils.HttpClient
 import org.danceofvalkyries.utils.rest.parse
 import org.danceofvalkyries.utils.rest.post
 import org.danceofvalkyries.utils.rest.request
@@ -28,6 +22,8 @@ class RestfulTelegramChat(
     private val client: OkHttpClient,
     private val gson: Gson,
     private val chatId: String,
+    private val ktorWebServer: KtorWebServer,
+    private val httpClient: HttpClient,
 ) : TelegramChat {
 
     private companion object {
@@ -118,11 +114,8 @@ class RestfulTelegramChat(
     }
 
     override suspend fun delete(messageId: Long) {
-        Request.Builder()
-            .url(telegramChatUrls.deleteMessage(messageId, chatId.toLong()))
-            .get()
-            .build()
-            .request(client)
+        val url = telegramChatUrls.deleteMessage(messageId, chatId.toLong()).toString()
+        httpClient.get(url)
     }
 
     override suspend fun getMessage(messageId: Long): TelegramMessage {
@@ -139,23 +132,16 @@ class RestfulTelegramChat(
     }
 
     override fun getEvents(): Flow<TelegramMessage.Button.Callback> {
-        return channelFlow {
-            embeddedServer(Netty, port = 8080) {
-                routing {
-                    post("/webhook") {
-                        send(call.receiveText())
-                        call.respond(HttpStatusCode.OK)
-                    }
-                }
-            }.start(wait = true)
-        }.map { gson.fromJson(it, UpdateResponseData::class.java) }
+        return ktorWebServer.getWebHook()
+            .map { gson.fromJson(it, UpdateResponseData::class.java) }
             .map {
                 RestfulTelegramUpdateMessageButtonCallback(
-                    id = it.callbackQueryData.id,
-                    action = TelegramMessage.Button.Action.CallBackData(it.callbackQueryData.data!!),
+                    id = it.callbackQueryData?.id.orEmpty(),
+                    action = TelegramMessage.Button.Action.CallBackData(it.callbackQueryData?.data.orEmpty()),
                     gson = gson,
                     client = client,
                     telegramChatUrls = telegramChatUrls,
+                    messageId = it.messageData?.messageId ?: -1
                 )
             }
 

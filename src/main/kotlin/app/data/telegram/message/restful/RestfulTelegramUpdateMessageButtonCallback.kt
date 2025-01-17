@@ -12,6 +12,7 @@ import org.danceofvalkyries.utils.rest.request
 class RestfulTelegramUpdateMessageButtonCallback(
     override val id: String,
     override val action: TelegramMessage.Button.Action,
+    override val messageId: Long,
     private val telegramChatUrls: TelegramChatUrls,
     private val gson: Gson,
     private val client: OkHttpClient,

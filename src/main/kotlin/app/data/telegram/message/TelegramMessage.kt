@@ -18,7 +18,7 @@ interface TelegramMessage {
         interface Callback {
             val id: String
             val action: Action
-
+            val messageId: Long
             suspend fun answer()
         }
     }

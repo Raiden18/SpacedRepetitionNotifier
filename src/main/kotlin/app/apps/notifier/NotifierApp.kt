@@ -6,7 +6,9 @@ import org.danceofvalkyries.app.data.dictionary.constant.ConfigOnlineDictionarie
 import org.danceofvalkyries.app.data.notion.databases.NotionDataBases
 import org.danceofvalkyries.app.data.notion.databases.restful.RestFulNotionDataBases
 import org.danceofvalkyries.app.data.notion.databases.sqlite.SqlLiteNotionDataBases
+import org.danceofvalkyries.app.data.telegram.chat.restful.KtorWebServerImpl
 import org.danceofvalkyries.app.data.telegram.chat.restful.RestfulTelegramChat
+import org.danceofvalkyries.app.data.telegram.chat.restful.TelegramChatHttpClient
 import org.danceofvalkyries.app.data.telegram.message_types.sqlite.SqlLiteTelegramMessagesType
 import org.danceofvalkyries.app.data.telegram.users.TelegramBotUser
 import org.danceofvalkyries.app.data.telegram.users.bot.TelegramBotUserImpl
@@ -25,11 +27,14 @@ fun NotifierApp(
         gson = Gson()
     )
     val sqlLiteTelegramMessages = SqlLiteTelegramMessagesType(dbConnection)
+    val webServer = KtorWebServerImpl()
     val telegramChat = RestfulTelegramChat(
         apiKey = environment.config.telegram.apiKey,
         client = environment.httpClient,
         gson = Gson(),
         chatId = environment.config.telegram.chatId,
+        ktorWebServer = webServer,
+        httpClient = TelegramChatHttpClient(environment.httpClient)
     )
     val onlineDictionaries = ConfigOnlineDictionaries(environment.config.notion.observedDatabases)
     val telegramBotUser = TelegramBotUserImpl(

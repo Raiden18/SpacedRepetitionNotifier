@@ -13,9 +13,9 @@ import com.google.gson.annotations.SerializedName
  */
 data class MessageData(
     @SerializedName("chat_id")
-    val chatId: String,
+    val chatId: String?,
     @SerializedName("parse_mode")
-    val parseMode: String,
+    val parseMode: String? = null,
     @SerializedName("reply_markup")
     val replyMarkup: ReplyMarkupData?,
     @SerializedName("photo")
