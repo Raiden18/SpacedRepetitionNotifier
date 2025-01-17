@@ -2,6 +2,7 @@ package org.danceofvalkyries.app.apps.buttonslistener
 
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.danceofvalkyries.app.App
 import org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.SpaceRepetitionSession
@@ -42,7 +43,6 @@ fun TelegramButtonListenerApp(
 
     val telegramChat = RestfulTelegramChat(
         apiKey = config.telegram.apiKey,
-        client = environment.httpClient,
         gson = Gson(),
         chatId = environment.config.telegram.chatId,
         ktorWebServer = webServer,
@@ -79,14 +79,17 @@ class TelegramButtonListenerApp(
 
     override suspend fun run() {
         scope.launch {
-            telegramChat.getEvents().collect {
-                when (val action = ButtonAction.parse(it.action.value)) {
-                    is ButtonAction.DataBase -> spaceRepetitionSession.beginFor(action.notionDbId)
-                    is ButtonAction.Forgotten -> spaceRepetitionSession.forget(action.flashCardId)
-                    is ButtonAction.Recalled -> spaceRepetitionSession.recall(action.flashCardId)
-                    is ButtonAction.Unknown -> telegramChat.delete(it.messageId)
+            telegramChat
+                .getEvents()
+                .collect {
+                    println(ButtonAction.parse(it.action.value))
+                    when (val action = ButtonAction.parse(it.action.value)) {
+                        is ButtonAction.DataBase -> spaceRepetitionSession.beginFor(action.notionDbId)
+                        is ButtonAction.Forgotten -> spaceRepetitionSession.forget(action.flashCardId)
+                        is ButtonAction.Recalled -> spaceRepetitionSession.recall(action.flashCardId)
+                        is ButtonAction.Unknown -> telegramChat.delete(it.messageId)
+                    }
                 }
-            }
         }
     }
 }

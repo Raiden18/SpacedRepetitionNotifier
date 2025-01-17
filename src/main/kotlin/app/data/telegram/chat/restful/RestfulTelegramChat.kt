@@ -4,7 +4,6 @@ import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import okhttp3.HttpUrl
-import okhttp3.OkHttpClient
 import org.danceofvalkyries.app.data.telegram.chat.TelegramChat
 import org.danceofvalkyries.app.data.telegram.jsonobjects.TelegramChatUrls
 import org.danceofvalkyries.app.data.telegram.jsons.*
@@ -12,11 +11,9 @@ import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
 import org.danceofvalkyries.app.data.telegram.message.restful.RestfulTelegramMessage
 import org.danceofvalkyries.app.data.telegram.message.restful.RestfulTelegramUpdateMessageButtonCallback
 import org.danceofvalkyries.utils.HttpClient
-import org.danceofvalkyries.utils.parse
 
 class RestfulTelegramChat(
     private val apiKey: String,
-    private val client: OkHttpClient,
     private val gson: Gson,
     private val chatId: String,
     private val ktorWebServer: KtorWebServer,
@@ -139,7 +136,7 @@ class RestfulTelegramChat(
                     id = it.callbackQueryData?.id.orEmpty(),
                     action = TelegramMessage.Button.Action.CallBackData(it.callbackQueryData?.data.orEmpty()),
                     gson = gson,
-                    client = client,
+                    httpClient = httpClient,
                     telegramChatUrls = telegramChatUrls,
                     messageId = it.messageData?.messageId ?: -1
                 )
@@ -148,12 +145,13 @@ class RestfulTelegramChat(
     }
 
     private fun sendMessage(url: HttpUrl, textBody: MessageData): MessageData {
+        println(gson.toJson(textBody))
         val response = httpClient.post(
             url = url.toString(),
             body = gson.toJson(textBody),
             headers = emptyList(),
         )
-
+        println(response)
         return gson.fromJson(response.responseBody, TelegramMessageRootResponse::class.java).result
     }
 }

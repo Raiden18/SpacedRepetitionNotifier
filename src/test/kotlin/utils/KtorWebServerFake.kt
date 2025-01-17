@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onEach
 import org.danceofvalkyries.app.data.telegram.chat.restful.KtorWebServer
 
 class KtorWebServerFake(

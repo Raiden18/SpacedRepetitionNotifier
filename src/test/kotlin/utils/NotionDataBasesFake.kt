@@ -15,16 +15,10 @@ data class NotionDataBasesFake(
     }
 
     override suspend fun add(notionDataBase: NotionDataBase): NotionDataBase {
-        return add(
+        val dataBase = NotionDataBaseFake(
             id = notionDataBase.id,
             name = notionDataBase.name,
-        )
-    }
-
-    override suspend fun add(id: String, name: String): NotionDataBase {
-        val dataBase = NotionDataBaseFake(
-            id = id,
-            name = name,
+            pages = notionDataBase.iterate().toMutableList()
         )
         dataBases = dataBases + listOf(dataBase)
         return dataBase

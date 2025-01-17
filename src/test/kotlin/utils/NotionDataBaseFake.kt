@@ -13,36 +13,18 @@ data class NotionDataBaseFake(
         return pages.asSequence()
     }
 
-    override fun add(
-        id: String,
-        coverUrl: String?,
-        name: String,
-        example: String?,
-        explanation: String?,
-        knowLevels: Map<Int, Boolean>
-    ): NotionPageFlashCard {
+    override fun add(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard {
         val notionPageFlashCardFake = NotionPageFlashCardFake(
-            id = id,
-            coverUrl = coverUrl,
-            name = name,
-            example = example,
-            explanation = explanation,
-            knowLevels = knowLevels,
+            id = notionPageFlashCard.id,
+            coverUrl = notionPageFlashCard.coverUrl,
+            name = notionPageFlashCard.name,
+            example = notionPageFlashCard.example,
+            explanation = notionPageFlashCard.explanation,
+            knowLevels = notionPageFlashCard.knowLevels,
             notionDbID = this@NotionDataBaseFake.id
         )
         pages.add(notionPageFlashCardFake)
         return notionPageFlashCardFake
-    }
-
-    override fun add(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard {
-        return add(
-            notionPageFlashCard.id,
-            notionPageFlashCard.coverUrl,
-            notionPageFlashCard.name,
-            notionPageFlashCard.example,
-            notionPageFlashCard.explanation,
-            notionPageFlashCard.knowLevels,
-        )
     }
 
     override fun getPageBy(pageId: String): NotionPageFlashCard {

@@ -2,6 +2,7 @@ package org.danceofvalkyries.app.apps.notifier
 
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import org.danceofvalkyries.app.App
 import org.danceofvalkyries.app.data.dictionary.constant.ConfigOnlineDictionaries
 import org.danceofvalkyries.app.data.notion.databases.NotionDataBases
@@ -34,7 +35,6 @@ fun NotifierApp(
     val webServer = KtorWebServerImpl()
     val telegramChat = RestfulTelegramChat(
         apiKey = environment.config.telegram.apiKey,
-        client = environment.httpClient,
         gson = Gson(),
         chatId = environment.config.telegram.chatId,
         ktorWebServer = webServer,
@@ -67,9 +67,11 @@ class NotifierApp(
     private val coroutineScope = CoroutineScope(dispatchers.io)
 
     override suspend fun run() {
-        clearAllCache()
-        downLoadNotionDataBasesAndPagesAndSaveThemToLocalDataBase()
-        checkFlashCardsAndSendNotificationOrShowDoneMessage()
+        coroutineScope.launch {
+            clearAllCache()
+            downLoadNotionDataBasesAndPagesAndSaveThemToLocalDataBase()
+            checkFlashCardsAndSendNotificationOrShowDoneMessage()
+        }
     }
 
     private suspend fun clearAllCache() {

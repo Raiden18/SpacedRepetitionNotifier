@@ -1,8 +1,8 @@
 package org.danceofvalkyries.app.data.notion.databases.sqlite
 
 import org.danceofvalkyries.app.data.notion.databases.NotionDataBase
-import org.danceofvalkyries.app.data.notion.pages.sqlite.SqlLiteNotionPageFlashCard
 import org.danceofvalkyries.app.data.notion.pages.NotionPageFlashCard
+import org.danceofvalkyries.app.data.notion.pages.sqlite.SqlLiteNotionPageFlashCard
 import org.danceofvalkyries.utils.db.SqlQuery
 import org.danceofvalkyries.utils.db.asSequence
 import org.danceofvalkyries.utils.db.tables.columns.PrimaryKey
@@ -67,14 +67,13 @@ class SqlLiteNotionDataBase(
             .filter { it.notionDbID == id }
     }
 
-    override fun add(
-        id: String,
-        coverUrl: String?,
-        name: String,
-        example: String?,
-        explanation: String?,
-        knowLevels: Map<Int, Boolean>
-    ): NotionPageFlashCard {
+    override fun add(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard {
+        val id = notionPageFlashCard.id
+        val coverUrl = notionPageFlashCard.coverUrl
+        val name = notionPageFlashCard.name
+        val example = notionPageFlashCard.example
+        val explanation = notionPageFlashCard.explanation
+        val knowLevels = notionPageFlashCard.knowLevels
         val knowLevelDbValues = knowLevels
             .keys
             .map { level ->
@@ -97,17 +96,6 @@ class SqlLiteNotionDataBase(
             }
         )
         return getPageBy(id)
-    }
-
-    override fun add(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard {
-        return add(
-            id = notionPageFlashCard.id,
-            coverUrl = notionPageFlashCard.coverUrl,
-            name = notionPageFlashCard.name,
-            explanation = notionPageFlashCard.explanation,
-            example = notionPageFlashCard.example,
-            knowLevels = notionPageFlashCard.knowLevels
-        )
     }
 
     override fun getPageBy(pageId: String): NotionPageFlashCard {

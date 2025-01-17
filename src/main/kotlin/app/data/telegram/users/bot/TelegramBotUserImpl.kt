@@ -114,6 +114,7 @@ class TelegramBotUserImpl(
 
     override suspend fun getAnyFlashCardFor(notionDbId: String): NotionPageFlashCard? {
         return notionDataBases.iterate()
+            .onEach { println("QQQ: ${it.id}") }
             .flatMap { it.iterate() }
             .firstOrNull { it.notionDbID == notionDbId }
     }

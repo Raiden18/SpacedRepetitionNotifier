@@ -3,7 +3,7 @@ package integrations
 import com.google.gson.Gson
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.collections.shouldContain
-import okhttp3.OkHttpClient
+import kotlinx.coroutines.test.runTest
 import org.danceofvalkyries.app.apps.buttonslistener.TelegramButtonListenerApp
 import org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.SpaceRepetitionSession
 import org.danceofvalkyries.app.data.telegram.chat.restful.RestfulTelegramChat
@@ -11,10 +11,10 @@ import org.danceofvalkyries.app.data.telegram.users.bot.TelegramBotUserImpl
 import org.danceofvalkyries.app.data.telegram.users.user.TelegramHumanUserImpl
 import org.danceofvalkyries.utils.rest.jsonObject
 import utils.*
+import utils.HttpClientFake.PostRequest
 
 class ButtonsListenersTest : BehaviorSpec() {
 
-    private lateinit var spaceRepetitionSession: SpaceRepetitionSession
     private lateinit var telegramButtonListenerApp: TelegramButtonListenerApp
     private lateinit var ktorWebServer: KtorWebServerFake
     private lateinit var httpClientFake: HttpClientFake
@@ -29,7 +29,6 @@ class ButtonsListenersTest : BehaviorSpec() {
             notionDataBasesFake = NotionDataBasesFake()
             val telegramChat = RestfulTelegramChat(
                 apiKey = TestData.TELEGRAM_API_KEY,
-                OkHttpClient(),
                 Gson(),
                 TestData.CHAT_ID,
                 ktorWebServer,
@@ -85,7 +84,6 @@ class ButtonsListenersTest : BehaviorSpec() {
                             "text" to "Q"
                         }
                     }
-
                     ktorWebServer.send(responseFromTelegram)
                 }
 
@@ -96,11 +94,12 @@ class ButtonsListenersTest : BehaviorSpec() {
             }
         }
 
-        Given("Flash Cards from English vocabulary") {
+        Given("Flash Cards from English vocabulary are in Date Base") {
             val englishVocabularyId = "488338833838"
+            val callbackQueryId = "3323123"
             val word1 = NotionPageFlashCardFake(
                 id = "00001",
-                coverUrl = "https://images.ctfassets.net/8x8155mjsjdj/1af9dvSFEPGCzaKvs8XQ5O/a7d4adc8f9573183394ef2853afeb0b6/Copy_of_Red_Wine_Blog_Post_Header.png",
+                coverUrl = null,
                 notionDbID = englishVocabularyId,
                 name = "Wine",
                 example = "I do not drink wine at all",
@@ -123,7 +122,7 @@ class ButtonsListenersTest : BehaviorSpec() {
             )
             val word2 = NotionPageFlashCardFake(
                 id = "00002",
-                coverUrl = "https://chaumette.com/wp-content/uploads/2020/03/wine-gone-bad-900x675.jpg",
+                coverUrl = null,
                 notionDbID = englishVocabularyId,
                 name = "Dota 2",
                 example = "Dota 2 is the best game in the world.",
@@ -145,22 +144,47 @@ class ButtonsListenersTest : BehaviorSpec() {
                 )
             )
 
+            val sendMessageBody = TestData.Telegram.SendMessage.flashCard(
+                text = word1.name,
+                example = word1.example!!,
+                answer = word1.explanation!!,
+                flashCardId = word1.id
+            )
+
             beforeTest {
                 val notionDataBase = NotionDataBaseFake(
                     id = englishVocabularyId,
                     name = "English Vocabulary",
                     pages = mutableListOf(word1, word2)
                 )
+
                 notionDataBasesFake.add(notionDataBase)
             }
-            When("User taps on Greek Letters and Sounds Button") {
+
+            When("User taps on the Button") {
 
                 beforeTest {
-                    ktorWebServer.send()
+                    ktorWebServer.send(
+                        TestData.Telegram.Callback.response(
+                            callbackQueryId = callbackQueryId,
+                            notionDbId = englishVocabularyId
+                        )
+                    )
+                    httpClientFake.mockPostResponse(
+                        url = TestData.Telegram.Urls.getSendMessage(),
+                        body = sendMessageBody,
+                        response = TestData.Telegram.SendMessage.notificationResponseWithOneButton(messageId = 228)
+                    )
                 }
 
                 Then("Flash Card Message should be sent") {
-
+                    runTest {
+                        telegramButtonListenerApp.run()
+                        httpClientFake.postRequests shouldContain PostRequest(
+                            url = TestData.Telegram.Urls.getSendMessage(),
+                            body = sendMessageBody
+                        )
+                    }
                 }
             }
         }

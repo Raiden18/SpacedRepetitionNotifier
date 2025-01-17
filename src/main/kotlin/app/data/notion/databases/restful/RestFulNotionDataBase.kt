@@ -57,15 +57,6 @@ class RestFulNotionDataBase(
             }
     }
 
-    override fun add(
-        id: String,
-        coverUrl: String?,
-        name: String,
-        example: String?,
-        explanation: String?,
-        knowLevels: Map<Int, Boolean>
-    ): NotionPageFlashCard = error("Adding a page to Notion is not supported")
-
     override fun add(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard =
         error("Adding a page to Notion is not supported")
 

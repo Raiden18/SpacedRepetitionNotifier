@@ -10,7 +10,6 @@ import integrations.TestData.Notion.NOTION_API_KEY
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
-import io.kotest.mpp.stacktraces
 import okhttp3.OkHttpClient
 import org.danceofvalkyries.app.apps.notifier.NotifierApp
 import org.danceofvalkyries.app.data.notion.databases.restful.RestFulNotionDataBases
@@ -23,22 +22,21 @@ class NotifierAppTest : BehaviorSpec() {
     private lateinit var notifierApp: NotifierApp
     private lateinit var httpClient: HttpClientFake
     private lateinit var sentTelegramMessagesType: SentTelegramMessagesTypeFake
+    private lateinit var sqlLiteNotionDataBases: NotionDataBasesFake
 
 
     init {
-        stacktraces
         beforeTest {
             httpClient = HttpClientFake()
             sentTelegramMessagesType = SentTelegramMessagesTypeFake()
             val telegramChat = RestfulTelegramChat(
                 TestData.TELEGRAM_API_KEY,
-                OkHttpClient(),
                 Gson(),
                 TestData.CHAT_ID,
                 KtorWebServerFake(Gson()),
                 httpClient,
             )
-            val sqlLiteNotionDataBases = NotionDataBasesFake()
+            sqlLiteNotionDataBases = NotionDataBasesFake()
             val onlineDictionaries = OnlineDictionariesFake(emptyList())
 
             val telegramBot = TelegramBotUserImpl(
@@ -92,7 +90,6 @@ class NotifierAppTest : BehaviorSpec() {
                     }
 
                     Then("Should send notification to Telegram") {
-
                         val expectedNotificationMessage =
                             TestData.Telegram.SendMessage.notificationRequestWithOneButton(
                                 text = """You have 2 flashcards to revise 🧠""",

@@ -4,7 +4,6 @@ import com.google.gson.Gson
 import org.danceofvalkyries.app.data.telegram.jsons.ButtonData
 import org.danceofvalkyries.app.data.telegram.jsons.MessageData
 import org.danceofvalkyries.app.data.telegram.jsons.ReplyMarkupData
-import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
 import org.danceofvalkyries.utils.rest.jsonObject
 
 object TestData {
@@ -618,22 +617,72 @@ object TestData {
                 }.let { Gson().toJson(it) }
             }
 
-            fun greekLetterAndSoundFlashCard(
+            fun flashCard(
                 text: String,
+                example: String,
+                answer: String,
                 flashCardId: String,
             ): String {
                 return MessageData(
                     chatId = CHAT_ID,
                     parseMode = "MarkdownV2",
-                    text = text,
+                    text = """
+                        *$text*
+                        
+                        _${example}_
+                        
+                        ||${answer}||
+                        
+                        Choose:
+                    """.trimIndent(),
                     replyMarkup = ReplyMarkupData(
                         listOf(
                             listOf(
-                            )
+                                ButtonData(
+                                    text = "Forgot  ❌",
+                                    callbackData = "forgottenFlashCardId=$flashCardId"
+                                ),
+                                ButtonData(
+                                    text = "Recalled  ✅",
+                                    callbackData = "recalledFlashCardId=$flashCardId"
+                                ),
+                            ),
+                            emptyList()
                         )
                     )
                 ).let { Gson().toJson(it) }
             }
+        }
+
+        object Callback {
+
+            fun response(
+                callbackQueryId: String,
+                notionDbId: String,
+            ) = jsonObject {
+                "update_id" to 123123123
+                "callback_query" to jsonObject {
+                    "id" to callbackQueryId
+                    "from" to {
+                        // Omitted
+                    }
+                    "message" to jsonObject {
+                        "message_id" to OMITTED_INT
+                        "reply_markup" to jsonObject {
+                            "inline_keyboard" to listOf(
+                                listOf(
+                                    jsonObject {
+                                        "text" to OMITTED
+                                        "callback_data" to "dbId=$notionDbId"
+                                    }
+                                )
+                            )
+                        }
+                    }
+                    "data" to "dbId=$notionDbId"
+                }
+            }
+
         }
 
         private fun ActionButton(
