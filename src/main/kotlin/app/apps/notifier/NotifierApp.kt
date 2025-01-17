@@ -44,7 +44,7 @@ fun NotifierApp(
         onlineDictionaries,
     )
     return NotifierApp(
-        environment.config,
+        environment.config.flashCardsThreshold,
         restfulNotionDatabases,
         sqlLiteNotionDatabases,
         telegramBotUser,
@@ -52,7 +52,7 @@ fun NotifierApp(
 }
 
 class NotifierApp(
-    private val config: Config,
+    private val flashCardsThreshold: Int,
     private val restfulNotionDataBases: NotionDataBases,
     private val sqlLiteNotionDataBases: NotionDataBases,
     private val telegramBot: TelegramBotUser,
@@ -78,7 +78,7 @@ class NotifierApp(
     }
 
     private suspend fun checkFlashCardsAndSendNotificationOrShowDoneMessage() {
-        if (getAllFlashCardsNeedRevising().count() >= config.flashCardsThreshold) {
+        if (getAllFlashCardsNeedRevising().count() >= flashCardsThreshold) {
             telegramBot.deleteOldNotificationMessage()
             telegramBot.sendNewNotificationMessage()
         } else {

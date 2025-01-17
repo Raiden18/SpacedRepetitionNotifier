@@ -3,7 +3,7 @@ package utils
 import org.danceofvalkyries.app.data.telegram.message_types.TelegramMessageType
 import org.danceofvalkyries.app.data.telegram.message_types.TelegramMessagesType
 
- class TelegramMessageTypeFake() : TelegramMessagesType {
+ class TelegramMessagesTypeFake() : TelegramMessagesType {
     override suspend fun iterate(): Sequence<TelegramMessageType> {
         TODO("Not yet implemented")
     }

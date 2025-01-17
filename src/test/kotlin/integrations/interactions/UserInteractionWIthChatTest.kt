@@ -1,4 +1,4 @@
-package e2e.interactions
+package integrations.interactions
 
 import com.google.gson.Gson
 import io.kotest.core.spec.style.BehaviorSpec
@@ -39,7 +39,7 @@ class UserInteractionWIthChatTest : BehaviorSpec() {
             )
             val restfulNotionDataBases = NotionDataBasesFake()
             val localDbNotionDataBases = NotionDataBasesFake()
-            val telegramMessagesType = TelegramMessageTypeFake()
+            val telegramMessagesType = TelegramMessagesTypeFake()
             val humanUser = TelegramHumanUserImpl(
                 localDbNotionDataBases,
                 restfulNotionDataBases,
@@ -62,6 +62,7 @@ class UserInteractionWIthChatTest : BehaviorSpec() {
         }
 
         Given("Listener App") {
+
             val messageId = 2868
 
             When("User types a message in chat") {
@@ -91,7 +92,7 @@ class UserInteractionWIthChatTest : BehaviorSpec() {
                     ktorWebServer.send(responseFromTelegram)
                 }
 
-                Then("Should delete that message from telegram").config() {
+                Then("Should delete that message on Telegram").config() {
                     telegramButtonListenerApp.run()
                     httpClientFake.urls shouldContain "https://api.telegram.org/bot$API_KEY/deleteMessage?chat_id=$CHAT_ID&message_id=$messageId"
                 }
