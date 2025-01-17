@@ -1,6 +1,5 @@
 package org.danceofvalkyries.app
 
-import kotlinx.coroutines.Dispatchers
 import org.danceofvalkyries.app.apps.SandBoxApp
 import org.danceofvalkyries.app.apps.buttonslistener.TelegramButtonListenerApp
 import org.danceofvalkyries.app.apps.notifier.NotifierApp
@@ -24,10 +23,10 @@ private class AppFactoryImpl(
         val environmentArgument = args.getOrNull(1) ?: error("Environment kind argument must be set!")
 
         val environment = Environment(environmentArgument)
-        val dispatchers = DispatchersImpl(Dispatchers.IO)
+        val dispatchers = DispatchersImpl()
 
         return when (appKindArgument) {
-            "notifier" -> NotifierApp(environment)
+            "notifier" -> NotifierApp(dispatchers, environment)
             "button_listener" -> TelegramButtonListenerApp(dispatchers, environment)
             "sand_box" -> SandBoxApp(dispatchers, environment)
             else -> error("Unknown App kind argument: $appKindArgument")

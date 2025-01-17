@@ -6,7 +6,7 @@ import org.danceofvalkyries.app.data.notion.pages.NotionPageFlashCard
 data class NotionDataBaseFake(
     override val id: String,
     override val name: String,
-    private val pages: List<NotionPageFlashCard> = emptyList()
+    private val pages: MutableList<NotionPageFlashCard> = mutableListOf()
 ) : NotionDataBase {
 
     override fun iterate(): Sequence<NotionPageFlashCard> {
@@ -21,22 +21,39 @@ data class NotionDataBaseFake(
         explanation: String?,
         knowLevels: Map<Int, Boolean>
     ): NotionPageFlashCard {
-        TODO("Not yet implemented")
+        val notionPageFlashCardFake = NotionPageFlashCardFake(
+            id = id,
+            coverUrl = coverUrl,
+            name = name,
+            example = example,
+            explanation = explanation,
+            knowLevels = knowLevels,
+            notionDbID = this@NotionDataBaseFake.id
+        )
+        pages.add(notionPageFlashCardFake)
+        return notionPageFlashCardFake
     }
 
     override fun add(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard {
-        TODO("Not yet implemented")
+        return add(
+            notionPageFlashCard.id,
+            notionPageFlashCard.coverUrl,
+            notionPageFlashCard.name,
+            notionPageFlashCard.example,
+            notionPageFlashCard.explanation,
+            notionPageFlashCard.knowLevels,
+        )
     }
 
     override fun getPageBy(pageId: String): NotionPageFlashCard {
-        TODO("Not yet implemented")
+        return pages.first { pageId == it.id }
     }
 
     override fun clear() {
-        TODO("Not yet implemented")
+        pages.clear()
     }
 
     override fun delete(pageId: String) {
-        TODO("Not yet implemented")
+        pages.removeIf { it.id == pageId }
     }
 }

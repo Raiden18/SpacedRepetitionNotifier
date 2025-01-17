@@ -9,10 +9,10 @@ import org.danceofvalkyries.app.data.dictionary.constant.ConfigOnlineDictionarie
 import org.danceofvalkyries.app.data.notion.databases.restful.RestFulNotionDataBases
 import org.danceofvalkyries.app.data.notion.databases.sqlite.SqlLiteNotionDataBases
 import org.danceofvalkyries.app.data.telegram.chat.TelegramChat
+import org.danceofvalkyries.app.data.telegram.chat.restful.HttpClientImpl
 import org.danceofvalkyries.app.data.telegram.chat.restful.KtorWebServerImpl
 import org.danceofvalkyries.app.data.telegram.chat.restful.RestfulTelegramChat
-import org.danceofvalkyries.app.data.telegram.chat.restful.TelegramChatHttpClient
-import org.danceofvalkyries.app.data.telegram.message_types.sqlite.SqlLiteTelegramMessagesType
+import org.danceofvalkyries.app.data.telegram.message_types.sqlite.SqlLiteSentTelegramMessagesType
 import org.danceofvalkyries.app.data.telegram.users.bot.TelegramBotUserImpl
 import org.danceofvalkyries.app.data.telegram.users.user.TelegramHumanUserImpl
 import org.danceofvalkyries.app.data.telegram_and_notion.sqlite.SqlLiteSentNotionPageFlashCardsToTelegram
@@ -27,17 +27,19 @@ fun TelegramButtonListenerApp(
     val config = environment.config
     val dbConnection = environment.dataBase.establishConnection()
     val sqlLiteNotionDataBases = SqlLiteNotionDataBases(dbConnection)
+    val httpClient = HttpClientImpl(environment.httpClient)
     val restfulNotionDataBases = RestFulNotionDataBases(
         desiredDbIds = config.notion.observedDatabases.map { it.id },
         apiKey = config.notion.apiKey,
-        client = environment.httpClient,
+        okHttpClient = environment.httpClient,
+        httpClient = httpClient,
         gson = Gson(),
     )
     val sentNotionPageFlashCardsToTelegram = SqlLiteSentNotionPageFlashCardsToTelegram(dbConnection)
-    val sqlLiteTelegramMessages = SqlLiteTelegramMessagesType(dbConnection)
+    val sqlLiteTelegramMessages = SqlLiteSentTelegramMessagesType(dbConnection)
     val onlineDictionaries = ConfigOnlineDictionaries(config.notion.observedDatabases)
     val webServer = KtorWebServerImpl()
-    val httpClient = TelegramChatHttpClient(environment.httpClient)
+
     val telegramChat = RestfulTelegramChat(
         apiKey = config.telegram.apiKey,
         client = environment.httpClient,
@@ -74,12 +76,6 @@ class TelegramButtonListenerApp(
 ) : App {
 
     private val scope = CoroutineScope(dispatchers.io)
-
-    fun runTest() {
-        scope.launch {
-            run()
-        }
-    }
 
     override suspend fun run() {
         scope.launch {

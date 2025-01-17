@@ -16,7 +16,7 @@ class NeedRevisingNotificationMessageTest : BehaviorSpec() {
             val englishVocabularyDb = NotionDataBaseFake(
                 id = "1",
                 name = "English vocabulary",
-                pages = listOf(
+                pages = mutableListOf(
                     NotionPageFlashCardFake(
                         notionDbID = "1"
                     )
@@ -25,7 +25,7 @@ class NeedRevisingNotificationMessageTest : BehaviorSpec() {
             val greekVocabularyDb = NotionDataBaseFake(
                 id = "2",
                 name = "Greek vocabulary",
-                pages = listOf(
+                pages = mutableListOf(
                     NotionPageFlashCardFake(
                         notionDbID = "2"
                     )
@@ -35,7 +35,7 @@ class NeedRevisingNotificationMessageTest : BehaviorSpec() {
             val englishGrammarDb = NotionDataBaseFake(
                 id = "3",
                 name = "English grammar",
-                pages = listOf(
+                pages = mutableListOf(
                     NotionPageFlashCardFake(
                         notionDbID = "3"
                     )
@@ -43,7 +43,7 @@ class NeedRevisingNotificationMessageTest : BehaviorSpec() {
             )
             When("Creates Telegram Message") {
                 val telegramMessage = NeedRevisingNotificationMessage(
-                    NotionDataBasesFake(listOf(englishVocabularyDb, greekVocabularyDb, englishGrammarDb))
+                    NotionDataBasesFake(mutableListOf(englishVocabularyDb, greekVocabularyDb, englishGrammarDb))
                 ).asTelegramBody()
 
                 Then("Should Show text with total count of unrevised flashcards") {

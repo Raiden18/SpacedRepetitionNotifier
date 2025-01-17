@@ -22,6 +22,6 @@ class KtorWebServerImpl : KtorWebServer {
                     }
                 }
             }.start(wait = true)
-        }.onEach { println("HUI") }.onEach { println(it) }
+        }
     }
 }

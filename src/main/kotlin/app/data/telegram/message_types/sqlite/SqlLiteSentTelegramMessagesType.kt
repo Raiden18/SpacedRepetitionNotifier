@@ -1,7 +1,7 @@
 package org.danceofvalkyries.app.data.telegram.message_types.sqlite
 
-import org.danceofvalkyries.app.data.telegram.message_types.TelegramMessageType
-import org.danceofvalkyries.app.data.telegram.message_types.TelegramMessagesType
+import org.danceofvalkyries.app.data.telegram.message_types.SentTelegramMessageType
+import org.danceofvalkyries.app.data.telegram.message_types.SentTelegramMessagesType
 import org.danceofvalkyries.utils.db.SqlQuery
 import org.danceofvalkyries.utils.db.asSequence
 import org.danceofvalkyries.utils.db.tables.columns.LongTableColumn
@@ -10,9 +10,9 @@ import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
 import java.sql.Connection
 import java.sql.Statement
 
-class SqlLiteTelegramMessagesType(
+class SqlLiteSentTelegramMessagesType(
     private val connection: Connection
-) : TelegramMessagesType {
+) : SentTelegramMessagesType {
 
     private companion object {
         const val TABLE_NAME = "telegram_messages"
@@ -21,7 +21,7 @@ class SqlLiteTelegramMessagesType(
     private val idColumn = LongTableColumn("id", PrimaryKey())
     private val typeColumn = TextTableColumn("type")
 
-    override suspend fun iterate(): Sequence<TelegramMessageType> {
+    override suspend fun iterate(): Sequence<SentTelegramMessageType> {
         return createStatement()
             .let {
                 it.executeQuery(
@@ -32,7 +32,7 @@ class SqlLiteTelegramMessagesType(
                 )
             }.asSequence()
             .map {
-                SqlLiteTelegramMessageType(
+                SqlLiteSentTelegramMessageType(
                     id = idColumn.getValue(it),
                     tableName = TABLE_NAME,
                     connection = connection,
@@ -41,7 +41,7 @@ class SqlLiteTelegramMessagesType(
             }
     }
 
-    override suspend fun add(id: Long, type: String): TelegramMessageType {
+    override suspend fun add(id: Long, type: String): SentTelegramMessageType {
         createStatement()
             .execute(
                 SqlQuery {
@@ -54,7 +54,7 @@ class SqlLiteTelegramMessagesType(
                     )
                 }
             )
-        return SqlLiteTelegramMessageType(
+        return SqlLiteSentTelegramMessageType(
             id = id,
             tableName = TABLE_NAME,
             connection = connection,

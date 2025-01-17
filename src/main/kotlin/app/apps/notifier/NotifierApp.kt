@@ -1,32 +1,36 @@
 package org.danceofvalkyries.app.apps.notifier
 
 import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
 import org.danceofvalkyries.app.App
 import org.danceofvalkyries.app.data.dictionary.constant.ConfigOnlineDictionaries
 import org.danceofvalkyries.app.data.notion.databases.NotionDataBases
 import org.danceofvalkyries.app.data.notion.databases.restful.RestFulNotionDataBases
 import org.danceofvalkyries.app.data.notion.databases.sqlite.SqlLiteNotionDataBases
+import org.danceofvalkyries.app.data.telegram.chat.restful.HttpClientImpl
 import org.danceofvalkyries.app.data.telegram.chat.restful.KtorWebServerImpl
 import org.danceofvalkyries.app.data.telegram.chat.restful.RestfulTelegramChat
-import org.danceofvalkyries.app.data.telegram.chat.restful.TelegramChatHttpClient
-import org.danceofvalkyries.app.data.telegram.message_types.sqlite.SqlLiteTelegramMessagesType
+import org.danceofvalkyries.app.data.telegram.message_types.sqlite.SqlLiteSentTelegramMessagesType
 import org.danceofvalkyries.app.data.telegram.users.TelegramBotUser
 import org.danceofvalkyries.app.data.telegram.users.bot.TelegramBotUserImpl
-import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.environment.Environment
+import org.danceofvalkyries.utils.Dispatchers
 
 fun NotifierApp(
+    dispatchers: Dispatchers,
     environment: Environment,
 ): App {
     val dbConnection = environment.dataBase.establishConnection()
     val sqlLiteNotionDatabases = SqlLiteNotionDataBases(dbConnection)
+    val httpClient = HttpClientImpl(environment.httpClient)
     val restfulNotionDatabases = RestFulNotionDataBases(
         desiredDbIds = environment.config.notion.observedDatabases.map { it.id },
         apiKey = environment.config.notion.apiKey,
-        client = environment.httpClient,
+        okHttpClient = environment.httpClient,
+        httpClient = httpClient,
         gson = Gson()
     )
-    val sqlLiteTelegramMessages = SqlLiteTelegramMessagesType(dbConnection)
+    val sqlLiteTelegramMessages = SqlLiteSentTelegramMessagesType(dbConnection)
     val webServer = KtorWebServerImpl()
     val telegramChat = RestfulTelegramChat(
         apiKey = environment.config.telegram.apiKey,
@@ -34,7 +38,7 @@ fun NotifierApp(
         gson = Gson(),
         chatId = environment.config.telegram.chatId,
         ktorWebServer = webServer,
-        httpClient = TelegramChatHttpClient(environment.httpClient)
+        httpClient = httpClient,
     )
     val onlineDictionaries = ConfigOnlineDictionaries(environment.config.notion.observedDatabases)
     val telegramBotUser = TelegramBotUserImpl(
@@ -44,6 +48,7 @@ fun NotifierApp(
         onlineDictionaries,
     )
     return NotifierApp(
+        dispatchers,
         environment.config.flashCardsThreshold,
         restfulNotionDatabases,
         sqlLiteNotionDatabases,
@@ -52,11 +57,14 @@ fun NotifierApp(
 }
 
 class NotifierApp(
+    private val dispatchers: Dispatchers,
     private val flashCardsThreshold: Int,
     private val restfulNotionDataBases: NotionDataBases,
     private val sqlLiteNotionDataBases: NotionDataBases,
     private val telegramBot: TelegramBotUser,
 ) : App {
+
+    private val coroutineScope = CoroutineScope(dispatchers.io)
 
     override suspend fun run() {
         clearAllCache()

@@ -7,19 +7,19 @@ import org.danceofvalkyries.app.data.telegram.chat.TelegramChat
 import org.danceofvalkyries.app.data.telegram.chat.sendMessage
 import org.danceofvalkyries.app.data.telegram.message.ConstantTelegramMessageButton
 import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
-import org.danceofvalkyries.app.data.telegram.message_types.TelegramMessagesType
+import org.danceofvalkyries.app.data.telegram.message_types.SentTelegramMessagesType
 import org.danceofvalkyries.app.data.telegram.users.TelegramBotUser
 import org.danceofvalkyries.app.domain.message.ButtonAction
 
 class TelegramBotUserImpl(
     private val telegramChat: TelegramChat,
     private val notionDataBases: NotionDataBases,
-    private val telegramMessagesType: TelegramMessagesType,
+    private val sentTelegramMessagesType: SentTelegramMessagesType,
     private val onlineDictionaries: OnlineDictionaries,
 ) : TelegramBotUser {
 
     override suspend fun editOldNotificationMessageToDoneMessage() {
-        telegramMessagesType.iterate().forEach { message ->
+        sentTelegramMessagesType.iterate().forEach { message ->
             val telegramMessage = telegramChat.getMessage(messageId = message.id)
             telegramMessage.edit(
                 newText = """Good Job! 😎 Everything is revised! ✅""",
@@ -30,8 +30,8 @@ class TelegramBotUserImpl(
     }
 
     override suspend fun deleteOldNotificationMessage() {
-        telegramMessagesType.iterate().forEach {
-            telegramMessagesType.delete(it.id)
+        sentTelegramMessagesType.iterate().forEach {
+            sentTelegramMessagesType.delete(it.id)
             telegramChat.delete(messageId = it.id)
         }
     }
@@ -54,7 +54,7 @@ class TelegramBotUserImpl(
             imageUrl = null,
             nestedButtons = telegramButtons
         )
-        telegramMessagesType.add(
+        sentTelegramMessagesType.add(
             id = sentMessage.id,
             type = "NOTIFICATION"
         )
@@ -106,7 +106,7 @@ class TelegramBotUserImpl(
             )
         )
 
-        telegramMessagesType.add(
+        sentTelegramMessagesType.add(
             telegramMessage.id,
             "FLASH_CARD"
         )
@@ -119,15 +119,15 @@ class TelegramBotUserImpl(
     }
 
     override suspend fun removeFlashCards() {
-        telegramMessagesType.iterate().filter { it.type == "FLASH_CARD" }
+        sentTelegramMessagesType.iterate().filter { it.type == "FLASH_CARD" }
             .forEach {
                 telegramChat.delete(it.id)
-                telegramMessagesType.delete(it.id)
+                sentTelegramMessagesType.delete(it.id)
             }
     }
 
     override suspend fun updateNotificationMessage() {
-        val notificationMessage = telegramMessagesType.iterate().first { it.type == "NOTIFICATION" }
+        val notificationMessage = sentTelegramMessagesType.iterate().first { it.type == "NOTIFICATION" }
 
         // TODO: Code duplication from send message. Eliminate copy-pasted code
         val flashCards = notionDataBases.iterate()

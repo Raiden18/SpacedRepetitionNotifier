@@ -1,20 +1,18 @@
-package integrations.interactions
+package integrations
 
 import com.google.gson.Gson
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.collections.shouldContain
-import kotlinx.coroutines.Dispatchers
 import okhttp3.OkHttpClient
 import org.danceofvalkyries.app.apps.buttonslistener.TelegramButtonListenerApp
 import org.danceofvalkyries.app.apps.buttonslistener.presentation.controller.SpaceRepetitionSession
 import org.danceofvalkyries.app.data.telegram.chat.restful.RestfulTelegramChat
 import org.danceofvalkyries.app.data.telegram.users.bot.TelegramBotUserImpl
 import org.danceofvalkyries.app.data.telegram.users.user.TelegramHumanUserImpl
-import org.danceofvalkyries.utils.DispatchersImpl
 import org.danceofvalkyries.utils.rest.jsonObject
 import utils.*
 
-class UserInteractionWIthChatTest : BehaviorSpec() {
+class ButtonsListenersTest : BehaviorSpec() {
 
     private lateinit var spaceRepetitionSession: SpaceRepetitionSession
     private lateinit var telegramButtonListenerApp: TelegramButtonListenerApp
@@ -39,7 +37,7 @@ class UserInteractionWIthChatTest : BehaviorSpec() {
             )
             val restfulNotionDataBases = NotionDataBasesFake()
             val localDbNotionDataBases = NotionDataBasesFake()
-            val telegramMessagesType = TelegramMessagesTypeFake()
+            val telegramMessagesType = SentTelegramMessagesTypeFake()
             val humanUser = TelegramHumanUserImpl(
                 localDbNotionDataBases,
                 restfulNotionDataBases,
@@ -55,7 +53,7 @@ class UserInteractionWIthChatTest : BehaviorSpec() {
             )
             val spaceRepetitionSession = SpaceRepetitionSession(humanUser, botUser)
             telegramButtonListenerApp = TelegramButtonListenerApp(
-                DispatchersImpl(Dispatchers.Unconfined),
+                DispatchersFake(),
                 spaceRepetitionSession,
                 telegramChat
             )
@@ -94,7 +92,7 @@ class UserInteractionWIthChatTest : BehaviorSpec() {
 
                 Then("Should delete that message on Telegram").config() {
                     telegramButtonListenerApp.run()
-                    httpClientFake.urls shouldContain "https://api.telegram.org/bot$API_KEY/deleteMessage?chat_id=$CHAT_ID&message_id=$messageId"
+                    httpClientFake.getUrlRequests shouldContain "https://api.telegram.org/bot$API_KEY/deleteMessage?chat_id=$CHAT_ID&message_id=$messageId"
                 }
             }
         }
