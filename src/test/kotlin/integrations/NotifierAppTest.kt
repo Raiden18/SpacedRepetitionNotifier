@@ -1,26 +1,24 @@
 package integrations
 
     import integrations.testdata.GreekLettersAndSoundsDataBaseRestfulFake
-import io.kotest.core.spec.style.BehaviorSpec
-import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.app.App
-import org.danceofvalkyries.app.apps.notifier.NotifierApp
-import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
-import org.danceofvalkyries.app.data.telegram.users.bot.TelegramBotUserImpl
-import utils.DispatchersFake
-import utils.OnlineDictionariesFake
-import utils.SentTelegramMessagesTypeFake
-import utils.SqlLiteNotionDataBasesFake
-import utils.fakes.AppTestRunnable
-import utils.fakes.NotionDataBasesRestfulFake
-import utils.fakes.httpclient.NewHttpClientFake
-import utils.fakes.telegram.TelegramChatFake
-import utils.fakes.telegram.TelegramMessageFake
+    import io.kotest.core.spec.style.BehaviorSpec
+    import io.kotest.matchers.shouldBe
+    import org.danceofvalkyries.app.App
+    import org.danceofvalkyries.app.apps.notifier.NotifierApp
+    import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
+    import org.danceofvalkyries.app.data.telegram.users.bot.TelegramBotUserImpl
+    import utils.DispatchersFake
+    import utils.OnlineDictionariesFake
+    import utils.SentTelegramMessagesTypeFake
+    import utils.SqlLiteNotionDataBasesFake
+    import utils.fakes.AppTestRunnable
+    import utils.fakes.NotionDataBasesRestfulFake
+    import utils.fakes.telegram.TelegramChatFake
+    import utils.fakes.telegram.TelegramMessageFake
 
 class NotifierAppTest : BehaviorSpec() {
 
     private lateinit var notifierApp: App
-    private lateinit var httpClient: NewHttpClientFake
     private lateinit var sentTelegramMessagesType: SentTelegramMessagesTypeFake
     private lateinit var sqlLiteNotionDataBases: SqlLiteNotionDataBasesFake
     private lateinit var greekLettersAndSoundsDataBaseRestfulFake: GreekLettersAndSoundsDataBaseRestfulFake
@@ -31,21 +29,17 @@ class NotifierAppTest : BehaviorSpec() {
 
     init {
         beforeTest {
-            httpClient = NewHttpClientFake()
             sentTelegramMessagesType = SentTelegramMessagesTypeFake()
             sqlLiteNotionDataBases = SqlLiteNotionDataBasesFake()
             greekLettersAndSoundsDataBaseRestfulFake = GreekLettersAndSoundsDataBaseRestfulFake()
             telegramChatFake = TelegramChatFake()
-
-            val onlineDictionaries = OnlineDictionariesFake(emptyList())
             restfulNotionDataBases = NotionDataBasesRestfulFake(listOf(greekLettersAndSoundsDataBaseRestfulFake))
-
             telegramBot = TelegramBotUserImpl(
                 telegramChatFake,
                 sqlLiteNotionDataBases,
                 restfulNotionDataBases,
                 sentTelegramMessagesType,
-                onlineDictionaries,
+                OnlineDictionariesFake(emptyList()),
             )
         }
 
