@@ -15,7 +15,6 @@ import org.danceofvalkyries.app.data.telegram.message_types.sqlite.SqlLiteSentTe
 import org.danceofvalkyries.app.data.telegram.users.bot.SpaceRepetitionSession
 import org.danceofvalkyries.app.data.telegram.users.bot.TelegramBotUserImpl
 import org.danceofvalkyries.app.data.telegram.users.user.TelegramHumanUserImpl
-import org.danceofvalkyries.app.data.telegram_and_notion.sqlite.SqlLiteSentNotionPageFlashCardsToTelegram
 import org.danceofvalkyries.app.domain.message.ButtonAction
 import org.danceofvalkyries.environment.Environment
 import org.danceofvalkyries.utils.Dispatchers
@@ -34,7 +33,6 @@ fun TelegramButtonListenerApp(
         httpClient = httpClient,
         gson = Gson(),
     )
-    val sentNotionPageFlashCardsToTelegram = SqlLiteSentNotionPageFlashCardsToTelegram(dbConnection)
     val sqlLiteTelegramMessages = SqlLiteSentTelegramMessagesType(dbConnection)
     val onlineDictionaries = ConfigOnlineDictionaries(config.notion.observedDatabases)
     val webServer = KtorWebServerImpl()
