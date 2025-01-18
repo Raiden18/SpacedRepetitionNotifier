@@ -2,6 +2,7 @@ package org.danceofvalkyries.app.data.telegram.message
 
 import org.danceofvalkyries.app.data.telegram.chat.TelegramChat
 import org.danceofvalkyries.app.data.telegram.chat.sendMessage
+import org.danceofvalkyries.app.data.telegram.message_types.SentTelegramMessagesType
 
 interface TelegramMessage {
     val id: Long
@@ -32,14 +33,6 @@ suspend fun TelegramMessage.sendTo(telegramChat: TelegramChat): TelegramMessage 
     return telegramChat.sendMessage(this)
 }
 
-suspend fun TelegramMessage.editIn(telegramChat: TelegramChat): TelegramMessage {
-    return telegramChat.edit(
-        messageId = id,
-        newText = text,
-        newNestedButtons = nestedButtons,
-    )
-}
-
 suspend fun TelegramMessage.edit(
     newMessage: TelegramMessage,
     telegramChat: TelegramChat,
@@ -50,4 +43,3 @@ suspend fun TelegramMessage.edit(
         newNestedButtons = newMessage.nestedButtons,
     )
 }
-

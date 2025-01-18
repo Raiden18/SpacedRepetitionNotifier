@@ -4,18 +4,12 @@ import org.danceofvalkyries.app.data.dictionary.OnlineDictionaries
 import org.danceofvalkyries.app.data.notion.databases.NotionDataBases
 import org.danceofvalkyries.app.data.notion.pages.NotionPageFlashCard
 import org.danceofvalkyries.app.data.telegram.chat.TelegramChat
-import org.danceofvalkyries.app.data.telegram.chat.sendMessage
-import org.danceofvalkyries.app.data.telegram.message.ConstantTelegramMessageButton
-import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
 import org.danceofvalkyries.app.data.telegram.message.edit
 import org.danceofvalkyries.app.data.telegram.message.sendTo
 import org.danceofvalkyries.app.data.telegram.message_types.SentTelegramMessagesType
 import org.danceofvalkyries.app.data.telegram.users.TelegramBotUser
-import org.danceofvalkyries.app.data.telegram.users.bot.messages.DoneTelegramMessage
-import org.danceofvalkyries.app.data.telegram.users.bot.messages.MessageEntity
-import org.danceofvalkyries.app.data.telegram.users.bot.messages.NotificationMessage
+import org.danceofvalkyries.app.data.telegram.users.bot.messages.*
 import org.danceofvalkyries.app.data.telegram.users.bot.translator.TextTranslator
-import org.danceofvalkyries.app.domain.message.ButtonAction
 import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
 import org.danceofvalkyries.notion.api.models.KnowLevels
 import org.danceofvalkyries.notion.api.models.NotionId
@@ -38,7 +32,7 @@ class TelegramBotUserImpl(
 
     override suspend fun editOldNotificationMessageToDoneMessage() {
         sentTelegramMessagesType.iterate()
-            .map { MessageEntity(it.id) }
+            .map { SerializedMessage(it.id, it.type) }
             .forEach { oldNotification ->
                 val newMessage = DoneTelegramMessage(stringResources)
                 oldNotification.edit(newMessage, telegramChat)
@@ -53,68 +47,21 @@ class TelegramBotUserImpl(
     }
 
     override suspend fun sendNewNotificationMessage() {
-        val flashCards = getAllFlashCard()
-        val sentMessage = NotificationMessage(
-            stringResources = stringResources,
-            flashCardsCount = flashCards.count(),
-            nestedButtons = buildButtonsForNotifications(flashCards)
-        ).sendTo(telegramChat)
-
-        sentTelegramMessagesType.add(
-            id = sentMessage.id,
-            type = NOTIFiCATION_TYPE_MESSAGE
+        sentMessageAndSave(
+            NeedRevisingFlashCardMessage(
+                getAllFlashCard()
+            )
         )
     }
 
     override suspend fun sendFlashCardMessage(flashCard: NotionPageFlashCard) {
-        val memorizedInfo = textTranslator.encode(flashCard.name)!!
-        val example = textTranslator.encode(flashCard.example)
-        val answer = textTranslator.encode(flashCard.explanation)
-
-        val body = StringBuilder()
-            .appendLine("*${memorizedInfo}*")
-        if (example != null) {
-            body.appendLine()
-                .appendLine("_${example}_")
-        }
-        if (answer != null) {
-            body.appendLine()
-                .appendLine("||${answer}||")
-        }
-        body.appendLine()
-            .append(stringResources.choose())
-
-        val recallActions = listOf(
-            ConstantTelegramMessageButton(
-                "${stringResources.forgot()}  ❌",
-                TelegramMessage.Button.Action.CallBackData(ButtonAction.Forgotten(flashCard.id).rawValue)
-            ),
-            ConstantTelegramMessageButton(
-                "${stringResources.recalled()}  ✅",
-                TelegramMessage.Button.Action.CallBackData(ButtonAction.Recalled(flashCard.id).rawValue)
+        sentMessageAndSave(
+            FlashCardMessage(
+                flashCard,
+                textTranslator,
+                stringResources,
+                onlineDictionaries.iterate(flashCard.notionDbID)
             )
-        )
-
-        val dictionaryTelegramButtons = onlineDictionaries.iterate(flashCard.notionDbID)
-            .map {
-                ConstantTelegramMessageButton(
-                    text = stringResources.lookUp(),
-                    action = TelegramMessage.Button.Action.Url(it.getUrlFor(memorizedInfo)),
-                )
-            }
-
-        val telegramMessage = telegramChat.sendMessage(
-            text = body.toString(),
-            imageUrl = flashCard.coverUrl,
-            nestedButtons = listOf(
-                recallActions,
-                dictionaryTelegramButtons
-            )
-        )
-
-        sentTelegramMessagesType.add(
-            telegramMessage.id,
-            "FLASH_CARD"
         )
     }
 
@@ -132,18 +79,12 @@ class TelegramBotUserImpl(
             return
         }
 
+        val newNeedRevisingFlashCardMessage = NeedRevisingFlashCardMessage(flashCards)
         val oldNotificationMessage = sentTelegramMessagesType.iterate()
             .filter { it.type == NOTIFiCATION_TYPE_MESSAGE }
-            .map { MessageEntity(it.id) }
+            .map { SerializedMessage(it.id, it.type) }
             .first()
-
-        val newNotificationMessage = NotificationMessage(
-            stringResources = stringResources,
-            flashCardsCount = flashCards.count(),
-            nestedButtons = buildButtonsForNotifications(flashCards)
-        )
-
-        oldNotificationMessage.edit(newNotificationMessage, telegramChat)
+        oldNotificationMessage.edit(newNeedRevisingFlashCardMessage, telegramChat)
     }
 
     override suspend fun removeAllFlashCardsFromChat() {
@@ -226,15 +167,19 @@ class TelegramBotUserImpl(
             .toList()
     }
 
-    private suspend fun buildButtonsForNotifications(flashCards: List<NotionPageFlashCard>): List<List<ConstantTelegramMessageButton>> {
-        return flashCards
-            .groupBy { it.notionDbID }
-            .map { (dbId, flashCards) ->
-                val db = localDbNotionDataBases.iterate().first { it.id == dbId }
-                ConstantTelegramMessageButton(
-                    text = "${db.name}: ${flashCards.count()}",
-                    action = TelegramMessage.Button.Action.CallBackData(ButtonAction.DataBase(db.id).rawValue),
-                )
-            }.map { listOf(it) }
+    private suspend fun NeedRevisingFlashCardMessage(flashCards: List<NotionPageFlashCard>): NeedRevisingFlashCardMessage {
+        return NeedRevisingFlashCardMessage(
+            stringResources = stringResources,
+            flashCards = flashCards,
+            notionDataBases = localDbNotionDataBases.iterate().toList()
+        )
+    }
+
+    private suspend fun sentMessageAndSave(localMessage: LocalTelegramMessage) {
+        val remoteFlashCardMessage = localMessage.sendTo(telegramChat)
+        SerializedMessage(
+            id = remoteFlashCardMessage.id,
+            type = localMessage.type
+        ).saveTo(sentTelegramMessagesType)
     }
 }

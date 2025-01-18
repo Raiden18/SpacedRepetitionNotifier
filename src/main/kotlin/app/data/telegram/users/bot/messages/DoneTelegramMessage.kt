@@ -4,7 +4,8 @@ import org.danceofvalkyries.utils.resources.StringResources
 
 class DoneTelegramMessage(
     private val stringResources: StringResources
-) : LocalTelegramMessage() {
+) : NotificationMessage() {
+
     override val text: String
         get() = """${stringResources.getJob()} 😎 ${stringResources.everythingIsRevised()} ✅"""
 }
