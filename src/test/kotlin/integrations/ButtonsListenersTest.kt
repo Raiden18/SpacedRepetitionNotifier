@@ -11,7 +11,6 @@ import org.danceofvalkyries.app.data.dictionary.constant.ConstantOnlineDictionar
 import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
 import org.danceofvalkyries.app.data.telegram.users.bot.SpaceRepetitionSession
 import org.danceofvalkyries.app.data.telegram.users.bot.TelegramBotUserImpl
-import org.danceofvalkyries.app.data.telegram.users.user.TelegramHumanUserImpl
 import utils.DispatchersFake
 import utils.OnlineDictionariesFake
 import utils.SentTelegramMessagesTypeFake
@@ -54,10 +53,6 @@ class ButtonsListenersTest : BehaviorSpec() {
 
                 val restfulNotionDataBases = SqlLiteNotionDataBasesFake(listOf(englishVocabularyDataBaseRestfulFake))
 
-                val humanUser = TelegramHumanUserImpl(
-                    sqlLiteNotionDataBasesFake,
-                    restfulNotionDataBases,
-                )
                 val botUser = TelegramBotUserImpl(
                     telegramChat,
                     sqlLiteNotionDataBasesFake,
@@ -67,7 +62,7 @@ class ButtonsListenersTest : BehaviorSpec() {
                 )
                 telegramButtonListenerApp = TelegramButtonListenerApp(
                     DispatchersFake(),
-                    SpaceRepetitionSession(humanUser, botUser),
+                    SpaceRepetitionSession(botUser),
                     telegramChat
                 )
             }

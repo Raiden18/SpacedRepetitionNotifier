@@ -1,11 +1,9 @@
 package org.danceofvalkyries.app.data.telegram.users.bot
 
-import org.danceofvalkyries.app.data.telegram.users.HumanUser
 import org.danceofvalkyries.app.data.telegram.users.TelegramBotUser
 import org.danceofvalkyries.notion.api.models.NotionId
 
 class SpaceRepetitionSession(
-    private val humanUser: HumanUser,
     private val telegramBotUser: TelegramBotUser,
 ) {
 

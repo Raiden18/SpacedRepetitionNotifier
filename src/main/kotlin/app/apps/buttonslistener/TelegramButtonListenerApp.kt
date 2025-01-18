@@ -14,7 +14,6 @@ import org.danceofvalkyries.app.data.telegram.chat.restful.RestfulTelegramChat
 import org.danceofvalkyries.app.data.telegram.message_types.sqlite.SqlLiteSentTelegramMessagesType
 import org.danceofvalkyries.app.data.telegram.users.bot.SpaceRepetitionSession
 import org.danceofvalkyries.app.data.telegram.users.bot.TelegramBotUserImpl
-import org.danceofvalkyries.app.data.telegram.users.user.TelegramHumanUserImpl
 import org.danceofvalkyries.app.domain.message.ButtonAction
 import org.danceofvalkyries.environment.Environment
 import org.danceofvalkyries.utils.Dispatchers
@@ -51,14 +50,7 @@ fun TelegramButtonListenerApp(
         sqlLiteTelegramMessages,
         onlineDictionaries,
     )
-    val humanUser = TelegramHumanUserImpl(
-        localDbNotionDataBases = sqlLiteNotionDataBases,
-        restfulNotionDataBases = restfulNotionDataBases,
-    )
-    val spaceRepetitionSession = SpaceRepetitionSession(
-        humanUser,
-        botUser,
-    )
+    val spaceRepetitionSession = SpaceRepetitionSession(botUser)
     return TelegramButtonListenerApp(
         dispatchers,
         spaceRepetitionSession,
