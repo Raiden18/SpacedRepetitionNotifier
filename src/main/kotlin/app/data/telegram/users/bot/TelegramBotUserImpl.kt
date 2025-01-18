@@ -150,15 +150,6 @@ class TelegramBotUserImpl(
         )
     }
 
-    override suspend fun removeFromDB(flashCardId: String) {
-        val flashCard = localDbNotionDataBases.iterate()
-            .flatMap { it.iterate() }
-            .first { it.id == flashCardId }
-
-        val flashCardDb = localDbNotionDataBases.getBy(flashCard.notionDbID)
-        flashCardDb.delete(flashCard.id)
-    }
-
     override suspend fun removeAllFlashCardsFromChat() {
         sentTelegramMessagesType.iterate()
             .filter { it.type == "FLASH_CARD" }
