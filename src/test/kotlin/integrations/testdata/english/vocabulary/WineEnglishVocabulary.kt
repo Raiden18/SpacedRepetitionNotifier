@@ -76,7 +76,7 @@ class WineEnglishVocabulary(
         )
 
     override fun setKnowLevels(knowLevels: Map<Int, Boolean>) {
-        this.updatedKnowLevels = knowLevels
+        updatedKnowLevels = knowLevels
     }
 
     override fun equals(other: Any?): Boolean {

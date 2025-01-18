@@ -91,110 +91,173 @@ class ButtonsListenersTest : BehaviorSpec() {
                 }
             }
 
-            When("Notification Message is shown") {
+            When("Notification Message is shown for Flash Cards from English Vocabulary Database") {
+
                 lateinit var notificationMessage: TelegramMessage
 
-                val wineFlashCard = TelegramMessageFake.createEnglishVocabularyFlashCard(
-                    messageId = 2,
-                    text = englishVocabularyDataBaseFake.wine.name,
-                    example = englishVocabularyDataBaseFake.wine.example!!,
-                    answer = englishVocabularyDataBaseFake.wine.explanation!!,
-                    flashCardId = englishVocabularyDataBaseFake.wine.id,
-                    dictionaryUrl = cambridgeDictionary.getUrlFor(englishVocabularyDataBaseFake.wine.name),
-                    imageUrl = englishVocabularyDataBaseFake.wine.coverUrl
-                )
+                And("There are 2 flash cards to revise") {
 
-                val dota2FlashCard = TelegramMessageFake.createEnglishVocabularyFlashCard(
-                    messageId = 3,
-                    text = englishVocabularyDataBaseFake.dota2.name,
-                    example = englishVocabularyDataBaseFake.dota2.example!!,
-                    answer = englishVocabularyDataBaseFake.dota2.explanation!!,
-                    flashCardId = englishVocabularyDataBaseFake.dota2.id,
-                    dictionaryUrl = cambridgeDictionary.getUrlFor(englishVocabularyDataBaseFake.dota2.name),
-                    imageUrl = englishVocabularyDataBaseFake.dota2.coverUrl
-                )
+                    val wineFlashCard = TelegramMessageFake.createEnglishVocabularyFlashCard(
+                        messageId = 2,
+                        text = englishVocabularyDataBaseFake.wine.name,
+                        example = englishVocabularyDataBaseFake.wine.example!!,
+                        answer = englishVocabularyDataBaseFake.wine.explanation!!,
+                        flashCardId = englishVocabularyDataBaseFake.wine.id,
+                        dictionaryUrl = cambridgeDictionary.getUrlFor(englishVocabularyDataBaseFake.wine.name),
+                        imageUrl = englishVocabularyDataBaseFake.wine.coverUrl
+                    )
 
-                beforeTest {
-                    val message = TelegramMessageFake.createTelegramNotification(
-                        messageId = -1,
-                        numberToRevise = 2,
-                        tableName = englishVocabularyDataBaseFake.name,
-                        dbId = englishVocabularyDataBaseFake.id
+                    val dota2FlashCard = TelegramMessageFake.createEnglishVocabularyFlashCard(
+                        messageId = 3,
+                        text = englishVocabularyDataBaseFake.dota2.name,
+                        example = englishVocabularyDataBaseFake.dota2.example!!,
+                        answer = englishVocabularyDataBaseFake.dota2.explanation!!,
+                        flashCardId = englishVocabularyDataBaseFake.dota2.id,
+                        dictionaryUrl = cambridgeDictionary.getUrlFor(englishVocabularyDataBaseFake.dota2.name),
+                        imageUrl = englishVocabularyDataBaseFake.dota2.coverUrl
                     )
-                    notificationMessage = telegramChat.sendTextMessage(
-                        text = message.text,
-                        nestedButtons = message.nestedButtons
-                    )
-                    sentTelegramMessagesTypeFake.add(
-                        id = notificationMessage.id,
-                        type = "NOTIFICATION"
-                    )
-                    telegramButtonListenerApp.run()
-                }
 
-                And("User taps on English Vocabulary buttons") {
                     beforeTest {
-                        telegramChat.userSendsCallback(
-                            TelegramCallbackData(
-                                id = "callback_id",
-                                action = TelegramMessage.Button.Action.CallBackData("dbId=${englishVocabularyDataBaseFake.id}"),
-                                messageId = notificationMessage.id
-                            )
-                        )
+                        notificationMessage = initAndGetNotificationMessage(numberToRevise = 2)
+                        telegramButtonListenerApp.run()
                     }
 
-                    shouldSendWineFlashCardToTelegramChat(wineFlashCard)
-                    notificationMessageShouldRemainIntactInTelegramChat(notificationMessage)
-
-                    And("User forgets Wine FlashCard") {
+                    And("User taps on English Vocabulary buttons") {
                         beforeTest {
-                            telegramChat.userSendsCallback(
-                                TelegramCallbackData(
-                                    id = "callback_id",
-                                    action = TelegramMessage.Button.Action.CallBackData("forgottenFlashCardId=${englishVocabularyDataBaseFake.wine.id}"),
-                                    messageId = wineFlashCard.id
-                                )
+                            userTapsOnDbButton(
+                                dbId = englishVocabularyDataBaseFake.id,
+                                notificationMessageId = notificationMessage.id
                             )
                         }
 
-                        shouldSendDota2FlashCardToTelegram(dota2FlashCard)
-                        shouldRemoveWineFlashCardFromTelegramChat(wineFlashCard)
-                        shouldDecreaseCounterOnEnglishVocabularyButton(
-                            messageId = notificationMessage.id,
-                            newNumberToRevise = 1
-                        )
-                        notificationMessageShouldRemainInSentMessagesDb(notificationMessage.id)
-                        wineFlashCardShouldBeForgotten()
-                    }
+                        shouldSendWineFlashCardToTelegramChat(wineFlashCard)
+                        notificationMessageShouldRemainIntactInTelegramChat(notificationMessage)
 
-                    And("User recalls Wine FlashCard") {
-                        beforeTest {
-                            telegramChat.userSendsCallback(
-                                TelegramCallbackData(
-                                    id = "callback_id",
-                                    action = TelegramMessage.Button.Action.CallBackData("recalledFlashCardId=${englishVocabularyDataBaseFake.wine.id}"),
-                                    messageId = wineFlashCard.id
+                        And("User forgets Wine FlashCard") {
+                            beforeTest {
+                                userTapsOnForgot(
+                                    messageId = wineFlashCard.id,
+                                    notionPageId = englishVocabularyDataBaseFake.wine.id
                                 )
+                            }
+
+                            shouldSendDota2FlashCardToTelegram(dota2FlashCard)
+                            shouldRemoveWineFlashCardFromTelegramChat(wineFlashCard)
+                            shouldDecreaseCounterOnEnglishVocabularyButton(
+                                messageId = notificationMessage.id,
+                                newNumberToRevise = 1
                             )
+                            notificationMessageShouldRemainInSentMessagesDb(notificationMessage.id)
+                            wineFlashCardShouldBeForgotten()
                         }
 
-                        shouldSendDota2FlashCardToTelegram(dota2FlashCard)
-                        shouldRemoveWineFlashCardFromTelegramChat(wineFlashCard)
-                        shouldDecreaseCounterOnEnglishVocabularyButton(
-                            messageId = notificationMessage.id,
-                            newNumberToRevise = 1
-                        )
-                        notificationMessageShouldRemainInSentMessagesDb(notificationMessage.id)
-                        wineFlashCardShouldBeRecalled()
+                        And("User recalls Wine FlashCard") {
+                            beforeTest {
+                                userTapsOnRecalled(
+                                    messageId = wineFlashCard.id,
+                                    notionPageId = englishVocabularyDataBaseFake.wine.id,
+                                )
+                            }
+
+                            shouldSendDota2FlashCardToTelegram(dota2FlashCard)
+                            shouldRemoveWineFlashCardFromTelegramChat(wineFlashCard)
+                            shouldDecreaseCounterOnEnglishVocabularyButton(
+                                messageId = notificationMessage.id,
+                                newNumberToRevise = 1
+                            )
+                            notificationMessageShouldRemainInSentMessagesDb(notificationMessage.id)
+                            wineFlashCardShouldBeRecalled()
+
+                            And("User Recalls Dota 2 Flash Card") {
+                                beforeTest {
+                                    userTapsOnRecalled(
+                                        messageId = dota2FlashCard.id,
+                                        notionPageId = englishVocabularyDataBaseFake.dota2.id
+                                    )
+                                }
+
+                                shouldRemoveDota2FlashCardFromTelegram(dota2FlashCard)
+                                shouldEditNotificationMessageToAllDone(messageId = notificationMessage.id)
+                                notificationMessageShouldRemainInSentMessagesDb(notificationMessage.id)
+                                dota2FlashCardShouldBeRecalled()
+                            }
+                        }
                     }
                 }
             }
         }
     }
 
+
+    private fun initAppDependencies() {
+
+    }
+
+    private suspend fun initAndGetNotificationMessage(
+        numberToRevise: Int
+    ): TelegramMessage {
+        val message = TelegramMessageFake.createTelegramNotification(
+            messageId = -1,
+            numberToRevise = numberToRevise,
+            tableName = englishVocabularyDataBaseFake.name,
+            dbId = englishVocabularyDataBaseFake.id
+        )
+        val notificationMessage = telegramChat.sendTextMessage(
+            text = message.text,
+            nestedButtons = message.nestedButtons
+        )
+        sentTelegramMessagesTypeFake.add(
+            id = notificationMessage.id,
+            type = "NOTIFICATION"
+        )
+        return notificationMessage
+    }
+
+    private fun userTapsOnDbButton(
+        dbId: String,
+        notificationMessageId: Long
+    ) {
+        telegramChat.userSendsCallback(
+            TelegramCallbackData(
+                id = "callback_id",
+                action = TelegramMessage.Button.Action.CallBackData("dbId=${dbId}"),
+                messageId = notificationMessageId
+            )
+        )
+    }
+
+    private fun userTapsOnRecalled(messageId: Long, notionPageId: String) {
+        telegramChat.userSendsCallback(
+            TelegramCallbackData(
+                id = "callback_id",
+                action = TelegramMessage.Button.Action.CallBackData("recalledFlashCardId=${notionPageId}"),
+                messageId = messageId
+            )
+        )
+    }
+
+    private fun userTapsOnForgot(messageId: Long, notionPageId: String) {
+        telegramChat.userSendsCallback(
+            TelegramCallbackData(
+                id = "callback_id",
+                action = TelegramMessage.Button.Action.CallBackData("forgottenFlashCardId=${notionPageId}"),
+                messageId = messageId
+            )
+        )
+    }
+
     /**
      * Reusable Then
      */
+    private suspend fun BehaviorSpecWhenContainerScope.shouldEditNotificationMessageToAllDone(messageId: Long) {
+        Then("Should edit notification message to All done message") {
+            val allDoneMessage = TelegramMessageFake.createAllDone(
+                messageId = messageId,
+            )
+            telegramChat.assertThat().isInChat(allDoneMessage)
+        }
+    }
+
     private suspend fun BehaviorSpecWhenContainerScope.shouldDecreaseCounterOnEnglishVocabularyButton(messageId: Long, newNumberToRevise: Int) {
         Then("Should decrease counter on English Vocabulary Button") {
             val editedNotificationMessage = TelegramMessageFake.createTelegramNotification(
@@ -203,8 +266,7 @@ class ButtonsListenersTest : BehaviorSpec() {
                 tableName = englishVocabularyDataBaseFake.name,
                 dbId = englishVocabularyDataBaseFake.id
             )
-            telegramChat.assertThat()
-                .isInChat(editedNotificationMessage)
+            telegramChat.assertThat().isInChat(editedNotificationMessage)
         }
     }
 
@@ -235,8 +297,14 @@ class ButtonsListenersTest : BehaviorSpec() {
     }
 
     private suspend fun BehaviorSpecWhenContainerScope.shouldSendDota2FlashCardToTelegram(dota2FlashCard: TelegramMessage) {
-        Then("Should Send Dota 2 Flash Card") {
+        Then("Should Send Dota 2 Flash Card message") {
             telegramChat.assertThat().isInChat(dota2FlashCard)
+        }
+    }
+
+    private suspend fun BehaviorSpecWhenContainerScope.shouldRemoveDota2FlashCardFromTelegram(dota2FlashCard: TelegramMessage) {
+        Then("Should Remove Dota 2 Flash Card Message from Telegram") {
+            telegramChat.assertThat().wasDeleted(dota2FlashCard)
         }
     }
 
@@ -249,6 +317,18 @@ class ButtonsListenersTest : BehaviorSpec() {
     private suspend fun BehaviorSpecWhenContainerScope.wineFlashCardShouldBeRecalled() {
         Then("Wine Flash Card should be recalled") {
             englishVocabularyDataBaseRestfulFake.wine.updatedKnowLevels shouldBe englishVocabularyDataBaseFake.wine.nextLevelKnowLevels
+        }
+    }
+
+    private suspend fun BehaviorSpecWhenContainerScope.dota2FlashCardShouldBeForgotten() {
+        Then("Dota 2 Flash Card should be forgotten") {
+            englishVocabularyDataBaseRestfulFake.dota2.updatedKnowLevels shouldBe englishVocabularyDataBaseFake.dota2.forgottenLevelKnowLevels
+        }
+    }
+
+    private suspend fun BehaviorSpecWhenContainerScope.dota2FlashCardShouldBeRecalled() {
+        Then("Dota 2 Flash Card should be recalled") {
+            englishVocabularyDataBaseRestfulFake.dota2.updatedKnowLevels shouldBe englishVocabularyDataBaseFake.dota2.nextLevelKnowLevels
         }
     }
 }

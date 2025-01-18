@@ -6,6 +6,40 @@ class Dota2EnglishVocabulary(
     private val notionDbId: String,
 ) : NotionPageFlashCard {
 
+    var updatedKnowLevels: Map<Int, Boolean> = mapOf<Int, Boolean>()
+
+    val forgottenLevelKnowLevels = mapOf(
+        1 to false,
+        2 to false,
+        3 to false,
+        4 to false,
+        5 to false,
+        6 to false,
+        7 to false,
+        8 to false,
+        9 to false,
+        10 to false,
+        11 to false,
+        12 to false,
+        13 to false,
+    )
+
+    val nextLevelKnowLevels = mapOf(
+        1 to true,
+        2 to true,
+        3 to true,
+        4 to false,
+        5 to false,
+        6 to false,
+        7 to false,
+        8 to false,
+        9 to false,
+        10 to false,
+        11 to false,
+        12 to false,
+        13 to false,
+    )
+
     override val id: String
         get() = "dota_2_english_vocabulary_1"
 
@@ -41,7 +75,9 @@ class Dota2EnglishVocabulary(
             13 to false,
         )
 
-    override fun setKnowLevels(knowLevels: Map<Int, Boolean>) = Unit
+    override fun setKnowLevels(knowLevels: Map<Int, Boolean>) {
+        updatedKnowLevels = knowLevels
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

@@ -129,6 +129,10 @@ class TelegramBotUserImpl(
         val flashCards = localDbNotionDataBases.iterate()
             .flatMap { it.iterate() }
             .toList()
+        if (flashCards.isEmpty()) {
+            editOldNotificationMessageToDoneMessage()
+            return
+        }
         val telegramButtons = flashCards
             .groupBy { it.notionDbID }
             .map { (dbId, flashCards) ->
@@ -158,18 +162,16 @@ class TelegramBotUserImpl(
     override suspend fun removeAllFlashCardsFromChat() {
         sentTelegramMessagesType.iterate()
             .filter { it.type == "FLASH_CARD" }
-            .forEach {
-                println("BOT: ")
-                println("REMOVE FROM CHAT: ${it.id}=${it.type}")
-                telegramChat.delete(it.id)
-            }
+            .forEach { telegramChat.delete(it.id) }
     }
 
     override suspend fun sendNextFlashCardFrom(notionDbId: String) {
         val flashCard = localDbNotionDataBases.iterate()
             .flatMap { it.iterate() }
-            .firstOrNull { it.notionDbID == notionDbId }!!
-        sendFlashCardMessage(flashCard)
+            .firstOrNull { it.notionDbID == notionDbId }
+        if (flashCard != null) {
+            sendFlashCardMessage(flashCard)
+        }
     }
 
     override suspend fun removeRecalledFlashCardFromLocalDbs(recalledFlashCardID: String) {
@@ -215,6 +217,7 @@ class TelegramBotUserImpl(
     }
 
     override suspend fun makeRecalledOnNotion(flashCardId: String) {
+
         val flashCard = localDbNotionDataBases
             .iterate()
             .flatMap { it.iterate() }
@@ -229,9 +232,10 @@ class TelegramBotUserImpl(
                     knowLevels = KnowLevels(it.knowLevels)
                 )
             }.first { it.id.rawValue == flashCardId }
-        val forgottenFlashCard = flashCard.recall()
+
+        val recalled = flashCard.recall()
         val restfullDataBase = restfulNotionDataBases.getBy(flashCard.notionDbID.rawValue)
-        restfullDataBase.getPageBy(flashCardId).setKnowLevels(forgottenFlashCard.knowLevels.levels)
+        restfullDataBase.getPageBy(flashCardId).setKnowLevels(recalled.knowLevels.levels)
     }
 
     private fun String.escapeCharacters(): String {
