@@ -14,6 +14,7 @@ import org.danceofvalkyries.app.domain.message.ButtonAction
 import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
 import org.danceofvalkyries.notion.api.models.KnowLevels
 import org.danceofvalkyries.notion.api.models.NotionId
+import org.danceofvalkyries.utils.resources.StringResources
 
 class TelegramBotUserImpl(
     private val telegramChat: TelegramChat,
@@ -22,13 +23,14 @@ class TelegramBotUserImpl(
     private val sentTelegramMessagesType: SentTelegramMessagesType,
     private val onlineDictionaries: OnlineDictionaries,
     private val textTranslator: TextTranslator,
+    private val stringResources: StringResources,
 ) : TelegramBotUser {
 
     override suspend fun editOldNotificationMessageToDoneMessage() {
         sentTelegramMessagesType.iterate().forEach { message ->
             telegramChat.edit(
                 messageId = message.id,
-                newText = """Good Job! 😎 Everything is revised! ✅""",
+                newText = """${stringResources.getJob()} 😎 ${stringResources.everythingIsRevised()} ✅""",
                 newNestedButtons = emptyList()
             )
         }
@@ -55,7 +57,7 @@ class TelegramBotUserImpl(
                 )
             }.map { listOf(it) }
         val sentMessage = telegramChat.sendMessage(
-            text = """You have ${flashCards.count()} flashcards to revise 🧠""".trimIndent(),
+            text = """${stringResources.flashCardsToRevise(flashCards.count())} 🧠""".trimIndent(),
             imageUrl = null,
             nestedButtons = telegramButtons
         )
@@ -81,15 +83,15 @@ class TelegramBotUserImpl(
                 .appendLine("||${answer}||")
         }
         body.appendLine()
-            .append("Choose:")
+            .append(stringResources.choose())
 
         val recallActions = listOf(
             ConstantTelegramMessageButton(
-                "Forgot  ❌",
+                "${stringResources.forgot()}  ❌",
                 TelegramMessage.Button.Action.CallBackData(ButtonAction.Forgotten(flashCard.id).rawValue)
             ),
             ConstantTelegramMessageButton(
-                "Recalled  ✅",
+                "${stringResources.recalled()}  ✅",
                 TelegramMessage.Button.Action.CallBackData(ButtonAction.Recalled(flashCard.id).rawValue)
             )
         )
@@ -97,7 +99,7 @@ class TelegramBotUserImpl(
         val dictionaryTelegramButtons = onlineDictionaries.iterate(flashCard.notionDbID)
             .map {
                 ConstantTelegramMessageButton(
-                    text = "Look it up",
+                    text = stringResources.lookUp(),
                     action = TelegramMessage.Button.Action.Url(it.getUrlFor(memorizedInfo)),
                 )
             }
@@ -110,7 +112,6 @@ class TelegramBotUserImpl(
                 dictionaryTelegramButtons
             )
         )
-
 
         sentTelegramMessagesType.add(
             telegramMessage.id,
@@ -147,7 +148,7 @@ class TelegramBotUserImpl(
 
         telegramChat.edit(
             messageId = notificationMessage.id,
-            newText = """You have ${flashCards.count()} flashcards to revise 🧠""".trimIndent(),
+            newText = """${stringResources.flashCardsToRevise(flashCards.count())} 🧠""".trimIndent(),
             newNestedButtons = telegramButtons
         )
     }

@@ -5,6 +5,7 @@ import integrations.testdata.telegram.TelegramCallbackDataFake
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.core.spec.style.scopes.BehaviorSpecWhenContainerScope
 import io.kotest.matchers.shouldBe
+import org.danceofvalkyries.app.App
 import org.danceofvalkyries.app.apps.buttonslistener.TelegramButtonListenerApp
 import org.danceofvalkyries.app.data.dictionary.OnlineDictionary
 import org.danceofvalkyries.app.data.dictionary.constant.ConstantOnlineDictionary
@@ -12,6 +13,7 @@ import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
 import org.danceofvalkyries.app.data.telegram.users.bot.SpaceRepetitionSession
 import org.danceofvalkyries.app.data.telegram.users.bot.TelegramBotUserImpl
 import org.danceofvalkyries.app.data.telegram.users.bot.translator.TelegramTextTranslator
+import org.danceofvalkyries.utils.resources.EngStringResources
 import utils.DispatchersFake
 import utils.OnlineDictionariesFake
 import utils.SentTelegramMessagesTypeFake
@@ -22,7 +24,7 @@ import utils.fakes.telegram.TelegramMessageFake
 
 class ButtonsListenersTest : BehaviorSpec() {
 
-    private lateinit var telegramButtonListenerApp: TelegramButtonListenerApp
+    private lateinit var telegramButtonListenerApp: App
     private lateinit var httpClientFake: HttpClientFake
     private lateinit var sqlLiteNotionDataBasesFake: SqlLiteNotionDataBasesFake
     private lateinit var sentTelegramMessagesTypeFake: SentTelegramMessagesTypeFake
@@ -61,11 +63,14 @@ class ButtonsListenersTest : BehaviorSpec() {
                     sentTelegramMessagesTypeFake,
                     OnlineDictionariesFake(listOf(cambridgeDictionary)),
                     TelegramTextTranslator(),
+                    EngStringResources(),
                 )
-                telegramButtonListenerApp = TelegramButtonListenerApp(
-                    DispatchersFake(),
-                    SpaceRepetitionSession(botUser),
-                    telegramChat
+                telegramButtonListenerApp = AppRunInTestDecorator(
+                    TelegramButtonListenerApp(
+                        DispatchersFake(),
+                        SpaceRepetitionSession(botUser),
+                        telegramChat
+                    )
                 )
             }
             When("User types a message in the chat") {

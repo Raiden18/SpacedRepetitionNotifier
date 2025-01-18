@@ -8,11 +8,11 @@ import org.danceofvalkyries.app.apps.notifier.NotifierApp
 import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
 import org.danceofvalkyries.app.data.telegram.users.bot.TelegramBotUserImpl
 import org.danceofvalkyries.app.data.telegram.users.bot.translator.TelegramTextTranslator
+import org.danceofvalkyries.utils.resources.EngStringResources
 import utils.DispatchersFake
 import utils.OnlineDictionariesFake
 import utils.SentTelegramMessagesTypeFake
 import utils.SqlLiteNotionDataBasesFake
-import utils.fakes.AppTestRunnable
 import utils.fakes.NotionDataBasesRestfulFake
 import utils.fakes.telegram.TelegramChatFake
 import utils.fakes.telegram.TelegramMessageFake
@@ -40,7 +40,8 @@ class NotifierAppTest : BehaviorSpec() {
                 restfulNotionDataBases,
                 sentTelegramMessagesType,
                 OnlineDictionariesFake(emptyList()),
-                TelegramTextTranslator()
+                TelegramTextTranslator(),
+                EngStringResources(),
             )
         }
 
@@ -117,7 +118,7 @@ class NotifierAppTest : BehaviorSpec() {
     }
 
     private fun createApp(flashCardsThreshold: Int): App {
-        return AppTestRunnable(
+        return AppRunInTestDecorator(
             NotifierApp(
                 DispatchersFake(),
                 flashCardsThreshold = flashCardsThreshold,

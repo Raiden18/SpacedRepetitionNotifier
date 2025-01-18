@@ -1,13 +1,13 @@
-package utils.fakes
+package integrations
 
-import io.kotest.engine.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.danceofvalkyries.app.App
 
-class AppTestRunnable(
+class AppRunInTestDecorator(
     private val app: App
 ) : App {
     override suspend fun run() {
-        runBlocking {
+        runTest {
             app.run()
         }
     }

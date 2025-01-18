@@ -20,6 +20,7 @@ import org.danceofvalkyries.app.data.telegram.users.bot.translator.TelegramTextT
 import org.danceofvalkyries.app.domain.message.ButtonAction
 import org.danceofvalkyries.environment.Environment
 import org.danceofvalkyries.utils.Dispatchers
+import org.danceofvalkyries.utils.resources.EngStringResources
 
 fun TelegramButtonListenerApp(
     dispatchers: Dispatchers,
@@ -52,7 +53,8 @@ fun TelegramButtonListenerApp(
         restfulNotionDataBases,
         sqlLiteTelegramMessages,
         onlineDictionaries,
-        TelegramTextTranslator()
+        TelegramTextTranslator(),
+        EngStringResources()
     )
     val spaceRepetitionSession = SpaceRepetitionSession(botUser)
     return TelegramButtonListenerApp(

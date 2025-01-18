@@ -17,6 +17,7 @@ import org.danceofvalkyries.app.data.telegram.users.bot.TelegramBotUserImpl
 import org.danceofvalkyries.app.data.telegram.users.bot.translator.TelegramTextTranslator
 import org.danceofvalkyries.environment.Environment
 import org.danceofvalkyries.utils.Dispatchers
+import org.danceofvalkyries.utils.resources.EngStringResources
 
 fun NotifierApp(
     dispatchers: Dispatchers,
@@ -47,7 +48,8 @@ fun NotifierApp(
         restfulNotionDatabases,
         sqlLiteTelegramMessages,
         onlineDictionaries,
-        TelegramTextTranslator()
+        TelegramTextTranslator(),
+        EngStringResources(),
     )
     return NotifierApp(
         dispatchers,
