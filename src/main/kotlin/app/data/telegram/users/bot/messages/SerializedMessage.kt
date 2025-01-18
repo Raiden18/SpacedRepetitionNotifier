@@ -16,4 +16,8 @@ class SerializedMessage(
             type = type
         )
     }
+
+    suspend fun deleteFrom(sentTelegramMessagesType: SentTelegramMessagesType) {
+        sentTelegramMessagesType.delete(id)
+    }
 }

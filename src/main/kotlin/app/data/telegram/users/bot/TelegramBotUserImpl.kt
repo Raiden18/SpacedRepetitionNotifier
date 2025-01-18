@@ -4,6 +4,7 @@ import org.danceofvalkyries.app.data.dictionary.OnlineDictionaries
 import org.danceofvalkyries.app.data.notion.databases.NotionDataBases
 import org.danceofvalkyries.app.data.notion.pages.NotionPageFlashCard
 import org.danceofvalkyries.app.data.telegram.chat.TelegramChat
+import org.danceofvalkyries.app.data.telegram.message.deleteFrom
 import org.danceofvalkyries.app.data.telegram.message.edit
 import org.danceofvalkyries.app.data.telegram.message.sendTo
 import org.danceofvalkyries.app.data.telegram.message_types.SentTelegramMessagesType
@@ -40,10 +41,12 @@ class TelegramBotUserImpl(
     }
 
     override suspend fun deleteOldNotificationMessage() {
-        sentTelegramMessagesType.iterate().forEach {
-            sentTelegramMessagesType.delete(it.id)
-            telegramChat.delete(it.id)
-        }
+        sentTelegramMessagesType.iterate()
+            .map { SerializedMessage(it.id, it.type) }
+            .forEach {
+                it.deleteFrom(sentTelegramMessagesType)
+                it.deleteFrom(telegramChat)
+            }
     }
 
     override suspend fun sendNewNotificationMessage() {
@@ -89,8 +92,9 @@ class TelegramBotUserImpl(
 
     override suspend fun removeAllFlashCardsFromChat() {
         sentTelegramMessagesType.iterate()
+            .map { SerializedMessage(it.id, it.type) }
             .filter { it.type == FLASH_CARD_TYPE_MESSAGE }
-            .forEach { telegramChat.delete(it.id) }
+            .forEach { it.deleteFrom(telegramChat) }
     }
 
     override suspend fun sendNextFlashCardFrom(notionDbId: String) {
@@ -105,11 +109,10 @@ class TelegramBotUserImpl(
         localDbNotionDataBases.iterate().forEach {
             it.delete(recalledFlashCardID)
         }
-        sentTelegramMessagesType.iterate().filter {
-            it.type == FLASH_CARD_TYPE_MESSAGE
-        }.forEach {
-            sentTelegramMessagesType.delete(it.id)
-        }
+        sentTelegramMessagesType.iterate()
+            .map { SerializedMessage(it.id, it.type) }
+            .filter { it.type == FLASH_CARD_TYPE_MESSAGE }
+            .forEach { it.deleteFrom(sentTelegramMessagesType) }
     }
 
     override suspend fun removeForgotFlashCardFromLocalDbs(forgotFlashCardId: String) {
@@ -161,8 +164,7 @@ class TelegramBotUserImpl(
     }
 
     private suspend fun getAllFlashCard(): List<NotionPageFlashCard> {
-        return localDbNotionDataBases
-            .iterate()
+        return localDbNotionDataBases.iterate()
             .flatMap { it.iterate() }
             .toList()
     }
