@@ -2,6 +2,7 @@ package org.danceofvalkyries.app.apps.buttonslistener
 
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.danceofvalkyries.app.App
 import org.danceofvalkyries.app.data.dictionary.constant.ConfigOnlineDictionaries
@@ -11,6 +12,7 @@ import org.danceofvalkyries.app.data.telegram.chat.TelegramChat
 import org.danceofvalkyries.app.data.telegram.chat.restful.HttpClientImpl
 import org.danceofvalkyries.app.data.telegram.chat.restful.KtorWebServerImpl
 import org.danceofvalkyries.app.data.telegram.chat.restful.RestfulTelegramChat
+import org.danceofvalkyries.app.data.telegram.message.TelegramMessage.Button
 import org.danceofvalkyries.app.data.telegram.message_types.sqlite.SqlLiteSentTelegramMessagesType
 import org.danceofvalkyries.app.data.telegram.users.bot.SpaceRepetitionSession
 import org.danceofvalkyries.app.data.telegram.users.bot.TelegramBotUserImpl
@@ -70,14 +72,14 @@ class TelegramButtonListenerApp(
         scope.launch {
             telegramChat
                 .getEvents()
-                .collect {
+                .onEach {
                     when (val action = ButtonAction.parse(it.action.value)) {
                         is ButtonAction.DataBase -> spaceRepetitionSession.beginFor(action.notionDbId)
                         is ButtonAction.Forgotten -> spaceRepetitionSession.forget(action.flashCardId)
                         is ButtonAction.Recalled -> spaceRepetitionSession.recall(action.flashCardId)
                         is ButtonAction.Unknown -> telegramChat.delete(it.messageId)
                     }
-                }
+                }.collect(Button.Callback::answer)
         }
     }
 }

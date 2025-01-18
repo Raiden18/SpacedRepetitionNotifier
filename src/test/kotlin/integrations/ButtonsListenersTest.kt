@@ -1,7 +1,7 @@
 package integrations
 
 import integrations.testdata.english.vocabulary.EnglishVocabularyDataBaseFake
-import integrations.testdata.telegram.TelegramCallbackData
+import integrations.testdata.telegram.TelegramCallbackDataFake
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.core.spec.style.scopes.BehaviorSpecWhenContainerScope
 import io.kotest.matchers.shouldBe
@@ -68,21 +68,25 @@ class ButtonsListenersTest : BehaviorSpec() {
             }
             When("User types a message in the chat") {
                 lateinit var telegramMessage: TelegramMessage
-
+                lateinit var callback: TelegramCallbackDataFake
                 beforeTest {
                     telegramMessage = telegramChat.sendTextMessage(text = "Q", nestedButtons = emptyList())
-                    telegramChat.userSendsCallback(
-                        TelegramCallbackData(
-                            id = "2",
-                            messageId = telegramMessage.id,
-                            action = TelegramMessage.Button.Action.Text("Q")
-                        )
+                    callback = TelegramCallbackDataFake(
+                        id = "2",
+                        messageId = telegramMessage.id,
+                        action = TelegramMessage.Button.Action.Text("Q")
                     )
+                    telegramChat.userSendsCallback(callback)
+                    telegramButtonListenerApp.run()
                 }
 
                 Then("Should delete that message from Telegram") {
-                    telegramButtonListenerApp.run()
+
                     telegramChat.assertThat().wasDeleted(telegramMessage)
+                }
+
+                Then("Should answer to callback") {
+                    callback.assertThat().callbackIsAnswered(callback.id)
                 }
             }
 
@@ -184,10 +188,6 @@ class ButtonsListenersTest : BehaviorSpec() {
     }
 
 
-    private fun initAppDependencies() {
-
-    }
-
     private suspend fun initAndGetNotificationMessage(
         numberToRevise: Int
     ): TelegramMessage {
@@ -213,7 +213,7 @@ class ButtonsListenersTest : BehaviorSpec() {
         notificationMessageId: Long
     ) {
         telegramChat.userSendsCallback(
-            TelegramCallbackData(
+            TelegramCallbackDataFake(
                 id = "callback_id",
                 action = TelegramMessage.Button.Action.CallBackData("dbId=${dbId}"),
                 messageId = notificationMessageId
@@ -223,7 +223,7 @@ class ButtonsListenersTest : BehaviorSpec() {
 
     private fun userTapsOnRecalled(messageId: Long, notionPageId: String) {
         telegramChat.userSendsCallback(
-            TelegramCallbackData(
+            TelegramCallbackDataFake(
                 id = "callback_id",
                 action = TelegramMessage.Button.Action.CallBackData("recalledFlashCardId=${notionPageId}"),
                 messageId = messageId
@@ -233,7 +233,7 @@ class ButtonsListenersTest : BehaviorSpec() {
 
     private fun userTapsOnForgot(messageId: Long, notionPageId: String) {
         telegramChat.userSendsCallback(
-            TelegramCallbackData(
+            TelegramCallbackDataFake(
                 id = "callback_id",
                 action = TelegramMessage.Button.Action.CallBackData("forgottenFlashCardId=${notionPageId}"),
                 messageId = messageId
@@ -325,5 +325,10 @@ class ButtonsListenersTest : BehaviorSpec() {
         Then("Dota 2 Flash Card should be recalled") {
             englishVocabularyDataBaseRestfulFake.dota2.updatedKnowLevels shouldBe englishVocabularyDataBaseFake.dota2.nextLevelKnowLevels
         }
+    }
+
+    private suspend fun BehaviorSpecWhenContainerScope.shouldAnswerToCallback() {
+        telegramChat.assertThat()
+        TODO()
     }
 }
