@@ -27,6 +27,7 @@ class SpaceRepetitionSession(
         telegramBotUser.removeAllFlashCardsFromChat()
         telegramBotUser.removeRecalledFlashCardFromLocalDbs(recalledFlashCardID)
         telegramBotUser.sendNextFlashCardFrom(notionDb.rawValue)
+        telegramBotUser.updateNotificationMessage()
     }
 
     private suspend fun replaceFlashCard() {

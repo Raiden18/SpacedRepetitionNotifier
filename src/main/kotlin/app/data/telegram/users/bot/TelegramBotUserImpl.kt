@@ -120,29 +120,27 @@ class TelegramBotUserImpl(
     }
 
     override suspend fun updateNotificationMessage() {
-        // TODO
-        /*val notificationMessage = sentTelegramMessagesType.iterate().first { it.type == "NOTIFICATION" }
+        val notificationMessage = sentTelegramMessagesType.iterate().first { it.type == "NOTIFICATION" }
 
         // TODO: Code duplication from send message. Eliminate copy-pasted code
-        val flashCards = notionDataBases.iterate()
+        val flashCards = localDbNotionDataBases.iterate()
             .flatMap { it.iterate() }
             .toList()
         val telegramButtons = flashCards
             .groupBy { it.notionDbID }
             .map { (dbId, flashCards) ->
-                val db = notionDataBases.iterate().first { it.id == dbId }
+                val db = localDbNotionDataBases.iterate().first { it.id == dbId }
                 ConstantTelegramMessageButton(
                     text = "${db.name}: ${flashCards.count()}",
                     action = TelegramMessage.Button.Action.CallBackData(ButtonAction.DataBase(db.id).rawValue),
                 )
             }.map { listOf(it) }
 
-        telegramChat.getMessage(notificationMessage.id)
-            .edit(
-                newText = """You have ${flashCards.count()} flashcards to revise 🧠""".trimIndent(),
-                newImageUrl = null,
-                newNestedButtons = telegramButtons
-            )*/
+        telegramChat.edit(
+            messageId = notificationMessage.id,
+            newText = """You have ${flashCards.count()} flashcards to revise 🧠""".trimIndent(),
+            newNestedButtons = telegramButtons
+        )
     }
 
     override suspend fun removeFromDB(flashCardId: String) {

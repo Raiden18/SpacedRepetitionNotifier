@@ -182,15 +182,7 @@ class ButtonsListenersTest : BehaviorSpec() {
                                 dbId = englishVocabularyDataBaseLocalDbFake.id
                             )
                             telegramChat.assertThat()
-                                .textMessageWasEdited(
-                                    from = notificationMessage,
-                                    to = editedNotificationMessage
-                                )
-                        }
-
-                        Then("Notification Message should remain in Chat") {
-                            telegramChat.assertThat()
-                                .isInChat(notificationMessage)
+                                .isInChat(editedNotificationMessage)
                         }
 
                         Then("Notification Message should remain in Sent Messages DB") {

@@ -1,9 +1,6 @@
 package utils.fakes.telegram
 
-import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldNotContain
-import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.mapNotNull
@@ -84,7 +81,7 @@ class TelegramChatFake : TelegramChat {
     inner class Matcher {
 
         fun isInChat(telegramMessage: TelegramMessage) {
-            if(sentTelegramMessages.contains(telegramMessage).not()){
+            if (sentTelegramMessages.contains(telegramMessage).not()) {
                 val stringBuilder = StringBuilder()
                     .appendLine("Does not contain: $telegramMessage")
                     .appendLine("List: $sentTelegramMessages")
@@ -95,12 +92,6 @@ class TelegramChatFake : TelegramChat {
 
         fun wasDeleted(telegramMessage: TelegramMessage) {
             sentTelegramMessages shouldNotContain telegramMessage
-        }
-
-
-        fun textMessageWasEdited(from: TelegramMessage, to: TelegramMessage) {
-            from.id shouldBe to.id
-            from.text shouldNotBe to.text
         }
     }
 }

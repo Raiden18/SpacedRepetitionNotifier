@@ -107,10 +107,7 @@ class NotifierAppTest : BehaviorSpec() {
                     notifierApp.run()
                     val expectedNotificationMessage = TelegramMessageFake.createAllDone(1)
                     telegramChatFake.assertThat()
-                        .textMessageWasEdited(
-                            from = previousMessage,
-                            to = expectedNotificationMessage
-                        )
+                        .isInChat(expectedNotificationMessage)
                 }
             }
 
