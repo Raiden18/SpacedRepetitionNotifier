@@ -26,6 +26,11 @@ class TelegramBotUserImpl(
     private val stringResources: StringResources,
 ) : TelegramBotUser {
 
+    companion object {
+        const val FLASH_CARD_TYPE_MESSAGE = "FLASH_CARD"
+        const val NOTIFiCATION_TYPE_MESSAGE = "NOTIFICATION"
+    }
+
     override suspend fun editOldNotificationMessageToDoneMessage() {
         sentTelegramMessagesType.iterate().forEach { message ->
             telegramChat.edit(
@@ -45,16 +50,7 @@ class TelegramBotUserImpl(
 
     override suspend fun sendNewNotificationMessage() {
         val flashCards = getAllFlashCard()
-            .toList()
-        val telegramButtons = flashCards
-            .groupBy { it.notionDbID }
-            .map { (dbId, flashCards) ->
-                val db = localDbNotionDataBases.iterate().first { it.id == dbId }
-                ConstantTelegramMessageButton(
-                    text = "${db.name}: ${flashCards.count()}",
-                    action = TelegramMessage.Button.Action.CallBackData(ButtonAction.DataBase(db.id).rawValue),
-                )
-            }.map { listOf(it) }
+        val telegramButtons = buildButtonsForNotifications(flashCards)
         val sentMessage = telegramChat.sendMessage(
             text = """${stringResources.flashCardsToRevise(flashCards.count())} 🧠""".trimIndent(),
             imageUrl = null,
@@ -62,7 +58,7 @@ class TelegramBotUserImpl(
         )
         sentTelegramMessagesType.add(
             id = sentMessage.id,
-            type = "NOTIFICATION"
+            type = NOTIFiCATION_TYPE_MESSAGE
         )
     }
 
@@ -125,25 +121,15 @@ class TelegramBotUserImpl(
     }
 
     override suspend fun updateNotificationMessage() {
-        val notificationMessage = sentTelegramMessagesType.iterate().first { it.type == "NOTIFICATION" }
-
         // TODO: Code duplication from send message. Eliminate copy-pasted code
         val flashCards = getAllFlashCard()
-            .toList()
         if (flashCards.isEmpty()) {
             editOldNotificationMessageToDoneMessage()
             return
         }
-        val telegramButtons = flashCards
-            .groupBy { it.notionDbID }
-            .map { (dbId, flashCards) ->
-                val db = localDbNotionDataBases.iterate().first { it.id == dbId }
-                ConstantTelegramMessageButton(
-                    text = "${db.name}: ${flashCards.count()}",
-                    action = TelegramMessage.Button.Action.CallBackData(ButtonAction.DataBase(db.id).rawValue),
-                )
-            }.map { listOf(it) }
+        val telegramButtons = buildButtonsForNotifications(flashCards)
 
+        val notificationMessage = sentTelegramMessagesType.iterate().first { it.type == NOTIFiCATION_TYPE_MESSAGE }
         telegramChat.edit(
             messageId = notificationMessage.id,
             newText = """${stringResources.flashCardsToRevise(flashCards.count())} 🧠""".trimIndent(),
@@ -153,7 +139,7 @@ class TelegramBotUserImpl(
 
     override suspend fun removeAllFlashCardsFromChat() {
         sentTelegramMessagesType.iterate()
-            .filter { it.type == "FLASH_CARD" }
+            .filter { it.type == FLASH_CARD_TYPE_MESSAGE }
             .forEach { telegramChat.delete(it.id) }
     }
 
@@ -170,7 +156,7 @@ class TelegramBotUserImpl(
             it.delete(recalledFlashCardID)
         }
         sentTelegramMessagesType.iterate().filter {
-            it.type == "FLASH_CARD"
+            it.type == FLASH_CARD_TYPE_MESSAGE
         }.forEach {
             sentTelegramMessagesType.delete(it.id)
         }
@@ -181,7 +167,7 @@ class TelegramBotUserImpl(
             it.delete(forgotFlashCardId)
         }
         sentTelegramMessagesType.iterate().filter {
-            it.type == "FLASH_CARD"
+            it.type == FLASH_CARD_TYPE_MESSAGE
         }.forEach {
             sentTelegramMessagesType.delete(it.id)
         }
@@ -224,9 +210,22 @@ class TelegramBotUserImpl(
         restfullDataBase.getPageBy(flashCardId).setKnowLevels(recalled.knowLevels.levels)
     }
 
-    private suspend fun getAllFlashCard(): Sequence<NotionPageFlashCard> {
+    private suspend fun getAllFlashCard(): List<NotionPageFlashCard> {
         return localDbNotionDataBases
             .iterate()
             .flatMap { it.iterate() }
+            .toList()
+    }
+
+    private suspend fun buildButtonsForNotifications(flashCards: List<NotionPageFlashCard>): List<List<ConstantTelegramMessageButton>> {
+        return flashCards
+            .groupBy { it.notionDbID }
+            .map { (dbId, flashCards) ->
+                val db = localDbNotionDataBases.iterate().first { it.id == dbId }
+                ConstantTelegramMessageButton(
+                    text = "${db.name}: ${flashCards.count()}",
+                    action = TelegramMessage.Button.Action.CallBackData(ButtonAction.DataBase(db.id).rawValue),
+                )
+            }.map { listOf(it) }
     }
 }
