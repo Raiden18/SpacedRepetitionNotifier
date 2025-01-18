@@ -14,6 +14,7 @@ import org.danceofvalkyries.app.data.telegram.chat.restful.RestfulTelegramChat
 import org.danceofvalkyries.app.data.telegram.message_types.sqlite.SqlLiteSentTelegramMessagesType
 import org.danceofvalkyries.app.data.telegram.users.TelegramBotUser
 import org.danceofvalkyries.app.data.telegram.users.bot.TelegramBotUserImpl
+import org.danceofvalkyries.app.data.telegram.users.bot.translator.TelegramTextTranslator
 import org.danceofvalkyries.environment.Environment
 import org.danceofvalkyries.utils.Dispatchers
 
@@ -46,6 +47,7 @@ fun NotifierApp(
         restfulNotionDatabases,
         sqlLiteTelegramMessages,
         onlineDictionaries,
+        TelegramTextTranslator()
     )
     return NotifierApp(
         dispatchers,
@@ -79,7 +81,6 @@ class NotifierApp(
     }
 
     private suspend fun downLoadNotionDataBasesAndPagesAndSaveThemToLocalDataBase() {
-
         restfulNotionDataBases.iterate().forEach { restfulNotionDb ->
             sqlLiteNotionDataBases.add(restfulNotionDb)
         }

@@ -1,20 +1,21 @@
 package integrations
 
-    import integrations.testdata.greek.GreekLettersAndSoundsDataBaseRestfulFake
-    import io.kotest.core.spec.style.BehaviorSpec
-    import io.kotest.matchers.shouldBe
-    import org.danceofvalkyries.app.App
-    import org.danceofvalkyries.app.apps.notifier.NotifierApp
-    import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
-    import org.danceofvalkyries.app.data.telegram.users.bot.TelegramBotUserImpl
-    import utils.DispatchersFake
-    import utils.OnlineDictionariesFake
-    import utils.SentTelegramMessagesTypeFake
-    import utils.SqlLiteNotionDataBasesFake
-    import utils.fakes.AppTestRunnable
-    import utils.fakes.NotionDataBasesRestfulFake
-    import utils.fakes.telegram.TelegramChatFake
-    import utils.fakes.telegram.TelegramMessageFake
+import integrations.testdata.greek.GreekLettersAndSoundsDataBaseRestfulFake
+import io.kotest.core.spec.style.BehaviorSpec
+import io.kotest.matchers.shouldBe
+import org.danceofvalkyries.app.App
+import org.danceofvalkyries.app.apps.notifier.NotifierApp
+import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
+import org.danceofvalkyries.app.data.telegram.users.bot.TelegramBotUserImpl
+import org.danceofvalkyries.app.data.telegram.users.bot.translator.TelegramTextTranslator
+import utils.DispatchersFake
+import utils.OnlineDictionariesFake
+import utils.SentTelegramMessagesTypeFake
+import utils.SqlLiteNotionDataBasesFake
+import utils.fakes.AppTestRunnable
+import utils.fakes.NotionDataBasesRestfulFake
+import utils.fakes.telegram.TelegramChatFake
+import utils.fakes.telegram.TelegramMessageFake
 
 class NotifierAppTest : BehaviorSpec() {
 
@@ -39,6 +40,7 @@ class NotifierAppTest : BehaviorSpec() {
                 restfulNotionDataBases,
                 sentTelegramMessagesType,
                 OnlineDictionariesFake(emptyList()),
+                TelegramTextTranslator()
             )
         }
 

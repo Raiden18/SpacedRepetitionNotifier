@@ -11,6 +11,7 @@ import org.danceofvalkyries.app.data.dictionary.constant.ConstantOnlineDictionar
 import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
 import org.danceofvalkyries.app.data.telegram.users.bot.SpaceRepetitionSession
 import org.danceofvalkyries.app.data.telegram.users.bot.TelegramBotUserImpl
+import org.danceofvalkyries.app.data.telegram.users.bot.translator.TelegramTextTranslator
 import utils.DispatchersFake
 import utils.OnlineDictionariesFake
 import utils.SentTelegramMessagesTypeFake
@@ -58,7 +59,8 @@ class ButtonsListenersTest : BehaviorSpec() {
                     sqlLiteNotionDataBasesFake,
                     restfulNotionDataBases,
                     sentTelegramMessagesTypeFake,
-                    OnlineDictionariesFake(listOf(cambridgeDictionary))
+                    OnlineDictionariesFake(listOf(cambridgeDictionary)),
+                    TelegramTextTranslator(),
                 )
                 telegramButtonListenerApp = TelegramButtonListenerApp(
                     DispatchersFake(),

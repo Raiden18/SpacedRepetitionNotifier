@@ -9,6 +9,7 @@ import org.danceofvalkyries.app.data.telegram.message.ConstantTelegramMessageBut
 import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
 import org.danceofvalkyries.app.data.telegram.message_types.SentTelegramMessagesType
 import org.danceofvalkyries.app.data.telegram.users.TelegramBotUser
+import org.danceofvalkyries.app.data.telegram.users.bot.translator.TextTranslator
 import org.danceofvalkyries.app.domain.message.ButtonAction
 import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
 import org.danceofvalkyries.notion.api.models.KnowLevels
@@ -20,6 +21,7 @@ class TelegramBotUserImpl(
     private val restfulNotionDataBases: NotionDataBases,
     private val sentTelegramMessagesType: SentTelegramMessagesType,
     private val onlineDictionaries: OnlineDictionaries,
+    private val textTranslator: TextTranslator,
 ) : TelegramBotUser {
 
     override suspend fun editOldNotificationMessageToDoneMessage() {
@@ -64,9 +66,9 @@ class TelegramBotUserImpl(
     }
 
     override suspend fun sendFlashCardMessage(flashCard: NotionPageFlashCard) {
-        val memorizedInfo = flashCard.name.escapeCharacters()
-        val example = flashCard.example?.escapeCharacters()
-        val answer = flashCard.explanation?.escapeCharacters()
+        val memorizedInfo = textTranslator.encode(flashCard.name)!!
+        val example = textTranslator.encode(flashCard.example)
+        val answer = textTranslator.encode(flashCard.explanation)
 
         val body = StringBuilder()
             .appendLine("*${memorizedInfo}*")
@@ -208,7 +210,6 @@ class TelegramBotUserImpl(
     }
 
     override suspend fun makeRecalledOnNotion(flashCardId: String) {
-
         val flashCard = localDbNotionDataBases
             .iterate()
             .flatMap { it.iterate() }
@@ -227,17 +228,5 @@ class TelegramBotUserImpl(
         val recalled = flashCard.recall()
         val restfullDataBase = restfulNotionDataBases.getBy(flashCard.notionDbID.rawValue)
         restfullDataBase.getPageBy(flashCardId).setKnowLevels(recalled.knowLevels.levels)
-    }
-
-    private fun String.escapeCharacters(): String {
-        return replace("!", "\\!")
-            .replace("(", "\\(")
-            .replace(")", "\\)")
-            .replace("=", "\\=")
-            .replace(".", "\\.")
-            .replace("_", "\\_")
-            .replace("-", "\\-")
-            .replace("+", "\\+")
-            .replace("\\\\", "\\")
     }
 }
