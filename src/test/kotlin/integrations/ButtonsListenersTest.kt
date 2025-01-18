@@ -4,7 +4,7 @@ import com.google.gson.Gson
 import integrations.testdata.english.vocabulary.EnglishVocabularyDataBaseLocalDbFake
 import integrations.testdata.telegram.TelegramCallbackData
 import io.kotest.core.spec.style.BehaviorSpec
-import org.danceofvalkyries.app.App
+import io.kotest.core.spec.style.scopes.BehaviorSpecWhenContainerScope
 import org.danceofvalkyries.app.apps.buttonslistener.TelegramButtonListenerApp
 import org.danceofvalkyries.app.data.dictionary.OnlineDictionary
 import org.danceofvalkyries.app.data.dictionary.constant.ConstantOnlineDictionary
@@ -142,15 +142,27 @@ class ButtonsListenersTest : BehaviorSpec() {
                         )
                     }
 
-                    Then("Wine Flash Card should be shown") {
-                        telegramChat
-                            .assertThat()
-                            .isInChat(wineFlashCard)
-                    }
+                    shouldSendWineFlashCardToTelegramChat(wineFlashCard)
+                    notificationMessageShouldRemainIntactInTelegramChat(notificationMessage)
 
-                    Then("Notification Message should remain in Chat") {
-                        telegramChat.assertThat()
-                            .isInChat(notificationMessage)
+                    And("User forgets Wine FlashCard") {
+                        beforeTest {
+                            telegramChat.userSendsCallback(
+                                TelegramCallbackData(
+                                    id = "callback_id",
+                                    action = TelegramMessage.Button.Action.CallBackData("forgottenFlashCardId=${englishVocabularyDataBaseLocalDbFake.wine.id}"),
+                                    messageId = wineFlashCard.id
+                                )
+                            )
+                        }
+
+                        shouldSendDota2FlashCardToTelegram(dota2FlashCard)
+                        shouldRemoveWineFlashCardFromTelegramChat(wineFlashCard)
+                        shouldDecreaseCounterOnEnglishVocabularyButton(
+                            messageId = notificationMessage.id,
+                            newNumberToRevise = 1
+                        )
+                        notificationMessageShouldRemainInSentMessagesDb(notificationMessage.id)
                     }
 
                     And("User recalls Wine FlashCard") {
@@ -164,72 +176,64 @@ class ButtonsListenersTest : BehaviorSpec() {
                             )
                         }
 
-                        Then("Should Send Dota 2 Flash Card") {
-                            telegramChat.assertThat()
-                                .isInChat(dota2FlashCard)
-                        }
-
-                        Then("Should remove Wine Flash Card From Telegram") {
-                            telegramChat.assertThat()
-                                .wasDeleted(wineFlashCard)
-                        }
-
-                        Then("Should decrease counter on English Vocabulary Button") {
-                            val editedNotificationMessage = TelegramMessageFake.createTelegramNotification(
-                                messageId = notificationMessage.id,
-                                numberToRevise = 1,
-                                tableName = englishVocabularyDataBaseLocalDbFake.name,
-                                dbId = englishVocabularyDataBaseLocalDbFake.id
-                            )
-                            telegramChat.assertThat()
-                                .isInChat(editedNotificationMessage)
-                        }
-
-                        Then("Notification Message should remain in Sent Messages DB") {
-                            sentTelegramMessagesTypeFake.assertThat()
-                                .presents(notificationMessage.id, "NOTIFICATION")
-                        }
+                        shouldSendDota2FlashCardToTelegram(dota2FlashCard)
+                        shouldRemoveWineFlashCardFromTelegramChat(wineFlashCard)
+                        shouldDecreaseCounterOnEnglishVocabularyButton(
+                            messageId = notificationMessage.id,
+                            newNumberToRevise = 1
+                        )
+                        notificationMessageShouldRemainInSentMessagesDb(notificationMessage.id)
                     }
                 }
             }
         }
     }
 
-    private fun createApp(
-        telegramChatFake: TelegramChatFake,
-    ): App {
-        val sqlLiteNotionDataBasesFake = SqlLiteNotionDataBasesFake(
-            listOf(englishVocabularyDataBaseLocalDbFake)
-        )
+    /**
+     * Reusable Then
+     */
+    private suspend fun BehaviorSpecWhenContainerScope.shouldDecreaseCounterOnEnglishVocabularyButton(messageId: Long, newNumberToRevise: Int) {
+        Then("Should decrease counter on English Vocabulary Button") {
+            val editedNotificationMessage = TelegramMessageFake.createTelegramNotification(
+                messageId = messageId,
+                numberToRevise = newNumberToRevise,
+                tableName = englishVocabularyDataBaseLocalDbFake.name,
+                dbId = englishVocabularyDataBaseLocalDbFake.id
+            )
+            telegramChat.assertThat()
+                .isInChat(editedNotificationMessage)
+        }
+    }
 
-        val ktorWebServer = KtorWebServerFake(Gson())
-        val cambridgeDictionary = ConstantOnlineDictionary("https://dictionary.cambridge.org/dictionary/english/encounter")
+    private suspend fun BehaviorSpecWhenContainerScope.notificationMessageShouldRemainInSentMessagesDb(notificationMessageId: Long) {
+        Then("Notification Message should remain in Sent Messages DB") {
+            sentTelegramMessagesTypeFake.assertThat()
+                .presents(notificationMessageId, "NOTIFICATION")
+        }
+    }
 
-        val httpClientFake = HttpClientFake()
-        val sentTelegramMessagesTypeFake = SentTelegramMessagesTypeFake()
+    private suspend fun BehaviorSpecWhenContainerScope.notificationMessageShouldRemainIntactInTelegramChat(notificationMessage: TelegramMessage) {
+        Then("Notification Message should remain intact in Telegram chat") {
+            telegramChat.assertThat()
+                .isInChat(notificationMessage)
+        }
+    }
 
+    private suspend fun BehaviorSpecWhenContainerScope.shouldSendWineFlashCardToTelegramChat(wineFlashCard: TelegramMessage) {
+        Then("Wine Flash Card should be shown") {
+            telegramChat.assertThat().isInChat(wineFlashCard)
+        }
+    }
 
-        val restfulNotionDataBases = RestFulNotionDataBases(
-            desiredDbIds = listOf(TestData.Notion.EnglishVocabulary.DATA_BASE_ID),
-            apiKey = TestData.Notion.NOTION_API_KEY,
-            httpClient = httpClientFake,
-            gson = Gson()
-        )
-        val humanUser = TelegramHumanUserImpl(
-            sqlLiteNotionDataBasesFake,
-            restfulNotionDataBases,
-        )
-        val botUser = TelegramBotUserImpl(
-            telegramChatFake,
-            sqlLiteNotionDataBasesFake,
-            restfulNotionDataBases,
-            sentTelegramMessagesTypeFake,
-            OnlineDictionariesFake(listOf(cambridgeDictionary))
-        )
-        return TelegramButtonListenerApp(
-            DispatchersFake(),
-            SpaceRepetitionSession(humanUser, botUser),
-            telegramChatFake
-        )
+    private suspend fun BehaviorSpecWhenContainerScope.shouldRemoveWineFlashCardFromTelegramChat(wineFlashCard: TelegramMessage) {
+        Then("Should remove Wine Flash Card From Telegram") {
+            telegramChat.assertThat().wasDeleted(wineFlashCard)
+        }
+    }
+
+    private suspend fun BehaviorSpecWhenContainerScope.shouldSendDota2FlashCardToTelegram(dota2FlashCard: TelegramMessage) {
+        Then("Should Send Dota 2 Flash Card") {
+            telegramChat.assertThat().isInChat(dota2FlashCard)
+        }
     }
 }

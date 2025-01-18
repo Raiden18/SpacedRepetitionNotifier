@@ -180,6 +180,17 @@ class TelegramBotUserImpl(
         }
     }
 
+    override suspend fun removeForgotFlashCardFromLocalDbs(forgotFlashCardId: String) {
+        localDbNotionDataBases.iterate().forEach {
+            it.delete(forgotFlashCardId)
+        }
+        sentTelegramMessagesType.iterate().filter {
+            it.type == "FLASH_CARD"
+        }.forEach {
+            sentTelegramMessagesType.delete(it.id)
+        }
+    }
+
     private fun String.escapeCharacters(): String {
         return replace("!", "\\!")
             .replace("(", "\\(")
