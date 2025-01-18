@@ -8,6 +8,7 @@ import org.danceofvalkyries.app.data.telegram.chat.TelegramChat
 import org.danceofvalkyries.app.data.telegram.jsonobjects.TelegramChatUrls
 import org.danceofvalkyries.app.data.telegram.jsons.*
 import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
+import org.danceofvalkyries.app.data.telegram.message.TelegramMessage.Button
 import org.danceofvalkyries.app.data.telegram.message.restful.RestfulTelegramMessage
 import org.danceofvalkyries.app.data.telegram.message.restful.RestfulTelegramUpdateMessageButtonCallback
 import org.danceofvalkyries.utils.HttpClient
@@ -38,7 +39,7 @@ class RestfulTelegramChat(
 
     override suspend fun sendTextMessage(
         text: String,
-        nestedButtons: List<List<TelegramMessage.Button>>
+        nestedButtons: List<List<Button>>
     ): TelegramMessage {
         val requestBody = MessageData(
             chatId = chatId,
@@ -49,8 +50,8 @@ class RestfulTelegramChat(
                     it.map { button ->
                         ButtonData(
                             text = button.text,
-                            callbackData = button.action.value.takeIf { button.action is TelegramMessage.Button.Action.CallBackData },
-                            url = button.action.value.takeIf { button.action is TelegramMessage.Button.Action.Url }
+                            callbackData = button.action.value.takeIf { button.action is Button.Action.CallBackData },
+                            url = button.action.value.takeIf { button.action is Button.Action.Url }
                         )
                     }
                 }
@@ -59,10 +60,6 @@ class RestfulTelegramChat(
 
         val response = sendMessage(telegramChatUrls.sendMessage(), requestBody)
         return RestfulTelegramMessage(
-            chatId = chatId,
-            client = httpClient,
-            gson = gson,
-            telegramChatUrls = telegramChatUrls,
             id = response.messageId!!,
             text = text,
             imageUrl = null,
@@ -73,7 +70,7 @@ class RestfulTelegramChat(
     override suspend fun sendPhotoMessage(
         caption: String,
         imageUrl: String,
-        nestedButtons: List<List<TelegramMessage.Button>>
+        nestedButtons: List<List<Button>>
     ): TelegramMessage {
         val isSupportedByTelegram = NOT_SUPPORTED_BY_TELEGRAM_TAGS.any { imageUrl.contains(it) }.not()
         val photo = if (isSupportedByTelegram) imageUrl else BLUE_SCREEN
@@ -87,8 +84,8 @@ class RestfulTelegramChat(
                     it.map { button ->
                         ButtonData(
                             text = button.text,
-                            callbackData = button.action.value.takeIf { button.action is TelegramMessage.Button.Action.CallBackData },
-                            url = button.action.value.takeIf { button.action is TelegramMessage.Button.Action.Url }
+                            callbackData = button.action.value.takeIf { button.action is Button.Action.CallBackData },
+                            url = button.action.value.takeIf { button.action is Button.Action.Url }
                         )
                     }
                 }
@@ -96,10 +93,6 @@ class RestfulTelegramChat(
         )
         val response = sendMessage(telegramChatUrls.sendPhoto(), requestBody)
         return RestfulTelegramMessage(
-            chatId = chatId,
-            client = httpClient,
-            gson = gson,
-            telegramChatUrls = telegramChatUrls,
             id = response.messageId!!,
             text = caption,
             imageUrl = photo,
@@ -115,12 +108,39 @@ class RestfulTelegramChat(
         )
     }
 
+    override suspend fun edit(messageId: Long, newText: String, newNestedButtons: List<List<Button>>): TelegramMessage {
+        val request = MessageData(
+            messageId = messageId,
+            chatId = chatId,
+            text = newText,
+            parseMode = "MarkdownV2",
+            replyMarkup = ReplyMarkupData(
+                newNestedButtons.map {
+                    it.map { button ->
+                        ButtonData(
+                            text = button.text,
+                            callbackData = button.action.value.takeIf { button.action is Button.Action.CallBackData },
+                            url = button.action.value.takeIf { button.action is Button.Action.Url }
+                        )
+                    }
+                }
+            )
+        )
+        httpClient.post(
+            url = telegramChatUrls.editMessageText().toString(),
+            body = gson.toJson(request),
+            headers = emptyList()
+        )
+        return RestfulTelegramMessage(
+            id = messageId,
+            text = newText,
+            imageUrl = null,
+            nestedButtons = newNestedButtons
+        )
+    }
+
     override suspend fun getMessage(messageId: Long): TelegramMessage {
         return RestfulTelegramMessage(
-            chatId = chatId,
-            client = httpClient,
-            gson = gson,
-            telegramChatUrls = telegramChatUrls,
             id = messageId,
             text = "",
             imageUrl = null,
@@ -128,13 +148,13 @@ class RestfulTelegramChat(
         )
     }
 
-    override fun getEvents(): Flow<TelegramMessage.Button.Callback> {
+    override fun getEvents(): Flow<Button.Callback> {
         return ktorWebServer.getWebHook()
             .map { gson.fromJson(it, UpdateResponseData::class.java) }
             .map {
                 RestfulTelegramUpdateMessageButtonCallback(
                     id = it.callbackQueryData?.id.orEmpty(),
-                    action = TelegramMessage.Button.Action.CallBackData(it.callbackQueryData?.data.orEmpty()),
+                    action = Button.Action.CallBackData(it.callbackQueryData?.data.orEmpty()),
                     gson = gson,
                     httpClient = httpClient,
                     telegramChatUrls = telegramChatUrls,

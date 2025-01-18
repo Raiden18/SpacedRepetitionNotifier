@@ -22,11 +22,5 @@ interface TelegramMessage {
             suspend fun answer()
         }
     }
-
-    fun edit(
-        newText: String,
-        newImageUrl: String?,
-        newNestedButtons: List<List<Button>>,
-    ): TelegramMessage
 }
 

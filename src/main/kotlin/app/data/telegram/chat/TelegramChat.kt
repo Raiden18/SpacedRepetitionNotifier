@@ -19,6 +19,12 @@ interface TelegramChat {
 
     suspend fun delete(messageId: Long)
 
+    suspend fun edit(
+        messageId: Long,
+        newText: String,
+        newNestedButtons: List<List<Button>>,
+    ): TelegramMessage
+
     suspend fun getMessage(messageId: Long): TelegramMessage
 
     fun getEvents(): Flow<Button.Callback>

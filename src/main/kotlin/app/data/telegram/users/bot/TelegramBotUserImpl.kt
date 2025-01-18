@@ -22,10 +22,10 @@ class TelegramBotUserImpl(
     override suspend fun editOldNotificationMessageToDoneMessage() {
         sentTelegramMessagesType.iterate().forEach { message ->
             val telegramMessage = telegramChat.getMessage(messageId = message.id)
-            telegramMessage.edit(
+            telegramChat.edit(
+                messageId = message.id,
                 newText = """Good Job! 😎 Everything is revised! ✅""",
-                newImageUrl = null,
-                newNestedButtons = emptyList(),
+                newNestedButtons = emptyList()
             )
         }
     }
@@ -33,7 +33,7 @@ class TelegramBotUserImpl(
     override suspend fun deleteOldNotificationMessage() {
         sentTelegramMessagesType.iterate().forEach {
             sentTelegramMessagesType.delete(it.id)
-            telegramChat.delete(messageId = it.id)
+            telegramChat.delete(it.id)
         }
     }
 
