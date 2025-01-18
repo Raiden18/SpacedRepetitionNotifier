@@ -6,7 +6,7 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.core.spec.style.scopes.BehaviorSpecWhenContainerScope
 import io.kotest.matchers.shouldBe
 import org.danceofvalkyries.app.App
-import org.danceofvalkyries.app.apps.buttonslistener.TelegramButtonListenerApp
+import org.danceofvalkyries.app.apps.TelegramButtonListenerApp
 import org.danceofvalkyries.app.data.dictionary.OnlineDictionary
 import org.danceofvalkyries.app.data.dictionary.constant.ConstantOnlineDictionary
 import org.danceofvalkyries.app.data.telegram.message.TelegramMessage

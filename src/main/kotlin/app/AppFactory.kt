@@ -1,8 +1,8 @@
 package org.danceofvalkyries.app
 
 import org.danceofvalkyries.app.apps.SandBoxApp
-import org.danceofvalkyries.app.apps.buttonslistener.TelegramButtonListenerApp
-import org.danceofvalkyries.app.apps.notifier.NotifierApp
+import org.danceofvalkyries.app.apps.TelegramButtonListenerApp
+import org.danceofvalkyries.app.apps.NotifierApp
 import org.danceofvalkyries.environment.Environment
 import org.danceofvalkyries.utils.DispatchersImpl
 

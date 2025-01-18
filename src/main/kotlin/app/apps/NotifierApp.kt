@@ -1,4 +1,4 @@
-package org.danceofvalkyries.app.apps.notifier
+package org.danceofvalkyries.app.apps
 
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope

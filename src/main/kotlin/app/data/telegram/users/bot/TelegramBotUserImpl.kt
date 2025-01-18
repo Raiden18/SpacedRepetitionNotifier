@@ -44,8 +44,7 @@ class TelegramBotUserImpl(
     }
 
     override suspend fun sendNewNotificationMessage() {
-        val flashCards = localDbNotionDataBases.iterate()
-            .flatMap { it.iterate() }
+        val flashCards = getAllFlashCard()
             .toList()
         val telegramButtons = flashCards
             .groupBy { it.notionDbID }
@@ -129,8 +128,7 @@ class TelegramBotUserImpl(
         val notificationMessage = sentTelegramMessagesType.iterate().first { it.type == "NOTIFICATION" }
 
         // TODO: Code duplication from send message. Eliminate copy-pasted code
-        val flashCards = localDbNotionDataBases.iterate()
-            .flatMap { it.iterate() }
+        val flashCards = getAllFlashCard()
             .toList()
         if (flashCards.isEmpty()) {
             editOldNotificationMessageToDoneMessage()
@@ -160,8 +158,7 @@ class TelegramBotUserImpl(
     }
 
     override suspend fun sendNextFlashCardFrom(notionDbId: String) {
-        val flashCard = localDbNotionDataBases.iterate()
-            .flatMap { it.iterate() }
+        val flashCard = getAllFlashCard()
             .firstOrNull { it.notionDbID == notionDbId }
         if (flashCard != null) {
             sendFlashCardMessage(flashCard)
@@ -191,9 +188,7 @@ class TelegramBotUserImpl(
     }
 
     override suspend fun makeForgottenOnNotion(flashCardId: String) {
-        val flashCard = localDbNotionDataBases
-            .iterate()
-            .flatMap { it.iterate() }
+        val flashCard = getAllFlashCard()
             .map {
                 FlashCardNotionPage(
                     name = it.name,
@@ -211,9 +206,7 @@ class TelegramBotUserImpl(
     }
 
     override suspend fun makeRecalledOnNotion(flashCardId: String) {
-        val flashCard = localDbNotionDataBases
-            .iterate()
-            .flatMap { it.iterate() }
+        val flashCard = getAllFlashCard()
             .map {
                 FlashCardNotionPage(
                     name = it.name,
@@ -229,5 +222,11 @@ class TelegramBotUserImpl(
         val recalled = flashCard.recall()
         val restfullDataBase = restfulNotionDataBases.getBy(flashCard.notionDbID.rawValue)
         restfullDataBase.getPageBy(flashCardId).setKnowLevels(recalled.knowLevels.levels)
+    }
+
+    private suspend fun getAllFlashCard(): Sequence<NotionPageFlashCard> {
+        return localDbNotionDataBases
+            .iterate()
+            .flatMap { it.iterate() }
     }
 }

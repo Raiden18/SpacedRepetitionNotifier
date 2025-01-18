@@ -4,7 +4,7 @@ import integrations.testdata.greek.GreekLettersAndSoundsDataBaseRestfulFake
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import org.danceofvalkyries.app.App
-import org.danceofvalkyries.app.apps.notifier.NotifierApp
+import org.danceofvalkyries.app.apps.NotifierApp
 import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
 import org.danceofvalkyries.app.data.telegram.users.bot.TelegramBotUserImpl
 import org.danceofvalkyries.app.data.telegram.users.bot.translator.TelegramTextTranslator
