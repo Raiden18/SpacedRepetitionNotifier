@@ -7,8 +7,13 @@ import org.danceofvalkyries.app.data.telegram.chat.TelegramChat
 import org.danceofvalkyries.app.data.telegram.chat.sendMessage
 import org.danceofvalkyries.app.data.telegram.message.ConstantTelegramMessageButton
 import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
+import org.danceofvalkyries.app.data.telegram.message.edit
+import org.danceofvalkyries.app.data.telegram.message.sendTo
 import org.danceofvalkyries.app.data.telegram.message_types.SentTelegramMessagesType
 import org.danceofvalkyries.app.data.telegram.users.TelegramBotUser
+import org.danceofvalkyries.app.data.telegram.users.bot.messages.DoneTelegramMessage
+import org.danceofvalkyries.app.data.telegram.users.bot.messages.MessageEntity
+import org.danceofvalkyries.app.data.telegram.users.bot.messages.NotificationMessage
 import org.danceofvalkyries.app.data.telegram.users.bot.translator.TextTranslator
 import org.danceofvalkyries.app.domain.message.ButtonAction
 import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
@@ -32,13 +37,12 @@ class TelegramBotUserImpl(
     }
 
     override suspend fun editOldNotificationMessageToDoneMessage() {
-        sentTelegramMessagesType.iterate().forEach { message ->
-            telegramChat.edit(
-                messageId = message.id,
-                newText = """${stringResources.getJob()} 😎 ${stringResources.everythingIsRevised()} ✅""",
-                newNestedButtons = emptyList()
-            )
-        }
+        sentTelegramMessagesType.iterate()
+            .map { MessageEntity(it.id) }
+            .forEach { oldNotification ->
+                val newMessage = DoneTelegramMessage(stringResources)
+                oldNotification.edit(newMessage, telegramChat)
+            }
     }
 
     override suspend fun deleteOldNotificationMessage() {
@@ -50,12 +54,12 @@ class TelegramBotUserImpl(
 
     override suspend fun sendNewNotificationMessage() {
         val flashCards = getAllFlashCard()
-        val telegramButtons = buildButtonsForNotifications(flashCards)
-        val sentMessage = telegramChat.sendMessage(
-            text = """${stringResources.flashCardsToRevise(flashCards.count())} 🧠""".trimIndent(),
-            imageUrl = null,
-            nestedButtons = telegramButtons
-        )
+        val sentMessage = NotificationMessage(
+            stringResources = stringResources,
+            flashCardsCount = flashCards.count(),
+            nestedButtons = buildButtonsForNotifications(flashCards)
+        ).sendTo(telegramChat)
+
         sentTelegramMessagesType.add(
             id = sentMessage.id,
             type = NOTIFiCATION_TYPE_MESSAGE
@@ -127,14 +131,19 @@ class TelegramBotUserImpl(
             editOldNotificationMessageToDoneMessage()
             return
         }
-        val telegramButtons = buildButtonsForNotifications(flashCards)
 
-        val notificationMessage = sentTelegramMessagesType.iterate().first { it.type == NOTIFiCATION_TYPE_MESSAGE }
-        telegramChat.edit(
-            messageId = notificationMessage.id,
-            newText = """${stringResources.flashCardsToRevise(flashCards.count())} 🧠""".trimIndent(),
-            newNestedButtons = telegramButtons
+        val oldNotificationMessage = sentTelegramMessagesType.iterate()
+            .filter { it.type == NOTIFiCATION_TYPE_MESSAGE }
+            .map { MessageEntity(it.id) }
+            .first()
+
+        val newNotificationMessage = NotificationMessage(
+            stringResources = stringResources,
+            flashCardsCount = flashCards.count(),
+            nestedButtons = buildButtonsForNotifications(flashCards)
         )
+
+        oldNotificationMessage.edit(newNotificationMessage, telegramChat)
     }
 
     override suspend fun removeAllFlashCardsFromChat() {

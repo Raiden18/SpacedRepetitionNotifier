@@ -1,6 +1,8 @@
 package integrations.testdata.english.vocabulary
 
 import org.danceofvalkyries.app.data.notion.pages.NotionPageFlashCard
+import org.danceofvalkyries.app.data.telegram.chat.TelegramChat
+import org.danceofvalkyries.app.data.telegram.chat.sendMessage
 
 class Dota2EnglishVocabulary(
     private val notionDbId: String,

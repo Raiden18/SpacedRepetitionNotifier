@@ -48,3 +48,11 @@ suspend fun TelegramChat.sendMessage(
         )
     }
 }
+
+suspend fun TelegramChat.sendMessage(telegramMessage: TelegramMessage): TelegramMessage {
+    return sendMessage(
+        text = telegramMessage.text,
+        imageUrl = telegramMessage.imageUrl,
+        nestedButtons = telegramMessage.nestedButtons
+    )
+}

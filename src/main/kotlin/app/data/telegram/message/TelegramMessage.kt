@@ -1,5 +1,8 @@
 package org.danceofvalkyries.app.data.telegram.message
 
+import org.danceofvalkyries.app.data.telegram.chat.TelegramChat
+import org.danceofvalkyries.app.data.telegram.chat.sendMessage
+
 interface TelegramMessage {
     val id: Long
     val text: String
@@ -23,5 +26,28 @@ interface TelegramMessage {
             suspend fun answer()
         }
     }
+}
+
+suspend fun TelegramMessage.sendTo(telegramChat: TelegramChat): TelegramMessage {
+    return telegramChat.sendMessage(this)
+}
+
+suspend fun TelegramMessage.editIn(telegramChat: TelegramChat): TelegramMessage {
+    return telegramChat.edit(
+        messageId = id,
+        newText = text,
+        newNestedButtons = nestedButtons,
+    )
+}
+
+suspend fun TelegramMessage.edit(
+    newMessage: TelegramMessage,
+    telegramChat: TelegramChat,
+): TelegramMessage {
+    return telegramChat.edit(
+        messageId = id,
+        newText = newMessage.text,
+        newNestedButtons = newMessage.nestedButtons,
+    )
 }
 
