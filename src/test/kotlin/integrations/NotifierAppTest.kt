@@ -1,6 +1,6 @@
 package integrations
 
-    import integrations.testdata.GreekLettersAndSoundsDataBaseRestfulFake
+    import integrations.testdata.greek.GreekLettersAndSoundsDataBaseRestfulFake
     import io.kotest.core.spec.style.BehaviorSpec
     import io.kotest.matchers.shouldBe
     import org.danceofvalkyries.app.App
@@ -25,7 +25,6 @@ class NotifierAppTest : BehaviorSpec() {
     private lateinit var restfulNotionDataBases: NotionDataBasesRestfulFake
     private lateinit var telegramBot: TelegramBotUserImpl
     private lateinit var telegramChatFake: TelegramChatFake
-
 
     init {
         beforeTest {
@@ -56,7 +55,7 @@ class NotifierAppTest : BehaviorSpec() {
                 Then("Should send notification to Telegram") {
                     notifierApp.run()
                     val expectedNotificationMessage = greekLettersAndSoundsDataBaseRestfulFake.createTelegramNotification(1)
-                    telegramChatFake.assertThat().wasSent(expectedNotificationMessage)
+                    telegramChatFake.assertThat().isInChat(expectedNotificationMessage)
                 }
             }
         }
@@ -83,7 +82,7 @@ class NotifierAppTest : BehaviorSpec() {
                 Then("Should send NEW notification to Telegram") {
                     notifierApp.run()
                     val newNotification = greekLettersAndSoundsDataBaseRestfulFake.createTelegramNotification(2)
-                    telegramChatFake.assertThat().wasSent(newNotification)
+                    telegramChatFake.assertThat().isInChat(newNotification)
                 }
 
                 Then("Should Delete OLD notification From DB") {

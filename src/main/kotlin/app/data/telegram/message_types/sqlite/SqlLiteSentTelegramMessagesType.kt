@@ -37,6 +37,7 @@ class SqlLiteSentTelegramMessagesType(
                     tableName = TABLE_NAME,
                     connection = connection,
                     typeColumn = typeColumn,
+                    idColumn = idColumn,
                 )
             }
     }
@@ -59,6 +60,7 @@ class SqlLiteSentTelegramMessagesType(
             tableName = TABLE_NAME,
             connection = connection,
             typeColumn = typeColumn,
+            idColumn = idColumn,
         )
     }
 

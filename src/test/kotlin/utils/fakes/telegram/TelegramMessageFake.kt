@@ -40,5 +40,47 @@ data class TelegramMessageFake(
                 nestedButtons = emptyList(),
             )
         }
+
+        fun createEnglishVocabularyFlashCard(
+            messageId: Long,
+            text: String,
+            example: String,
+            answer: String,
+            flashCardId: String,
+            dictionaryUrl: String,
+            imageUrl: String?,
+        ): TelegramMessageFake {
+            return TelegramMessageFake(
+                id = messageId,
+                text = """
+                    *${text}*
+                    
+                    _${example}_
+                    
+                    ||${answer}||
+                    
+                    Choose:
+                """.trimIndent(),
+                imageUrl = imageUrl,
+                nestedButtons = listOf(
+                    listOf(
+                        ConstantTelegramMessageButton(
+                            "Forgot  ❌",
+                            TelegramMessage.Button.Action.CallBackData("forgottenFlashCardId=${flashCardId}")
+                        ),
+                        ConstantTelegramMessageButton(
+                            "Recalled  ✅",
+                            TelegramMessage.Button.Action.CallBackData("recalledFlashCardId=${flashCardId}")
+                        )
+                    ),
+                    listOf(
+                        ConstantTelegramMessageButton(
+                            text = "Look it up",
+                            action = TelegramMessage.Button.Action.Url(dictionaryUrl),
+                        )
+                    ),
+                ),
+            )
+        }
     }
 }

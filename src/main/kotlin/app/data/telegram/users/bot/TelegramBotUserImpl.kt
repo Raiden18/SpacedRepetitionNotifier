@@ -21,7 +21,6 @@ class TelegramBotUserImpl(
 
     override suspend fun editOldNotificationMessageToDoneMessage() {
         sentTelegramMessagesType.iterate().forEach { message ->
-            val telegramMessage = telegramChat.getMessage(messageId = message.id)
             telegramChat.edit(
                 messageId = message.id,
                 newText = """Good Job! 😎 Everything is revised! ✅""",
@@ -107,6 +106,7 @@ class TelegramBotUserImpl(
             )
         )
 
+
         sentTelegramMessagesType.add(
             telegramMessage.id,
             "FLASH_CARD"
@@ -117,14 +117,6 @@ class TelegramBotUserImpl(
         return localDbNotionDataBases.iterate()
             .flatMap { it.iterate() }
             .firstOrNull { it.notionDbID == notionDbId }
-    }
-
-    override suspend fun removeFlashCards() {
-        sentTelegramMessagesType.iterate().filter { it.type == "FLASH_CARD" }
-            .forEach {
-                telegramChat.delete(it.id)
-                sentTelegramMessagesType.delete(it.id)
-            }
     }
 
     override suspend fun updateNotificationMessage() {
@@ -153,10 +145,6 @@ class TelegramBotUserImpl(
             )*/
     }
 
-    override suspend fun deleteMessage(messageId: Long) {
-        telegramChat.delete(messageId)
-    }
-
     override suspend fun removeFromDB(flashCardId: String) {
         val flashCard = localDbNotionDataBases.iterate()
             .flatMap { it.iterate() }
@@ -167,16 +155,31 @@ class TelegramBotUserImpl(
     }
 
     override suspend fun removeAllFlashCardsFromChat() {
-        val sendMessageType = sentTelegramMessagesType.iterate().first { it.type == "FLASH_CARD" }
-        telegramChat.delete(sendMessageType.id)
+        sentTelegramMessagesType.iterate()
+            .filter { it.type == "FLASH_CARD" }
+            .forEach {
+                println("BOT: ")
+                println("REMOVE FROM CHAT: ${it.id}=${it.type}")
+                telegramChat.delete(it.id)
+            }
     }
 
     override suspend fun sendNextFlashCardFrom(notionDbId: String) {
         val flashCard = localDbNotionDataBases.iterate()
             .flatMap { it.iterate() }
             .firstOrNull { it.notionDbID == notionDbId }!!
-        println(flashCard)
         sendFlashCardMessage(flashCard)
+    }
+
+    override suspend fun removeRecalledFlashCardFromLocalDbs(recalledFlashCardID: String) {
+        localDbNotionDataBases.iterate().forEach {
+            it.delete(recalledFlashCardID)
+        }
+        sentTelegramMessagesType.iterate().filter {
+            it.type == "FLASH_CARD"
+        }.forEach {
+            sentTelegramMessagesType.delete(it.id)
+        }
     }
 
     private fun String.escapeCharacters(): String {

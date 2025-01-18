@@ -1,9 +1,7 @@
-package integrations.testdata
+package integrations.testdata.greek
 
 import org.danceofvalkyries.app.data.notion.databases.NotionDataBase
 import org.danceofvalkyries.app.data.notion.pages.NotionPageFlashCard
-import org.danceofvalkyries.app.data.telegram.message.ConstantTelegramMessageButton
-import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
 import utils.NotionDataBaseFake
 import utils.fakes.telegram.TelegramMessageFake
 
@@ -14,13 +12,14 @@ class GreekLettersAndSoundsDataBaseRestfulFake : NotionDataBase {
         const val NAME = "Greek Letter And Sounds"
     }
 
+    val restfulGreekLetter1FlashCard = RestfulGreekLetter1FlashCard(ID)
+    val restfulGreekLetter2FlashCard = RestfulGreekLetter2FlashCard(ID)
+
     private val defaultNotionDataBaseFake = NotionDataBaseFake(
         id = ID,
         name = NAME,
+        pages = listOf(restfulGreekLetter1FlashCard, restfulGreekLetter2FlashCard)
     )
-
-    val restfulGreekLetter1FlashCard = RestfulGreekLetter1FlashCard(ID)
-    val restfulGreekLetter2FlashCard = RestfulGreekLetter2FlashCard(ID)
 
     override val id: String
         get() = defaultNotionDataBaseFake.id

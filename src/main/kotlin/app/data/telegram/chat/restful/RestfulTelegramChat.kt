@@ -170,7 +170,6 @@ class RestfulTelegramChat(
             body = gson.toJson(textBody),
             headers = emptyList(),
         )
-        println(response.responseBody)
         return gson.fromJson(response.responseBody, TelegramMessageRootResponse::class.java)?.result ?: error("Message Data is NULL ${response.responseBody}")
     }
 }

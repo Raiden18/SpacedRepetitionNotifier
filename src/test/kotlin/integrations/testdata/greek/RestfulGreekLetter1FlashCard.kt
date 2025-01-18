@@ -1,4 +1,4 @@
-package integrations.testdata
+package integrations.testdata.greek
 
 import org.danceofvalkyries.app.data.notion.pages.NotionPageFlashCard
 

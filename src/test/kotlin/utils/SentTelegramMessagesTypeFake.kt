@@ -1,5 +1,6 @@
 package utils
 
+import io.kotest.matchers.collections.shouldContain
 import org.danceofvalkyries.app.data.telegram.message_types.SentTelegramMessageType
 import org.danceofvalkyries.app.data.telegram.message_types.SentTelegramMessagesType
 
@@ -23,5 +24,23 @@ class SentTelegramMessagesTypeFake(
 
     fun clear() {
         telegramMessages = emptyList()
+    }
+
+    fun assertThat(): Matcher {
+        return Matcher()
+    }
+
+    inner class Matcher {
+
+        fun presents(messageId: Long, type: String) {
+            val sentMessageType = SentTelegramMessageTypeFake(messageId, type)
+            if(telegramMessages.contains(sentMessageType).not()){
+                val errorBuilder = StringBuilder()
+                    .appendLine("No Sent Message Type: $sentMessageType")
+                    .appendLine("List: $telegramMessages")
+                    .toString()
+                error(errorBuilder)
+            }
+        }
     }
 }

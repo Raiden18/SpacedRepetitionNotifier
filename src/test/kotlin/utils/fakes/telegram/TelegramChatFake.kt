@@ -5,14 +5,17 @@ import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.mapNotNull
 import org.danceofvalkyries.app.data.telegram.chat.TelegramChat
 import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
 
 class TelegramChatFake : TelegramChat {
 
-    private var sentTelegramMessages = listOf<TelegramMessageFake>()
+    var sentTelegramMessages = listOf<TelegramMessageFake>()
+    private val userCallback = MutableStateFlow<TelegramMessage.Button.Callback?>(null)
 
-    private var ID = 0L
+    var ID = 0L
 
     override suspend fun sendTextMessage(
         text: String,
@@ -32,20 +35,8 @@ class TelegramChatFake : TelegramChat {
         return Matcher()
     }
 
-    inner class Matcher {
-
-        fun wasSent(telegramMessage: TelegramMessage) {
-            sentTelegramMessages shouldContain telegramMessage
-        }
-
-        fun wasDeleted(telegramMessage: TelegramMessage) {
-            sentTelegramMessages shouldNotContain telegramMessage
-        }
-
-        fun textMessageWasEdited(from: TelegramMessage, to: TelegramMessage) {
-            from.id shouldBe to.id
-            from.text shouldNotBe to.text
-        }
+    fun userSendsCallback(callback: TelegramMessage.Button.Callback) {
+        userCallback.value = callback
     }
 
     override suspend fun sendPhotoMessage(
@@ -53,7 +44,14 @@ class TelegramChatFake : TelegramChat {
         imageUrl: String,
         nestedButtons: List<List<TelegramMessage.Button>>
     ): TelegramMessage {
-        TODO("Not yet implemented")
+        val message = TelegramMessageFake(
+            id = ++ID,
+            text = caption,
+            imageUrl = imageUrl,
+            nestedButtons = nestedButtons
+        )
+        sentTelegramMessages = sentTelegramMessages + listOf(message)
+        return message
     }
 
     override suspend fun delete(messageId: Long) {
@@ -80,6 +78,29 @@ class TelegramChatFake : TelegramChat {
     }
 
     override fun getEvents(): Flow<TelegramMessage.Button.Callback> {
-        TODO("Not yet implemented")
+        return userCallback.mapNotNull { it }
+    }
+
+    inner class Matcher {
+
+        fun isInChat(telegramMessage: TelegramMessage) {
+            if(sentTelegramMessages.contains(telegramMessage).not()){
+                val stringBuilder = StringBuilder()
+                    .appendLine("Does not contain: $telegramMessage")
+                    .appendLine("List: $sentTelegramMessages")
+                    .toString()
+                error(stringBuilder)
+            }
+        }
+
+        fun wasDeleted(telegramMessage: TelegramMessage) {
+            sentTelegramMessages shouldNotContain telegramMessage
+        }
+
+
+        fun textMessageWasEdited(from: TelegramMessage, to: TelegramMessage) {
+            from.id shouldBe to.id
+            from.text shouldNotBe to.text
+        }
     }
 }

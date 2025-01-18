@@ -10,4 +10,6 @@ class DispatchersFake(
         get() = dispatcher
     override val default: CoroutineDispatcher
         get() = dispatcher
+    override val unconfined: CoroutineDispatcher
+        get() = dispatcher
 }

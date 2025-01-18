@@ -13,6 +13,7 @@ interface TelegramMessage {
         sealed class Action(open val value: String) {
             data class Url(override val value: String) : Action(value)
             data class CallBackData(override val value: String) : Action(value)
+            data class Text(override val value: String) : Action(value)
         }
 
         interface Callback {

@@ -80,5 +80,18 @@ class TelegramChatFakeTest : FunSpec() {
             message1.id shouldBe editedMessage.id
             message1.text shouldNotBe editedMessage.text
         }
+
+        test("Should send photo message") {
+            telegramChatFake.sendPhotoMessage(
+                caption = "caption 1",
+                imageUrl = "image url",
+                nestedButtons = emptyList()
+            ) shouldBe TelegramMessageFake(
+                id = 1,
+                text = "caption 1",
+                imageUrl = "image url",
+                nestedButtons = emptyList()
+            )
+        }
     }
 }

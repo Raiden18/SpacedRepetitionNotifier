@@ -6,7 +6,7 @@ import org.danceofvalkyries.app.data.notion.pages.NotionPageFlashCard
 data class NotionDataBaseFake(
     override val id: String,
     override val name: String,
-    private var pages: List<NotionPageFlashCard> = emptyList()
+    private var pages: List<NotionPageFlashCard>
 ) : NotionDataBase {
 
     override fun iterate(): Sequence<NotionPageFlashCard> {

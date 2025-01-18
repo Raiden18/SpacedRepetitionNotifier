@@ -55,13 +55,17 @@ class SqlLiteNotionDataBases(
                 )
             }
         )
-        return SqlLiteNotionDataBase(
+        val sqlLiteDb = SqlLiteNotionDataBase(
             id = id,
             tableName = TABLE_NAME,
             idColumn = idColumn,
             nameColumn = nameColumn,
             connection = connection,
         )
+        notionDataBase.iterate().forEach {
+            sqlLiteDb.add(it)
+        }
+        return sqlLiteDb
     }
 
     override suspend fun clear() {

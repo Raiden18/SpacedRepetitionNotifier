@@ -1,4 +1,4 @@
-package org.danceofvalkyries.app.apps.buttonslistener.presentation.controller
+package org.danceofvalkyries.app.data.telegram.users.bot
 
 import org.danceofvalkyries.app.data.telegram.users.HumanUser
 import org.danceofvalkyries.app.data.telegram.users.TelegramBotUser
@@ -12,6 +12,7 @@ class SpaceRepetitionSession(
     private var notionDb = NotionId.EMPTY
 
     suspend fun beginFor(notionDbId: String) {
+        println("beginFor: $notionDbId")
         notionDb = NotionId(notionDbId)
         val nextFlashCard = telegramBotUser.getAnyFlashCardFor(notionDb.rawValue)
         telegramBotUser.sendFlashCardMessage(nextFlashCard!!)
@@ -22,9 +23,9 @@ class SpaceRepetitionSession(
         replaceFlashCard()
     }
 
-    suspend fun recall(flashCardId: String) {
+    suspend fun recall(recalledFlashCardID: String) {
         telegramBotUser.removeAllFlashCardsFromChat()
-        telegramBotUser.removeFromDB(flashCardId)
+        telegramBotUser.removeRecalledFlashCardFromLocalDbs(recalledFlashCardID)
         telegramBotUser.sendNextFlashCardFrom(notionDb.rawValue)
     }
 

@@ -64,7 +64,7 @@ class NotifierApp(
     private val telegramBot: TelegramBotUser,
 ) : App {
 
-    private val coroutineScope = CoroutineScope(dispatchers.io)
+    private val coroutineScope = CoroutineScope(dispatchers.unconfined)
 
     override suspend fun run() {
         coroutineScope.launch {
@@ -79,6 +79,7 @@ class NotifierApp(
     }
 
     private suspend fun downLoadNotionDataBasesAndPagesAndSaveThemToLocalDataBase() {
+
         restfulNotionDataBases.iterate().forEach { restfulNotionDb ->
             sqlLiteNotionDataBases.add(restfulNotionDb)
         }
