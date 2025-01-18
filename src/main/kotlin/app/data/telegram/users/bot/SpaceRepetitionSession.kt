@@ -18,6 +18,7 @@ class SpaceRepetitionSession(
     }
 
     suspend fun forget(forgotFlashCardId: String) {
+        telegramBotUser.makeForgottenOnNotion(forgotFlashCardId)
         telegramBotUser.removeAllFlashCardsFromChat()
         telegramBotUser.removeForgotFlashCardFromLocalDbs(forgotFlashCardId)
         telegramBotUser.sendNextFlashCardFrom(notionDb.rawValue)
@@ -25,6 +26,7 @@ class SpaceRepetitionSession(
     }
 
     suspend fun recall(recalledFlashCardID: String) {
+        telegramBotUser.makeRecalledOnNotion(recalledFlashCardID)
         telegramBotUser.removeAllFlashCardsFromChat()
         telegramBotUser.removeRecalledFlashCardFromLocalDbs(recalledFlashCardID)
         telegramBotUser.sendNextFlashCardFrom(notionDb.rawValue)

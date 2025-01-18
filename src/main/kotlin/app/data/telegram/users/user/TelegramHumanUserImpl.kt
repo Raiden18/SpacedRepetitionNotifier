@@ -12,24 +12,7 @@ class TelegramHumanUserImpl(
 ) : HumanUser {
 
     override suspend fun forget(flashCardId: String) {
-        val flashCard = localDbNotionDataBases
-            .iterate()
-            .flatMap { it.iterate() }
-            .map {
-                FlashCardNotionPage(
-                    name = it.name,
-                    coverUrl = it.coverUrl,
-                    notionDbID = NotionId(it.notionDbID),
-                    id = NotionId(it.id),
-                    example = it.example,
-                    explanation = it.explanation,
-                    knowLevels = KnowLevels(it.knowLevels)
-                )
-            }.first { it.id.rawValue == flashCardId }
-        val forgottenFlashCard = flashCard.forget()
-        localDbNotionDataBases.iterate().forEach { it.delete(forgottenFlashCard.id.rawValue) }
-        val restfullDataBase = restfulNotionDataBases.getBy(flashCard.notionDbID.rawValue)
-        restfullDataBase.getPageBy(flashCardId).setKnowLevels(forgottenFlashCard.knowLevels.levels)
+
     }
 
     override suspend fun recall(flashCardId: String) {

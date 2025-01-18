@@ -10,6 +10,9 @@ import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
 import org.danceofvalkyries.app.data.telegram.message_types.SentTelegramMessagesType
 import org.danceofvalkyries.app.data.telegram.users.TelegramBotUser
 import org.danceofvalkyries.app.domain.message.ButtonAction
+import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
+import org.danceofvalkyries.notion.api.models.KnowLevels
+import org.danceofvalkyries.notion.api.models.NotionId
 
 class TelegramBotUserImpl(
     private val telegramChat: TelegramChat,
@@ -189,6 +192,46 @@ class TelegramBotUserImpl(
         }.forEach {
             sentTelegramMessagesType.delete(it.id)
         }
+    }
+
+    override suspend fun makeForgottenOnNotion(flashCardId: String) {
+        val flashCard = localDbNotionDataBases
+            .iterate()
+            .flatMap { it.iterate() }
+            .map {
+                FlashCardNotionPage(
+                    name = it.name,
+                    coverUrl = it.coverUrl,
+                    notionDbID = NotionId(it.notionDbID),
+                    id = NotionId(it.id),
+                    example = it.example,
+                    explanation = it.explanation,
+                    knowLevels = KnowLevels(it.knowLevels)
+                )
+            }.first { it.id.rawValue == flashCardId }
+        val forgottenFlashCard = flashCard.forget()
+        val restfullDataBase = restfulNotionDataBases.getBy(flashCard.notionDbID.rawValue)
+        restfullDataBase.getPageBy(flashCardId).setKnowLevels(forgottenFlashCard.knowLevels.levels)
+    }
+
+    override suspend fun makeRecalledOnNotion(flashCardId: String) {
+        val flashCard = localDbNotionDataBases
+            .iterate()
+            .flatMap { it.iterate() }
+            .map {
+                FlashCardNotionPage(
+                    name = it.name,
+                    coverUrl = it.coverUrl,
+                    notionDbID = NotionId(it.notionDbID),
+                    id = NotionId(it.id),
+                    example = it.example,
+                    explanation = it.explanation,
+                    knowLevels = KnowLevels(it.knowLevels)
+                )
+            }.first { it.id.rawValue == flashCardId }
+        val forgottenFlashCard = flashCard.recall()
+        val restfullDataBase = restfulNotionDataBases.getBy(flashCard.notionDbID.rawValue)
+        restfullDataBase.getPageBy(flashCardId).setKnowLevels(forgottenFlashCard.knowLevels.levels)
     }
 
     private fun String.escapeCharacters(): String {

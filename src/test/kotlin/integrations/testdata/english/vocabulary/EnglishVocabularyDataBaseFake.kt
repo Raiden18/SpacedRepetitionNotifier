@@ -4,7 +4,7 @@ import org.danceofvalkyries.app.data.notion.databases.NotionDataBase
 import org.danceofvalkyries.app.data.notion.pages.NotionPageFlashCard
 import utils.NotionDataBaseFake
 
-class EnglishVocabularyDataBaseLocalDbFake : NotionDataBase {
+class EnglishVocabularyDataBaseFake : NotionDataBase {
 
     companion object {
         val ID = "english_vocabulary_db_1"

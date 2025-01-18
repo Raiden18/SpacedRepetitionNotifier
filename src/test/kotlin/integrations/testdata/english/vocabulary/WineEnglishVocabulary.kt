@@ -4,7 +4,41 @@ import org.danceofvalkyries.app.data.notion.pages.NotionPageFlashCard
 
 class WineEnglishVocabulary(
     private val notionDbId: String
-): NotionPageFlashCard {
+) : NotionPageFlashCard {
+
+    var updatedKnowLevels: Map<Int, Boolean> = mapOf<Int, Boolean>()
+
+    val forgottenLevelKnowLevels = mapOf(
+        1 to false,
+        2 to false,
+        3 to false,
+        4 to false,
+        5 to false,
+        6 to false,
+        7 to false,
+        8 to false,
+        9 to false,
+        10 to false,
+        11 to false,
+        12 to false,
+        13 to false,
+    )
+
+    val nextLevelKnowLevels = mapOf(
+        1 to true,
+        2 to true,
+        3 to false,
+        4 to false,
+        5 to false,
+        6 to false,
+        7 to false,
+        8 to false,
+        9 to false,
+        10 to false,
+        11 to false,
+        12 to false,
+        13 to false,
+    )
 
     override val id: String
         get() = "wine_english_vocabulary_1"
@@ -41,7 +75,9 @@ class WineEnglishVocabulary(
             13 to false,
         )
 
-    override fun setKnowLevels(knowLevels: Map<Int, Boolean>) = Unit
+    override fun setKnowLevels(knowLevels: Map<Int, Boolean>) {
+        this.updatedKnowLevels = knowLevels
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

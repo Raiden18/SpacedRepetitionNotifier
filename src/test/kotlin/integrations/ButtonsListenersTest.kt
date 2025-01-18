@@ -1,19 +1,21 @@
 package integrations
 
-import com.google.gson.Gson
-import integrations.testdata.english.vocabulary.EnglishVocabularyDataBaseLocalDbFake
+import integrations.testdata.english.vocabulary.EnglishVocabularyDataBaseFake
 import integrations.testdata.telegram.TelegramCallbackData
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.core.spec.style.scopes.BehaviorSpecWhenContainerScope
+import io.kotest.matchers.shouldBe
 import org.danceofvalkyries.app.apps.buttonslistener.TelegramButtonListenerApp
 import org.danceofvalkyries.app.data.dictionary.OnlineDictionary
 import org.danceofvalkyries.app.data.dictionary.constant.ConstantOnlineDictionary
-import org.danceofvalkyries.app.data.notion.databases.restful.RestFulNotionDataBases
 import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
 import org.danceofvalkyries.app.data.telegram.users.bot.SpaceRepetitionSession
 import org.danceofvalkyries.app.data.telegram.users.bot.TelegramBotUserImpl
 import org.danceofvalkyries.app.data.telegram.users.user.TelegramHumanUserImpl
-import utils.*
+import utils.DispatchersFake
+import utils.OnlineDictionariesFake
+import utils.SentTelegramMessagesTypeFake
+import utils.SqlLiteNotionDataBasesFake
 import utils.fakes.httpclient.HttpClientFake
 import utils.fakes.telegram.TelegramChatFake
 import utils.fakes.telegram.TelegramMessageFake
@@ -21,11 +23,14 @@ import utils.fakes.telegram.TelegramMessageFake
 class ButtonsListenersTest : BehaviorSpec() {
 
     private lateinit var telegramButtonListenerApp: TelegramButtonListenerApp
-    private lateinit var ktorWebServer: KtorWebServerFake
     private lateinit var httpClientFake: HttpClientFake
     private lateinit var sqlLiteNotionDataBasesFake: SqlLiteNotionDataBasesFake
     private lateinit var sentTelegramMessagesTypeFake: SentTelegramMessagesTypeFake
-    private lateinit var englishVocabularyDataBaseLocalDbFake: EnglishVocabularyDataBaseLocalDbFake
+
+    private lateinit var englishVocabularyDataBaseFake: EnglishVocabularyDataBaseFake
+    private lateinit var englishVocabularyDataBaseRestfulFake: EnglishVocabularyDataBaseFake
+
+
     private lateinit var cambridgeDictionary: OnlineDictionary
 
     private lateinit var telegramChat: TelegramChatFake
@@ -34,12 +39,12 @@ class ButtonsListenersTest : BehaviorSpec() {
 
         Given("Notification App") {
             beforeTest {
-                englishVocabularyDataBaseLocalDbFake = EnglishVocabularyDataBaseLocalDbFake()
-                sqlLiteNotionDataBasesFake = SqlLiteNotionDataBasesFake(
-                    listOf(englishVocabularyDataBaseLocalDbFake)
-                )
+                englishVocabularyDataBaseFake = EnglishVocabularyDataBaseFake()
+                englishVocabularyDataBaseRestfulFake = EnglishVocabularyDataBaseFake()
 
-                ktorWebServer = KtorWebServerFake(Gson())
+                sqlLiteNotionDataBasesFake = SqlLiteNotionDataBasesFake(
+                    listOf(englishVocabularyDataBaseFake)
+                )
                 cambridgeDictionary = ConstantOnlineDictionary("https://dictionary.cambridge.org/dictionary/english/encounter")
 
                 httpClientFake = HttpClientFake()
@@ -47,12 +52,8 @@ class ButtonsListenersTest : BehaviorSpec() {
                 sentTelegramMessagesTypeFake = SentTelegramMessagesTypeFake()
 
 
-                val restfulNotionDataBases = RestFulNotionDataBases(
-                    desiredDbIds = listOf(TestData.Notion.EnglishVocabulary.DATA_BASE_ID),
-                    apiKey = TestData.Notion.NOTION_API_KEY,
-                    httpClient = httpClientFake,
-                    gson = Gson()
-                )
+                val restfulNotionDataBases = SqlLiteNotionDataBasesFake(listOf(englishVocabularyDataBaseRestfulFake))
+
                 val humanUser = TelegramHumanUserImpl(
                     sqlLiteNotionDataBasesFake,
                     restfulNotionDataBases,
@@ -95,30 +96,30 @@ class ButtonsListenersTest : BehaviorSpec() {
 
                 val wineFlashCard = TelegramMessageFake.createEnglishVocabularyFlashCard(
                     messageId = 2,
-                    text = englishVocabularyDataBaseLocalDbFake.wine.name,
-                    example = englishVocabularyDataBaseLocalDbFake.wine.example!!,
-                    answer = englishVocabularyDataBaseLocalDbFake.wine.explanation!!,
-                    flashCardId = englishVocabularyDataBaseLocalDbFake.wine.id,
-                    dictionaryUrl = cambridgeDictionary.getUrlFor(englishVocabularyDataBaseLocalDbFake.wine.name),
-                    imageUrl = englishVocabularyDataBaseLocalDbFake.wine.coverUrl
+                    text = englishVocabularyDataBaseFake.wine.name,
+                    example = englishVocabularyDataBaseFake.wine.example!!,
+                    answer = englishVocabularyDataBaseFake.wine.explanation!!,
+                    flashCardId = englishVocabularyDataBaseFake.wine.id,
+                    dictionaryUrl = cambridgeDictionary.getUrlFor(englishVocabularyDataBaseFake.wine.name),
+                    imageUrl = englishVocabularyDataBaseFake.wine.coverUrl
                 )
 
                 val dota2FlashCard = TelegramMessageFake.createEnglishVocabularyFlashCard(
                     messageId = 3,
-                    text = englishVocabularyDataBaseLocalDbFake.dota2.name,
-                    example = englishVocabularyDataBaseLocalDbFake.dota2.example!!,
-                    answer = englishVocabularyDataBaseLocalDbFake.dota2.explanation!!,
-                    flashCardId = englishVocabularyDataBaseLocalDbFake.dota2.id,
-                    dictionaryUrl = cambridgeDictionary.getUrlFor(englishVocabularyDataBaseLocalDbFake.dota2.name),
-                    imageUrl = englishVocabularyDataBaseLocalDbFake.dota2.coverUrl
+                    text = englishVocabularyDataBaseFake.dota2.name,
+                    example = englishVocabularyDataBaseFake.dota2.example!!,
+                    answer = englishVocabularyDataBaseFake.dota2.explanation!!,
+                    flashCardId = englishVocabularyDataBaseFake.dota2.id,
+                    dictionaryUrl = cambridgeDictionary.getUrlFor(englishVocabularyDataBaseFake.dota2.name),
+                    imageUrl = englishVocabularyDataBaseFake.dota2.coverUrl
                 )
 
                 beforeTest {
                     val message = TelegramMessageFake.createTelegramNotification(
                         messageId = -1,
                         numberToRevise = 2,
-                        tableName = englishVocabularyDataBaseLocalDbFake.name,
-                        dbId = englishVocabularyDataBaseLocalDbFake.id
+                        tableName = englishVocabularyDataBaseFake.name,
+                        dbId = englishVocabularyDataBaseFake.id
                     )
                     notificationMessage = telegramChat.sendTextMessage(
                         text = message.text,
@@ -136,7 +137,7 @@ class ButtonsListenersTest : BehaviorSpec() {
                         telegramChat.userSendsCallback(
                             TelegramCallbackData(
                                 id = "callback_id",
-                                action = TelegramMessage.Button.Action.CallBackData("dbId=${englishVocabularyDataBaseLocalDbFake.id}"),
+                                action = TelegramMessage.Button.Action.CallBackData("dbId=${englishVocabularyDataBaseFake.id}"),
                                 messageId = notificationMessage.id
                             )
                         )
@@ -150,7 +151,7 @@ class ButtonsListenersTest : BehaviorSpec() {
                             telegramChat.userSendsCallback(
                                 TelegramCallbackData(
                                     id = "callback_id",
-                                    action = TelegramMessage.Button.Action.CallBackData("forgottenFlashCardId=${englishVocabularyDataBaseLocalDbFake.wine.id}"),
+                                    action = TelegramMessage.Button.Action.CallBackData("forgottenFlashCardId=${englishVocabularyDataBaseFake.wine.id}"),
                                     messageId = wineFlashCard.id
                                 )
                             )
@@ -163,6 +164,7 @@ class ButtonsListenersTest : BehaviorSpec() {
                             newNumberToRevise = 1
                         )
                         notificationMessageShouldRemainInSentMessagesDb(notificationMessage.id)
+                        wineFlashCardShouldBeForgotten()
                     }
 
                     And("User recalls Wine FlashCard") {
@@ -170,7 +172,7 @@ class ButtonsListenersTest : BehaviorSpec() {
                             telegramChat.userSendsCallback(
                                 TelegramCallbackData(
                                     id = "callback_id",
-                                    action = TelegramMessage.Button.Action.CallBackData("recalledFlashCardId=${englishVocabularyDataBaseLocalDbFake.wine.id}"),
+                                    action = TelegramMessage.Button.Action.CallBackData("recalledFlashCardId=${englishVocabularyDataBaseFake.wine.id}"),
                                     messageId = wineFlashCard.id
                                 )
                             )
@@ -183,6 +185,7 @@ class ButtonsListenersTest : BehaviorSpec() {
                             newNumberToRevise = 1
                         )
                         notificationMessageShouldRemainInSentMessagesDb(notificationMessage.id)
+                        wineFlashCardShouldBeRecalled()
                     }
                 }
             }
@@ -197,8 +200,8 @@ class ButtonsListenersTest : BehaviorSpec() {
             val editedNotificationMessage = TelegramMessageFake.createTelegramNotification(
                 messageId = messageId,
                 numberToRevise = newNumberToRevise,
-                tableName = englishVocabularyDataBaseLocalDbFake.name,
-                dbId = englishVocabularyDataBaseLocalDbFake.id
+                tableName = englishVocabularyDataBaseFake.name,
+                dbId = englishVocabularyDataBaseFake.id
             )
             telegramChat.assertThat()
                 .isInChat(editedNotificationMessage)
@@ -234,6 +237,18 @@ class ButtonsListenersTest : BehaviorSpec() {
     private suspend fun BehaviorSpecWhenContainerScope.shouldSendDota2FlashCardToTelegram(dota2FlashCard: TelegramMessage) {
         Then("Should Send Dota 2 Flash Card") {
             telegramChat.assertThat().isInChat(dota2FlashCard)
+        }
+    }
+
+    private suspend fun BehaviorSpecWhenContainerScope.wineFlashCardShouldBeForgotten() {
+        Then("Wine Flash Card should be forgotten") {
+            englishVocabularyDataBaseRestfulFake.wine.updatedKnowLevels shouldBe englishVocabularyDataBaseFake.wine.forgottenLevelKnowLevels
+        }
+    }
+
+    private suspend fun BehaviorSpecWhenContainerScope.wineFlashCardShouldBeRecalled() {
+        Then("Wine Flash Card should be recalled") {
+            englishVocabularyDataBaseRestfulFake.wine.updatedKnowLevels shouldBe englishVocabularyDataBaseFake.wine.nextLevelKnowLevels
         }
     }
 }
