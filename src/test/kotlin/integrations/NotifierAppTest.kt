@@ -8,26 +8,25 @@ import integrations.TestData.Notion.GreekLetterAndSounds.greekSound1
 import integrations.TestData.Notion.GreekLetterAndSounds.greekSound2
 import integrations.TestData.Notion.NOTION_API_KEY
 import io.kotest.core.spec.style.BehaviorSpec
-import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
 import org.danceofvalkyries.app.apps.notifier.NotifierApp
 import org.danceofvalkyries.app.data.notion.databases.restful.RestFulNotionDataBases
 import org.danceofvalkyries.app.data.telegram.chat.restful.RestfulTelegramChat
 import org.danceofvalkyries.app.data.telegram.users.bot.TelegramBotUserImpl
 import utils.*
-import utils.fakes.httpclient.HttpClientFake
-import utils.fakes.httpclient.HttpClientFake.PostRequest
+import utils.fakes.httpclient.NewHttpClientFake
 
 class NotifierAppTest : BehaviorSpec() {
+
     private lateinit var notifierApp: NotifierApp
-    private lateinit var httpClient: HttpClientFake
+    private lateinit var httpClient: NewHttpClientFake
     private lateinit var sentTelegramMessagesType: SentTelegramMessagesTypeFake
     private lateinit var sqlLiteNotionDataBases: SqlLiteNotionDataBasesFake
 
 
     init {
         beforeTest {
-            httpClient = HttpClientFake()
+            httpClient = NewHttpClientFake()
             sentTelegramMessagesType = SentTelegramMessagesTypeFake()
             val telegramChat = RestfulTelegramChat(
                 TestData.TELEGRAM_API_KEY,
@@ -69,24 +68,26 @@ class NotifierAppTest : BehaviorSpec() {
 
             And("Greek Letters And Sounds Notion Table") {
                 beforeTest {
-                    httpClient.mockGetResponse(
-                        url = "https://api.notion.com/v1/databases/$GREEK_SOUNDS_AND_LETTERS_NOTION_DATA_BASE_ID",
-                        response = greekLettersAndSoundsTable
-                    )
+                    httpClient.mockNewResponse()
+                        .url("https://api.notion.com/v1/databases/$GREEK_SOUNDS_AND_LETTERS_NOTION_DATA_BASE_ID")
+                        .get()
+                        .responseWith(greekLettersAndSoundsTable)
+                        .build()
                 }
 
                 When("Number of Flash Cards is more than threshold") {
                     beforeTest {
-                        httpClient.mockPostResponse(
-                            url = "https://api.notion.com/v1/databases/$GREEK_SOUNDS_AND_LETTERS_NOTION_DATA_BASE_ID/query",
-                            body = TestData.Notion.GreekLetterAndSounds.unrevisedCardBodyRequest(),
-                            response = TestData.Notion.GreekLetterAndSounds.pagesResponse(
-                                listOf(
-                                    greekSound1,
-                                    greekSound2
+                        httpClient.mockNewResponse()
+                            .url("https://api.notion.com/v1/databases/$GREEK_SOUNDS_AND_LETTERS_NOTION_DATA_BASE_ID/query")
+                            .post(TestData.Notion.GreekLetterAndSounds.unrevisedCardBodyRequest())
+                            .responseWith(
+                                TestData.Notion.GreekLetterAndSounds.pagesResponse(
+                                    listOf(
+                                        greekSound1,
+                                        greekSound2
+                                    )
                                 )
-                            )
-                        )
+                            ).build()
                     }
 
                     Then("Should send notification to Telegram") {
@@ -96,21 +97,21 @@ class NotifierAppTest : BehaviorSpec() {
                                 buttonTitle = "$GREEK_LETTERS_AND_SOUNDS: 2",
                                 notionDataBaseId = GREEK_SOUNDS_AND_LETTERS_NOTION_DATA_BASE_ID
                             )
-                        val notificationBodyResponse =
-                            TestData.Telegram.SendMessage.notificationResponseWithOneButton(messageId = 228)
+                        val notificationBodyResponse = TestData.Telegram.SendMessage.notificationResponseWithOneButton(messageId = 228)
 
-                        httpClient.mockPostResponse(
-                            url = TestData.Telegram.Urls.getSendMessage(),
-                            body = expectedNotificationMessage,
-                            response = notificationBodyResponse
-                        )
+                        httpClient.mockNewResponse()
+                            .url(TestData.Telegram.Urls.getSendMessage())
+                            .post(expectedNotificationMessage)
+                            .responseWith(notificationBodyResponse)
+                            .build()
 
                         notifierApp.run()
 
-                        httpClient.postRequests shouldContain PostRequest(
-                            url = TestData.Telegram.Urls.getSendMessage(),
-                            body = expectedNotificationMessage,
-                        )
+                        httpClient.assertThat()
+                            .post(
+                                url = TestData.Telegram.Urls.getSendMessage(),
+                                body = expectedNotificationMessage,
+                            ).wasSent()
                     }
                 }
             }
@@ -128,24 +129,28 @@ class NotifierAppTest : BehaviorSpec() {
             And("Greek Letters And Sounds Notion Table") {
 
                 beforeTest {
-                    httpClient.mockGetResponse(
-                        url = "https://api.notion.com/v1/databases/$GREEK_SOUNDS_AND_LETTERS_NOTION_DATA_BASE_ID",
-                        response = greekLettersAndSoundsTable
-                    )
+                    httpClient.mockNewResponse()
+                        .url("https://api.notion.com/v1/databases/$GREEK_SOUNDS_AND_LETTERS_NOTION_DATA_BASE_ID")
+                        .get()
+                        .responseWith(greekLettersAndSoundsTable)
+                        .build()
+
                 }
 
                 When("Number of Flash Cards is more than threshold") {
                     beforeTest {
-                        httpClient.mockPostResponse(
-                            url = "https://api.notion.com/v1/databases/$GREEK_SOUNDS_AND_LETTERS_NOTION_DATA_BASE_ID/query",
-                            body = TestData.Notion.GreekLetterAndSounds.unrevisedCardBodyRequest(),
-                            response = TestData.Notion.GreekLetterAndSounds.pagesResponse(
-                                listOf(
-                                    greekSound1,
-                                    greekSound2
+                        httpClient.mockNewResponse()
+                            .url("https://api.notion.com/v1/databases/$GREEK_SOUNDS_AND_LETTERS_NOTION_DATA_BASE_ID/query")
+                            .post(TestData.Notion.GreekLetterAndSounds.unrevisedCardBodyRequest())
+                            .responseWith(
+                                TestData.Notion.GreekLetterAndSounds.pagesResponse(
+                                    listOf(
+                                        greekSound1,
+                                        greekSound2
+                                    )
                                 )
-                            )
-                        )
+                            ).build()
+
                     }
 
                     val expectedNotificationMessage =
@@ -158,20 +163,27 @@ class NotifierAppTest : BehaviorSpec() {
                         TestData.Telegram.SendMessage.notificationResponseWithOneButton(messageId = 322)
 
                     beforeTest {
-                        httpClient.mockPostResponse(
-                            url = TestData.Telegram.Urls.getSendMessage(),
-                            body = expectedNotificationMessage,
-                            response = notificationBodyResponse
-                        )
+                        httpClient.mockNewResponse()
+                            .url(TestData.Telegram.Urls.getSendMessage())
+                            .post(expectedNotificationMessage)
+                            .responseWith(notificationBodyResponse)
+                            .build()
+
+                        httpClient.mockNewResponse()
+                            .url(TestData.Telegram.Urls.getDeleteMessageUrl(sentNotificationMessageId))
+                            .get()
+                            .responseWith("{}")
+                            .build()
 
                         notifierApp.run()
                     }
 
                     Then("Should send NEW notification to Telegram") {
-                        httpClient.postRequests shouldContain PostRequest(
-                            url = TestData.Telegram.Urls.getSendMessage(),
-                            body = expectedNotificationMessage,
-                        )
+                        httpClient.assertThat()
+                            .post(
+                                url = TestData.Telegram.Urls.getSendMessage(),
+                                body = expectedNotificationMessage,
+                            ).wasSent()
                     }
 
                     Then("Should Delete OLD notification From DB") {
@@ -181,20 +193,20 @@ class NotifierAppTest : BehaviorSpec() {
                     }
 
                     Then("Should Delete OLD notification from Telegram") {
-                        httpClient.getUrlRequests shouldContain TestData.Telegram.Urls.getDeleteMessageUrl(
-                            sentNotificationMessageId
-                        )
+                        httpClient.assertThat()
+                            .get(TestData.Telegram.Urls.getDeleteMessageUrl(sentNotificationMessageId))
+                            .wasSent()
                     }
                 }
 
                 When("Number of Flash Cards is less than threshold") {
 
                     beforeTest {
-                        httpClient.mockPostResponse(
-                            url = "https://api.notion.com/v1/databases/$GREEK_SOUNDS_AND_LETTERS_NOTION_DATA_BASE_ID/query",
-                            body = TestData.Notion.GreekLetterAndSounds.unrevisedCardBodyRequest(),
-                            response = TestData.Notion.GreekLetterAndSounds.pagesResponse(listOf(greekSound1))
-                        )
+                        httpClient.mockNewResponse()
+                            .url("https://api.notion.com/v1/databases/$GREEK_SOUNDS_AND_LETTERS_NOTION_DATA_BASE_ID/query")
+                            .post(TestData.Notion.GreekLetterAndSounds.unrevisedCardBodyRequest())
+                            .responseWith(TestData.Notion.GreekLetterAndSounds.pagesResponse(listOf(greekSound1)))
+                            .build()
                     }
 
                     val text = """Good Job! 😎 Everything is revised! ✅"""
@@ -208,19 +220,20 @@ class NotifierAppTest : BehaviorSpec() {
                     )
 
                     beforeTest {
-                        httpClient.mockPostResponse(
-                            url = TestData.Telegram.Urls.getEditMessage(),
-                            body = expectedNotificationMessage,
-                            response = notificationBodyResponse
-                        )
+                        httpClient.mockNewResponse()
+                            .url(TestData.Telegram.Urls.getEditMessage())
+                            .post(expectedNotificationMessage)
+                            .responseWith(notificationBodyResponse)
+                            .build()
                         notifierApp.run()
                     }
 
                     Then("Then should edit PREVIOUS notification to DONE") {
-                        httpClient.postRequests shouldContain PostRequest(
-                            url = TestData.Telegram.Urls.getEditMessage(),
-                            body = expectedNotificationMessage,
-                        )
+                        httpClient.assertThat()
+                            .post(
+                                url = TestData.Telegram.Urls.getEditMessage(),
+                                body = expectedNotificationMessage,
+                            ).wasSent()
                     }
                 }
             }

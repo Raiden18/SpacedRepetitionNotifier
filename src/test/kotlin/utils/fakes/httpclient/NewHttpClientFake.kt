@@ -94,7 +94,7 @@ class NewHttpClientFake : HttpClient {
             return this
         }
 
-        fun shouldReturnBody(body: String): MockRequestBuilder {
+        fun responseWith(body: String): MockRequestBuilder {
             response = response.copy(responseBody = body)
             return this
         }
@@ -150,16 +150,40 @@ class NewHttpClientFake : HttpClient {
             return this
         }
 
+        fun get(url: String): Matcher {
+            method = "GET"
+            this.url = url
+            return this
+        }
+
         fun wasSent() {
             when (method) {
                 "POST" -> mockedPostResponses.firstOrNull {
                     it.url == url && it.requestBody == body
-                } ?: error("""
+                } ?: error(
+                    """
                     METHOD: $method
                     URL: $url
                     BODY: $body
-                    has not been sent!
-                """.trimIndent())
+                    was not called!
+                """.trimIndent()
+                )
+
+                """GET""" -> {
+                    val calledMethod = mockedGetResponses.firstOrNull { it.requestUrl == url }
+                    if (calledMethod == null) {
+                        error(
+                            """
+                                    METHOD :$method
+                                    URL: $url
+                                    was not called!
+                                    
+                                    CALLED GET REQUESTS: $mockedGetResponses
+                                    """.trimIndent()
+                        )
+
+                    }
+                }
             }
         }
     }

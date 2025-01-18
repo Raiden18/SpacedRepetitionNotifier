@@ -18,13 +18,13 @@ class NewHttpClientFakeTest : FunSpec() {
             newHttpClientFake.mockNewResponse()
                 .url("https://google.com")
                 .get()
-                .shouldReturnBody("""{}""")
+                .responseWith("""{}""")
                 .build()
 
             newHttpClientFake.mockNewResponse()
                 .url("https://ya.ru")
                 .get()
-                .shouldReturnBody("""{"result":true}""")
+                .responseWith("""{"result":true}""")
                 .build()
 
             newHttpClientFake.get(
@@ -47,7 +47,7 @@ class NewHttpClientFakeTest : FunSpec() {
             newHttpClientFake.mockNewResponse()
                 .url("https://youtube.com")
                 .post("""{"request":something}""")
-                .shouldReturnBody("{}")
+                .responseWith("{}")
                 .build()
 
             newHttpClientFake.post(
@@ -64,7 +64,7 @@ class NewHttpClientFakeTest : FunSpec() {
             newHttpClientFake.mockNewResponse()
                 .url("https://reddit.com")
                 .patch("{}")
-                .shouldReturnBody("""{"result":true}""")
+                .responseWith("""{"result":true}""")
                 .build()
 
             newHttpClientFake.patch(
@@ -89,7 +89,7 @@ class NewHttpClientFakeTest : FunSpec() {
             newHttpClientFake.mockNewResponse()
                 .url("https://youtube.com")
                 .post("{}")
-                .shouldReturnBody("{}")
+                .responseWith("{}")
                 .build()
 
             newHttpClientFake.post(
@@ -103,6 +103,14 @@ class NewHttpClientFakeTest : FunSpec() {
 
             newHttpClientFake.assertThat()
                 .post(url = "https://youtube.com", body = "{}").wasSent()
+        }
+
+        test("Should return exception if GET request was not called") {
+            assertThrows<Throwable> {
+                newHttpClientFake.assertThat()
+                    .get("ya.ru")
+                    .wasSent()
+            }
         }
     }
 }
