@@ -1,4 +1,4 @@
-package utils
+package utils.fakes.httpclient
 
 import org.danceofvalkyries.utils.HttpClient
 import org.danceofvalkyries.utils.rest.Header

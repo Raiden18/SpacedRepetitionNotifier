@@ -13,7 +13,8 @@ import org.danceofvalkyries.app.data.telegram.users.bot.TelegramBotUserImpl
 import org.danceofvalkyries.app.data.telegram.users.user.TelegramHumanUserImpl
 import org.danceofvalkyries.utils.rest.jsonObject
 import utils.*
-import utils.HttpClientFake.PostRequest
+import utils.fakes.httpclient.HttpClientFake
+import utils.fakes.httpclient.HttpClientFake.PostRequest
 
 class ButtonsListenersTest : BehaviorSpec() {
 

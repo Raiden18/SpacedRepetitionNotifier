@@ -15,7 +15,8 @@ import org.danceofvalkyries.app.data.notion.databases.restful.RestFulNotionDataB
 import org.danceofvalkyries.app.data.telegram.chat.restful.RestfulTelegramChat
 import org.danceofvalkyries.app.data.telegram.users.bot.TelegramBotUserImpl
 import utils.*
-import utils.HttpClientFake.PostRequest
+import utils.fakes.httpclient.HttpClientFake
+import utils.fakes.httpclient.HttpClientFake.PostRequest
 
 class NotifierAppTest : BehaviorSpec() {
     private lateinit var notifierApp: NotifierApp
