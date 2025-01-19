@@ -1,7 +1,6 @@
-package integrations
+package org.danceofvalkyries.job
 
 import kotlinx.coroutines.test.runTest
-import org.danceofvalkyries.job.Job
 
 class JobRunInTestDecorator(
     private val job: Job

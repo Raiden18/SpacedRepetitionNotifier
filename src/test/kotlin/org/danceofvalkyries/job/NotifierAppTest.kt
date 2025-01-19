@@ -1,10 +1,8 @@
-package integrations
+package org.danceofvalkyries.job
 
-import integrations.testdata.greek.GreekLettersAndSoundsDataBaseRestfulFake
+import integrations.testdata.greek.GreekLettersAndSoundsDataBaseDataBase
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.job.Job
-import org.danceofvalkyries.job.NotifierJob
 import org.danceofvalkyries.job.data.telegram.bot.TelegramBotImpl
 import org.danceofvalkyries.job.data.telegram.message.TelegramMessage
 import org.danceofvalkyries.job.data.telegram.message.local.translator.TelegramTextTranslator
@@ -22,22 +20,20 @@ class NotifierAppTest : BehaviorSpec() {
     private lateinit var notifierJob: Job
     private lateinit var sentTelegramMessagesType: SentTelegramMessagesTypeFake
     private lateinit var sqlLiteNotionDataBases: SqlLiteNotionDataBasesFake
-    private lateinit var greekLettersAndSoundsDataBaseRestfulFake: GreekLettersAndSoundsDataBaseRestfulFake
-    private lateinit var restfulNotionDataBases: NotionDataBasesRestfulFake
     private lateinit var telegramBot: TelegramBotImpl
     private lateinit var telegramChatFake: TelegramChatFake
+    private lateinit var greekLettersAndSoundsDataBaseSqlLiteFake: GreekLettersAndSoundsDataBaseDataBase
 
     init {
         beforeTest {
             sentTelegramMessagesType = SentTelegramMessagesTypeFake()
-            sqlLiteNotionDataBases = SqlLiteNotionDataBasesFake()
-            greekLettersAndSoundsDataBaseRestfulFake = GreekLettersAndSoundsDataBaseRestfulFake()
+            greekLettersAndSoundsDataBaseSqlLiteFake = GreekLettersAndSoundsDataBaseDataBase()
+            sqlLiteNotionDataBases = SqlLiteNotionDataBasesFake(listOf(greekLettersAndSoundsDataBaseSqlLiteFake))
             telegramChatFake = TelegramChatFake()
-            restfulNotionDataBases = NotionDataBasesRestfulFake(listOf(greekLettersAndSoundsDataBaseRestfulFake))
             telegramBot = TelegramBotImpl(
                 telegramChatFake,
                 sqlLiteNotionDataBases,
-                restfulNotionDataBases,
+                NotionDataBasesRestfulFake(listOf()),
                 sentTelegramMessagesType,
                 OnlineDictionariesFake(emptyList()),
                 TelegramTextTranslator(),
@@ -58,7 +54,7 @@ class NotifierAppTest : BehaviorSpec() {
 
                 Then("Should send notification to Telegram") {
                     notifierJob.run()
-                    val expectedNotificationMessage = greekLettersAndSoundsDataBaseRestfulFake.createTelegramNotification(1)
+                    val expectedNotificationMessage = greekLettersAndSoundsDataBaseSqlLiteFake.createTelegramNotification(1)
                     telegramChatFake.assertThat().isInChat(expectedNotificationMessage)
                 }
             }
@@ -85,7 +81,7 @@ class NotifierAppTest : BehaviorSpec() {
 
                 Then("Should send NEW notification to Telegram") {
                     notifierJob.run()
-                    val newNotification = greekLettersAndSoundsDataBaseRestfulFake.createTelegramNotification(2)
+                    val newNotification = greekLettersAndSoundsDataBaseSqlLiteFake.createTelegramNotification(2)
                     telegramChatFake.assertThat().isInChat(newNotification)
                 }
 
@@ -123,7 +119,6 @@ class NotifierAppTest : BehaviorSpec() {
             NotifierJob(
                 DispatchersFake(),
                 flashCardsThreshold = flashCardsThreshold,
-                restfulNotionDataBases,
                 sqlLiteNotionDataBases,
                 telegramBot,
             )

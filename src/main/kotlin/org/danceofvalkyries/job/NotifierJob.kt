@@ -54,7 +54,6 @@ fun NotifierJob(
     return NotifierJob(
         dispatchers,
         environment.config.flashCardsThreshold,
-        restfulNotionDatabases,
         sqlLiteNotionDatabases,
         telegramBotUser,
     )
@@ -63,7 +62,6 @@ fun NotifierJob(
 class NotifierJob(
     private val dispatchers: Dispatchers,
     private val flashCardsThreshold: Int,
-    private val restfulNotionDataBases: NotionDataBases,
     private val sqlLiteNotionDataBases: NotionDataBases,
     private val telegramBot: TelegramBot,
 ) : Job {
@@ -72,19 +70,7 @@ class NotifierJob(
 
     override suspend fun run() {
         coroutineScope.launch {
-            clearAllCache()
-            downLoadNotionDataBasesAndPagesAndSaveThemToLocalDataBase()
             checkFlashCardsAndSendNotificationOrShowDoneMessage()
-        }
-    }
-
-    private suspend fun clearAllCache() {
-        sqlLiteNotionDataBases.clear()
-    }
-
-    private suspend fun downLoadNotionDataBasesAndPagesAndSaveThemToLocalDataBase() {
-        restfulNotionDataBases.iterate().forEach { restfulNotionDb ->
-            sqlLiteNotionDataBases.add(restfulNotionDb)
         }
     }
 

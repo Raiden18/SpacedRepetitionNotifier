@@ -70,10 +70,10 @@ class TelegramButtonListenerJob(
     private val bot: TelegramBot,
 ) : Job {
 
-    private val scope = CoroutineScope(dispatchers.unconfined)
+    private val coroutineScope = CoroutineScope(dispatchers.unconfined)
 
     override suspend fun run() {
-        scope.launch {
+        coroutineScope.launch {
             telegramChat
                 .getEvents()
                 .onEach {

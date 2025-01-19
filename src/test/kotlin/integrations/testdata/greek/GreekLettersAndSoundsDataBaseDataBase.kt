@@ -5,7 +5,7 @@ import org.danceofvalkyries.job.data.notion.pages.NotionPageFlashCard
 import utils.NotionDataBaseFake
 import utils.fakes.telegram.TelegramMessageFake
 
-class GreekLettersAndSoundsDataBaseRestfulFake : NotionDataBase {
+class GreekLettersAndSoundsDataBaseDataBase : NotionDataBase {
 
     companion object {
         const val ID = "greek_letters_and_sounds_data_base"

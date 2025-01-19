@@ -1,4 +1,4 @@
-package integrations
+package org.danceofvalkyries.job
 
 import integrations.testdata.english.vocabulary.EnglishVocabularyDataBaseFake
 import integrations.testdata.telegram.TelegramCallbackDataFake
@@ -6,7 +6,6 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.core.spec.style.scopes.BehaviorSpecWhenContainerScope
 import io.kotest.matchers.shouldBe
 import job.telegram_listener.TelegramButtonListenerJob
-import org.danceofvalkyries.job.Job
 import org.danceofvalkyries.job.data.dictionary.OnlineDictionary
 import org.danceofvalkyries.job.data.dictionary.constant.ConstantOnlineDictionary
 import org.danceofvalkyries.job.data.telegram.bot.TelegramBotImpl

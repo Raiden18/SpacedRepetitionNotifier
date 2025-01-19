@@ -27,6 +27,7 @@ private class JobFactoryImpl(
             "notifier" -> NotifierJob(dispatchers, environment)
             "button_listener" -> ListenToTelegramEvensJob(dispatchers, environment)
             "sand_box" -> SandBoxJob(dispatchers, environment)
+            "update_cache" -> UpdateCacheJob(dispatchers, environment)
             else -> error("Unknown Job kind argument: $jobKindArgument")
         }
     }

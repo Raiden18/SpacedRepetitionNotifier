@@ -6,6 +6,7 @@ import job.telegram_listener.TelegramButtonListenerJob
 import org.danceofvalkyries.job.JobFactory
 import org.danceofvalkyries.job.NotifierJob
 import org.danceofvalkyries.job.SandBoxJob
+import org.danceofvalkyries.job.UpdateCacheJob
 
 class JobFactoryKtTest : FunSpec() {
 
@@ -26,6 +27,12 @@ class JobFactoryKtTest : FunSpec() {
             val isSandBox = JobFactory(arrayOf("sand_box", "test"))
                 .create() is SandBoxJob
             isSandBox shouldBe true
+        }
+
+        test("Should return Update Cache Job") {
+            val isUpdateCache = JobFactory(arrayOf("update_cache", "test"))
+                .create() is UpdateCacheJob
+            isUpdateCache shouldBe true
         }
     }
 }
