@@ -8,11 +8,11 @@ interface SentTelegramMessageType : TelegramMessage {
 
 suspend fun SentTelegramMessageType.saveTo(sentTelegramMessagesType: SentTelegramMessagesType) {
     sentTelegramMessagesType.add(
-        id = id,
+        id = getId(),
         type = type
     )
 }
 
 suspend fun SentTelegramMessageType.deleteFrom(sentTelegramMessagesType: SentTelegramMessagesType) {
-    sentTelegramMessagesType.delete(id)
+    sentTelegramMessagesType.delete(getId())
 }

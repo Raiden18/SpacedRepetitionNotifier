@@ -20,7 +20,7 @@ class FlashCardMessageTest : FunSpec() {
             )
 
             test("Should return text") {
-                flashCardMessage.text shouldBe """
+                flashCardMessage.getText() shouldBe """
                     *Dota 2*
                     
                     _Dota 2 is the best game in the world_
@@ -32,7 +32,7 @@ class FlashCardMessageTest : FunSpec() {
             }
 
             test("Should return action buttons with dictionary button") {
-                flashCardMessage.nestedButtons shouldBe listOf(
+                flashCardMessage.getNestedButtons() shouldBe listOf(
                     listOf(
                         ConstantTelegramMessageButton(
                             "Forgot  ❌",

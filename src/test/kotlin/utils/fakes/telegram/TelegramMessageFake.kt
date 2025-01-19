@@ -4,10 +4,10 @@ import org.danceofvalkyries.telegram.message.ConstantTelegramMessageButton
 import org.danceofvalkyries.telegram.message.TelegramMessage
 
 data class TelegramMessageFake(
-    override val id: Long,
-    override val text: String,
-    override val imageUrl: String?,
-    override val nestedButtons: List<List<TelegramMessage.Button>>
+    private val id: Long,
+    private val text: String,
+    private val imageUrl: String?,
+    private val nestedButtons: List<List<TelegramMessage.Button>>
 ) : TelegramMessage {
 
     companion object {
@@ -82,5 +82,21 @@ data class TelegramMessageFake(
                 ),
             )
         }
+    }
+
+    override fun getId(): Long {
+        return id
+    }
+
+    override fun getText(): String {
+        return text
+    }
+
+    override fun getImageUrl(): String? {
+        return imageUrl
+    }
+
+    override fun getNestedButtons(): List<List<TelegramMessage.Button>> {
+        return nestedButtons
     }
 }

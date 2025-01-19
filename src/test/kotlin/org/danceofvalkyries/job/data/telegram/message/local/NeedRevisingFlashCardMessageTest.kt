@@ -20,11 +20,11 @@ class NeedRevisingFlashCardMessageTest : FunSpec() {
             )
 
             test("Should return text") {
-                needRevisingNotificationMessage.text shouldBe """You have 1 flashcards to revise 🧠"""
+                needRevisingNotificationMessage.getText() shouldBe """You have 1 flashcards to revise 🧠"""
             }
 
             test("Should return nested buttons") {
-                needRevisingNotificationMessage.nestedButtons shouldBe listOf(
+                needRevisingNotificationMessage.getNestedButtons() shouldBe listOf(
                     listOf(
                         ConstantTelegramMessageButton(
                             text = "English Vocabulary: 1",

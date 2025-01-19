@@ -6,6 +6,7 @@ class DoneTelegramMessage(
     private val stringResources: StringResources
 ) : NotificationMessage() {
 
-    override val text: String
-        get() = """${stringResources.getJob()} 😎 ${stringResources.everythingIsRevised()} ✅"""
+    override fun getText(): String {
+        return """${stringResources.getJob()} 😎 ${stringResources.everythingIsRevised()} ✅"""
+    }
 }

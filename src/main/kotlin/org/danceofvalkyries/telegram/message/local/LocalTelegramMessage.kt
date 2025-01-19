@@ -6,12 +6,15 @@ abstract class LocalTelegramMessage : TelegramMessage {
 
     abstract val type: String
 
-    override val id: Long
-        get() = error("No id in Local Message")
+    override fun getId(): Long {
+        error("No id in Local Message")
+    }
 
-    override val imageUrl: String?
-        get() = null
+    override fun getImageUrl(): String? {
+        return null
+    }
 
-    override val nestedButtons: List<List<TelegramMessage.Button>>
-        get() = emptyList()
+    override fun getNestedButtons(): List<List<TelegramMessage.Button>> {
+        return emptyList()
+    }
 }

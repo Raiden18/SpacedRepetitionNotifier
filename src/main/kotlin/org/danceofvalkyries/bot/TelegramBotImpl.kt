@@ -122,7 +122,7 @@ class TelegramBotImpl(
     private suspend fun sendMessageAndSave(localMessage: LocalTelegramMessage) {
         val remoteFlashCardMessage = localMessage.sendTo(telegramChat)
         SerializedMessage(
-            id = remoteFlashCardMessage.id,
+            id = remoteFlashCardMessage.getId(),
             type = localMessage.type
         ).saveTo(sentTelegramMessagesType)
     }

@@ -2,11 +2,14 @@ package org.danceofvalkyries.telegram.message.local
 
 import org.danceofvalkyries.telegram.message_types.SentTelegramMessageType
 
-class SerializedMessage(
-    override val id: Long,
+data class SerializedMessage(
+    private val id: Long,
     override val type: String,
-) : LocalTelegramMessage(), org.danceofvalkyries.telegram.message_types.SentTelegramMessageType {
+) : LocalTelegramMessage(), SentTelegramMessageType {
 
-    override val text: String
-        get() = error("Text was not saved")
+    override fun getId(): Long {
+        return id
+    }
+
+    override fun getText(): String = error("No text in serialized message")
 }

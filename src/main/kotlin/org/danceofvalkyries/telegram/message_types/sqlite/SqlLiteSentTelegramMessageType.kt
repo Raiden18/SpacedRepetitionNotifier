@@ -7,7 +7,7 @@ import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
 import java.sql.Connection
 
 class SqlLiteSentTelegramMessageType(
-    override val id: Long,
+    private val id: Long,
     private val idColumn: LongTableColumn,
     private val tableName: String,
     private val connection: Connection,
@@ -24,12 +24,19 @@ class SqlLiteSentTelegramMessageType(
                 }
             )?.let(typeColumn::getValue)!!
 
-    override val text: String
-        get() = error("Are not saved in DB")
-    override val imageUrl: String?
+    override fun getId(): Long {
+        return id
+    }
 
-        get() = error("Are not saved in DB")
+    override fun getText(): String {
+        error("Is not saved in DB")
+    }
 
-    override val nestedButtons: List<List<TelegramMessage.Button>>
-        get() =error("Are not saved in DB")
+    override fun getImageUrl(): String? {
+        error("Is not saved in DB")
+    }
+
+    override fun getNestedButtons(): List<List<TelegramMessage.Button>> {
+        error("Is not saved in DB")
+    }
 }

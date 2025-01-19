@@ -18,56 +18,55 @@ class FlashCardMessage(
         get() = "FLASH_CARD"
 
 
-    override val text: String
-        get() {
-            val translator = TelegramTextTranslator()
-            val memorizedInfo = translator.encode(flashCard.name)!!
-            val example = translator.encode(flashCard.example)
-            val answer = translator.encode(flashCard.explanation)
+    override fun getText(): String {
+        val translator = TelegramTextTranslator()
+        val memorizedInfo = translator.encode(flashCard.name)!!
+        val example = translator.encode(flashCard.example)
+        val answer = translator.encode(flashCard.explanation)
 
-            val body = StringBuilder()
-                .appendLine("*${memorizedInfo}*")
-            if (example != null) {
-                body.appendLine()
-                    .appendLine("_${example}_")
-            }
-            if (answer != null) {
-                body.appendLine()
-                    .appendLine("||${answer}||")
-            }
+        val body = StringBuilder()
+            .appendLine("*${memorizedInfo}*")
+        if (example != null) {
             body.appendLine()
-                .append(stringResources.choose())
-
-            return body.toString()
+                .appendLine("_${example}_")
         }
+        if (answer != null) {
+            body.appendLine()
+                .appendLine("||${answer}||")
+        }
+        body.appendLine()
+            .append(stringResources.choose())
 
-    override val nestedButtons: List<List<TelegramMessage.Button>>
-        get() {
-            val recallActions = listOf(
+        return body.toString()
+    }
+
+    override fun getNestedButtons(): List<List<TelegramMessage.Button>> {
+        val recallActions = listOf(
+            ConstantTelegramMessageButton(
+                "${stringResources.forgot()}  ❌",
+                TelegramMessage.Button.Action.CallBackData(ButtonAction.Forgotten(flashCard.id).rawValue)
+            ),
+            ConstantTelegramMessageButton(
+                "${stringResources.recalled()}  ✅",
+                TelegramMessage.Button.Action.CallBackData(ButtonAction.Recalled(flashCard.id).rawValue)
+            )
+        )
+
+        val dictionaryTelegramButtons = onlineDictionaries
+            .map {
                 ConstantTelegramMessageButton(
-                    "${stringResources.forgot()}  ❌",
-                    TelegramMessage.Button.Action.CallBackData(ButtonAction.Forgotten(flashCard.id).rawValue)
-                ),
-                ConstantTelegramMessageButton(
-                    "${stringResources.recalled()}  ✅",
-                    TelegramMessage.Button.Action.CallBackData(ButtonAction.Recalled(flashCard.id).rawValue)
+                    text = stringResources.lookUp(),
+                    action = TelegramMessage.Button.Action.Url(it.getUrlFor(flashCard.name)),
                 )
-            )
+            }
 
-            val dictionaryTelegramButtons = onlineDictionaries
-                .map {
-                    ConstantTelegramMessageButton(
-                        text = stringResources.lookUp(),
-                        action = TelegramMessage.Button.Action.Url(it.getUrlFor(flashCard.name)),
-                    )
-                }
+        return listOf(
+            recallActions,
+            dictionaryTelegramButtons
+        )
+    }
 
-            return listOf(
-                recallActions,
-                dictionaryTelegramButtons
-            )
-        }
-
-    override val imageUrl: String?
-        get() = flashCard.coverUrl
+    override fun getImageUrl(): String? {
+        return flashCard.coverUrl
+    }
 }

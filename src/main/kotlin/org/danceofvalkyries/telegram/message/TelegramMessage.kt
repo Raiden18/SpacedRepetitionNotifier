@@ -4,10 +4,10 @@ import org.danceofvalkyries.telegram.chat.TelegramChat
 import org.danceofvalkyries.telegram.chat.sendMessage
 
 interface TelegramMessage {
-    val id: Long
-    val text: String
-    val imageUrl: String?
-    val nestedButtons: List<List<Button>>
+    fun getId(): Long
+    fun getText(): String
+    fun getImageUrl(): String?
+    fun getNestedButtons(): List<List<Button>>
 
     interface Button {
         val text: String
@@ -37,12 +37,12 @@ suspend fun TelegramMessage.edit(
     telegramChat: TelegramChat,
 ): TelegramMessage {
     return telegramChat.edit(
-        messageId = id,
-        newText = newMessage.text,
-        newNestedButtons = newMessage.nestedButtons,
+        messageId = getId(),
+        newText = newMessage.getText(),
+        newNestedButtons = newMessage.getNestedButtons(),
     )
 }
 
 suspend fun TelegramMessage.deleteFrom(telegramChat: TelegramChat) {
-    telegramChat.delete(id)
+    telegramChat.delete(getId())
 }

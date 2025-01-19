@@ -13,11 +13,12 @@ class NeedRevisingNotificationMessage(
     private val notionDataBases: List<NotionDataBase>
 ) : NotificationMessage() {
 
-    override val text: String
-        get() = """${stringResources.flashCardsToRevise(flashCards.count())} 🧠""".trimIndent()
+    override fun getText(): String {
+        return """${stringResources.flashCardsToRevise(flashCards.count())} 🧠""".trimIndent()
+    }
 
-    override val nestedButtons: List<List<TelegramMessage.Button>>
-        get() = flashCards
+    override fun getNestedButtons(): List<List<TelegramMessage.Button>> {
+        return flashCards
             .groupBy { it.notionDbID }
             .map { (dbId, flashCards) ->
                 val db = notionDataBases.first { it.getId() == dbId }
@@ -26,4 +27,5 @@ class NeedRevisingNotificationMessage(
                     action = TelegramMessage.Button.Action.CallBackData(ButtonAction.DataBase(db.getId()).rawValue),
                 )
             }.map { listOf(it) }
+    }
 }

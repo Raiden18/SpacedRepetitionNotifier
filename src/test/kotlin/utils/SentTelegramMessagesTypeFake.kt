@@ -1,5 +1,6 @@
 package utils
 
+import org.danceofvalkyries.telegram.message.local.SerializedMessage
 import org.danceofvalkyries.telegram.message_types.SentTelegramMessageType
 import org.danceofvalkyries.telegram.message_types.SentTelegramMessagesType
 
@@ -17,13 +18,13 @@ class SentTelegramMessagesTypeFake(
     }
 
     override suspend fun add(id: Long, type: String): SentTelegramMessageType {
-        val telegramMessageType = SentTelegramMessageTypeFake(id, type)
+        val telegramMessageType = SerializedMessage(id, type)
         telegramMessages = telegramMessages + listOf(telegramMessageType)
         return telegramMessageType
     }
 
     override suspend fun delete(id: Long) {
-        telegramMessages = telegramMessages.filter { it.id != id }
+        telegramMessages = telegramMessages.filter { it.getId() != id }
     }
 
     fun clear() {
@@ -37,7 +38,7 @@ class SentTelegramMessagesTypeFake(
     inner class Matcher {
 
         fun presents(messageId: Long, type: String) {
-            val sentMessageType = SentTelegramMessageTypeFake(messageId, type)
+            val sentMessageType = SerializedMessage(messageId, type)
             if(telegramMessages.contains(sentMessageType).not()){
                 val errorBuilder = StringBuilder()
                     .appendLine("No Sent Message Type: $sentMessageType")

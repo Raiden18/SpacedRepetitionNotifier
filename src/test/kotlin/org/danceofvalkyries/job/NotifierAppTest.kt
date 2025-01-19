@@ -67,7 +67,7 @@ class NotifierAppTest : BehaviorSpec() {
                     nestedButtons = emptyList()
                 )
                 sentTelegramMessagesType.add(
-                    id = previousMessage.id,
+                    id = previousMessage.getId(),
                     type = "NOTIFICATION"
                 )
             }
@@ -86,7 +86,7 @@ class NotifierAppTest : BehaviorSpec() {
                 Then("Should Delete OLD notification From DB") {
                     notifierJob.run()
                     val containsOldMessage = sentTelegramMessagesType.iterate().toList()
-                        .firstOrNull { it.id == previousMessage.id }
+                        .firstOrNull { it.getId() == previousMessage.getId() }
                     containsOldMessage shouldBe null
                 }
 
