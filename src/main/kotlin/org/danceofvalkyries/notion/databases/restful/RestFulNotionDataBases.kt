@@ -26,8 +26,6 @@ class RestFulNotionDataBases(
         )
     }
 
-    override suspend fun add(notionDataBase: NotionDataBase) =
-        error("Adding Dbs to Notion is not going to be supported")
-
+    override suspend fun add(notionDataBase: NotionDataBase) = error("Adding Dbs to Notion is not going to be supported")
     override suspend fun clear() = error("Clearing Notion Db is not going to be supported")
 }

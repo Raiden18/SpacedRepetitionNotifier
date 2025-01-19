@@ -21,25 +21,23 @@ class RestFulNotionDataBase(
     private val gson: Gson,
 ) : NotionDataBase {
 
+    private val headers = listOf(
+        AuthorizationBearerHeader(apiKey),
+        NotionApiVersionHeader("2022-06-28"),
+        ContentType(ContentTypes.ApplicationJson)
+    )
+
     override val name: String
         get() = httpClient.get(
             url = "https://api.notion.com/v1/databases/$id",
-            headers = listOf(
-                AuthorizationBearerHeader(apiKey),
-                NotionApiVersionHeader("2022-06-28"),
-                ContentType(ContentTypes.ApplicationJson)
-            )
+            headers = headers
         ).parse<NotionDbResponse>(gson).name
 
 
     override fun iterate(): Sequence<NotionPageFlashCard> {
         return httpClient.post(
             url = "https://api.notion.com/v1/databases/$id/query",
-            headers = listOf(
-                AuthorizationBearerHeader(apiKey),
-                NotionApiVersionHeader("2022-06-28"),
-                ContentType(ContentTypes.ApplicationJson)
-            ),
+            headers = headers,
             body = SpacedRepetitionRequestBody(gson)
         ).parse<NotionPagesResponse>(gson)
             .results
@@ -47,30 +45,27 @@ class RestFulNotionDataBase(
             .map {
                 RestfulNotionPageFlashCard(
                     id = it.id!!,
-                    apiKey = apiKey,
                     responseData = it,
                     httpClient = httpClient,
                     gson = gson,
+                    headers = headers,
                 )
             }
     }
 
-    override fun add(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard =
-        error("Adding a page to Notion is not supported")
-
     override fun getPageBy(pageId: String): NotionPageFlashCard {
         return RestfulNotionPageFlashCard(
-            apiKey = apiKey,
+            id = pageId,
             responseData = null,
             httpClient = httpClient,
             gson = gson,
-            id = pageId
+            headers = headers,
         )
     }
 
-    override fun clear() = error("Clearing pages from Notion is not supported")
-
-    override fun delete(pageId: String) = error("Deleting pages from Notion is not supported")
+    override fun clear() = error("Clearing pages from Notion is not going to be supported")
+    override fun delete(pageId: String) = error("Deleting pages from Notion is not going to be supported")
+    override fun add(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard = error("Adding a page to Notion is not going to be supported")
 
     private data class NotionPagesResponse(
         val results: List<RestFulNotionPage>

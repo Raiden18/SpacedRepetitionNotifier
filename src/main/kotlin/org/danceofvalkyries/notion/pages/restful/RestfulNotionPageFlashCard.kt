@@ -4,17 +4,15 @@ import com.google.gson.Gson
 import org.danceofvalkyries.notion.pages.NotionPageFlashCard
 import org.danceofvalkyries.notion.pages.restful.jsonobjects.PropertyData
 import org.danceofvalkyries.notion.pages.restful.jsonobjects.RestFulNotionPage
-import org.danceofvalkyries.utils.rest.AuthorizationBearerHeader
-import org.danceofvalkyries.utils.rest.ContentType
-import org.danceofvalkyries.utils.rest.ContentTypes
+import org.danceofvalkyries.utils.rest.Header
 import org.danceofvalkyries.utils.rest.clients.http.HttpClient
 
 class RestfulNotionPageFlashCard(
-    private val apiKey: String,
     override val id: String,
     private val responseData: RestFulNotionPage? = null,
     private val httpClient: HttpClient,
     private val gson: Gson,
+    private val headers: List<Header>
 ) : NotionPageFlashCard {
 
     override val coverUrl: String?
@@ -45,11 +43,7 @@ class RestfulNotionPageFlashCard(
         )
         httpClient.patch(
             url = "https://api.notion.com/v1/pages/$id",
-            headers = listOf(
-                AuthorizationBearerHeader(apiKey),
-                NotionApiVersionHeader("2022-06-28"),
-                ContentType(ContentTypes.ApplicationJson),
-            ),
+            headers = headers,
             body = gson.toJson(updatedNotionPage)
         )
     }
