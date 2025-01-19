@@ -3,26 +3,13 @@ name: Test and Upload Coverage to Coveralls
 on: ["push", "pull_request"]
 
 jobs:
-  build:
+  tests:
     runs-on: ubuntu-latest
     steps:
-      - name: Set up JDK
-        uses: actions/setup-java@v3
+      - uses: actions/checkout@v2
         with:
-          distribution: 'temurin'
-          java-version: '21'
-
-      - name: Init gradle wrapper
-        run: gradle wrapper
-
-      - name: Change wrapper permissions
-        run: chmod +x ./gradlew
-
-      - name: Build and test
-        run: ./gradlew test jacocoTestReport
-
-      - name: Upload coverage to Coveralls
-        uses: coverallsapp/github-action@v2.3.4
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          path-to-lcov: ./build/reports/jacoco/test/jacocoTestReport.xml
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: test and publish coverage
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./gradlew test jacocoTestReport coverallsJacoco
