@@ -12,8 +12,8 @@ import org.danceofvalkyries.app.data.telegram.chat.restful.HttpClientImpl
 import org.danceofvalkyries.app.data.telegram.chat.restful.KtorWebServerImpl
 import org.danceofvalkyries.app.data.telegram.chat.restful.RestfulTelegramChat
 import org.danceofvalkyries.app.data.telegram.message_types.sqlite.SqlLiteSentTelegramMessagesType
-import org.danceofvalkyries.app.data.telegram.users.TelegramBotUser
-import org.danceofvalkyries.app.data.telegram.users.bot.TelegramBotUserImpl
+import org.danceofvalkyries.app.data.telegram.bot.TelegramBot
+import org.danceofvalkyries.app.data.telegram.bot.TelegramBotImpl
 import org.danceofvalkyries.app.data.telegram.message.local.translator.TelegramTextTranslator
 import org.danceofvalkyries.environment.Environment
 import org.danceofvalkyries.utils.Dispatchers
@@ -42,7 +42,7 @@ fun NotifierApp(
         httpClient = httpClient,
     )
     val onlineDictionaries = ConfigOnlineDictionaries(environment.config.notion.observedDatabases)
-    val telegramBotUser = TelegramBotUserImpl(
+    val telegramBotUser = TelegramBotImpl(
         telegramChat,
         sqlLiteNotionDatabases,
         restfulNotionDatabases,
@@ -65,7 +65,7 @@ class NotifierApp(
     private val flashCardsThreshold: Int,
     private val restfulNotionDataBases: NotionDataBases,
     private val sqlLiteNotionDataBases: NotionDataBases,
-    private val telegramBot: TelegramBotUser,
+    private val telegramBot: TelegramBot,
 ) : App {
 
     private val coroutineScope = CoroutineScope(dispatchers.unconfined)

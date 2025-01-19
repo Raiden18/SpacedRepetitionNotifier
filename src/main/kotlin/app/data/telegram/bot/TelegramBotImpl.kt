@@ -1,4 +1,4 @@
-package org.danceofvalkyries.app.data.telegram.users.bot
+package org.danceofvalkyries.app.data.telegram.bot
 
 import org.danceofvalkyries.app.data.dictionary.OnlineDictionaries
 import org.danceofvalkyries.app.data.notion.databases.NotionDataBases
@@ -14,10 +14,9 @@ import org.danceofvalkyries.app.data.telegram.message.sendTo
 import org.danceofvalkyries.app.data.telegram.message_types.SentTelegramMessagesType
 import org.danceofvalkyries.app.data.telegram.message_types.deleteFrom
 import org.danceofvalkyries.app.data.telegram.message_types.saveTo
-import org.danceofvalkyries.app.data.telegram.users.TelegramBotUser
 import org.danceofvalkyries.utils.resources.StringResources
 
-class TelegramBotUserImpl(
+class TelegramBotImpl(
     private val telegramChat: TelegramChat,
     private val localDbNotionDataBases: NotionDataBases,
     private val restfulNotionDataBases: NotionDataBases,
@@ -25,12 +24,14 @@ class TelegramBotUserImpl(
     private val onlineDictionaries: OnlineDictionaries,
     private val textTranslator: TextTranslator,
     private val stringResources: StringResources,
-) : TelegramBotUser {
+) : TelegramBot {
 
     companion object {
         const val FLASH_CARD_TYPE_MESSAGE = "FLASH_CARD"
         const val NOTIFiCATION_TYPE_MESSAGE = "NOTIFICATION"
     }
+
+    private var dbId: String = ""
 
     override suspend fun editOldNotificationMessageToDoneMessage() {
         editNotificationMessageTo(
@@ -107,6 +108,32 @@ class TelegramBotUserImpl(
 
     override suspend fun makeRecalledOnNotion(flashCardId: String) {
         performAction(flashCardId) { it.recall() }
+    }
+
+    override suspend fun startRepetitionSessionFor(dbId: String) {
+        this.dbId = dbId
+        val nextFlashCard = getAnyFlashCardFor(dbId)
+        sendFlashCardMessage(nextFlashCard!!)
+    }
+
+    override suspend fun makeForgotten(flashCardId: String) {
+        makeForgottenOnNotion(flashCardId)
+        deleteAllFlashCardsFromChat()
+        removeForgotFlashCardFromLocalDbs(flashCardId)
+        sendNextFlashCardFrom(dbId)
+        updateNotificationMessage()
+    }
+
+    override suspend fun makeRecalled(flashCardId: String) {
+        makeRecalledOnNotion(flashCardId)
+        deleteAllFlashCardsFromChat()
+        removeRecalledFlashCardFromLocalDbs(flashCardId)
+        sendNextFlashCardFrom(dbId)
+        updateNotificationMessage()
+    }
+
+    override suspend fun deleteMessage(telegramMessageId: Long) {
+        telegramChat.delete(telegramMessageId)
     }
 
     private suspend fun performAction(flashCardId: String, action: (NotionPageFlashCard) -> Map<Int, Boolean>) {

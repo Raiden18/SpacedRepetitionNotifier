@@ -1,8 +1,8 @@
-package org.danceofvalkyries.app.data.telegram.users
+package org.danceofvalkyries.app.data.telegram.bot
 
 import org.danceofvalkyries.app.data.notion.pages.NotionPageFlashCard
 
-interface TelegramBotUser {
+interface TelegramBot {
     suspend fun editOldNotificationMessageToDoneMessage()
     suspend fun deleteOldNotificationMessage()
     suspend fun sendNewNotificationMessage()
@@ -15,4 +15,9 @@ interface TelegramBotUser {
     suspend fun removeForgotFlashCardFromLocalDbs(forgotFlashCardId: String)
     suspend fun makeForgottenOnNotion(flashCardId: String)
     suspend fun makeRecalledOnNotion(flashCardId: String)
+
+    suspend fun startRepetitionSessionFor(dbId: String)
+    suspend fun makeForgotten(flashCardId: String)
+    suspend fun makeRecalled(flashCardId: String)
+    suspend fun deleteMessage(telegramMessageId: Long)
 }

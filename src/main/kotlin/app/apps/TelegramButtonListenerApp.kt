@@ -13,10 +13,10 @@ import org.danceofvalkyries.app.data.telegram.chat.restful.HttpClientImpl
 import org.danceofvalkyries.app.data.telegram.chat.restful.KtorWebServerImpl
 import org.danceofvalkyries.app.data.telegram.chat.restful.RestfulTelegramChat
 import org.danceofvalkyries.app.data.telegram.message.TelegramMessage.Button
-import org.danceofvalkyries.app.data.telegram.message_types.sqlite.SqlLiteSentTelegramMessagesType
-import org.danceofvalkyries.app.data.telegram.users.bot.SpaceRepetitionSession
-import org.danceofvalkyries.app.data.telegram.users.bot.TelegramBotUserImpl
 import org.danceofvalkyries.app.data.telegram.message.local.translator.TelegramTextTranslator
+import org.danceofvalkyries.app.data.telegram.message_types.sqlite.SqlLiteSentTelegramMessagesType
+import org.danceofvalkyries.app.data.telegram.bot.TelegramBot
+import org.danceofvalkyries.app.data.telegram.bot.TelegramBotImpl
 import org.danceofvalkyries.app.domain.message.ButtonAction
 import org.danceofvalkyries.environment.Environment
 import org.danceofvalkyries.utils.Dispatchers
@@ -47,7 +47,7 @@ fun TelegramButtonListenerApp(
         ktorWebServer = webServer,
         httpClient = httpClient,
     )
-    val botUser = TelegramBotUserImpl(
+    val botUser = TelegramBotImpl(
         telegramChat,
         sqlLiteNotionDataBases,
         restfulNotionDataBases,
@@ -56,18 +56,17 @@ fun TelegramButtonListenerApp(
         TelegramTextTranslator(),
         EngStringResources()
     )
-    val spaceRepetitionSession = SpaceRepetitionSession(botUser)
     return TelegramButtonListenerApp(
         dispatchers,
-        spaceRepetitionSession,
         telegramChat,
+        botUser,
     )
 }
 
 class TelegramButtonListenerApp(
     private val dispatchers: Dispatchers,
-    private val spaceRepetitionSession: SpaceRepetitionSession,
     private val telegramChat: TelegramChat,
+    private val bot: TelegramBot,
 ) : App {
 
     private val scope = CoroutineScope(dispatchers.unconfined)
@@ -78,10 +77,10 @@ class TelegramButtonListenerApp(
                 .getEvents()
                 .onEach {
                     when (val action = ButtonAction.parse(it.action.value)) {
-                        is ButtonAction.DataBase -> spaceRepetitionSession.beginFor(action.notionDbId)
-                        is ButtonAction.Forgotten -> spaceRepetitionSession.forget(action.flashCardId)
-                        is ButtonAction.Recalled -> spaceRepetitionSession.recall(action.flashCardId)
-                        is ButtonAction.Unknown -> telegramChat.delete(it.messageId)
+                        is ButtonAction.DataBase -> bot.startRepetitionSessionFor(action.notionDbId)
+                        is ButtonAction.Forgotten -> bot.makeForgotten(action.flashCardId)
+                        is ButtonAction.Recalled -> bot.makeRecalled(action.flashCardId)
+                        is ButtonAction.Unknown -> bot.deleteMessage(it.messageId)
                     }
                 }.collect(Button.Callback::answer)
         }

@@ -6,7 +6,7 @@ import io.kotest.matchers.shouldBe
 import org.danceofvalkyries.app.App
 import org.danceofvalkyries.app.apps.NotifierApp
 import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
-import org.danceofvalkyries.app.data.telegram.users.bot.TelegramBotUserImpl
+import org.danceofvalkyries.app.data.telegram.bot.TelegramBotImpl
 import org.danceofvalkyries.app.data.telegram.message.local.translator.TelegramTextTranslator
 import org.danceofvalkyries.utils.resources.EngStringResources
 import utils.DispatchersFake
@@ -24,7 +24,7 @@ class NotifierAppTest : BehaviorSpec() {
     private lateinit var sqlLiteNotionDataBases: SqlLiteNotionDataBasesFake
     private lateinit var greekLettersAndSoundsDataBaseRestfulFake: GreekLettersAndSoundsDataBaseRestfulFake
     private lateinit var restfulNotionDataBases: NotionDataBasesRestfulFake
-    private lateinit var telegramBot: TelegramBotUserImpl
+    private lateinit var telegramBot: TelegramBotImpl
     private lateinit var telegramChatFake: TelegramChatFake
 
     init {
@@ -34,7 +34,7 @@ class NotifierAppTest : BehaviorSpec() {
             greekLettersAndSoundsDataBaseRestfulFake = GreekLettersAndSoundsDataBaseRestfulFake()
             telegramChatFake = TelegramChatFake()
             restfulNotionDataBases = NotionDataBasesRestfulFake(listOf(greekLettersAndSoundsDataBaseRestfulFake))
-            telegramBot = TelegramBotUserImpl(
+            telegramBot = TelegramBotImpl(
                 telegramChatFake,
                 sqlLiteNotionDataBases,
                 restfulNotionDataBases,
