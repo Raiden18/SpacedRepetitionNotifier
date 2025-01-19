@@ -6,9 +6,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Coveralls GitHub Action
-        uses: coverallsapp/github-action@v2.3.4
-
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
@@ -19,7 +16,7 @@ jobs:
         run: ./gradlew test jacocoTestReport
 
       - name: Upload coverage to Coveralls
-        uses: coverallsapp/github-action@v2
+        uses:  coverallsapp/github-action@v2.3.4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-lcov: ./build/reports/jacoco/test/jacocoTestReport.xml
