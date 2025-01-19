@@ -1,4 +1,4 @@
-package org.danceofvalkyries.app.data.telegram.users.bot.messages
+package org.danceofvalkyries.app.data.telegram.message.local
 
 abstract class NotificationMessage: LocalTelegramMessage() {
 

@@ -1,4 +1,4 @@
-package org.danceofvalkyries.app.data.telegram.users.bot.translator
+package org.danceofvalkyries.app.data.telegram.message.local.translator
 
 //TODO: Remove and move implto FlashCard Message
 interface TextTranslator {

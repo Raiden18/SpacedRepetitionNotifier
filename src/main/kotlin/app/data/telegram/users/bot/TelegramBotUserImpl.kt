@@ -3,18 +3,18 @@ package org.danceofvalkyries.app.data.telegram.users.bot
 import org.danceofvalkyries.app.data.dictionary.OnlineDictionaries
 import org.danceofvalkyries.app.data.notion.databases.NotionDataBases
 import org.danceofvalkyries.app.data.notion.pages.NotionPageFlashCard
+import org.danceofvalkyries.app.data.notion.pages.forget
+import org.danceofvalkyries.app.data.notion.pages.recall
 import org.danceofvalkyries.app.data.telegram.chat.TelegramChat
 import org.danceofvalkyries.app.data.telegram.message.deleteFrom
 import org.danceofvalkyries.app.data.telegram.message.edit
+import org.danceofvalkyries.app.data.telegram.message.local.*
+import org.danceofvalkyries.app.data.telegram.message.local.translator.TextTranslator
 import org.danceofvalkyries.app.data.telegram.message.sendTo
 import org.danceofvalkyries.app.data.telegram.message_types.SentTelegramMessagesType
 import org.danceofvalkyries.app.data.telegram.message_types.deleteFrom
+import org.danceofvalkyries.app.data.telegram.message_types.saveTo
 import org.danceofvalkyries.app.data.telegram.users.TelegramBotUser
-import org.danceofvalkyries.app.data.telegram.users.bot.messages.*
-import org.danceofvalkyries.app.data.telegram.users.bot.translator.TextTranslator
-import org.danceofvalkyries.notion.api.models.FlashCardNotionPage
-import org.danceofvalkyries.notion.api.models.KnowLevels
-import org.danceofvalkyries.notion.api.models.NotionId
 import org.danceofvalkyries.utils.resources.StringResources
 
 class TelegramBotUserImpl(
@@ -83,62 +83,37 @@ class TelegramBotUserImpl(
     }
 
     override suspend fun sendNextFlashCardFrom(notionDbId: String) {
-        val flashCard = getAllFlashCard()
-            .firstOrNull { it.notionDbID == notionDbId }
+        val flashCard = localDbNotionDataBases.getBy(notionDbId)
+            .iterate()
+            .firstOrNull()
         if (flashCard != null) {
             sendFlashCardMessage(flashCard)
         }
     }
 
     override suspend fun removeRecalledFlashCardFromLocalDbs(recalledFlashCardID: String) {
-        localDbNotionDataBases.iterate().forEach {
-            it.delete(recalledFlashCardID)
-        }
+        removeNotionFlashCard(recalledFlashCardID)
         removedCachedMessages(FLASH_CARD_TYPE_MESSAGE)
     }
 
     override suspend fun removeForgotFlashCardFromLocalDbs(forgotFlashCardId: String) {
-        localDbNotionDataBases.iterate().forEach {
-            it.delete(forgotFlashCardId)
-        }
+        removeNotionFlashCard(forgotFlashCardId)
         removedCachedMessages(FLASH_CARD_TYPE_MESSAGE)
     }
 
     override suspend fun makeForgottenOnNotion(flashCardId: String) {
-        val flashCard = getAllFlashCard()
-            .map {
-                FlashCardNotionPage(
-                    name = it.name,
-                    coverUrl = it.coverUrl,
-                    notionDbID = NotionId(it.notionDbID),
-                    id = NotionId(it.id),
-                    example = it.example,
-                    explanation = it.explanation,
-                    knowLevels = KnowLevels(it.knowLevels)
-                )
-            }.first { it.id.rawValue == flashCardId }
-        val forgottenFlashCard = flashCard.forget()
-        val restfullDataBase = restfulNotionDataBases.getBy(flashCard.notionDbID.rawValue)
-        restfullDataBase.getPageBy(flashCardId).setKnowLevels(forgottenFlashCard.knowLevels.levels)
+        performAction(flashCardId) { it.forget() }
     }
 
     override suspend fun makeRecalledOnNotion(flashCardId: String) {
-        val flashCard = getAllFlashCard()
-            .map {
-                FlashCardNotionPage(
-                    name = it.name,
-                    coverUrl = it.coverUrl,
-                    notionDbID = NotionId(it.notionDbID),
-                    id = NotionId(it.id),
-                    example = it.example,
-                    explanation = it.explanation,
-                    knowLevels = KnowLevels(it.knowLevels)
-                )
-            }.first { it.id.rawValue == flashCardId }
+        performAction(flashCardId) { it.recall() }
+    }
 
-        val recalled = flashCard.recall()
-        val restfullDataBase = restfulNotionDataBases.getBy(flashCard.notionDbID.rawValue)
-        restfullDataBase.getPageBy(flashCardId).setKnowLevels(recalled.knowLevels.levels)
+    private suspend fun performAction(flashCardId: String, action: (NotionPageFlashCard) -> Map<Int, Boolean>) {
+        val flashCard = getAllFlashCard().first { it.id == flashCardId }
+        val updatedLevels = action.invoke(flashCard)
+        val restfullDataBase = restfulNotionDataBases.getBy(flashCard.notionDbID)
+        restfullDataBase.getPageBy(flashCardId).setKnowLevels(updatedLevels)
     }
 
     private suspend fun getAllFlashCard(): List<NotionPageFlashCard> {
@@ -178,5 +153,11 @@ class TelegramBotUserImpl(
             .forEach { oldNotification ->
                 oldNotification.edit(newMessage, telegramChat)
             }
+    }
+
+    private suspend fun removeNotionFlashCard(notionPagId: String) {
+        localDbNotionDataBases.iterate().forEach {
+            it.delete(notionPagId)
+        }
     }
 }

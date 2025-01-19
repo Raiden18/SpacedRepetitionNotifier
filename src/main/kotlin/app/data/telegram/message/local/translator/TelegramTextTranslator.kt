@@ -1,4 +1,4 @@
-package org.danceofvalkyries.app.data.telegram.users.bot.translator
+package org.danceofvalkyries.app.data.telegram.message.local.translator
 
 class TelegramTextTranslator : TextTranslator {
 

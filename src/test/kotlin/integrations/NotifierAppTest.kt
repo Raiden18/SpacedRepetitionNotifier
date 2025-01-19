@@ -7,7 +7,7 @@ import org.danceofvalkyries.app.App
 import org.danceofvalkyries.app.apps.NotifierApp
 import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
 import org.danceofvalkyries.app.data.telegram.users.bot.TelegramBotUserImpl
-import org.danceofvalkyries.app.data.telegram.users.bot.translator.TelegramTextTranslator
+import org.danceofvalkyries.app.data.telegram.message.local.translator.TelegramTextTranslator
 import org.danceofvalkyries.utils.resources.EngStringResources
 import utils.DispatchersFake
 import utils.OnlineDictionariesFake

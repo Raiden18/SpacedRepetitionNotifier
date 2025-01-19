@@ -11,3 +11,12 @@ interface NotionPageFlashCard {
 
     fun setKnowLevels(knowLevels: Map<Int, Boolean>)
 }
+
+fun NotionPageFlashCard.recall(): Map<Int, Boolean> {
+    val nextChecked = knowLevels.keys.firstOrNull { knowLevels[it] == false } ?: return knowLevels
+    return knowLevels.mapValues { it.key <= nextChecked }
+}
+
+fun NotionPageFlashCard.forget(): Map<Int, Boolean> {
+    return knowLevels.mapValues { false }
+}

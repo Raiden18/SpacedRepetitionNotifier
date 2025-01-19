@@ -1,10 +1,10 @@
-package org.danceofvalkyries.app.data.telegram.users.bot.messages
+package org.danceofvalkyries.app.data.telegram.message.local
 
 import org.danceofvalkyries.app.data.dictionary.OnlineDictionary
 import org.danceofvalkyries.app.data.notion.pages.NotionPageFlashCard
 import org.danceofvalkyries.app.data.telegram.message.ConstantTelegramMessageButton
 import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
-import org.danceofvalkyries.app.data.telegram.users.bot.translator.TextTranslator
+import org.danceofvalkyries.app.data.telegram.message.local.translator.TextTranslator
 import org.danceofvalkyries.app.domain.message.ButtonAction
 import org.danceofvalkyries.utils.resources.StringResources
 
