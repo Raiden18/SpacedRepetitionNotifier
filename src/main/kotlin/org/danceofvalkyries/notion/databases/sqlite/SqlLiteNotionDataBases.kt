@@ -1,9 +1,11 @@
 package org.danceofvalkyries.notion.databases.sqlite
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import org.danceofvalkyries.notion.databases.NotionDataBase
 import org.danceofvalkyries.notion.databases.NotionDataBases
 import org.danceofvalkyries.utils.db.SqlQuery
-import org.danceofvalkyries.utils.db.asSequence
+import org.danceofvalkyries.utils.db.asFlow
 import org.danceofvalkyries.utils.db.tables.columns.PrimaryKey
 import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
 import java.sql.Connection
@@ -20,7 +22,7 @@ class SqlLiteNotionDataBases(
     private val idColumn = TextTableColumn("id", PrimaryKey())
     private val nameColumn = TextTableColumn("text")
 
-    override suspend fun iterate(): Sequence<NotionDataBase> {
+    override suspend fun iterate(): Flow<NotionDataBase> {
         return createStatement().let {
             it.executeQuery(
                 SqlQuery {
@@ -28,7 +30,7 @@ class SqlLiteNotionDataBases(
                     from(TABLE_NAME)
                 }
             )
-        }.asSequence().map { getBy(idColumn.getValue(it)!!) }
+        }.asFlow().map { getBy(idColumn.getValue(it)!!) }
     }
 
     override fun getBy(id: String): NotionDataBase {
@@ -62,14 +64,14 @@ class SqlLiteNotionDataBases(
             nameColumn = nameColumn,
             connection = connection,
         )
-        notionDataBase.iterate().forEach {
+        notionDataBase.iterate().collect {
             sqlLiteDb.add(it)
         }
         return sqlLiteDb
     }
 
     override suspend fun clear() {
-        iterate().forEach { it.clear() }
+        iterate().collect { it.clear() }
         createStatement().execute(
             SqlQuery {
                 delete()

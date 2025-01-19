@@ -1,6 +1,9 @@
 package org.danceofvalkyries.notion.databases.restful
 
 import com.google.gson.Gson
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.map
 import org.danceofvalkyries.notion.databases.NotionDataBase
 import org.danceofvalkyries.notion.pages.NotionPageFlashCard
 import org.danceofvalkyries.notion.pages.restful.NotionApiVersionHeader
@@ -39,14 +42,14 @@ class RestFulNotionDataBase(
     }
 
 
-    override fun iterate(): Sequence<NotionPageFlashCard> {
+    override fun iterate(): Flow<NotionPageFlashCard> {
         return httpClient.post(
             url = "https://api.notion.com/v1/databases/$id/query",
             headers = headers,
             body = SpacedRepetitionRequestBody(gson)
         ).parse<NotionPagesResponse>(gson)
             .results
-            .asSequence()
+            .asFlow()
             .map {
                 RestfulNotionPageFlashCard(
                     id = it.id!!,
@@ -58,7 +61,7 @@ class RestFulNotionDataBase(
             }
     }
 
-    override fun getPageBy(pageId: String): NotionPageFlashCard {
+    override suspend fun getPageBy(pageId: String): NotionPageFlashCard {
         return RestfulNotionPageFlashCard(
             id = pageId,
             responseData = null,
@@ -70,7 +73,8 @@ class RestFulNotionDataBase(
 
     override fun clear() = error("Clearing pages from Notion is not going to be supported")
     override fun delete(pageId: String) = error("Deleting pages from Notion is not going to be supported")
-    override fun add(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard = error("Adding a page to Notion is not going to be supported")
+
+    override suspend fun add(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard = error("Adding a page to Notion is not going to be supported")
 
     private data class NotionPagesResponse(
         val results: List<RestFulNotionPage>

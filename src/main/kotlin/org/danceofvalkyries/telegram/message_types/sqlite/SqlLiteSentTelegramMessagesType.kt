@@ -1,8 +1,11 @@
 package org.danceofvalkyries.telegram.message_types.sqlite
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import org.danceofvalkyries.telegram.message_types.SentTelegramMessageType
 import org.danceofvalkyries.telegram.message_types.SentTelegramMessagesType
 import org.danceofvalkyries.utils.db.SqlQuery
-import org.danceofvalkyries.utils.db.asSequence
+import org.danceofvalkyries.utils.db.asFlow
 import org.danceofvalkyries.utils.db.tables.columns.LongTableColumn
 import org.danceofvalkyries.utils.db.tables.columns.PrimaryKey
 import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
@@ -20,7 +23,7 @@ class SqlLiteSentTelegramMessagesType(
     private val idColumn = LongTableColumn("id", PrimaryKey())
     private val typeColumn = TextTableColumn("type")
 
-    override suspend fun iterate(): Sequence<org.danceofvalkyries.telegram.message_types.SentTelegramMessageType> {
+    override suspend fun iterate(): Flow<SentTelegramMessageType> {
         return createStatement()
             .let {
                 it.executeQuery(
@@ -29,7 +32,7 @@ class SqlLiteSentTelegramMessagesType(
                         from(TABLE_NAME)
                     }
                 )
-            }.asSequence()
+            }.asFlow()
             .map {
                 SqlLiteSentTelegramMessageType(
                     id = idColumn.getValue(it),
@@ -41,7 +44,7 @@ class SqlLiteSentTelegramMessagesType(
             }
     }
 
-    override suspend fun iterate(type: String): Sequence<org.danceofvalkyries.telegram.message_types.SentTelegramMessageType> {
+    override suspend fun iterate(type: String): Flow<SentTelegramMessageType> {
         return createStatement()
             .let {
                 it.executeQuery(
@@ -51,7 +54,7 @@ class SqlLiteSentTelegramMessagesType(
                         where(typeColumn to type)
                     }
                 )
-            }.asSequence()
+            }.asFlow()
             .map {
                 SqlLiteSentTelegramMessageType(
                     id = idColumn.getValue(it),

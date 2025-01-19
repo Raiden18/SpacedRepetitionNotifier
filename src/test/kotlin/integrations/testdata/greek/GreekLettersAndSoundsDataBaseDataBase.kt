@@ -1,5 +1,7 @@
 package integrations.testdata.greek
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import org.danceofvalkyries.notion.databases.NotionDataBase
 import org.danceofvalkyries.notion.pages.NotionPageFlashCard
 import utils.NotionDataBaseFake
@@ -38,15 +40,15 @@ class GreekLettersAndSoundsDataBaseDataBase : NotionDataBase {
         )
     }
 
-    override fun iterate(): Sequence<NotionPageFlashCard> {
-        return sequenceOf(restfulGreekLetter1FlashCard, restfulGreekLetter2FlashCard)
+    override fun iterate(): Flow<NotionPageFlashCard> {
+        return flowOf(restfulGreekLetter1FlashCard, restfulGreekLetter2FlashCard)
     }
 
-    override fun getPageBy(pageId: String): NotionPageFlashCard {
+    override suspend fun getPageBy(pageId: String): NotionPageFlashCard {
         return defaultNotionDataBaseFake.getPageBy(pageId)
     }
 
-    override fun add(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard {
+    override suspend fun add(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard {
         error("Must not be supported")
     }
 

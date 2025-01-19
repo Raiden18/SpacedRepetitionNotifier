@@ -50,7 +50,7 @@ class UpdateCacheJob(
     }
 
     private suspend fun downLoadNotionDataBasesAndPagesAndSaveThemToLocalDataBase() {
-        restfulNotionDataBases.iterate().forEach { restfulNotionDb ->
+        restfulNotionDataBases.iterate().collect { restfulNotionDb ->
             sqlLiteNotionDataBases.add(restfulNotionDb)
         }
     }

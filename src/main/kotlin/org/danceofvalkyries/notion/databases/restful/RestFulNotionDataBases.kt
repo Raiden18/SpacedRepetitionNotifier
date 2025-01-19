@@ -1,6 +1,9 @@
 package org.danceofvalkyries.notion.databases.restful
 
 import com.google.gson.Gson
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.map
 import org.danceofvalkyries.notion.databases.NotionDataBase
 import org.danceofvalkyries.notion.databases.NotionDataBases
 import org.danceofvalkyries.utils.rest.clients.http.HttpClient
@@ -12,8 +15,8 @@ class RestFulNotionDataBases(
     private val gson: Gson,
 ) : NotionDataBases {
 
-    override suspend fun iterate(): Sequence<NotionDataBase> {
-        return desiredDbIds.asSequence()
+    override suspend fun iterate(): Flow<NotionDataBase> {
+        return desiredDbIds.asFlow()
             .map { getBy(it) }
     }
 

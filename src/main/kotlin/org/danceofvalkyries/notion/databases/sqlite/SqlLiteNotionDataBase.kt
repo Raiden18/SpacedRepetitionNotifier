@@ -1,10 +1,13 @@
 package org.danceofvalkyries.notion.databases.sqlite
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
 import org.danceofvalkyries.notion.databases.NotionDataBase
 import org.danceofvalkyries.notion.pages.NotionPageFlashCard
 import org.danceofvalkyries.notion.pages.sqlite.SqlLiteNotionPageFlashCard
 import org.danceofvalkyries.utils.db.SqlQuery
-import org.danceofvalkyries.utils.db.asSequence
+import org.danceofvalkyries.utils.db.asFlow
 import org.danceofvalkyries.utils.db.tables.columns.PrimaryKey
 import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
 import java.sql.Connection
@@ -47,7 +50,7 @@ class SqlLiteNotionDataBase(
             )?.let(nameColumn::getValue)!!
     }
 
-    override fun iterate(): Sequence<NotionPageFlashCard> {
+    override fun iterate(): Flow<NotionPageFlashCard> {
         return createStatement().let {
             it.executeQuery(
                 SqlQuery {
@@ -55,7 +58,7 @@ class SqlLiteNotionDataBase(
                     from(getPageTableName())
                 }
             )
-        }.asSequence()
+        }.asFlow()
             .map {
                 SqlLiteNotionPageFlashCard(
                     id = pageIdColumn.getValue(it)!!,
@@ -73,7 +76,7 @@ class SqlLiteNotionDataBase(
             .filter { it.notionDbID == id }
     }
 
-    override fun add(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard {
+    override suspend fun add(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard {
         val id = notionPageFlashCard.id
         val coverUrl = notionPageFlashCard.coverUrl
         val name = notionPageFlashCard.name
@@ -104,7 +107,7 @@ class SqlLiteNotionDataBase(
         return getPageBy(id)
     }
 
-    override fun getPageBy(pageId: String): NotionPageFlashCard {
+    override suspend fun getPageBy(pageId: String): NotionPageFlashCard {
         return SqlLiteNotionPageFlashCard(
             id = id,
             tableName = getPageTableName(),

@@ -1,5 +1,7 @@
 package utils
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
 import org.danceofvalkyries.notion.databases.NotionDataBase
 import org.danceofvalkyries.notion.pages.NotionPageFlashCard
 
@@ -17,11 +19,11 @@ data class NotionDataBaseFake(
         return name
     }
 
-    override fun iterate(): Sequence<NotionPageFlashCard> {
-        return pages.asSequence()
+    override fun iterate(): Flow<NotionPageFlashCard> {
+        return pages.asFlow()
     }
 
-    override fun add(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard {
+    override suspend fun add(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard {
         val notionPageFlashCardFake = NotionPageFlashCardFake(
             id = notionPageFlashCard.id,
             coverUrl = notionPageFlashCard.coverUrl,
@@ -35,7 +37,7 @@ data class NotionDataBaseFake(
         return notionPageFlashCardFake
     }
 
-    override fun getPageBy(pageId: String): NotionPageFlashCard {
+    override suspend fun getPageBy(pageId: String): NotionPageFlashCard {
         return pages.first { pageId == it.id }
     }
 

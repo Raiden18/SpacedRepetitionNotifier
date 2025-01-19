@@ -1,5 +1,7 @@
 package integrations.testdata.english.vocabulary
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import org.danceofvalkyries.notion.databases.NotionDataBase
 import org.danceofvalkyries.notion.pages.NotionPageFlashCard
 import utils.NotionDataBaseFake
@@ -29,15 +31,15 @@ class EnglishVocabularyDataBaseFake : NotionDataBase {
         return NAME
     }
 
-    override fun iterate(): Sequence<NotionPageFlashCard> {
+    override fun iterate(): Flow<NotionPageFlashCard> {
         return defaultNotionDataBaseFake.iterate()
     }
 
-    override fun add(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard {
+    override suspend fun add(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard {
         return defaultNotionDataBaseFake.add(notionPageFlashCard)
     }
 
-    override fun getPageBy(pageId: String): NotionPageFlashCard {
+    override suspend fun getPageBy(pageId: String): NotionPageFlashCard {
         return iterate().first { it.id == pageId }
     }
 

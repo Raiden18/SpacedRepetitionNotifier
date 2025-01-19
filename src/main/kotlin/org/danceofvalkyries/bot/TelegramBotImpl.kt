@@ -1,5 +1,6 @@
 package org.danceofvalkyries.bot
 
+import kotlinx.coroutines.flow.*
 import org.danceofvalkyries.dictionary.OnlineDictionaries
 import org.danceofvalkyries.notion.databases.NotionDataBases
 import org.danceofvalkyries.notion.pages.NotionPageFlashCard
@@ -82,7 +83,7 @@ class TelegramBotImpl(
         }
         sentTelegramMessagesType
             .iterate(FLASH_CARD_TYPE_MESSAGE)
-            .forEach { it.deleteFrom(sentTelegramMessagesType) }
+            .collect { it.deleteFrom(sentTelegramMessagesType) }
         notionDb.delete(flashCardId)
         val nextFlashCard = notionDb.iterate().firstOrNull()
         if (nextFlashCard != null) {
@@ -107,7 +108,7 @@ class TelegramBotImpl(
 
     private suspend fun getAllFlashCard(): List<NotionPageFlashCard> {
         return localDbNotionDataBases.iterate()
-            .flatMap { it.iterate() }
+            .flatMapConcat { it.iterate() }
             .toList()
     }
 
@@ -129,17 +130,17 @@ class TelegramBotImpl(
 
     private suspend fun removedCachedMessages(type: String) {
         sentTelegramMessagesType.iterate(type)
-            .forEach { it.deleteFrom(sentTelegramMessagesType) }
+            .collect { it.deleteFrom(sentTelegramMessagesType) }
     }
 
     private suspend fun removedTelegramMessages(type: String) {
         sentTelegramMessagesType.iterate(type)
-            .forEach { it.deleteFrom(telegramChat) }
+            .collect { it.deleteFrom(telegramChat) }
     }
 
     private suspend fun editNotificationMessageTo(newMessage: LocalTelegramMessage) {
         sentTelegramMessagesType.iterate(NOTIFICATION_TYPE_MESSAGE)
-            .forEach { oldNotification ->
+            .collect { oldNotification ->
                 oldNotification.edit(newMessage, telegramChat)
             }
     }

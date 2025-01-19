@@ -2,14 +2,16 @@ package org.danceofvalkyries.job
 
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.count
+import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.launch
+import org.danceofvalkyries.bot.TelegramBot
+import org.danceofvalkyries.bot.TelegramBotImpl
 import org.danceofvalkyries.dictionary.constant.ConfigOnlineDictionaries
 import org.danceofvalkyries.environment.Environment
 import org.danceofvalkyries.notion.databases.NotionDataBases
 import org.danceofvalkyries.notion.databases.restful.RestFulNotionDataBases
 import org.danceofvalkyries.notion.databases.sqlite.SqlLiteNotionDataBases
-import org.danceofvalkyries.bot.TelegramBot
-import org.danceofvalkyries.bot.TelegramBotImpl
 import org.danceofvalkyries.telegram.chat.restful.RestfulTelegramChat
 import org.danceofvalkyries.telegram.message_types.sqlite.SqlLiteSentTelegramMessagesType
 import org.danceofvalkyries.utils.Dispatchers
@@ -80,5 +82,5 @@ class NotifierJob(
         }
     }
 
-    private suspend fun getAllFlashCardsNeedRevising() = sqlLiteNotionDataBases.iterate().flatMap { it.iterate() }
+    private suspend fun getAllFlashCardsNeedRevising() = sqlLiteNotionDataBases.iterate().flatMapConcat { it.iterate() }
 }
