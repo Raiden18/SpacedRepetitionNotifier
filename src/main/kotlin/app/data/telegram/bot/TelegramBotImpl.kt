@@ -28,7 +28,7 @@ class TelegramBotImpl(
 
     companion object {
         const val FLASH_CARD_TYPE_MESSAGE = "FLASH_CARD"
-        const val NOTIFiCATION_TYPE_MESSAGE = "NOTIFICATION"
+        const val NOTIFICATION_TYPE_MESSAGE = "NOTIFICATION"
     }
 
     private var dbId: String = ""
@@ -39,13 +39,10 @@ class TelegramBotImpl(
         )
     }
 
-    override suspend fun deleteOldNotificationMessage() {
-        removedTelegramMessages(NOTIFiCATION_TYPE_MESSAGE)
-        removedCachedMessages(NOTIFiCATION_TYPE_MESSAGE)
-    }
-
-    override suspend fun sendNewNotificationMessage() {
-        sentMessageAndSave(
+    override suspend fun sendNotification() {
+        removedTelegramMessages(NOTIFICATION_TYPE_MESSAGE)
+        removedCachedMessages(NOTIFICATION_TYPE_MESSAGE)
+        sendMessageAndSave(
             NeedRevisingFlashCardMessage(
                 getAllFlashCard()
             )
@@ -54,24 +51,16 @@ class TelegramBotImpl(
 
     override suspend fun startRepetitionSessionFor(dbId: String) {
         this.dbId = dbId
-        val nextFlashCard = getAnyFlashCardFor(dbId)
-        sendFlashCardMessage(nextFlashCard!!)
+        val firstFlashCard = getAllFlashCard().first { it.notionDbID == dbId }
+        sendFlashCardMessage(firstFlashCard)
     }
 
     override suspend fun makeForgotten(flashCardId: String) {
-        makeForgottenOnNotion(flashCardId)
-        deleteAllFlashCardsFromChat()
-        removeForgotFlashCardFromLocalDbs(flashCardId)
-        sendNextFlashCardFrom(dbId)
-        updateNotificationMessage()
+        performAction(flashCardId) { it.forget() }
     }
 
     override suspend fun makeRecalled(flashCardId: String) {
-        makeRecalledOnNotion(flashCardId)
-        deleteAllFlashCardsFromChat()
-        removeRecalledFlashCardFromLocalDbs(flashCardId)
-        sendNextFlashCardFrom(dbId)
-        updateNotificationMessage()
+        performAction(flashCardId) { it.recall() }
     }
 
     override suspend fun deleteMessage(telegramMessageId: Long) {
@@ -81,8 +70,15 @@ class TelegramBotImpl(
     private suspend fun performAction(flashCardId: String, action: (NotionPageFlashCard) -> Map<Int, Boolean>) {
         val flashCard = getAllFlashCard().first { it.id == flashCardId }
         val updatedLevels = action.invoke(flashCard)
-        val restfullDataBase = restfulNotionDataBases.getBy(flashCard.notionDbID)
-        restfullDataBase.getPageBy(flashCardId).setKnowLevels(updatedLevels)
+        removedTelegramMessages(FLASH_CARD_TYPE_MESSAGE)
+        removedCachedMessages(FLASH_CARD_TYPE_MESSAGE)
+        removeNotionFlashCard(flashCardId)
+        sendNextFlashCardFrom(dbId)
+        updateNotificationMessage()
+        restfulNotionDataBases
+            .getBy(flashCard.notionDbID)
+            .getPageBy(flashCardId)
+            .setKnowLevels(updatedLevels)
     }
 
     private suspend fun getAllFlashCard(): List<NotionPageFlashCard> {
@@ -99,7 +95,7 @@ class TelegramBotImpl(
         )
     }
 
-    private suspend fun sentMessageAndSave(localMessage: LocalTelegramMessage) {
+    private suspend fun sendMessageAndSave(localMessage: LocalTelegramMessage) {
         val remoteFlashCardMessage = localMessage.sendTo(telegramChat)
         SerializedMessage(
             id = remoteFlashCardMessage.id,
@@ -118,7 +114,7 @@ class TelegramBotImpl(
     }
 
     private suspend fun editNotificationMessageTo(newMessage: LocalTelegramMessage) {
-        sentTelegramMessagesType.iterate(NOTIFiCATION_TYPE_MESSAGE)
+        sentTelegramMessagesType.iterate(NOTIFICATION_TYPE_MESSAGE)
             .forEach { oldNotification ->
                 oldNotification.edit(newMessage, telegramChat)
             }
@@ -131,7 +127,7 @@ class TelegramBotImpl(
     }
 
     private suspend fun sendFlashCardMessage(flashCard: NotionPageFlashCard) {
-        sentMessageAndSave(
+        sendMessageAndSave(
             FlashCardMessage(
                 flashCard,
                 textTranslator,
@@ -139,20 +135,6 @@ class TelegramBotImpl(
                 onlineDictionaries.iterate(flashCard.notionDbID)
             )
         )
-    }
-
-    private suspend fun makeRecalledOnNotion(flashCardId: String) {
-        performAction(flashCardId) { it.recall() }
-    }
-
-    private suspend fun makeForgottenOnNotion(flashCardId: String) {
-        performAction(flashCardId) { it.forget() }
-    }
-
-    private suspend fun getAnyFlashCardFor(notionDbId: String): NotionPageFlashCard? {
-        return localDbNotionDataBases.iterate()
-            .flatMap { it.iterate() }
-            .firstOrNull { it.notionDbID == notionDbId }
     }
 
     private suspend fun updateNotificationMessage() {
@@ -165,10 +147,6 @@ class TelegramBotImpl(
         editNotificationMessageTo(newNotificationMessage)
     }
 
-    private suspend fun deleteAllFlashCardsFromChat() {
-        removedTelegramMessages(FLASH_CARD_TYPE_MESSAGE)
-    }
-
     private suspend fun sendNextFlashCardFrom(notionDbId: String) {
         val flashCard = localDbNotionDataBases.getBy(notionDbId)
             .iterate()
@@ -176,15 +154,5 @@ class TelegramBotImpl(
         if (flashCard != null) {
             sendFlashCardMessage(flashCard)
         }
-    }
-
-    private suspend fun removeRecalledFlashCardFromLocalDbs(recalledFlashCardID: String) {
-        removeNotionFlashCard(recalledFlashCardID)
-        removedCachedMessages(FLASH_CARD_TYPE_MESSAGE)
-    }
-
-    private suspend fun removeForgotFlashCardFromLocalDbs(forgotFlashCardId: String) {
-        removeNotionFlashCard(forgotFlashCardId)
-        removedCachedMessages(FLASH_CARD_TYPE_MESSAGE)
     }
 }

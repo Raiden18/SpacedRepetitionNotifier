@@ -90,8 +90,7 @@ class NotifierApp(
 
     private suspend fun checkFlashCardsAndSendNotificationOrShowDoneMessage() {
         if (getAllFlashCardsNeedRevising().count() >= flashCardsThreshold) {
-            telegramBot.deleteOldNotificationMessage()
-            telegramBot.sendNewNotificationMessage()
+            telegramBot.sendNotification()
         } else {
             telegramBot.editOldNotificationMessageToDoneMessage()
         }
