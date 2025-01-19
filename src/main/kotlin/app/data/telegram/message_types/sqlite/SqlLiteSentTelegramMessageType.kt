@@ -1,9 +1,9 @@
 package org.danceofvalkyries.app.data.telegram.message_types.sqlite
 
+import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
 import org.danceofvalkyries.app.data.telegram.message_types.SentTelegramMessageType
 import org.danceofvalkyries.utils.db.SqlQuery
 import org.danceofvalkyries.utils.db.tables.columns.LongTableColumn
-import org.danceofvalkyries.utils.db.tables.columns.TableColumn
 import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
 import java.sql.Connection
 
@@ -24,4 +24,13 @@ class SqlLiteSentTelegramMessageType(
                     where(idColumn to id.toString())
                 }
             )?.let(typeColumn::getValue)!!
+
+    override val text: String
+        get() = error("Are not saved in DB")
+    override val imageUrl: String?
+
+        get() = error("Are not saved in DB")
+
+    override val nestedButtons: List<List<TelegramMessage.Button>>
+        get() =error("Are not saved in DB")
 }

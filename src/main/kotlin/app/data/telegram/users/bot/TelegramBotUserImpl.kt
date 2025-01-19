@@ -8,6 +8,7 @@ import org.danceofvalkyries.app.data.telegram.message.deleteFrom
 import org.danceofvalkyries.app.data.telegram.message.edit
 import org.danceofvalkyries.app.data.telegram.message.sendTo
 import org.danceofvalkyries.app.data.telegram.message_types.SentTelegramMessagesType
+import org.danceofvalkyries.app.data.telegram.message_types.deleteFrom
 import org.danceofvalkyries.app.data.telegram.users.TelegramBotUser
 import org.danceofvalkyries.app.data.telegram.users.bot.messages.*
 import org.danceofvalkyries.app.data.telegram.users.bot.translator.TextTranslator
@@ -33,7 +34,6 @@ class TelegramBotUserImpl(
 
     override suspend fun editOldNotificationMessageToDoneMessage() {
         sentTelegramMessagesType.iterate()
-            .map { SerializedMessage(it.id, it.type) }
             .forEach { oldNotification ->
                 val newMessage = DoneTelegramMessage(stringResources)
                 oldNotification.edit(newMessage, telegramChat)
@@ -42,7 +42,6 @@ class TelegramBotUserImpl(
 
     override suspend fun deleteOldNotificationMessage() {
         sentTelegramMessagesType.iterate()
-            .map { SerializedMessage(it.id, it.type) }
             .forEach {
                 it.deleteFrom(sentTelegramMessagesType)
                 it.deleteFrom(telegramChat)
@@ -110,7 +109,6 @@ class TelegramBotUserImpl(
             it.delete(recalledFlashCardID)
         }
         sentTelegramMessagesType.iterate()
-            .map { SerializedMessage(it.id, it.type) }
             .filter { it.type == FLASH_CARD_TYPE_MESSAGE }
             .forEach { it.deleteFrom(sentTelegramMessagesType) }
     }
