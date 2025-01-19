@@ -76,7 +76,7 @@ class TelegramBotImpl(
         sendNextFlashCardFrom(dbId)
         updateNotificationMessage()
         restfulNotionDataBases
-            .getBy(flashCard.notionDbID)
+            .getBy(dbId)
             .getPageBy(flashCardId)
             .setKnowLevels(updatedLevels)
     }
