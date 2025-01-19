@@ -26,7 +26,7 @@ fun ListenToTelegramEvensJob(
     val config = environment.config
     val dbConnection = environment.dataBase.establishConnection()
     val sqlLiteNotionDataBases = SqlLiteNotionDataBases(dbConnection)
-    val httpClient = HttpClientImpl(environment.httpClient)
+    val httpClient = environment.httpClient
     val restfulNotionDataBases = RestFulNotionDataBases(
         desiredDbIds = config.notion.observedDatabases.map { it.id },
         apiKey = config.notion.apiKey,

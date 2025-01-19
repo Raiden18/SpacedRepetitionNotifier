@@ -13,7 +13,7 @@ fun UpdateCacheJob(
     environment: Environment,
 ): Job {
     val dbConnection = environment.dataBase.establishConnection()
-    val httpClient = HttpClientImpl(environment.httpClient)
+    val httpClient = environment.httpClient
     val restfulNotionDatabases = RestFulNotionDataBases(
         desiredDbIds = environment.config.notion.observedDatabases.map { it.id },
         apiKey = environment.config.notion.apiKey,

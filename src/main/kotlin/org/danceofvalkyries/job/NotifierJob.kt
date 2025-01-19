@@ -14,7 +14,6 @@ import org.danceofvalkyries.telegram.chat.restful.RestfulTelegramChat
 import org.danceofvalkyries.telegram.message_types.sqlite.SqlLiteSentTelegramMessagesType
 import org.danceofvalkyries.utils.Dispatchers
 import org.danceofvalkyries.utils.resources.EngStringResources
-import org.danceofvalkyries.utils.rest.clients.http.HttpClientImpl
 import org.danceofvalkyries.utils.rest.clients.sever.KtorSeverClient
 
 fun NotifierJob(
@@ -23,7 +22,7 @@ fun NotifierJob(
 ): Job {
     val dbConnection = environment.dataBase.establishConnection()
     val sqlLiteNotionDatabases = SqlLiteNotionDataBases(dbConnection)
-    val httpClient = HttpClientImpl(environment.httpClient)
+    val httpClient = environment.httpClient
     val restfulNotionDatabases = RestFulNotionDataBases(
         desiredDbIds = environment.config.notion.observedDatabases.map { it.id },
         apiKey = environment.config.notion.apiKey,
