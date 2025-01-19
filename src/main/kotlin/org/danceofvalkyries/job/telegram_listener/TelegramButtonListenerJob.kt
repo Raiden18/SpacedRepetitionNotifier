@@ -1,4 +1,4 @@
-package job.telegram_listener
+package org.danceofvalkyries.job.telegram_listener
 
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
@@ -6,16 +6,15 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.danceofvalkyries.environment.Environment
 import org.danceofvalkyries.job.Job
-import org.danceofvalkyries.job.data.dictionary.constant.ConfigOnlineDictionaries
-import org.danceofvalkyries.job.data.notion.databases.restful.RestFulNotionDataBases
-import org.danceofvalkyries.job.data.notion.databases.sqlite.SqlLiteNotionDataBases
-import org.danceofvalkyries.job.data.telegram.bot.TelegramBot
-import org.danceofvalkyries.job.data.telegram.bot.TelegramBotImpl
-import org.danceofvalkyries.job.data.telegram.chat.TelegramChat
-import org.danceofvalkyries.job.data.telegram.chat.restful.RestfulTelegramChat
-import org.danceofvalkyries.job.data.telegram.message.TelegramMessage.Button
-import org.danceofvalkyries.job.data.telegram.message_types.sqlite.SqlLiteSentTelegramMessagesType
-import org.danceofvalkyries.job.telegram_listener.ButtonAction
+import org.danceofvalkyries.dictionary.constant.ConfigOnlineDictionaries
+import org.danceofvalkyries.notion.databases.restful.RestFulNotionDataBases
+import org.danceofvalkyries.notion.databases.sqlite.SqlLiteNotionDataBases
+import org.danceofvalkyries.telegram.bot.TelegramBot
+import org.danceofvalkyries.telegram.bot.TelegramBotImpl
+import org.danceofvalkyries.telegram.chat.TelegramChat
+import org.danceofvalkyries.telegram.chat.restful.RestfulTelegramChat
+import org.danceofvalkyries.telegram.message.TelegramMessage
+import org.danceofvalkyries.telegram.message_types.sqlite.SqlLiteSentTelegramMessagesType
 import org.danceofvalkyries.utils.Dispatchers
 import org.danceofvalkyries.utils.resources.EngStringResources
 import org.danceofvalkyries.utils.rest.clients.http.HttpClientImpl
@@ -81,7 +80,7 @@ class TelegramButtonListenerJob(
                         is ButtonAction.Recalled -> bot.makeRecalled(action.flashCardId)
                         is ButtonAction.Unknown -> bot.deleteMessage(it.messageId)
                     }
-                }.collect(Button.Callback::answer)
+                }.collect(TelegramMessage.Button.Callback::answer)
         }
     }
 }

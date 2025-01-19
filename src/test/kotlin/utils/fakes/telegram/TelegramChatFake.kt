@@ -4,8 +4,8 @@ import io.kotest.matchers.collections.shouldNotContain
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.mapNotNull
-import org.danceofvalkyries.job.data.telegram.chat.TelegramChat
-import org.danceofvalkyries.job.data.telegram.message.TelegramMessage
+import org.danceofvalkyries.telegram.chat.TelegramChat
+import org.danceofvalkyries.telegram.message.TelegramMessage
 
 class TelegramChatFake : TelegramChat {
 

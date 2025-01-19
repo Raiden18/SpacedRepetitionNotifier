@@ -5,11 +5,11 @@ import integrations.testdata.telegram.TelegramCallbackDataFake
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.core.spec.style.scopes.BehaviorSpecWhenContainerScope
 import io.kotest.matchers.shouldBe
-import job.telegram_listener.TelegramButtonListenerJob
-import org.danceofvalkyries.job.data.dictionary.OnlineDictionary
-import org.danceofvalkyries.job.data.dictionary.constant.ConstantOnlineDictionary
-import org.danceofvalkyries.job.data.telegram.bot.TelegramBotImpl
-import org.danceofvalkyries.job.data.telegram.message.TelegramMessage
+import org.danceofvalkyries.job.telegram_listener.TelegramButtonListenerJob
+import org.danceofvalkyries.dictionary.OnlineDictionary
+import org.danceofvalkyries.dictionary.constant.ConstantOnlineDictionary
+import org.danceofvalkyries.telegram.bot.TelegramBotImpl
+import org.danceofvalkyries.telegram.message.TelegramMessage
 import org.danceofvalkyries.utils.resources.EngStringResources
 import utils.DispatchersFake
 import utils.OnlineDictionariesFake

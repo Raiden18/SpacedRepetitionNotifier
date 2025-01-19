@@ -1,6 +1,6 @@
 package integrations.testdata.greek
 
-import org.danceofvalkyries.job.data.notion.pages.NotionPageFlashCard
+import org.danceofvalkyries.notion.pages.NotionPageFlashCard
 
 class RestfulGreekLetter1FlashCard(
     private val notionDbId: String

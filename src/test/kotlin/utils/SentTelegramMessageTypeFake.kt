@@ -1,12 +1,11 @@
 package utils
 
-import org.danceofvalkyries.job.data.telegram.message.TelegramMessage
-import org.danceofvalkyries.job.data.telegram.message_types.SentTelegramMessageType
+import org.danceofvalkyries.telegram.message.TelegramMessage
 
 data class SentTelegramMessageTypeFake(
     override val id: Long,
     override val type: String
-) : org.danceofvalkyries.job.data.telegram.message_types.SentTelegramMessageType {
+) : org.danceofvalkyries.telegram.message_types.SentTelegramMessageType {
 
     override val text: String
         get() = TODO("Not yet implemented")

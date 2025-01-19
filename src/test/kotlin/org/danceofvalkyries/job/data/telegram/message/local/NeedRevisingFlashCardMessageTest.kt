@@ -4,8 +4,9 @@ import integrations.testdata.english.vocabulary.Dota2EnglishVocabulary
 import integrations.testdata.english.vocabulary.EnglishVocabularyDataBaseFake
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.job.data.telegram.message.ConstantTelegramMessageButton
-import org.danceofvalkyries.job.data.telegram.message.TelegramMessage
+import org.danceofvalkyries.telegram.message.ConstantTelegramMessageButton
+import org.danceofvalkyries.telegram.message.TelegramMessage
+import org.danceofvalkyries.telegram.message.local.NeedRevisingNotificationMessage
 import org.danceofvalkyries.utils.resources.EngStringResources
 
 class NeedRevisingFlashCardMessageTest : FunSpec() {

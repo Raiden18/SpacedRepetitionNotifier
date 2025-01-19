@@ -4,9 +4,9 @@ import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.danceofvalkyries.environment.Environment
-import org.danceofvalkyries.job.data.notion.databases.NotionDataBases
-import org.danceofvalkyries.job.data.notion.databases.restful.RestFulNotionDataBases
-import org.danceofvalkyries.job.data.notion.databases.sqlite.SqlLiteNotionDataBases
+import org.danceofvalkyries.notion.databases.NotionDataBases
+import org.danceofvalkyries.notion.databases.restful.RestFulNotionDataBases
+import org.danceofvalkyries.notion.databases.sqlite.SqlLiteNotionDataBases
 import org.danceofvalkyries.utils.Dispatchers
 import org.danceofvalkyries.utils.db.DataBase
 import org.danceofvalkyries.utils.rest.clients.http.HttpClientImpl

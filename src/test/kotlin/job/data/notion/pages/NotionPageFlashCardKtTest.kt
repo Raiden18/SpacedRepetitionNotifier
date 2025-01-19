@@ -2,9 +2,9 @@ package job.data.notion.pages
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.job.data.notion.pages.NotionPageFlashCard
-import org.danceofvalkyries.job.data.notion.pages.forget
-import org.danceofvalkyries.job.data.notion.pages.recall
+import org.danceofvalkyries.notion.pages.NotionPageFlashCard
+import org.danceofvalkyries.notion.pages.forget
+import org.danceofvalkyries.notion.pages.recall
 
 class NotionPageFlashCardKtTest : FunSpec() {
 

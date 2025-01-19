@@ -1,6 +1,6 @@
 package integrations.testdata.english.vocabulary
 
-import org.danceofvalkyries.job.data.notion.pages.NotionPageFlashCard
+import org.danceofvalkyries.notion.pages.NotionPageFlashCard
 
 class WineEnglishVocabulary(
     private val notionDbId: String

@@ -3,9 +3,10 @@ package org.danceofvalkyries.job.data.telegram.message.local
 import integrations.testdata.english.vocabulary.Dota2EnglishVocabulary
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.job.data.dictionary.constant.ConstantOnlineDictionary
-import org.danceofvalkyries.job.data.telegram.message.ConstantTelegramMessageButton
-import org.danceofvalkyries.job.data.telegram.message.TelegramMessage
+import org.danceofvalkyries.dictionary.constant.ConstantOnlineDictionary
+import org.danceofvalkyries.telegram.message.ConstantTelegramMessageButton
+import org.danceofvalkyries.telegram.message.TelegramMessage
+import org.danceofvalkyries.telegram.message.local.FlashCardMessage
 import org.danceofvalkyries.utils.resources.EngStringResources
 
 class FlashCardMessageTest : FunSpec() {

@@ -2,7 +2,7 @@ package job.data.telegram.users.bot.translator
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.job.data.telegram.message.local.translator.TelegramTextTranslator
+import org.danceofvalkyries.telegram.message.local.translator.TelegramTextTranslator
 
 class TelegramTextTranslatorTest : FunSpec() {
 
