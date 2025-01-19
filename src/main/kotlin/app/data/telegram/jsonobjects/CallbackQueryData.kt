@@ -1,5 +1,6 @@
 package org.danceofvalkyries.app.data.telegram.jsons
 
+import app.data.telegram.jsonobjects.MessageData
 import com.google.gson.annotations.SerializedName
 
 data class CallbackQueryData(

@@ -1,6 +1,7 @@
-package org.danceofvalkyries.app.data.telegram.jsons
+package app.data.telegram.jsonobjects
 
 import com.google.gson.annotations.SerializedName
+import org.danceofvalkyries.app.data.telegram.jsons.ReplyMarkupData
 
 /**
  * Telegram Message request has the same body for photo and text.
@@ -13,11 +14,11 @@ import com.google.gson.annotations.SerializedName
  */
 data class MessageData(
     @SerializedName("chat_id")
-    val chatId: String?,
+    val chatId: String? = null,
     @SerializedName("parse_mode")
     val parseMode: String? = null,
     @SerializedName("reply_markup")
-    val replyMarkup: ReplyMarkupData?,
+    val replyMarkup: ReplyMarkupData? = null,
     @SerializedName("photo")
     val photo: Any? = null,
     @SerializedName("caption")

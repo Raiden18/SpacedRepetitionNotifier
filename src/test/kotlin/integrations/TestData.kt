@@ -2,7 +2,7 @@ package integrations
 
 import com.google.gson.Gson
 import org.danceofvalkyries.app.data.telegram.jsons.ButtonData
-import org.danceofvalkyries.app.data.telegram.jsons.MessageData
+import app.data.telegram.jsonobjects.MessageData
 import org.danceofvalkyries.app.data.telegram.jsons.ReplyMarkupData
 import org.danceofvalkyries.utils.rest.jsonObject
 

@@ -17,14 +17,12 @@ import utils.DispatchersFake
 import utils.OnlineDictionariesFake
 import utils.SentTelegramMessagesTypeFake
 import utils.SqlLiteNotionDataBasesFake
-import utils.fakes.httpclient.HttpClientFake
 import utils.fakes.telegram.TelegramChatFake
 import utils.fakes.telegram.TelegramMessageFake
 
 class ButtonsListenersTest : BehaviorSpec() {
 
     private lateinit var telegramButtonListenerApp: App
-    private lateinit var httpClientFake: HttpClientFake
     private lateinit var sqlLiteNotionDataBasesFake: SqlLiteNotionDataBasesFake
     private lateinit var sentTelegramMessagesTypeFake: SentTelegramMessagesTypeFake
 
@@ -48,7 +46,6 @@ class ButtonsListenersTest : BehaviorSpec() {
                 )
                 cambridgeDictionary = ConstantOnlineDictionary("https://dictionary.cambridge.org/dictionary/english/encounter")
 
-                httpClientFake = HttpClientFake()
                 telegramChat = TelegramChatFake()
                 sentTelegramMessagesTypeFake = SentTelegramMessagesTypeFake()
 

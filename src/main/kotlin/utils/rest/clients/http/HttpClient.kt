@@ -1,4 +1,4 @@
-package org.danceofvalkyries.utils
+package org.danceofvalkyries.utils.rest.clients.http
 
 import com.google.gson.Gson
 import org.danceofvalkyries.utils.rest.Header
@@ -11,7 +11,8 @@ interface HttpClient {
 
     data class Response(
         val requestUrl: String,
-        val responseBody: String?
+        val responseBody: String?,
+        val responseCode: Int
     )
 }
 

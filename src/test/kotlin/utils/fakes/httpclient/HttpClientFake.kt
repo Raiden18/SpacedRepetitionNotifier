@@ -1,85 +1,47 @@
 package utils.fakes.httpclient
 
-import org.danceofvalkyries.utils.HttpClient
 import org.danceofvalkyries.utils.rest.Header
+import org.danceofvalkyries.utils.rest.clients.http.HttpClient
 
-class HttpClientFake : HttpClient {
+class HttpClientFake(
+    private val postResponse: HttpClient.Response
+) : HttpClient {
 
-    val getUrlRequests = mutableListOf<String>()
-    val postRequests = mutableListOf<PostRequest>()
-    val patchRequests = mutableListOf<PatchRequest>()
-
-    val getUrlAndResponses = mutableMapOf<String, String>()
-    val postUrlAndResponse = mutableMapOf<PostRequest, String>()
-    val patchUrlAndResponses = mutableMapOf<PatchRequest, String>()
-
-    fun mockGetResponse(url: String, response: String) {
-        getUrlAndResponses[url] = response
-    }
-
-    fun mockPostResponse(
-        url: String,
-        body: String,
-        response: String,
-    ) {
-        val postRequest = PostRequest(
-            url = url,
-            body = body,
-        )
-        postUrlAndResponse[postRequest] = response
-    }
-
-    fun mockPatchResponse(
-        url: String,
-        body: String,
-        response: String
-    ) {
-        val patchRequest = PatchRequest(
-            url = url,
-            body = body,
-        )
-        patchUrlAndResponses[patchRequest] = response
-    }
+    var postRequest = mutableListOf<Request>()
 
     override fun get(url: String, headers: List<Header>): HttpClient.Response {
-        getUrlRequests.add(url)
-        return HttpClient.Response(
-            requestUrl = url,
-            responseBody = getUrlAndResponses[url]
-        )
+        TODO("Not yet implemented")
     }
 
     override fun post(url: String, body: String, headers: List<Header>): HttpClient.Response {
-        val postRequest = PostRequest(
-            url = url,
-            body = body,
-        )
-        postRequests.add(postRequest)
-        return HttpClient.Response(
-            requestUrl = url,
-            responseBody = postUrlAndResponse[postRequest]
-        )
+        postRequest.add(Request(url, body))
+        return postResponse
     }
 
     override fun patch(url: String, body: String, headers: List<Header>): HttpClient.Response {
-        val patchRequest = PatchRequest(
-            url = url,
-            body = body
-        )
-        patchRequests.add(patchRequest)
-        return HttpClient.Response(
-            requestUrl = url,
-            responseBody = patchUrlAndResponses[patchRequest],
-        )
+        TODO("Not yet implemented")
     }
 
-    data class PostRequest(
+    fun assertThat(): Matcher {
+        return Matcher()
+    }
+
+    data class Request(
         val url: String,
-        val body: String,
+        val body: String
     )
 
-    data class PatchRequest(
-        val url: String,
-        val body: String,
-    )
+    inner class Matcher {
+
+        fun postWasRequested(request: Request) {
+            if (postRequest.contains(request).not()) {
+                val errorMessage = StringBuilder()
+                    .appendLine("Was not requested!")
+                    .appendLine("Request: $request")
+                    .appendLine("List: $postRequest")
+                    .toString()
+                error(errorMessage)
+            }
+        }
+    }
 }

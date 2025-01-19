@@ -3,7 +3,7 @@ package org.danceofvalkyries.app.data.telegram.message.restful
 import com.google.gson.Gson
 import org.danceofvalkyries.app.data.telegram.jsonobjects.TelegramChatUrls
 import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
-import org.danceofvalkyries.utils.HttpClient
+import org.danceofvalkyries.utils.rest.clients.http.HttpClient
 import org.danceofvalkyries.utils.rest.jsonObject
 
 class RestfulTelegramUpdateMessageButtonCallback(

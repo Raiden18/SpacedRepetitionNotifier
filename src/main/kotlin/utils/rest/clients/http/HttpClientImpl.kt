@@ -1,12 +1,11 @@
-package org.danceofvalkyries.app.data.telegram.chat.restful
+package org.danceofvalkyries.utils.rest.clients.http
 
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
-import org.danceofvalkyries.utils.HttpClient
-import org.danceofvalkyries.utils.HttpClient.Response
 import org.danceofvalkyries.utils.rest.*
+import org.danceofvalkyries.utils.rest.clients.http.HttpClient.Response
 
 // TODO: Move to another package
 class HttpClientImpl(
@@ -22,7 +21,8 @@ class HttpClientImpl(
             .request(okHttpClient)
         return Response(
             requestUrl = response.request.url.toString(),
-            responseBody = response.body?.string().orEmpty()
+            responseBody = response.body?.string().orEmpty(),
+            responseCode = response.code
         )
     }
 
@@ -36,7 +36,8 @@ class HttpClientImpl(
             .request(okHttpClient)
         return Response(
             requestUrl = response.request.url.toString(),
-            responseBody = response.body?.string().orEmpty()
+            responseBody = response.body?.string().orEmpty(),
+            responseCode = response.code
         )
     }
 
@@ -50,7 +51,8 @@ class HttpClientImpl(
             .request(okHttpClient)
         return Response(
             requestUrl = response.request.url.toString(),
-            responseBody = response.body?.string().orEmpty()
+            responseBody = response.body?.string().orEmpty(),
+            responseCode = response.code
         )
     }
 }

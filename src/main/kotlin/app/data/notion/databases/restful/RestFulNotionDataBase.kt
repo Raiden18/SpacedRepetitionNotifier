@@ -8,8 +8,8 @@ import notion.impl.client.models.response.NotionDbResponse
 import org.danceofvalkyries.app.data.notion.databases.NotionDataBase
 import org.danceofvalkyries.app.data.notion.pages.NotionPageFlashCard
 import org.danceofvalkyries.app.data.notion.pages.restful.RestfulNotionPageFlashCard
-import org.danceofvalkyries.utils.HttpClient
-import org.danceofvalkyries.utils.parse
+import org.danceofvalkyries.utils.rest.clients.http.HttpClient
+import org.danceofvalkyries.utils.rest.clients.http.parse
 import org.danceofvalkyries.utils.rest.AuthorizationBearerHeader
 import org.danceofvalkyries.utils.rest.ContentType
 import org.danceofvalkyries.utils.rest.ContentTypes

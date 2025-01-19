@@ -1,41 +1,40 @@
 package org.danceofvalkyries.app.data.telegram.chat.restful
 
+import app.data.telegram.jsonobjects.MessageData
+import app.data.telegram.jsonobjects.TelegramMessageRootResponse
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import okhttp3.HttpUrl
 import org.danceofvalkyries.app.data.telegram.chat.TelegramChat
 import org.danceofvalkyries.app.data.telegram.jsonobjects.TelegramChatUrls
-import org.danceofvalkyries.app.data.telegram.jsons.*
+import org.danceofvalkyries.app.data.telegram.jsons.ButtonData
+import org.danceofvalkyries.app.data.telegram.jsons.ReplyMarkupData
+import org.danceofvalkyries.app.data.telegram.jsons.UpdateResponseData
 import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
 import org.danceofvalkyries.app.data.telegram.message.TelegramMessage.Button
 import org.danceofvalkyries.app.data.telegram.message.restful.RestfulTelegramMessage
 import org.danceofvalkyries.app.data.telegram.message.restful.RestfulTelegramUpdateMessageButtonCallback
-import org.danceofvalkyries.utils.HttpClient
+import org.danceofvalkyries.utils.rest.clients.http.HttpClient
+import org.danceofvalkyries.utils.rest.clients.sever.SeverClient
 
 class RestfulTelegramChat(
     private val apiKey: String,
     private val gson: Gson,
     private val chatId: String,
-    private val ktorWebServer: KtorWebServer,
-    private val httpClient: HttpClient,
+    private val severClient: SeverClient,
+    httpClient: HttpClient,
 ) : TelegramChat {
-
-    private companion object {
-        val NOT_SUPPORTED_BY_TELEGRAM_TAGS = listOf(
-            "shutterstock.com",
-            "base64",
-            "?",
-        )
-
-        const val BLUE_SCREEN =
-            "https://neosmart.net/wiki/wp-content/uploads/sites/5/2013/08/unmountable-boot-volume.png"
-    }
 
     private val telegramChatUrls: TelegramChatUrls
         get() = TelegramChatUrls(
             apiKey = apiKey
         )
+
+    private val httpClient = TelegramChatHttpClientDecorator(
+        httpClient,
+        gson,
+    )
 
     override suspend fun sendTextMessage(
         text: String,
@@ -72,12 +71,10 @@ class RestfulTelegramChat(
         imageUrl: String,
         nestedButtons: List<List<Button>>
     ): TelegramMessage {
-        val isSupportedByTelegram = NOT_SUPPORTED_BY_TELEGRAM_TAGS.any { imageUrl.contains(it) }.not()
-        val photo = if (isSupportedByTelegram) imageUrl else BLUE_SCREEN
         val requestBody = MessageData(
             chatId = chatId,
             caption = caption,
-            photo = photo,
+            photo = imageUrl,
             parseMode = "MarkdownV2",
             replyMarkup = ReplyMarkupData(
                 nestedButtons.map {
@@ -95,7 +92,7 @@ class RestfulTelegramChat(
         return RestfulTelegramMessage(
             id = response.messageId!!,
             text = caption,
-            imageUrl = photo,
+            imageUrl = imageUrl,
             nestedButtons = nestedButtons
         )
     }
@@ -149,7 +146,7 @@ class RestfulTelegramChat(
     }
 
     override fun getEvents(): Flow<Button.Callback> {
-        return ktorWebServer.getWebHook()
+        return severClient.getWebHook()
             .map { gson.fromJson(it, UpdateResponseData::class.java) }
             .map {
                 RestfulTelegramUpdateMessageButtonCallback(

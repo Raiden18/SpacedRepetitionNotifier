@@ -3,7 +3,7 @@ package org.danceofvalkyries.app.data.notion.databases.restful
 import com.google.gson.Gson
 import org.danceofvalkyries.app.data.notion.databases.NotionDataBase
 import org.danceofvalkyries.app.data.notion.databases.NotionDataBases
-import org.danceofvalkyries.utils.HttpClient
+import org.danceofvalkyries.utils.rest.clients.http.HttpClient
 
 class RestFulNotionDataBases(
     private val desiredDbIds: List<String>,

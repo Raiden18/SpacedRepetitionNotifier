@@ -1,4 +1,4 @@
-package org.danceofvalkyries.app.data.telegram.chat.restful
+package org.danceofvalkyries.utils.rest.clients.sever
 
 import io.ktor.http.*
 import io.ktor.server.engine.*
@@ -8,9 +8,8 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.flow.onEach
 
-class KtorWebServerImpl : KtorWebServer {
+class KtorSeverClient : SeverClient {
 
     override fun getWebHook(): Flow<String> {
         return channelFlow {

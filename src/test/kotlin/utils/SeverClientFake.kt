@@ -4,12 +4,11 @@ import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.mapNotNull
-import kotlinx.coroutines.flow.onEach
-import org.danceofvalkyries.app.data.telegram.chat.restful.KtorWebServer
+import org.danceofvalkyries.utils.rest.clients.sever.SeverClient
 
-class KtorWebServerFake(
+class SeverClientFake(
     private val gson: Gson
-): KtorWebServer {
+): SeverClient {
 
     private val channel = MutableStateFlow<String?>(null)
 

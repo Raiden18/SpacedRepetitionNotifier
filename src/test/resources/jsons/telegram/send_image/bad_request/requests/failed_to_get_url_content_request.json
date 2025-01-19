@@ -1,0 +1,26 @@
+{
+  "chat_id": "1",
+  "parse_mode": "MarkdownV2",
+  "reply_markup": {
+    "inline_keyboard": [
+      [
+        {
+          "text": "Forgot  ❌",
+          "callback_data": "forgottenFlashCardId\u003d2"
+        },
+        {
+          "text": "Recalled  ✅",
+          "callback_data": "recalledFlashCardId\u003d2"
+        }
+      ],
+      [
+        {
+          "text": "Look it up ",
+          " url ": " https://dictionary.cambridge.org/dictionary/english/picket"
+        }
+      ]
+    ]
+  },
+  "photo": "https://dictionary.cambridge.org/images/full/picket_noun_002_27546.jpg?version\u003d6.0.43",
+  "caption": "*picket*\n\n_There were pickets outside the factory gates\\._\n\n||a worker or group of workers who protest outside a building to prevent other workers from going inside, especially because they have a disagreement with their employers||\n\nChoose:"
+}

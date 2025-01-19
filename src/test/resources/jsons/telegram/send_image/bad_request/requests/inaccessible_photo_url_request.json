@@ -1,0 +1,26 @@
+{
+  "chat_id": "1",
+  "parse_mode": "MarkdownV2",
+  "reply_markup": {
+    "inline_keyboard": [
+      [
+        {
+          "text": "Forgot  ❌",
+          "callback_data": "forgottenFlashCardId\u003d2"
+        },
+        {
+          "text": "Recalled  ✅",
+          "callback_data": "recalledFlashCardId\u003d2"
+        }
+      ],
+      [
+        {
+          "text": "Look it up",
+          "url": "https://dictionary.cambridge.org/dictionary/english/condone"
+        }
+      ]
+    ]
+  },
+  "photo": "https://i.ytimg.com/vi/8PMIbcp5wGw/maxresdefault.jpg",
+  "caption": "*condone*\n\n_If the government is seen to condone violence, the bloodshed will never stop\\._\n\n||to accept or allow behaviour that is wrong||\n\nChoose:"
+}

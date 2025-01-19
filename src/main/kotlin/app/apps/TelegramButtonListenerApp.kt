@@ -9,8 +9,8 @@ import org.danceofvalkyries.app.data.dictionary.constant.ConfigOnlineDictionarie
 import org.danceofvalkyries.app.data.notion.databases.restful.RestFulNotionDataBases
 import org.danceofvalkyries.app.data.notion.databases.sqlite.SqlLiteNotionDataBases
 import org.danceofvalkyries.app.data.telegram.chat.TelegramChat
-import org.danceofvalkyries.app.data.telegram.chat.restful.HttpClientImpl
-import org.danceofvalkyries.app.data.telegram.chat.restful.KtorWebServerImpl
+import org.danceofvalkyries.utils.rest.clients.http.HttpClientImpl
+import org.danceofvalkyries.utils.rest.clients.sever.KtorSeverClient
 import org.danceofvalkyries.app.data.telegram.chat.restful.RestfulTelegramChat
 import org.danceofvalkyries.app.data.telegram.message.TelegramMessage.Button
 import org.danceofvalkyries.app.data.telegram.message.local.translator.TelegramTextTranslator
@@ -38,13 +38,13 @@ fun TelegramButtonListenerApp(
     )
     val sqlLiteTelegramMessages = SqlLiteSentTelegramMessagesType(dbConnection)
     val onlineDictionaries = ConfigOnlineDictionaries(config.notion.observedDatabases)
-    val webServer = KtorWebServerImpl()
+    val webServer = KtorSeverClient()
 
     val telegramChat = RestfulTelegramChat(
         apiKey = config.telegram.apiKey,
         gson = Gson(),
         chatId = environment.config.telegram.chatId,
-        ktorWebServer = webServer,
+        severClient = webServer,
         httpClient = httpClient,
     )
     val botUser = TelegramBotImpl(

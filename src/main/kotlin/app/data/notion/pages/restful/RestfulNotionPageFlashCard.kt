@@ -5,7 +5,7 @@ import notion.impl.client.models.PropertyData
 import notion.impl.client.models.RestFulNotionPage
 import notion.impl.client.models.request.NotionApiVersionHeader
 import org.danceofvalkyries.app.data.notion.pages.NotionPageFlashCard
-import org.danceofvalkyries.utils.HttpClient
+import org.danceofvalkyries.utils.rest.clients.http.HttpClient
 import org.danceofvalkyries.utils.rest.AuthorizationBearerHeader
 import org.danceofvalkyries.utils.rest.ContentType
 import org.danceofvalkyries.utils.rest.ContentTypes
