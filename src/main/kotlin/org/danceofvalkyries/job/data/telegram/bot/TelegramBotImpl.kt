@@ -52,7 +52,7 @@ class TelegramBotImpl(
 
     override suspend fun startRepetitionSessionFor(dbId: String) {
         this.dbId = dbId
-        val firstFlashCard = getAllFlashCard().first { it.notionDbID == dbId }
+        val firstFlashCard = localDbNotionDataBases.getBy(dbId).iterate().first()
         sendFlashCardMessage(firstFlashCard)
     }
 
@@ -70,21 +70,30 @@ class TelegramBotImpl(
 
     private suspend fun performAction(flashCardId: String, action: (NotionPageFlashCard) -> Map<Int, Boolean>) {
         val restActionsScheduler = ActonsSchedulerImpl(dispatchers)
-        val flashCard = getAllFlashCard().first { it.id == flashCardId }
+        val notionDb = localDbNotionDataBases.getBy(dbId)
+        val flashCard = notionDb.getPageBy(flashCardId)
+
         val updatedLevels = action.invoke(flashCard)
+
         val flashCardsMessagesToDeleteFromTelegram = sentTelegramMessagesType.iterate(FLASH_CARD_TYPE_MESSAGE).toList()
-        restActionsScheduler.schedule { flashCardsMessagesToDeleteFromTelegram.forEach { it.deleteFrom(telegramChat) } }
-        sentTelegramMessagesType.iterate(FLASH_CARD_TYPE_MESSAGE).forEach { it.deleteFrom(sentTelegramMessagesType) }
-        localDbNotionDataBases.iterate().forEach { it.delete(flashCardId) }
-        val nextFlashCard = localDbNotionDataBases.getBy(dbId).iterate().firstOrNull()
+        restActionsScheduler.schedule {
+            flashCardsMessagesToDeleteFromTelegram
+                .forEach { it.deleteFrom(telegramChat) }
+        }
+        sentTelegramMessagesType
+            .iterate(FLASH_CARD_TYPE_MESSAGE)
+            .forEach { it.deleteFrom(sentTelegramMessagesType) }
+        notionDb.delete(flashCardId)
+        val nextFlashCard = notionDb.iterate().firstOrNull()
         if (nextFlashCard != null) {
             restActionsScheduler.schedule { sendFlashCardMessage(nextFlashCard) }
         }
-        val flashCards = getAllFlashCard()
-        val newNotificationMessage = if (flashCards.isEmpty()) {
+
+        val allFlashCards = getAllFlashCard()
+        val newNotificationMessage = if (allFlashCards.isEmpty()) {
             DoneTelegramMessage(stringResources)
         } else {
-            NeedRevisingFlashCardMessage(flashCards)
+            NeedRevisingFlashCardMessage(allFlashCards)
         }
         restActionsScheduler.schedule { editNotificationMessageTo(newNotificationMessage) }
         restActionsScheduler.schedule {

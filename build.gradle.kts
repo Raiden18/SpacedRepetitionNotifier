@@ -4,12 +4,24 @@ plugins {
     kotlin("jvm") version "2.0.21"
     kotlin("plugin.serialization") version "2.1.0"
     id("com.github.johnrengelman.shadow") version "7.0.0"
+    id("jacoco")
 }
 
 group = "org.danceofvalkyries"
 
 repositories {
     mavenCentral()
+}
+
+jacoco {
+    toolVersion = "0.8.10"
+}
+
+tasks.jacocoTestReport {
+    reports {
+        xml.required.set(true)
+        html.required.set(false)
+    }
 }
 
 dependencies {
