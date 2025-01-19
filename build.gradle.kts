@@ -1,3 +1,5 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+
 plugins {
     kotlin("jvm") version "2.0.21"
     kotlin("plugin.serialization") version "2.1.0"
@@ -15,8 +17,10 @@ dependencies {
 
     implementation(kotlin("stdlib"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+
+    val okhttp = "4.12.0"
+    implementation("com.squareup.okhttp3:okhttp:$okhttp")
+    implementation("com.squareup.okhttp3:logging-interceptor:$okhttp")
     implementation("com.google.code.gson:gson:2.11.0")
     implementation("org.xerial:sqlite-jdbc:3.39.2.0")
 
@@ -52,4 +56,12 @@ tasks.withType<Jar> {
         .map(::zipTree)
     from(dependencies)
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+tasks.withType<Test> {
+    testLogging {
+        exceptionFormat = TestExceptionFormat.FULL
+        showStackTraces = true
+        showStandardStreams = true
+    }
 }
