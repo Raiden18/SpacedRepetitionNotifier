@@ -10,7 +10,7 @@ class DoneTelegramMessageTest : FunSpec() {
         test("Should return text for Done Message") {
             DoneTelegramMessage(
                 EngStringResources()
-            ).getText() shouldBe """Good Job! 😎 Everything is revised! ✅"""
+            ).getText() shouldBe "Good Job\\! 😎 Everything is revised\\! ✅"
         }
     }
 }
