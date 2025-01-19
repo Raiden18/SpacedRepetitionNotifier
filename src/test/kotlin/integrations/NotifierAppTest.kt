@@ -3,11 +3,11 @@ package integrations
 import integrations.testdata.greek.GreekLettersAndSoundsDataBaseRestfulFake
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.app.App
-import org.danceofvalkyries.app.apps.NotifierApp
-import org.danceofvalkyries.app.data.telegram.bot.TelegramBotImpl
-import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
-import org.danceofvalkyries.app.data.telegram.message.local.translator.TelegramTextTranslator
+import org.danceofvalkyries.job.Job
+import org.danceofvalkyries.job.NotifierJob
+import org.danceofvalkyries.job.data.telegram.bot.TelegramBotImpl
+import org.danceofvalkyries.job.data.telegram.message.TelegramMessage
+import org.danceofvalkyries.job.data.telegram.message.local.translator.TelegramTextTranslator
 import org.danceofvalkyries.utils.resources.EngStringResources
 import utils.DispatchersFake
 import utils.OnlineDictionariesFake
@@ -19,7 +19,7 @@ import utils.fakes.telegram.TelegramMessageFake
 
 class NotifierAppTest : BehaviorSpec() {
 
-    private lateinit var notifierApp: App
+    private lateinit var notifierJob: Job
     private lateinit var sentTelegramMessagesType: SentTelegramMessagesTypeFake
     private lateinit var sqlLiteNotionDataBases: SqlLiteNotionDataBasesFake
     private lateinit var greekLettersAndSoundsDataBaseRestfulFake: GreekLettersAndSoundsDataBaseRestfulFake
@@ -53,11 +53,11 @@ class NotifierAppTest : BehaviorSpec() {
 
             When("Number of Flash Cards is more than threshold") {
                 beforeTest {
-                    notifierApp = createApp(1)
+                    notifierJob = createApp(1)
                 }
 
                 Then("Should send notification to Telegram") {
-                    notifierApp.run()
+                    notifierJob.run()
                     val expectedNotificationMessage = greekLettersAndSoundsDataBaseRestfulFake.createTelegramNotification(1)
                     telegramChatFake.assertThat().isInChat(expectedNotificationMessage)
                 }
@@ -80,35 +80,35 @@ class NotifierAppTest : BehaviorSpec() {
 
             When("Number of Flash Cards is more than threshold") {
                 beforeTest {
-                    notifierApp = createApp(1)
+                    notifierJob = createApp(1)
                 }
 
                 Then("Should send NEW notification to Telegram") {
-                    notifierApp.run()
+                    notifierJob.run()
                     val newNotification = greekLettersAndSoundsDataBaseRestfulFake.createTelegramNotification(2)
                     telegramChatFake.assertThat().isInChat(newNotification)
                 }
 
                 Then("Should Delete OLD notification From DB") {
-                    notifierApp.run()
+                    notifierJob.run()
                     val containsOldMessage = sentTelegramMessagesType.iterate().toList()
                         .firstOrNull { it.id == previousMessage.id }
                     containsOldMessage shouldBe null
                 }
 
                 Then("Should Delete OLD notification from Telegram") {
-                    notifierApp.run()
+                    notifierJob.run()
                     telegramChatFake.assertThat().wasDeleted(previousMessage)
                 }
             }
 
             When("Number of Flash Cards is less than threshold") {
                 beforeTest {
-                    notifierApp = createApp(10)
+                    notifierJob = createApp(10)
                 }
 
                 Then("Then should edit PREVIOUS notification to DONE") {
-                    notifierApp.run()
+                    notifierJob.run()
                     val expectedNotificationMessage = TelegramMessageFake.createAllDone(1)
                     telegramChatFake.assertThat()
                         .isInChat(expectedNotificationMessage)
@@ -118,9 +118,9 @@ class NotifierAppTest : BehaviorSpec() {
         }
     }
 
-    private fun createApp(flashCardsThreshold: Int): App {
-        return AppRunInTestDecorator(
-            NotifierApp(
+    private fun createApp(flashCardsThreshold: Int): Job {
+        return JobRunInTestDecorator(
+            NotifierJob(
                 DispatchersFake(),
                 flashCardsThreshold = flashCardsThreshold,
                 restfulNotionDataBases,

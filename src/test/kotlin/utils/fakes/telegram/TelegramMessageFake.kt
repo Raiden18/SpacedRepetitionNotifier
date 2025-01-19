@@ -1,7 +1,7 @@
 package utils.fakes.telegram
 
-import org.danceofvalkyries.app.data.telegram.message.ConstantTelegramMessageButton
-import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
+import org.danceofvalkyries.job.data.telegram.message.ConstantTelegramMessageButton
+import org.danceofvalkyries.job.data.telegram.message.TelegramMessage
 
 data class TelegramMessageFake(
     override val id: Long,

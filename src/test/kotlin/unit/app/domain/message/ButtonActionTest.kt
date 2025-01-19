@@ -2,8 +2,7 @@ package unit.app.domain.message
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.app.domain.message.ButtonAction
-import org.danceofvalkyries.notion.api.models.NotionId
+import org.danceofvalkyries.job.telegram_listener.ButtonAction
 
 class ButtonActionTest : FunSpec() {
 

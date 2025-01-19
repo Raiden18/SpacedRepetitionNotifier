@@ -5,13 +5,13 @@ import integrations.testdata.telegram.TelegramCallbackDataFake
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.core.spec.style.scopes.BehaviorSpecWhenContainerScope
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.app.App
-import org.danceofvalkyries.app.apps.TelegramButtonListenerApp
-import org.danceofvalkyries.app.data.dictionary.OnlineDictionary
-import org.danceofvalkyries.app.data.dictionary.constant.ConstantOnlineDictionary
-import org.danceofvalkyries.app.data.telegram.bot.TelegramBotImpl
-import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
-import org.danceofvalkyries.app.data.telegram.message.local.translator.TelegramTextTranslator
+import job.telegram_listener.TelegramButtonListenerJob
+import org.danceofvalkyries.job.Job
+import org.danceofvalkyries.job.data.dictionary.OnlineDictionary
+import org.danceofvalkyries.job.data.dictionary.constant.ConstantOnlineDictionary
+import org.danceofvalkyries.job.data.telegram.bot.TelegramBotImpl
+import org.danceofvalkyries.job.data.telegram.message.TelegramMessage
+import org.danceofvalkyries.job.data.telegram.message.local.translator.TelegramTextTranslator
 import org.danceofvalkyries.utils.resources.EngStringResources
 import utils.DispatchersFake
 import utils.OnlineDictionariesFake
@@ -22,7 +22,7 @@ import utils.fakes.telegram.TelegramMessageFake
 
 class ButtonsListenersTest : BehaviorSpec() {
 
-    private lateinit var telegramButtonListenerApp: App
+    private lateinit var telegramButtonListenerJob: Job
     private lateinit var sqlLiteNotionDataBasesFake: SqlLiteNotionDataBasesFake
     private lateinit var sentTelegramMessagesTypeFake: SentTelegramMessagesTypeFake
 
@@ -62,8 +62,8 @@ class ButtonsListenersTest : BehaviorSpec() {
                     EngStringResources(),
                     DispatchersFake(),
                 )
-                telegramButtonListenerApp = AppRunInTestDecorator(
-                    TelegramButtonListenerApp(
+                telegramButtonListenerJob = JobRunInTestDecorator(
+                    TelegramButtonListenerJob(
                         DispatchersFake(),
                         telegramChat,
                         botUser,
@@ -81,7 +81,7 @@ class ButtonsListenersTest : BehaviorSpec() {
                         action = TelegramMessage.Button.Action.Text("Q")
                     )
                     telegramChat.userSendsCallback(callback)
-                    telegramButtonListenerApp.run()
+                    telegramButtonListenerJob.run()
                 }
 
                 Then("Should delete that message from Telegram") {
@@ -122,7 +122,7 @@ class ButtonsListenersTest : BehaviorSpec() {
 
                     beforeTest {
                         notificationMessage = initAndGetNotificationMessage(numberToRevise = 2)
-                        telegramButtonListenerApp.run()
+                        telegramButtonListenerJob.run()
                     }
 
                     And("User taps on English Vocabulary buttons") {

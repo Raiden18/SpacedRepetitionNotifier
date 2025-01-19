@@ -1,7 +1,7 @@
 package utils
 
-import org.danceofvalkyries.app.data.notion.databases.NotionDataBase
-import org.danceofvalkyries.app.data.notion.databases.NotionDataBases
+import org.danceofvalkyries.job.data.notion.databases.NotionDataBase
+import org.danceofvalkyries.job.data.notion.databases.NotionDataBases
 
 data class SqlLiteNotionDataBasesFake(
     private var dataBases: List<NotionDataBase> = emptyList()

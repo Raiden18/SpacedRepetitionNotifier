@@ -1,7 +1,7 @@
 package utils
 
-import org.danceofvalkyries.app.data.telegram.message_types.SentTelegramMessageType
-import org.danceofvalkyries.app.data.telegram.message_types.SentTelegramMessagesType
+import org.danceofvalkyries.job.data.telegram.message_types.SentTelegramMessageType
+import org.danceofvalkyries.job.data.telegram.message_types.SentTelegramMessagesType
 
 class SentTelegramMessagesTypeFake(
     private var telegramMessages: List<SentTelegramMessageType> = emptyList()
@@ -15,7 +15,7 @@ class SentTelegramMessagesTypeFake(
         return iterate().filter { it.type == type }
     }
 
-    override suspend fun add(id: Long, type: String): SentTelegramMessageType {
+    override suspend fun add(id: Long, type: String): org.danceofvalkyries.job.data.telegram.message_types.SentTelegramMessageType {
         val telegramMessageType = SentTelegramMessageTypeFake(id, type)
         telegramMessages = telegramMessages + listOf(telegramMessageType)
         return telegramMessageType

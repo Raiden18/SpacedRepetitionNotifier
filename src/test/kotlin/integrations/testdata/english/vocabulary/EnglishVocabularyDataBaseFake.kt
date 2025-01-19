@@ -1,7 +1,7 @@
 package integrations.testdata.english.vocabulary
 
-import org.danceofvalkyries.app.data.notion.databases.NotionDataBase
-import org.danceofvalkyries.app.data.notion.pages.NotionPageFlashCard
+import org.danceofvalkyries.job.data.notion.databases.NotionDataBase
+import org.danceofvalkyries.job.data.notion.pages.NotionPageFlashCard
 import utils.NotionDataBaseFake
 
 class EnglishVocabularyDataBaseFake : NotionDataBase {

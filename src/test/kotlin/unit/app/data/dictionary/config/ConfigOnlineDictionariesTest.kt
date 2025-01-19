@@ -2,8 +2,8 @@ package unit.app.data.dictionary.config
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.app.data.dictionary.constant.ConstantOnlineDictionary
-import org.danceofvalkyries.app.data.dictionary.constant.ConfigOnlineDictionaries
+import org.danceofvalkyries.job.data.dictionary.constant.ConstantOnlineDictionary
+import org.danceofvalkyries.job.data.dictionary.constant.ConfigOnlineDictionaries
 import org.danceofvalkyries.config.domain.ObservedDatabase
 
 class ConfigOnlineDictionariesTest : FunSpec() {

@@ -3,7 +3,7 @@ package unit.notion.impl.client.models.request
 import com.google.gson.GsonBuilder
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import notion.impl.client.models.request.SpacedRepetitionRequestBody
+import org.danceofvalkyries.notion.impl.client.models.request.SpacedRepetitionRequestBody
 
 class SpaceRepetitionRequestBodyKtTest : FunSpec() {
 

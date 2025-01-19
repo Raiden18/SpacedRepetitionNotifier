@@ -1,7 +1,7 @@
 package utils.fakes
 
-import org.danceofvalkyries.app.data.notion.databases.NotionDataBase
-import org.danceofvalkyries.app.data.notion.databases.NotionDataBases
+import org.danceofvalkyries.job.data.notion.databases.NotionDataBase
+import org.danceofvalkyries.job.data.notion.databases.NotionDataBases
 
 class NotionDataBasesRestfulFake(
     private val dataBases: List<NotionDataBase>

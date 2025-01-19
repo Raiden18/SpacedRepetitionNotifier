@@ -1,6 +1,6 @@
 package integrations.testdata.telegram
 
-import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
+import org.danceofvalkyries.job.data.telegram.message.TelegramMessage
 
 data class TelegramCallbackDataFake(
     override val id: String,
