@@ -1,12 +1,6 @@
 name: Test and Upload Coverage to Coveralls
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+on: ["push", "pull_request"]
 
 jobs:
   build:
@@ -29,3 +23,5 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-lcov: build/reports/jacoco/test/jacocoTestReport.xml
+
+github-token: ${{ secrets.GITHUB_TOKEN }}
