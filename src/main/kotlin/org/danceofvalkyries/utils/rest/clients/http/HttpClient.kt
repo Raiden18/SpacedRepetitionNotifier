@@ -9,6 +9,8 @@ interface HttpClient {
     suspend fun post(url: String, body: String, headers: List<Header>): Response
     suspend fun patch(url: String, body: String, headers: List<Header>): Response
 
+    fun releaseResources()
+
     data class Response(
         val requestUrl: String,
         val responseBody: String?,

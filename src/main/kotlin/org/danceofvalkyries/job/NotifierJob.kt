@@ -1,10 +1,8 @@
 package org.danceofvalkyries.job
 
 import com.google.gson.Gson
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.flow.flatMapConcat
-import kotlinx.coroutines.launch
 import org.danceofvalkyries.bot.TelegramBot
 import org.danceofvalkyries.bot.TelegramBotImpl
 import org.danceofvalkyries.dictionary.constant.ConfigOnlineDictionaries
@@ -51,27 +49,29 @@ fun NotifierJob(
         EngStringResources(),
         dispatchers,
     )
-    return NotifierJob(
+    return JobResourcesLifeCycleDecorator(
         dispatchers,
-        environment.config.flashCardsThreshold,
-        sqlLiteNotionDatabases,
-        telegramBotUser,
+        httpClient,
+        NotifierJob(
+            environment.config.flashCardsThreshold,
+            sqlLiteNotionDatabases,
+            telegramBotUser,
+        )
     )
 }
 
 class NotifierJob(
-    private val dispatchers: Dispatchers,
     private val flashCardsThreshold: Int,
     private val sqlLiteNotionDataBases: NotionDataBases,
     private val telegramBot: TelegramBot,
 ) : Job {
 
-    private val coroutineScope = CoroutineScope(dispatchers.unconfined)
+    override val type: String = "notifier"
 
     override suspend fun run() {
-        coroutineScope.launch {
-            checkFlashCardsAndSendNotificationOrShowDoneMessage()
-        }
+        println("HERE")
+        checkFlashCardsAndSendNotificationOrShowDoneMessage()
+        println("END")
     }
 
     private suspend fun checkFlashCardsAndSendNotificationOrShowDoneMessage() {

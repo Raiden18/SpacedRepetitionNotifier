@@ -16,21 +16,20 @@ class TestEnvironment : Environment {
             return DataBaseImpl(path)
         }
 
-    override val httpClient: OkHttpClient
-        get() {
-            val logger = HttpLoggingInterceptor.Logger { message -> println(message) }
-            val interceptor = HttpLoggingInterceptor(logger).apply {
-                level = HttpLoggingInterceptor.Level.BODY
-            }
-            val timeOut = 60_000L
-            return OkHttpClient.Builder()
-                .callTimeout(timeOut, TimeUnit.MILLISECONDS)
-                .readTimeout(timeOut, TimeUnit.MILLISECONDS)
-                .writeTimeout(timeOut, TimeUnit.MILLISECONDS)
-                .connectTimeout(timeOut, TimeUnit.MILLISECONDS)
-                .addInterceptor(interceptor)
-                .build()
+    override val httpClient: OkHttpClient by lazy {
+        val logger = HttpLoggingInterceptor.Logger { message -> println(message) }
+        val interceptor = HttpLoggingInterceptor(logger).apply {
+            level = HttpLoggingInterceptor.Level.BODY
         }
+        val timeOut = 60_000L
+        OkHttpClient.Builder()
+            .callTimeout(timeOut, TimeUnit.MILLISECONDS)
+            .readTimeout(timeOut, TimeUnit.MILLISECONDS)
+            .writeTimeout(timeOut, TimeUnit.MILLISECONDS)
+            .connectTimeout(timeOut, TimeUnit.MILLISECONDS)
+            .addInterceptor(interceptor)
+            .build()
+    }
 
     override val config: Config
         get() = TestConfigRepository().getConfig()

@@ -12,6 +12,7 @@ import utils.OnlineDictionariesFake
 import utils.SentTelegramMessagesTypeFake
 import utils.SqlLiteNotionDataBasesFake
 import utils.fakes.NotionDataBasesRestfulFake
+import utils.fakes.httpclient.HttpClientFake
 import utils.fakes.telegram.TelegramChatFake
 import utils.fakes.telegram.TelegramMessageFake
 
@@ -115,11 +116,14 @@ class NotifierAppTest : BehaviorSpec() {
 
     private fun createApp(flashCardsThreshold: Int): Job {
         return JobRunInTestDecorator(
-            NotifierJob(
+            JobResourcesLifeCycleDecorator(
                 DispatchersFake(),
-                flashCardsThreshold = flashCardsThreshold,
-                sqlLiteNotionDataBases,
-                telegramBot,
+                HttpClientFake(),
+                NotifierJob(
+                    flashCardsThreshold = flashCardsThreshold,
+                    sqlLiteNotionDataBases,
+                    telegramBot,
+                )
             )
         )
     }

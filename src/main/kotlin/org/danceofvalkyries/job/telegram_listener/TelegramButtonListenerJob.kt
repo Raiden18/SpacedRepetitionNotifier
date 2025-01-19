@@ -1,16 +1,15 @@
 package org.danceofvalkyries.job.telegram_listener
 
 import com.google.gson.Gson
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
-import org.danceofvalkyries.environment.Environment
-import org.danceofvalkyries.job.Job
-import org.danceofvalkyries.dictionary.constant.ConfigOnlineDictionaries
-import org.danceofvalkyries.notion.databases.restful.RestFulNotionDataBases
-import org.danceofvalkyries.notion.databases.sqlite.SqlLiteNotionDataBases
 import org.danceofvalkyries.bot.TelegramBot
 import org.danceofvalkyries.bot.TelegramBotImpl
+import org.danceofvalkyries.dictionary.constant.ConfigOnlineDictionaries
+import org.danceofvalkyries.environment.Environment
+import org.danceofvalkyries.job.Job
+import org.danceofvalkyries.job.JobResourcesLifeCycleDecorator
+import org.danceofvalkyries.notion.databases.restful.RestFulNotionDataBases
+import org.danceofvalkyries.notion.databases.sqlite.SqlLiteNotionDataBases
 import org.danceofvalkyries.telegram.chat.TelegramChat
 import org.danceofvalkyries.telegram.chat.restful.RestfulTelegramChat
 import org.danceofvalkyries.telegram.message.TelegramMessage
@@ -54,33 +53,33 @@ fun ListenToTelegramEvensJob(
         EngStringResources(),
         dispatchers,
     )
-    return TelegramButtonListenerJob(
+    return JobResourcesLifeCycleDecorator(
         dispatchers,
-        telegramChat,
-        botUser,
+        httpClient,
+        TelegramButtonListenerJob(
+            telegramChat,
+            botUser,
+        )
     )
 }
 
 class TelegramButtonListenerJob(
-    private val dispatchers: Dispatchers,
     private val telegramChat: TelegramChat,
     private val bot: TelegramBot,
 ) : Job {
 
-    private val coroutineScope = CoroutineScope(dispatchers.unconfined)
+    override val type: String = "button_listener"
 
     override suspend fun run() {
-        coroutineScope.launch {
-            telegramChat
-                .getEvents()
-                .onEach {
-                    when (val action = ButtonAction.parse(it.action.value)) {
-                        is ButtonAction.DataBase -> bot.startRepetitionSessionFor(action.notionDbId)
-                        is ButtonAction.Forgotten -> bot.makeForgotten(action.flashCardId)
-                        is ButtonAction.Recalled -> bot.makeRecalled(action.flashCardId)
-                        is ButtonAction.Unknown -> bot.deleteMessage(it.messageId)
-                    }
-                }.collect(TelegramMessage.Button.Callback::answer)
-        }
+        telegramChat
+            .getEvents()
+            .onEach {
+                when (val action = ButtonAction.parse(it.action.value)) {
+                    is ButtonAction.DataBase -> bot.startRepetitionSessionFor(action.notionDbId)
+                    is ButtonAction.Forgotten -> bot.makeForgotten(action.flashCardId)
+                    is ButtonAction.Recalled -> bot.makeRecalled(action.flashCardId)
+                    is ButtonAction.Unknown -> bot.deleteMessage(it.messageId)
+                }
+            }.collect(TelegramMessage.Button.Callback::answer)
     }
 }

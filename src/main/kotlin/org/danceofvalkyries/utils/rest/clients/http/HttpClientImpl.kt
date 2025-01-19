@@ -1,5 +1,6 @@
 package org.danceofvalkyries.utils.rest.clients.http
 
+import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.Headers
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -9,7 +10,6 @@ import org.danceofvalkyries.utils.rest.ContentType
 import org.danceofvalkyries.utils.rest.ContentTypes
 import org.danceofvalkyries.utils.rest.Header
 import org.danceofvalkyries.utils.rest.clients.http.HttpClient.Response
-import kotlin.coroutines.suspendCoroutine
 
 class HttpClientImpl(
     private val okHttpClient: OkHttpClient,
@@ -59,6 +59,11 @@ class HttpClientImpl(
         )
     }
 
+    override fun releaseResources() {
+        okHttpClient.dispatcher.executorService.shutdown()
+        okHttpClient.connectionPool.evictAll()
+    }
+
     private fun Request.Builder.headers(headers: List<Header>): Request.Builder {
         val headersBuilder = Headers.Builder()
         headers.forEach { headersBuilder.add(it.name, it.value) }
@@ -66,8 +71,10 @@ class HttpClientImpl(
     }
 
     private suspend fun Request.request(client: OkHttpClient): okhttp3.Response {
-        return suspendCoroutine { continuation ->
-            client.newCall(this).enqueue(OkHttpCallbackCoroutinesAdapter(continuation))
+        return suspendCancellableCoroutine { continuation ->
+            val call = client.newCall(this)
+            continuation.invokeOnCancellation { call.cancel() }
+            call.enqueue(OkHttpCallbackCoroutinesAdapter(continuation))
         }
     }
 }

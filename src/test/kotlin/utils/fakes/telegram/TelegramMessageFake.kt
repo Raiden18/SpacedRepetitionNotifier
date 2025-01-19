@@ -35,7 +35,7 @@ data class TelegramMessageFake(
         fun createAllDone(messageId: Long): TelegramMessageFake {
             return TelegramMessageFake(
                 id = messageId,
-                text = """Good Job! 😎 Everything is revised! ✅""",
+                text = """Good Job\! 😎 Everything is revised\! ✅""",
                 imageUrl = null,
                 nestedButtons = emptyList(),
             )

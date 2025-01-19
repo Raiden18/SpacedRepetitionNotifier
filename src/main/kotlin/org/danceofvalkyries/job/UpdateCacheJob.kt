@@ -1,20 +1,17 @@
 package org.danceofvalkyries.job
 
 import com.google.gson.Gson
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import org.danceofvalkyries.environment.Environment
 import org.danceofvalkyries.notion.databases.NotionDataBases
 import org.danceofvalkyries.notion.databases.restful.RestFulNotionDataBases
 import org.danceofvalkyries.notion.databases.sqlite.SqlLiteNotionDataBases
 import org.danceofvalkyries.utils.Dispatchers
-import org.danceofvalkyries.utils.db.DataBase
 import org.danceofvalkyries.utils.rest.clients.http.HttpClientImpl
 
 fun UpdateCacheJob(
     dispatchers: Dispatchers,
     environment: Environment,
-): UpdateCacheJob {
+): Job {
     val dbConnection = environment.dataBase.establishConnection()
     val httpClient = HttpClientImpl(environment.httpClient)
     val restfulNotionDatabases = RestFulNotionDataBases(
@@ -24,29 +21,27 @@ fun UpdateCacheJob(
         gson = Gson()
     )
     val sqlLiteNotionDatabases = SqlLiteNotionDataBases(dbConnection)
-    return UpdateCacheJob(
+    return JobResourcesLifeCycleDecorator(
         dispatchers,
-        restfulNotionDatabases,
-        sqlLiteNotionDatabases,
-        environment.dataBase,
+        httpClient,
+        UpdateCacheJob(
+            restfulNotionDatabases,
+            sqlLiteNotionDatabases,
+        )
     )
 }
 
 class UpdateCacheJob(
-    private val dispatchers: Dispatchers,
     private val restfulNotionDataBases: NotionDataBases,
     private val sqlLiteNotionDataBases: NotionDataBases,
-    private val dataBase: DataBase,
 ) : Job {
 
-    private val coroutineScope = CoroutineScope(dispatchers.unconfined)
+
+    override val type: String = "update_cache"
 
     override suspend fun run() {
-        coroutineScope.launch {
-            clearAllCache()
-            downLoadNotionDataBasesAndPagesAndSaveThemToLocalDataBase()
-            dataBase.demolishConnect()
-        }
+        clearAllCache()
+        downLoadNotionDataBasesAndPagesAndSaveThemToLocalDataBase()
     }
 
     private suspend fun downLoadNotionDataBasesAndPagesAndSaveThemToLocalDataBase() {

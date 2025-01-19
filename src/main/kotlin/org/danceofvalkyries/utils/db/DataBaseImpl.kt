@@ -7,13 +7,7 @@ class DataBaseImpl(
     private val path: String
 ) : DataBase {
 
-    private val connection by lazy { DriverManager.getConnection("jdbc:sqlite:${path}") }
-
     override fun establishConnection(): Connection {
-        return connection
-    }
-
-    override fun demolishConnect() {
-        connection.close()
+        return DriverManager.getConnection("jdbc:sqlite:${path}")
     }
 }

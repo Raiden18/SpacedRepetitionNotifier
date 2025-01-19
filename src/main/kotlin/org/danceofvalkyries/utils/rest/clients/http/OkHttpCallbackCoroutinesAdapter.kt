@@ -1,15 +1,15 @@
 package org.danceofvalkyries.utils.rest.clients.http
 
+import kotlinx.coroutines.CancellableContinuation
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
+import okhttp3.internal.closeQuietly
 import java.io.IOException
-import kotlin.coroutines.Continuation
-import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
 class OkHttpCallbackCoroutinesAdapter(
-    private val continuation: Continuation<Response>
+    private val continuation: CancellableContinuation<Response>
 ) : Callback {
 
     override fun onFailure(call: Call, e: IOException) {
@@ -17,6 +17,12 @@ class OkHttpCallbackCoroutinesAdapter(
     }
 
     override fun onResponse(call: Call, response: Response) {
-        continuation.resume(response)
+        if (response.isSuccessful) {
+            continuation.resume(response) { cause, _, _ ->
+                response.closeQuietly()
+            }
+        } else {
+            continuation.resumeWithException(IOException("HTTP error ${response.code}"))
+        }
     }
 }
