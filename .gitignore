@@ -25,4 +25,4 @@ out/
 /.idea/codeStyles/*
 /.idea/*
 /gradle/wrapper/gradle-wrapper.jar
-/src/main/kotlin/config/data/TestConfigRepository.kt
+/src/main/kotlin/org/danceofvalkyries/config/data/TestConfigRepository.kt
