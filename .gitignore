@@ -26,3 +26,4 @@ out/
 /.idea/*
 /gradle/wrapper/gradle-wrapper.jar
 /src/main/kotlin/org/danceofvalkyries/config/data/TestConfigRepository.kt
+/build/reports/
