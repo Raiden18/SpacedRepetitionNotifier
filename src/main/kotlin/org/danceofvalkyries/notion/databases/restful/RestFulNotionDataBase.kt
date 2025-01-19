@@ -34,7 +34,7 @@ class RestFulNotionDataBase(
         return id
     }
 
-    override fun getName(): String {
+    override suspend fun getName(): String {
         return httpClient.get(
             url = "https://api.notion.com/v1/databases/$id",
             headers = headers
@@ -42,7 +42,7 @@ class RestFulNotionDataBase(
     }
 
 
-    override fun iterate(): Flow<NotionPageFlashCard> {
+    override suspend fun iterate(): Flow<NotionPageFlashCard> {
         return httpClient.post(
             url = "https://api.notion.com/v1/databases/$id/query",
             headers = headers,
@@ -71,8 +71,8 @@ class RestFulNotionDataBase(
         )
     }
 
-    override fun clear() = error("Clearing pages from Notion is not going to be supported")
-    override fun delete(pageId: String) = error("Deleting pages from Notion is not going to be supported")
+    override suspend fun clear() = error("Clearing pages from Notion is not going to be supported")
+    override suspend fun delete(pageId: String) = error("Deleting pages from Notion is not going to be supported")
 
     override suspend fun add(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard = error("Adding a page to Notion is not going to be supported")
 

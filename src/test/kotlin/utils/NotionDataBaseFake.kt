@@ -15,11 +15,11 @@ data class NotionDataBaseFake(
         return id
     }
 
-    override fun getName(): String {
+    override suspend fun getName(): String {
         return name
     }
 
-    override fun iterate(): Flow<NotionPageFlashCard> {
+    override suspend fun iterate(): Flow<NotionPageFlashCard> {
         return pages.asFlow()
     }
 
@@ -41,11 +41,11 @@ data class NotionDataBaseFake(
         return pages.first { pageId == it.id }
     }
 
-    override fun clear() {
+    override suspend fun clear() {
         pages = emptyList()
     }
 
-    override fun delete(pageId: String) {
+    override suspend fun delete(pageId: String) {
         pages = pages.filter { it.id != pageId }
     }
 }

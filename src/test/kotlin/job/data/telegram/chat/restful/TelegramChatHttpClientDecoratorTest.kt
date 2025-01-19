@@ -73,7 +73,7 @@ class TelegramChatHttpClientDecoratorTest : BehaviorSpec() {
     }
 
 
-    private fun makePostRequest(jsonName: String) {
+    private suspend fun makePostRequest(jsonName: String) {
         telegramChatHttpClientDecorator.post(
             url = sendImageUrl,
             body = javaClass.getResource(jsonName)!!.readText(),

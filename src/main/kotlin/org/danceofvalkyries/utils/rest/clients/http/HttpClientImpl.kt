@@ -11,7 +11,7 @@ class HttpClientImpl(
     private val okHttpClient: OkHttpClient,
 ) : HttpClient {
 
-    override fun get(url: String, headers: List<Header>): Response {
+    override suspend fun get(url: String, headers: List<Header>): Response {
         val response = Request.Builder()
             .url(url)
             .headers(headers)
@@ -25,7 +25,7 @@ class HttpClientImpl(
         )
     }
 
-    override fun post(url: String, body: String, headers: List<Header>): Response {
+    override suspend fun post(url: String, body: String, headers: List<Header>): Response {
         val applicationJson = ContentType(ContentTypes.ApplicationJson)
         val response = Request.Builder()
             .url(url)

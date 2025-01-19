@@ -27,8 +27,8 @@ class GreekLettersAndSoundsDataBaseDataBase : NotionDataBase {
         return defaultNotionDataBaseFake.getId()
     }
 
-    override fun getName(): String {
-        return  defaultNotionDataBaseFake.getName()
+    override suspend fun getName(): String {
+        return defaultNotionDataBaseFake.getName()
     }
 
     fun createTelegramNotification(id: Long): TelegramMessageFake {
@@ -40,7 +40,7 @@ class GreekLettersAndSoundsDataBaseDataBase : NotionDataBase {
         )
     }
 
-    override fun iterate(): Flow<NotionPageFlashCard> {
+    override suspend fun iterate(): Flow<NotionPageFlashCard> {
         return flowOf(restfulGreekLetter1FlashCard, restfulGreekLetter2FlashCard)
     }
 
@@ -52,11 +52,11 @@ class GreekLettersAndSoundsDataBaseDataBase : NotionDataBase {
         error("Must not be supported")
     }
 
-    override fun clear() {
+    override suspend fun clear() {
         error("Must not be supported")
     }
 
-    override fun delete(pageId: String) {
+    override suspend fun delete(pageId: String) {
         error("Must not be supported")
     }
 }

@@ -27,11 +27,11 @@ class EnglishVocabularyDataBaseFake : NotionDataBase {
         return ID
     }
 
-    override fun getName(): String {
+    override suspend fun getName(): String {
         return NAME
     }
 
-    override fun iterate(): Flow<NotionPageFlashCard> {
+    override suspend fun iterate(): Flow<NotionPageFlashCard> {
         return defaultNotionDataBaseFake.iterate()
     }
 
@@ -43,11 +43,11 @@ class EnglishVocabularyDataBaseFake : NotionDataBase {
         return iterate().first { it.id == pageId }
     }
 
-    override fun clear() {
+    override suspend fun clear() {
         defaultNotionDataBaseFake.clear()
     }
 
-    override fun delete(pageId: String) {
+    override suspend fun delete(pageId: String) {
         defaultNotionDataBaseFake.delete(pageId)
     }
 }

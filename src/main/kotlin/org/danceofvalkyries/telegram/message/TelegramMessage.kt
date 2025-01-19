@@ -7,7 +7,7 @@ interface TelegramMessage {
     fun getId(): Long
     fun getText(): String
     fun getImageUrl(): String?
-    fun getNestedButtons(): List<List<Button>>
+    suspend fun getNestedButtons(): List<List<Button>>
 
     interface Button {
         val text: String

@@ -96,7 +96,7 @@ data class TelegramMessageFake(
         return imageUrl
     }
 
-    override fun getNestedButtons(): List<List<TelegramMessage.Button>> {
+    override suspend fun getNestedButtons(): List<List<TelegramMessage.Button>> {
         return nestedButtons
     }
 }

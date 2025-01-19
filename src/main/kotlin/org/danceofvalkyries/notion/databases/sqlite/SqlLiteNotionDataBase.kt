@@ -39,7 +39,7 @@ class SqlLiteNotionDataBase(
         return id
     }
 
-    override fun getName(): String {
+    override suspend fun getName(): String {
         return connection.createStatement()
             .executeQuery(
                 SqlQuery {
@@ -50,7 +50,7 @@ class SqlLiteNotionDataBase(
             )?.let(nameColumn::getValue)!!
     }
 
-    override fun iterate(): Flow<NotionPageFlashCard> {
+    override suspend fun iterate(): Flow<NotionPageFlashCard> {
         return createStatement().let {
             it.executeQuery(
                 SqlQuery {
@@ -122,7 +122,7 @@ class SqlLiteNotionDataBase(
         )
     }
 
-    override fun clear() {
+    override suspend fun clear() {
         createStatement().execute(
             SqlQuery {
                 delete()
@@ -131,7 +131,7 @@ class SqlLiteNotionDataBase(
         )
     }
 
-    override fun delete(pageId: String) {
+    override suspend fun delete(pageId: String) {
         createStatement()
             .also {
                 it.execute(
@@ -149,7 +149,7 @@ class SqlLiteNotionDataBase(
         return TextTableColumn("know_level_$lvl")
     }
 
-    private fun createStatement(): Statement {
+    private suspend fun createStatement(): Statement {
         return connection.createStatement()
             .also {
                 it.execute(
@@ -171,7 +171,7 @@ class SqlLiteNotionDataBase(
     }
 
 
-    private fun getPageTableName(): String {
+    private suspend fun getPageTableName(): String {
         return "flash_cards_to_revise_${getName().lowercase(Locale.getDefault()).replace(" ", "_")} "
     }
 }

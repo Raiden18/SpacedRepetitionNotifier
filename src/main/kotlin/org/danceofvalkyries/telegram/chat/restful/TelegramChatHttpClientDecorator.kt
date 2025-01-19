@@ -21,7 +21,7 @@ class TelegramChatHttpClientDecorator(
         const val BLUE_SCREEN = "https://neosmart.net/wiki/wp-content/uploads/sites/5/2013/08/unmountable-boot-volume.png"
     }
 
-    override fun post(url: String, body: String, headers: List<Header>): HttpClient.Response {
+    override suspend fun post(url: String, body: String, headers: List<Header>): HttpClient.Response {
         val response = httpClient.post(url, body, headers)
         if (response.responseCode == 400) {
             val errorJsonBody = gson.fromJson(response.responseBody, TelegramErrorJsonObject::class.java)

@@ -17,7 +17,7 @@ class NeedRevisingNotificationMessage(
         return """${stringResources.flashCardsToRevise(flashCards.count())} 🧠""".trimIndent()
     }
 
-    override fun getNestedButtons(): List<List<TelegramMessage.Button>> {
+    override suspend fun getNestedButtons(): List<List<TelegramMessage.Button>> {
         return flashCards
             .groupBy { it.notionDbID }
             .map { (dbId, flashCards) ->

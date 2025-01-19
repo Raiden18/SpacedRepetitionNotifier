@@ -5,10 +5,10 @@ import org.danceofvalkyries.notion.pages.NotionPageFlashCard
 
 interface NotionDataBase {
     fun getId(): String
-    fun getName(): String
-    fun iterate(): Flow<NotionPageFlashCard>
-    fun clear()
-    fun delete(pageId: String)
+    suspend fun clear()
+    suspend fun delete(pageId: String)
+    suspend fun getName(): String
+    suspend fun iterate(): Flow<NotionPageFlashCard>
     suspend fun add(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard
     suspend fun getPageBy(pageId: String): NotionPageFlashCard
 }

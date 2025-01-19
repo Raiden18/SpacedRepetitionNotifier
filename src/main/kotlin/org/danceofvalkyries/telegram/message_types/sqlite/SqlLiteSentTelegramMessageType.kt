@@ -36,7 +36,7 @@ class SqlLiteSentTelegramMessageType(
         error("Is not saved in DB")
     }
 
-    override fun getNestedButtons(): List<List<TelegramMessage.Button>> {
+    override suspend fun getNestedButtons(): List<List<TelegramMessage.Button>> {
         error("Is not saved in DB")
     }
 }

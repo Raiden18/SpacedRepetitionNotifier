@@ -160,7 +160,7 @@ class RestfulTelegramChat(
 
     }
 
-    private fun sendMessage(url: HttpUrl, textBody: MessageData): MessageData {
+    private suspend fun sendMessage(url: HttpUrl, textBody: MessageData): MessageData {
         val response = httpClient.post(
             url = url.toString(),
             body = gson.toJson(textBody),

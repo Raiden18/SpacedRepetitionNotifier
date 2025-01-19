@@ -40,7 +40,7 @@ class FlashCardMessage(
         return body.toString()
     }
 
-    override fun getNestedButtons(): List<List<TelegramMessage.Button>> {
+    override suspend fun getNestedButtons(): List<List<TelegramMessage.Button>> {
         val recallActions = listOf(
             ConstantTelegramMessageButton(
                 "${stringResources.forgot()}  ❌",

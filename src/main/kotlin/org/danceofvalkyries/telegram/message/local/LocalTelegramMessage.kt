@@ -14,7 +14,7 @@ abstract class LocalTelegramMessage : TelegramMessage {
         return null
     }
 
-    override fun getNestedButtons(): List<List<TelegramMessage.Button>> {
+    override suspend fun getNestedButtons(): List<List<TelegramMessage.Button>> {
         return emptyList()
     }
 }
