@@ -52,64 +52,6 @@ class TelegramBotImpl(
         )
     }
 
-    override suspend fun sendFlashCardMessage(flashCard: NotionPageFlashCard) {
-        sentMessageAndSave(
-            FlashCardMessage(
-                flashCard,
-                textTranslator,
-                stringResources,
-                onlineDictionaries.iterate(flashCard.notionDbID)
-            )
-        )
-    }
-
-    override suspend fun getAnyFlashCardFor(notionDbId: String): NotionPageFlashCard? {
-        return localDbNotionDataBases.iterate()
-            .flatMap { it.iterate() }
-            .firstOrNull { it.notionDbID == notionDbId }
-    }
-
-    override suspend fun updateNotificationMessage() {
-        val flashCards = getAllFlashCard()
-        val newNotificationMessage = if (flashCards.isEmpty()) {
-            DoneTelegramMessage(stringResources)
-        } else {
-            NeedRevisingFlashCardMessage(flashCards)
-        }
-        editNotificationMessageTo(newNotificationMessage)
-    }
-
-    override suspend fun deleteAllFlashCardsFromChat() {
-        removedTelegramMessages(FLASH_CARD_TYPE_MESSAGE)
-    }
-
-    override suspend fun sendNextFlashCardFrom(notionDbId: String) {
-        val flashCard = localDbNotionDataBases.getBy(notionDbId)
-            .iterate()
-            .firstOrNull()
-        if (flashCard != null) {
-            sendFlashCardMessage(flashCard)
-        }
-    }
-
-    override suspend fun removeRecalledFlashCardFromLocalDbs(recalledFlashCardID: String) {
-        removeNotionFlashCard(recalledFlashCardID)
-        removedCachedMessages(FLASH_CARD_TYPE_MESSAGE)
-    }
-
-    override suspend fun removeForgotFlashCardFromLocalDbs(forgotFlashCardId: String) {
-        removeNotionFlashCard(forgotFlashCardId)
-        removedCachedMessages(FLASH_CARD_TYPE_MESSAGE)
-    }
-
-    override suspend fun makeForgottenOnNotion(flashCardId: String) {
-        performAction(flashCardId) { it.forget() }
-    }
-
-    override suspend fun makeRecalledOnNotion(flashCardId: String) {
-        performAction(flashCardId) { it.recall() }
-    }
-
     override suspend fun startRepetitionSessionFor(dbId: String) {
         this.dbId = dbId
         val nextFlashCard = getAnyFlashCardFor(dbId)
@@ -186,5 +128,63 @@ class TelegramBotImpl(
         localDbNotionDataBases.iterate().forEach {
             it.delete(notionPagId)
         }
+    }
+
+    private suspend fun sendFlashCardMessage(flashCard: NotionPageFlashCard) {
+        sentMessageAndSave(
+            FlashCardMessage(
+                flashCard,
+                textTranslator,
+                stringResources,
+                onlineDictionaries.iterate(flashCard.notionDbID)
+            )
+        )
+    }
+
+    private suspend fun makeRecalledOnNotion(flashCardId: String) {
+        performAction(flashCardId) { it.recall() }
+    }
+
+    private suspend fun makeForgottenOnNotion(flashCardId: String) {
+        performAction(flashCardId) { it.forget() }
+    }
+
+    private suspend fun getAnyFlashCardFor(notionDbId: String): NotionPageFlashCard? {
+        return localDbNotionDataBases.iterate()
+            .flatMap { it.iterate() }
+            .firstOrNull { it.notionDbID == notionDbId }
+    }
+
+    private suspend fun updateNotificationMessage() {
+        val flashCards = getAllFlashCard()
+        val newNotificationMessage = if (flashCards.isEmpty()) {
+            DoneTelegramMessage(stringResources)
+        } else {
+            NeedRevisingFlashCardMessage(flashCards)
+        }
+        editNotificationMessageTo(newNotificationMessage)
+    }
+
+    private suspend fun deleteAllFlashCardsFromChat() {
+        removedTelegramMessages(FLASH_CARD_TYPE_MESSAGE)
+    }
+
+    private suspend fun sendNextFlashCardFrom(notionDbId: String) {
+        val flashCard = localDbNotionDataBases.getBy(notionDbId)
+            .iterate()
+            .firstOrNull()
+        if (flashCard != null) {
+            sendFlashCardMessage(flashCard)
+        }
+    }
+
+    private suspend fun removeRecalledFlashCardFromLocalDbs(recalledFlashCardID: String) {
+        removeNotionFlashCard(recalledFlashCardID)
+        removedCachedMessages(FLASH_CARD_TYPE_MESSAGE)
+    }
+
+    private suspend fun removeForgotFlashCardFromLocalDbs(forgotFlashCardId: String) {
+        removeNotionFlashCard(forgotFlashCardId)
+        removedCachedMessages(FLASH_CARD_TYPE_MESSAGE)
     }
 }
