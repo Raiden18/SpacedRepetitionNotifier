@@ -47,7 +47,6 @@ fun NotifierJob(
         restfulNotionDatabases,
         sqlLiteTelegramMessages,
         onlineDictionaries,
-        TelegramTextTranslator(),
         EngStringResources(),
         dispatchers,
     )

@@ -9,7 +9,6 @@ import org.danceofvalkyries.job.data.telegram.chat.TelegramChat
 import org.danceofvalkyries.job.data.telegram.message.deleteFrom
 import org.danceofvalkyries.job.data.telegram.message.edit
 import org.danceofvalkyries.job.data.telegram.message.local.*
-import org.danceofvalkyries.job.data.telegram.message.local.translator.TextTranslator
 import org.danceofvalkyries.job.data.telegram.message.sendTo
 import org.danceofvalkyries.job.data.telegram.message_types.SentTelegramMessagesType
 import org.danceofvalkyries.job.data.telegram.message_types.deleteFrom
@@ -24,7 +23,6 @@ class TelegramBotImpl(
     private val restfulNotionDataBases: NotionDataBases,
     private val sentTelegramMessagesType: SentTelegramMessagesType,
     private val onlineDictionaries: OnlineDictionaries,
-    private val textTranslator: TextTranslator,
     private val stringResources: StringResources,
     private val dispatchers: Dispatchers,
 ) : TelegramBot {
@@ -104,8 +102,8 @@ class TelegramBotImpl(
             .toList()
     }
 
-    private suspend fun NeedRevisingFlashCardMessage(flashCards: List<NotionPageFlashCard>): NeedRevisingFlashCardMessage {
-        return NeedRevisingFlashCardMessage(
+    private suspend fun NeedRevisingFlashCardMessage(flashCards: List<NotionPageFlashCard>): NeedRevisingNotificationMessage {
+        return NeedRevisingNotificationMessage(
             stringResources = stringResources,
             flashCards = flashCards,
             notionDataBases = localDbNotionDataBases.iterate().toList()
@@ -141,7 +139,6 @@ class TelegramBotImpl(
         sendMessageAndSave(
             FlashCardMessage(
                 flashCard,
-                textTranslator,
                 stringResources,
                 onlineDictionaries.iterate(flashCard.notionDbID)
             )

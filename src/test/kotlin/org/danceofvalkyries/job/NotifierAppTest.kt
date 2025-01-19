@@ -5,7 +5,6 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import org.danceofvalkyries.job.data.telegram.bot.TelegramBotImpl
 import org.danceofvalkyries.job.data.telegram.message.TelegramMessage
-import org.danceofvalkyries.job.data.telegram.message.local.translator.TelegramTextTranslator
 import org.danceofvalkyries.utils.resources.EngStringResources
 import utils.DispatchersFake
 import utils.OnlineDictionariesFake
@@ -36,7 +35,6 @@ class NotifierAppTest : BehaviorSpec() {
                 NotionDataBasesRestfulFake(listOf()),
                 sentTelegramMessagesType,
                 OnlineDictionariesFake(emptyList()),
-                TelegramTextTranslator(),
                 EngStringResources(),
                 DispatchersFake()
             )

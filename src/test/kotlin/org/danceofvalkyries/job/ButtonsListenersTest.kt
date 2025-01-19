@@ -10,7 +10,6 @@ import org.danceofvalkyries.job.data.dictionary.OnlineDictionary
 import org.danceofvalkyries.job.data.dictionary.constant.ConstantOnlineDictionary
 import org.danceofvalkyries.job.data.telegram.bot.TelegramBotImpl
 import org.danceofvalkyries.job.data.telegram.message.TelegramMessage
-import org.danceofvalkyries.job.data.telegram.message.local.translator.TelegramTextTranslator
 import org.danceofvalkyries.utils.resources.EngStringResources
 import utils.DispatchersFake
 import utils.OnlineDictionariesFake
@@ -57,7 +56,6 @@ class ButtonsListenersTest : BehaviorSpec() {
                     restfulNotionDataBases,
                     sentTelegramMessagesTypeFake,
                     OnlineDictionariesFake(listOf(cambridgeDictionary)),
-                    TelegramTextTranslator(),
                     EngStringResources(),
                     DispatchersFake(),
                 )
