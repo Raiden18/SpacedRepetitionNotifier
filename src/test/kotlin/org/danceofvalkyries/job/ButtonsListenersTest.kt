@@ -5,16 +5,17 @@ import integrations.testdata.telegram.TelegramCallbackDataFake
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.core.spec.style.scopes.BehaviorSpecWhenContainerScope
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.job.telegram_listener.TelegramButtonListenerJob
+import org.danceofvalkyries.bot.TelegramBotImpl
 import org.danceofvalkyries.dictionary.OnlineDictionary
 import org.danceofvalkyries.dictionary.constant.ConstantOnlineDictionary
-import org.danceofvalkyries.bot.TelegramBotImpl
+import org.danceofvalkyries.job.telegram_listener.TelegramButtonListenerJob
 import org.danceofvalkyries.telegram.message.TelegramMessage
 import org.danceofvalkyries.utils.resources.EngStringResources
 import utils.DispatchersFake
 import utils.OnlineDictionariesFake
 import utils.SentTelegramMessagesTypeFake
 import utils.SqlLiteNotionDataBasesFake
+import utils.fakes.httpclient.HttpClientFake
 import utils.fakes.telegram.TelegramChatFake
 import utils.fakes.telegram.TelegramMessageFake
 
@@ -60,10 +61,13 @@ class ButtonsListenersTest : BehaviorSpec() {
                     DispatchersFake(),
                 )
                 telegramButtonListenerJob = JobRunInTestDecorator(
-                    TelegramButtonListenerJob(
+                    JobResourcesLifeCycleDecorator(
                         DispatchersFake(),
-                        telegramChat,
-                        botUser,
+                        HttpClientFake(),
+                        TelegramButtonListenerJob(
+                            telegramChat,
+                            botUser,
+                        )
                     )
                 )
             }

@@ -1,5 +1,6 @@
 package org.danceofvalkyries.telegram.message.local
 
+import org.danceofvalkyries.telegram.message.local.translator.TelegramTextTranslator
 import org.danceofvalkyries.utils.resources.StringResources
 
 class DoneTelegramMessage(
@@ -7,6 +8,7 @@ class DoneTelegramMessage(
 ) : NotificationMessage() {
 
     override fun getText(): String {
-        return """${stringResources.getJob()} 😎 ${stringResources.everythingIsRevised()} ✅"""
+        val translator = TelegramTextTranslator()
+        return translator.encode("""${stringResources.getJob()} 😎 ${stringResources.everythingIsRevised()} ✅""")!!
     }
 }

@@ -1,12 +1,12 @@
 package org.danceofvalkyries.environment
 
-import okhttp3.OkHttpClient
 import org.danceofvalkyries.config.domain.Config
 import org.danceofvalkyries.utils.db.DataBase
+import org.danceofvalkyries.utils.rest.clients.http.HttpClient
 
 interface Environment {
     val dataBase: DataBase
-    val httpClient: OkHttpClient
+    val httpClient: HttpClient
     val config: Config
 }
 

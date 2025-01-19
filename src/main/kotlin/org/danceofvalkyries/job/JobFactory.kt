@@ -1,7 +1,7 @@
 package org.danceofvalkyries.job
 
-import org.danceofvalkyries.job.telegram_listener.ListenToTelegramEvensJob
 import org.danceofvalkyries.environment.Environment
+import org.danceofvalkyries.job.telegram_listener.ListenToTelegramEvensJob
 import org.danceofvalkyries.utils.DispatchersImpl
 
 interface JobFactory {
@@ -23,12 +23,13 @@ private class JobFactoryImpl(
         val environment = Environment(environmentArgument)
         val dispatchers = DispatchersImpl()
 
-        return when (jobKindArgument) {
-            "notifier" -> NotifierJob(dispatchers, environment)
-            "button_listener" -> ListenToTelegramEvensJob(dispatchers, environment)
-            "sand_box" -> SandBoxJob(dispatchers, environment)
-            "update_cache" -> UpdateCacheJob(dispatchers, environment)
-            else -> error("Unknown Job kind argument: $jobKindArgument")
-        }
+        val jobs = listOf(
+            NotifierJob(dispatchers, environment),
+            ListenToTelegramEvensJob(dispatchers, environment),
+            SandBoxJob(dispatchers, environment),
+            UpdateCacheJob(dispatchers, environment),
+        ).associateBy { it.type }
+
+        return jobs[jobKindArgument] ?: error("Unknown Job kind argument: $jobKindArgument. Known kinds: ${jobs.keys}")
     }
 }

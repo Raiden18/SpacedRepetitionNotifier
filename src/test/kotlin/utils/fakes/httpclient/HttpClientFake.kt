@@ -7,6 +7,10 @@ class HttpClientFake(
     private val postResponse: HttpClient.Response
 ) : HttpClient {
 
+    constructor() : this(
+        HttpClient.Response("", "", -1)
+    )
+
     var postRequest = mutableListOf<Request>()
 
     override suspend fun get(url: String, headers: List<Header>): HttpClient.Response {
@@ -21,6 +25,8 @@ class HttpClientFake(
     override suspend fun patch(url: String, body: String, headers: List<Header>): HttpClient.Response {
         TODO("Not yet implemented")
     }
+
+    override fun releaseResources() = Unit
 
     fun assertThat(): Matcher {
         return Matcher()

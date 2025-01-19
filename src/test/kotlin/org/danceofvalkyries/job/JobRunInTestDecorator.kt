@@ -4,7 +4,8 @@ import kotlinx.coroutines.test.runTest
 
 class JobRunInTestDecorator(
     private val job: Job
-) : Job {
+) : Job by job {
+
     override suspend fun run() {
         runTest {
             job.run()
