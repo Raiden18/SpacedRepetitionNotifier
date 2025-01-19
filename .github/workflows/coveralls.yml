@@ -9,12 +9,6 @@ jobs:
       - name: Coveralls GitHub Action
         uses: coverallsapp/github-action@v2.3.4
 
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
       - name: Build and test
         run: ./gradlew test jacocoTestReport
 
