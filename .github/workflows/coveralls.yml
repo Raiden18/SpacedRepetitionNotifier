@@ -9,6 +9,10 @@ jobs:
       - uses: actions/checkout@v2
         with:
           ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Change wrapper permissions
+        run: chmod +x ./gradlew
+
       - name: test and publish coverage
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
