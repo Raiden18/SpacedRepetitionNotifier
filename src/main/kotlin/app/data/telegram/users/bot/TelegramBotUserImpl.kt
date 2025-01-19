@@ -33,19 +33,15 @@ class TelegramBotUserImpl(
     }
 
     override suspend fun editOldNotificationMessageToDoneMessage() {
-        sentTelegramMessagesType.iterate()
-            .forEach { oldNotification ->
-                val newMessage = DoneTelegramMessage(stringResources)
-                oldNotification.edit(newMessage, telegramChat)
-            }
+        editNotificationMessageTo(
+            DoneTelegramMessage(stringResources)
+        )
     }
 
     override suspend fun deleteOldNotificationMessage() {
-        sentTelegramMessagesType.iterate()
-            .forEach {
-                it.deleteFrom(sentTelegramMessagesType)
-                it.deleteFrom(telegramChat)
-            }
+        sentTelegramMessagesType.iterate(NOTIFiCATION_TYPE_MESSAGE)
+            .forEach { it.deleteFrom(telegramChat) }
+        removedCachedMessages(NOTIFiCATION_TYPE_MESSAGE)
     }
 
     override suspend fun sendNewNotificationMessage() {
@@ -74,25 +70,18 @@ class TelegramBotUserImpl(
     }
 
     override suspend fun updateNotificationMessage() {
-        // TODO: Code duplication from send message. Eliminate copy-pasted code
         val flashCards = getAllFlashCard()
         if (flashCards.isEmpty()) {
             editOldNotificationMessageToDoneMessage()
             return
         }
-
-        val newNeedRevisingFlashCardMessage = NeedRevisingFlashCardMessage(flashCards)
-        val oldNotificationMessage = sentTelegramMessagesType.iterate()
-            .filter { it.type == NOTIFiCATION_TYPE_MESSAGE }
-            .map { SerializedMessage(it.id, it.type) }
-            .first()
-        oldNotificationMessage.edit(newNeedRevisingFlashCardMessage, telegramChat)
+        editNotificationMessageTo(
+            NeedRevisingFlashCardMessage(flashCards)
+        )
     }
 
-    override suspend fun removeAllFlashCardsFromChat() {
-        sentTelegramMessagesType.iterate()
-            .map { SerializedMessage(it.id, it.type) }
-            .filter { it.type == FLASH_CARD_TYPE_MESSAGE }
+    override suspend fun deleteAllFlashCardsFromChat() {
+        sentTelegramMessagesType.iterate(FLASH_CARD_TYPE_MESSAGE)
             .forEach { it.deleteFrom(telegramChat) }
     }
 
@@ -108,20 +97,14 @@ class TelegramBotUserImpl(
         localDbNotionDataBases.iterate().forEach {
             it.delete(recalledFlashCardID)
         }
-        sentTelegramMessagesType.iterate()
-            .filter { it.type == FLASH_CARD_TYPE_MESSAGE }
-            .forEach { it.deleteFrom(sentTelegramMessagesType) }
+        removedCachedMessages(FLASH_CARD_TYPE_MESSAGE)
     }
 
     override suspend fun removeForgotFlashCardFromLocalDbs(forgotFlashCardId: String) {
         localDbNotionDataBases.iterate().forEach {
             it.delete(forgotFlashCardId)
         }
-        sentTelegramMessagesType.iterate().filter {
-            it.type == FLASH_CARD_TYPE_MESSAGE
-        }.forEach {
-            sentTelegramMessagesType.delete(it.id)
-        }
+        removedCachedMessages(FLASH_CARD_TYPE_MESSAGE)
     }
 
     override suspend fun makeForgottenOnNotion(flashCardId: String) {
@@ -181,5 +164,17 @@ class TelegramBotUserImpl(
             id = remoteFlashCardMessage.id,
             type = localMessage.type
         ).saveTo(sentTelegramMessagesType)
+    }
+
+    private suspend fun removedCachedMessages(type: String) {
+        sentTelegramMessagesType.iterate(type)
+            .forEach { it.deleteFrom(sentTelegramMessagesType) }
+    }
+
+    private suspend fun editNotificationMessageTo(newMessage: LocalTelegramMessage) {
+        sentTelegramMessagesType.iterate(NOTIFiCATION_TYPE_MESSAGE)
+            .forEach { oldNotification ->
+                oldNotification.edit(newMessage, telegramChat)
+            }
     }
 }

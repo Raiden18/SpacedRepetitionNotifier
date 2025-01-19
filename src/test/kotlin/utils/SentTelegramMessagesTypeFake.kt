@@ -1,6 +1,5 @@
 package utils
 
-import io.kotest.matchers.collections.shouldContain
 import org.danceofvalkyries.app.data.telegram.message_types.SentTelegramMessageType
 import org.danceofvalkyries.app.data.telegram.message_types.SentTelegramMessagesType
 
@@ -10,6 +9,10 @@ class SentTelegramMessagesTypeFake(
 
     override suspend fun iterate(): Sequence<SentTelegramMessageType> {
         return telegramMessages.asSequence()
+    }
+
+    override suspend fun iterate(type: String): Sequence<SentTelegramMessageType> {
+        return iterate().filter { it.type == type }
     }
 
     override suspend fun add(id: Long, type: String): SentTelegramMessageType {

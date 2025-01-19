@@ -42,6 +42,28 @@ class SqlLiteSentTelegramMessagesType(
             }
     }
 
+    override suspend fun iterate(type: String): Sequence<SentTelegramMessageType> {
+        return createStatement()
+            .let {
+                it.executeQuery(
+                    SqlQuery {
+                        select("*")
+                        from(TABLE_NAME)
+                        where(typeColumn to type)
+                    }
+                )
+            }.asSequence()
+            .map {
+                SqlLiteSentTelegramMessageType(
+                    id = idColumn.getValue(it),
+                    tableName = TABLE_NAME,
+                    connection = connection,
+                    typeColumn = typeColumn,
+                    idColumn = idColumn,
+                )
+            }
+    }
+
     override suspend fun add(id: Long, type: String): SentTelegramMessageType {
         createStatement()
             .execute(
