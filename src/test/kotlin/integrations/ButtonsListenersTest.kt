@@ -9,8 +9,8 @@ import org.danceofvalkyries.app.App
 import org.danceofvalkyries.app.apps.TelegramButtonListenerApp
 import org.danceofvalkyries.app.data.dictionary.OnlineDictionary
 import org.danceofvalkyries.app.data.dictionary.constant.ConstantOnlineDictionary
-import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
 import org.danceofvalkyries.app.data.telegram.bot.TelegramBotImpl
+import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
 import org.danceofvalkyries.app.data.telegram.message.local.translator.TelegramTextTranslator
 import org.danceofvalkyries.utils.resources.EngStringResources
 import utils.DispatchersFake
@@ -63,6 +63,7 @@ class ButtonsListenersTest : BehaviorSpec() {
                     OnlineDictionariesFake(listOf(cambridgeDictionary)),
                     TelegramTextTranslator(),
                     EngStringResources(),
+                    DispatchersFake(),
                 )
                 telegramButtonListenerApp = AppRunInTestDecorator(
                     TelegramButtonListenerApp(

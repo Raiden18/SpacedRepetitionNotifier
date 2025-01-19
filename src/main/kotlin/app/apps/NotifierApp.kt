@@ -50,6 +50,7 @@ fun NotifierApp(
         onlineDictionaries,
         TelegramTextTranslator(),
         EngStringResources(),
+        dispatchers,
     )
     return NotifierApp(
         dispatchers,

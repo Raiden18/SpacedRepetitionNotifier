@@ -14,7 +14,9 @@ import org.danceofvalkyries.app.data.telegram.message.sendTo
 import org.danceofvalkyries.app.data.telegram.message_types.SentTelegramMessagesType
 import org.danceofvalkyries.app.data.telegram.message_types.deleteFrom
 import org.danceofvalkyries.app.data.telegram.message_types.saveTo
+import org.danceofvalkyries.utils.Dispatchers
 import org.danceofvalkyries.utils.resources.StringResources
+import org.danceofvalkyries.utils.scheduler.ActonsSchedulerImpl
 
 class TelegramBotImpl(
     private val telegramChat: TelegramChat,
@@ -24,6 +26,7 @@ class TelegramBotImpl(
     private val onlineDictionaries: OnlineDictionaries,
     private val textTranslator: TextTranslator,
     private val stringResources: StringResources,
+    private val dispatchers: Dispatchers,
 ) : TelegramBot {
 
     companion object {
@@ -68,17 +71,31 @@ class TelegramBotImpl(
     }
 
     private suspend fun performAction(flashCardId: String, action: (NotionPageFlashCard) -> Map<Int, Boolean>) {
+        val restActionsScheduler = ActonsSchedulerImpl(dispatchers)
         val flashCard = getAllFlashCard().first { it.id == flashCardId }
         val updatedLevels = action.invoke(flashCard)
-        removedTelegramMessages(FLASH_CARD_TYPE_MESSAGE)
-        removedCachedMessages(FLASH_CARD_TYPE_MESSAGE)
-        removeNotionFlashCard(flashCardId)
-        sendNextFlashCardFrom(dbId)
-        updateNotificationMessage()
-        restfulNotionDataBases
-            .getBy(dbId)
-            .getPageBy(flashCardId)
-            .setKnowLevels(updatedLevels)
+        val flashCardsMessagesToDeleteFromTelegram = sentTelegramMessagesType.iterate(FLASH_CARD_TYPE_MESSAGE).toList()
+        restActionsScheduler.schedule { flashCardsMessagesToDeleteFromTelegram.forEach { it.deleteFrom(telegramChat) } }
+        sentTelegramMessagesType.iterate(FLASH_CARD_TYPE_MESSAGE).forEach { it.deleteFrom(sentTelegramMessagesType) }
+        localDbNotionDataBases.iterate().forEach { it.delete(flashCardId) }
+        val nextFlashCard = localDbNotionDataBases.getBy(dbId).iterate().firstOrNull()
+        if (nextFlashCard != null) {
+            restActionsScheduler.schedule { sendFlashCardMessage(nextFlashCard) }
+        }
+        val flashCards = getAllFlashCard()
+        val newNotificationMessage = if (flashCards.isEmpty()) {
+            DoneTelegramMessage(stringResources)
+        } else {
+            NeedRevisingFlashCardMessage(flashCards)
+        }
+        restActionsScheduler.schedule { editNotificationMessageTo(newNotificationMessage) }
+        restActionsScheduler.schedule {
+            restfulNotionDataBases
+                .getBy(dbId)
+                .getPageBy(flashCardId)
+                .setKnowLevels(updatedLevels)
+        }
+        restActionsScheduler.awaitAll()
     }
 
     private suspend fun getAllFlashCard(): List<NotionPageFlashCard> {
@@ -120,12 +137,6 @@ class TelegramBotImpl(
             }
     }
 
-    private suspend fun removeNotionFlashCard(notionPagId: String) {
-        localDbNotionDataBases.iterate().forEach {
-            it.delete(notionPagId)
-        }
-    }
-
     private suspend fun sendFlashCardMessage(flashCard: NotionPageFlashCard) {
         sendMessageAndSave(
             FlashCardMessage(
@@ -135,24 +146,5 @@ class TelegramBotImpl(
                 onlineDictionaries.iterate(flashCard.notionDbID)
             )
         )
-    }
-
-    private suspend fun updateNotificationMessage() {
-        val flashCards = getAllFlashCard()
-        val newNotificationMessage = if (flashCards.isEmpty()) {
-            DoneTelegramMessage(stringResources)
-        } else {
-            NeedRevisingFlashCardMessage(flashCards)
-        }
-        editNotificationMessageTo(newNotificationMessage)
-    }
-
-    private suspend fun sendNextFlashCardFrom(notionDbId: String) {
-        val flashCard = localDbNotionDataBases.getBy(notionDbId)
-            .iterate()
-            .firstOrNull()
-        if (flashCard != null) {
-            sendFlashCardMessage(flashCard)
-        }
     }
 }

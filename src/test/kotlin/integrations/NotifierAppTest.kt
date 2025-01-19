@@ -5,8 +5,8 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import org.danceofvalkyries.app.App
 import org.danceofvalkyries.app.apps.NotifierApp
-import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
 import org.danceofvalkyries.app.data.telegram.bot.TelegramBotImpl
+import org.danceofvalkyries.app.data.telegram.message.TelegramMessage
 import org.danceofvalkyries.app.data.telegram.message.local.translator.TelegramTextTranslator
 import org.danceofvalkyries.utils.resources.EngStringResources
 import utils.DispatchersFake
@@ -42,6 +42,7 @@ class NotifierAppTest : BehaviorSpec() {
                 OnlineDictionariesFake(emptyList()),
                 TelegramTextTranslator(),
                 EngStringResources(),
+                DispatchersFake()
             )
         }
 

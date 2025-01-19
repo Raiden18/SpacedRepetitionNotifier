@@ -54,7 +54,8 @@ fun TelegramButtonListenerApp(
         sqlLiteTelegramMessages,
         onlineDictionaries,
         TelegramTextTranslator(),
-        EngStringResources()
+        EngStringResources(),
+        dispatchers,
     )
     return TelegramButtonListenerApp(
         dispatchers,
