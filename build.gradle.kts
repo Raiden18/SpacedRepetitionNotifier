@@ -5,6 +5,7 @@ plugins {
     kotlin("plugin.serialization") version "2.1.0"
     id("com.github.johnrengelman.shadow") version "7.0.0"
     id("jacoco")
+    id("com.github.nbaztec.coveralls-jacoco") version "1.2.20"
 }
 
 group = "org.danceofvalkyries"
