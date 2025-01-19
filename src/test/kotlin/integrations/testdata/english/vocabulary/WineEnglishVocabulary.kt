@@ -1,6 +1,6 @@
 package integrations.testdata.english.vocabulary
 
-import org.danceofvalkyries.job.data.notion.pages.NotionPageFlashCard
+import org.danceofvalkyries.notion.pages.NotionPageFlashCard
 
 class WineEnglishVocabulary(
     private val notionDbId: String
@@ -75,7 +75,7 @@ class WineEnglishVocabulary(
             13 to false,
         )
 
-    override fun setKnowLevels(knowLevels: Map<Int, Boolean>) {
+    override suspend fun setKnowLevels(knowLevels: Map<Int, Boolean>) {
         updatedKnowLevels = knowLevels
     }
 

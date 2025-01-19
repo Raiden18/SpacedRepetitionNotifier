@@ -1,6 +1,6 @@
 package org.danceofvalkyries.job
 
-import job.telegram_listener.ListenToTelegramEvensJob
+import org.danceofvalkyries.job.telegram_listener.ListenToTelegramEvensJob
 import org.danceofvalkyries.environment.Environment
 import org.danceofvalkyries.utils.DispatchersImpl
 

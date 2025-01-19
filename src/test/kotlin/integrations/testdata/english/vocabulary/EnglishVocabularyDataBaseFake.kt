@@ -1,7 +1,9 @@
 package integrations.testdata.english.vocabulary
 
-import org.danceofvalkyries.job.data.notion.databases.NotionDataBase
-import org.danceofvalkyries.job.data.notion.pages.NotionPageFlashCard
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import org.danceofvalkyries.notion.databases.NotionDataBase
+import org.danceofvalkyries.notion.pages.NotionPageFlashCard
 import utils.NotionDataBaseFake
 
 class EnglishVocabularyDataBaseFake : NotionDataBase {
@@ -20,27 +22,32 @@ class EnglishVocabularyDataBaseFake : NotionDataBase {
         pages = listOf(wine, dota2)
     )
 
-    override val id: String = ID
 
-    override val name: String = NAME
+    override fun getId(): String {
+        return ID
+    }
 
-    override fun iterate(): Sequence<NotionPageFlashCard> {
+    override suspend fun getName(): String {
+        return NAME
+    }
+
+    override suspend fun iterate(): Flow<NotionPageFlashCard> {
         return defaultNotionDataBaseFake.iterate()
     }
 
-    override fun add(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard {
+    override suspend fun add(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard {
         return defaultNotionDataBaseFake.add(notionPageFlashCard)
     }
 
-    override fun getPageBy(pageId: String): NotionPageFlashCard {
+    override suspend fun getPageBy(pageId: String): NotionPageFlashCard {
         return iterate().first { it.id == pageId }
     }
 
-    override fun clear() {
+    override suspend fun clear() {
         defaultNotionDataBaseFake.clear()
     }
 
-    override fun delete(pageId: String) {
+    override suspend fun delete(pageId: String) {
         defaultNotionDataBaseFake.delete(pageId)
     }
 }

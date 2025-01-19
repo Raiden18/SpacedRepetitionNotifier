@@ -4,8 +4,8 @@ import io.kotest.matchers.collections.shouldNotContain
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.mapNotNull
-import org.danceofvalkyries.job.data.telegram.chat.TelegramChat
-import org.danceofvalkyries.job.data.telegram.message.TelegramMessage
+import org.danceofvalkyries.telegram.chat.TelegramChat
+import org.danceofvalkyries.telegram.message.TelegramMessage
 
 class TelegramChatFake : TelegramChat {
 
@@ -52,7 +52,7 @@ class TelegramChatFake : TelegramChat {
     }
 
     override suspend fun delete(messageId: Long) {
-        sentTelegramMessages = sentTelegramMessages.filter { it.id != messageId }
+        sentTelegramMessages = sentTelegramMessages.filter { it.getId() != messageId }
     }
 
     override suspend fun edit(
@@ -61,7 +61,7 @@ class TelegramChatFake : TelegramChat {
         newNestedButtons: List<List<TelegramMessage.Button>>
     ): TelegramMessage {
         sentTelegramMessages = sentTelegramMessages.map {
-            if (it.id == messageId) {
+            if (it.getId() == messageId) {
                 it.copy(text = newText, nestedButtons = newNestedButtons)
             } else {
                 it
@@ -71,7 +71,7 @@ class TelegramChatFake : TelegramChat {
     }
 
     override suspend fun getMessage(messageId: Long): TelegramMessage {
-        return sentTelegramMessages.first { it.id == messageId }
+        return sentTelegramMessages.first { it.getId() == messageId }
     }
 
     override fun getEvents(): Flow<TelegramMessage.Button.Callback> {

@@ -9,16 +9,16 @@ class HttpClientFake(
 
     var postRequest = mutableListOf<Request>()
 
-    override fun get(url: String, headers: List<Header>): HttpClient.Response {
+    override suspend fun get(url: String, headers: List<Header>): HttpClient.Response {
         TODO("Not yet implemented")
     }
 
-    override fun post(url: String, body: String, headers: List<Header>): HttpClient.Response {
+    override suspend fun post(url: String, body: String, headers: List<Header>): HttpClient.Response {
         postRequest.add(Request(url, body))
         return postResponse
     }
 
-    override fun patch(url: String, body: String, headers: List<Header>): HttpClient.Response {
+    override suspend fun patch(url: String, body: String, headers: List<Header>): HttpClient.Response {
         TODO("Not yet implemented")
     }
 

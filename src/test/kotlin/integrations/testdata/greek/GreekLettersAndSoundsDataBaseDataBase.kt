@@ -1,7 +1,9 @@
 package integrations.testdata.greek
 
-import org.danceofvalkyries.job.data.notion.databases.NotionDataBase
-import org.danceofvalkyries.job.data.notion.pages.NotionPageFlashCard
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
+import org.danceofvalkyries.notion.databases.NotionDataBase
+import org.danceofvalkyries.notion.pages.NotionPageFlashCard
 import utils.NotionDataBaseFake
 import utils.fakes.telegram.TelegramMessageFake
 
@@ -21,11 +23,13 @@ class GreekLettersAndSoundsDataBaseDataBase : NotionDataBase {
         pages = listOf(restfulGreekLetter1FlashCard, restfulGreekLetter2FlashCard)
     )
 
-    override val id: String
-        get() = defaultNotionDataBaseFake.id
+    override fun getId(): String {
+        return defaultNotionDataBaseFake.getId()
+    }
 
-    override val name: String
-        get() = defaultNotionDataBaseFake.name
+    override suspend fun getName(): String {
+        return defaultNotionDataBaseFake.getName()
+    }
 
     fun createTelegramNotification(id: Long): TelegramMessageFake {
         return TelegramMessageFake.createTelegramNotification(
@@ -36,23 +40,23 @@ class GreekLettersAndSoundsDataBaseDataBase : NotionDataBase {
         )
     }
 
-    override fun iterate(): Sequence<NotionPageFlashCard> {
-        return sequenceOf(restfulGreekLetter1FlashCard, restfulGreekLetter2FlashCard)
+    override suspend fun iterate(): Flow<NotionPageFlashCard> {
+        return flowOf(restfulGreekLetter1FlashCard, restfulGreekLetter2FlashCard)
     }
 
-    override fun getPageBy(pageId: String): NotionPageFlashCard {
+    override suspend fun getPageBy(pageId: String): NotionPageFlashCard {
         return defaultNotionDataBaseFake.getPageBy(pageId)
     }
 
-    override fun add(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard {
+    override suspend fun add(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard {
         error("Must not be supported")
     }
 
-    override fun clear() {
+    override suspend fun clear() {
         error("Must not be supported")
     }
 
-    override fun delete(pageId: String) {
+    override suspend fun delete(pageId: String) {
         error("Must not be supported")
     }
 }

@@ -3,9 +3,9 @@ package job.data.telegram.chat.restful
 import com.google.gson.Gson
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.core.spec.style.scopes.BehaviorSpecWhenContainerScope
-import org.danceofvalkyries.job.data.telegram.chat.restful.TelegramChatHttpClientDecorator
-import org.danceofvalkyries.job.data.telegram.chat.restful.TelegramChatHttpClientDecorator.Companion.BLUE_SCREEN
-import org.danceofvalkyries.job.data.telegram.jsonobjects.MessageData
+import org.danceofvalkyries.telegram.chat.restful.TelegramChatHttpClientDecorator
+import org.danceofvalkyries.telegram.chat.restful.TelegramChatHttpClientDecorator.Companion.BLUE_SCREEN
+import org.danceofvalkyries.telegram.jsonobjects.MessageData
 import org.danceofvalkyries.utils.rest.clients.http.HttpClient
 import utils.fakes.httpclient.HttpClientFake
 
@@ -73,7 +73,7 @@ class TelegramChatHttpClientDecoratorTest : BehaviorSpec() {
     }
 
 
-    private fun makePostRequest(jsonName: String) {
+    private suspend fun makePostRequest(jsonName: String) {
         telegramChatHttpClientDecorator.post(
             url = sendImageUrl,
             body = javaClass.getResource(jsonName)!!.readText(),

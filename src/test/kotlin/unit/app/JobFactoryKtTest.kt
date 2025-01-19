@@ -2,7 +2,7 @@ package unit.app
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import job.telegram_listener.TelegramButtonListenerJob
+import org.danceofvalkyries.job.telegram_listener.TelegramButtonListenerJob
 import org.danceofvalkyries.job.JobFactory
 import org.danceofvalkyries.job.NotifierJob
 import org.danceofvalkyries.job.SandBoxJob

@@ -3,8 +3,9 @@ package org.danceofvalkyries.job
 import integrations.testdata.greek.GreekLettersAndSoundsDataBaseDataBase
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.job.data.telegram.bot.TelegramBotImpl
-import org.danceofvalkyries.job.data.telegram.message.TelegramMessage
+import kotlinx.coroutines.flow.toList
+import org.danceofvalkyries.bot.TelegramBotImpl
+import org.danceofvalkyries.telegram.message.TelegramMessage
 import org.danceofvalkyries.utils.resources.EngStringResources
 import utils.DispatchersFake
 import utils.OnlineDictionariesFake
@@ -67,7 +68,7 @@ class NotifierAppTest : BehaviorSpec() {
                     nestedButtons = emptyList()
                 )
                 sentTelegramMessagesType.add(
-                    id = previousMessage.id,
+                    id = previousMessage.getId(),
                     type = "NOTIFICATION"
                 )
             }
@@ -86,7 +87,7 @@ class NotifierAppTest : BehaviorSpec() {
                 Then("Should Delete OLD notification From DB") {
                     notifierJob.run()
                     val containsOldMessage = sentTelegramMessagesType.iterate().toList()
-                        .firstOrNull { it.id == previousMessage.id }
+                        .firstOrNull { it.getId() == previousMessage.getId() }
                     containsOldMessage shouldBe null
                 }
 

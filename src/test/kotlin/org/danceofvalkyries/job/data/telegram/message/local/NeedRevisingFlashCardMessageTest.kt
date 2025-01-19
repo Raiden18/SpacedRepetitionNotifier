@@ -4,8 +4,9 @@ import integrations.testdata.english.vocabulary.Dota2EnglishVocabulary
 import integrations.testdata.english.vocabulary.EnglishVocabularyDataBaseFake
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.job.data.telegram.message.ConstantTelegramMessageButton
-import org.danceofvalkyries.job.data.telegram.message.TelegramMessage
+import org.danceofvalkyries.telegram.message.ConstantTelegramMessageButton
+import org.danceofvalkyries.telegram.message.TelegramMessage
+import org.danceofvalkyries.telegram.message.local.NeedRevisingNotificationMessage
 import org.danceofvalkyries.utils.resources.EngStringResources
 
 class NeedRevisingFlashCardMessageTest : FunSpec() {
@@ -19,11 +20,11 @@ class NeedRevisingFlashCardMessageTest : FunSpec() {
             )
 
             test("Should return text") {
-                needRevisingNotificationMessage.text shouldBe """You have 1 flashcards to revise 🧠"""
+                needRevisingNotificationMessage.getText() shouldBe """You have 1 flashcards to revise 🧠"""
             }
 
             test("Should return nested buttons") {
-                needRevisingNotificationMessage.nestedButtons shouldBe listOf(
+                needRevisingNotificationMessage.getNestedButtons() shouldBe listOf(
                     listOf(
                         ConstantTelegramMessageButton(
                             text = "English Vocabulary: 1",

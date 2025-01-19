@@ -41,7 +41,7 @@ class TelegramChatFakeTest : FunSpec() {
                 nestedButtons = emptyList(),
             )
 
-            telegramChatFake.delete(message.id)
+            telegramChatFake.delete(message.getId())
 
             telegramChatFake.assertThat()
                 .wasDeleted(message)
@@ -52,7 +52,7 @@ class TelegramChatFakeTest : FunSpec() {
                 text = "message 1",
                 nestedButtons = emptyList(),
             )
-            telegramChatFake.delete(message1.id)
+            telegramChatFake.delete(message1.getId())
 
             telegramChatFake.sendTextMessage(
                 text = "message 2",
@@ -72,13 +72,13 @@ class TelegramChatFakeTest : FunSpec() {
             )
 
             val editedMessage = telegramChatFake.edit(
-                messageId = message1.id,
+                messageId = message1.getId(),
                 newText = "228",
                 newNestedButtons = emptyList()
             )
 
-            message1.id shouldBe editedMessage.id
-            message1.text shouldNotBe editedMessage.text
+            message1.getId() shouldBe editedMessage.getId()
+            message1.getText() shouldNotBe editedMessage.getText()
         }
 
         test("Should send photo message") {

@@ -1,6 +1,6 @@
 package utils
 
-import org.danceofvalkyries.job.data.notion.pages.NotionPageFlashCard
+import org.danceofvalkyries.notion.pages.NotionPageFlashCard
 
 data class NotionPageFlashCardFake(
     override val id: String = "",
@@ -12,5 +12,5 @@ data class NotionPageFlashCardFake(
     override val knowLevels: Map<Int, Boolean> = emptyMap(),
 ) : NotionPageFlashCard {
 
-    override fun setKnowLevels(knowLevels: Map<Int, Boolean>) = Unit
+    override suspend fun setKnowLevels(knowLevels: Map<Int, Boolean>) = Unit
 }

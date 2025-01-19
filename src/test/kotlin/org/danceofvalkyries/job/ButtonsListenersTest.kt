@@ -5,11 +5,11 @@ import integrations.testdata.telegram.TelegramCallbackDataFake
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.core.spec.style.scopes.BehaviorSpecWhenContainerScope
 import io.kotest.matchers.shouldBe
-import job.telegram_listener.TelegramButtonListenerJob
-import org.danceofvalkyries.job.data.dictionary.OnlineDictionary
-import org.danceofvalkyries.job.data.dictionary.constant.ConstantOnlineDictionary
-import org.danceofvalkyries.job.data.telegram.bot.TelegramBotImpl
-import org.danceofvalkyries.job.data.telegram.message.TelegramMessage
+import org.danceofvalkyries.job.telegram_listener.TelegramButtonListenerJob
+import org.danceofvalkyries.dictionary.OnlineDictionary
+import org.danceofvalkyries.dictionary.constant.ConstantOnlineDictionary
+import org.danceofvalkyries.bot.TelegramBotImpl
+import org.danceofvalkyries.telegram.message.TelegramMessage
 import org.danceofvalkyries.utils.resources.EngStringResources
 import utils.DispatchersFake
 import utils.OnlineDictionariesFake
@@ -74,7 +74,7 @@ class ButtonsListenersTest : BehaviorSpec() {
                     telegramMessage = telegramChat.sendTextMessage(text = "Q", nestedButtons = emptyList())
                     callback = TelegramCallbackDataFake(
                         id = "2",
-                        messageId = telegramMessage.id,
+                        messageId = telegramMessage.getId(),
                         action = TelegramMessage.Button.Action.Text("Q")
                     )
                     telegramChat.userSendsCallback(callback)
@@ -125,8 +125,8 @@ class ButtonsListenersTest : BehaviorSpec() {
                     And("User taps on English Vocabulary buttons") {
                         beforeTest {
                             userTapsOnDbButton(
-                                dbId = englishVocabularyDataBaseFake.id,
-                                notificationMessageId = notificationMessage.id
+                                dbId = englishVocabularyDataBaseFake.getId(),
+                                notificationMessageId = notificationMessage.getId()
                             )
                         }
 
@@ -136,7 +136,7 @@ class ButtonsListenersTest : BehaviorSpec() {
                         And("User forgets Wine FlashCard") {
                             beforeTest {
                                 userTapsOnForgot(
-                                    messageId = wineFlashCard.id,
+                                    messageId = wineFlashCard.getId(),
                                     notionPageId = englishVocabularyDataBaseFake.wine.id
                                 )
                             }
@@ -144,17 +144,17 @@ class ButtonsListenersTest : BehaviorSpec() {
                             shouldSendDota2FlashCardToTelegram(dota2FlashCard)
                             shouldRemoveWineFlashCardFromTelegramChat(wineFlashCard)
                             shouldDecreaseCounterOnEnglishVocabularyButton(
-                                messageId = notificationMessage.id,
+                                messageId = notificationMessage.getId(),
                                 newNumberToRevise = 1
                             )
-                            notificationMessageShouldRemainInSentMessagesDb(notificationMessage.id)
+                            notificationMessageShouldRemainInSentMessagesDb(notificationMessage.getId())
                             wineFlashCardShouldBeForgotten()
                         }
 
                         And("User recalls Wine FlashCard") {
                             beforeTest {
                                 userTapsOnRecalled(
-                                    messageId = wineFlashCard.id,
+                                    messageId = wineFlashCard.getId(),
                                     notionPageId = englishVocabularyDataBaseFake.wine.id,
                                 )
                             }
@@ -162,23 +162,23 @@ class ButtonsListenersTest : BehaviorSpec() {
                             shouldSendDota2FlashCardToTelegram(dota2FlashCard)
                             shouldRemoveWineFlashCardFromTelegramChat(wineFlashCard)
                             shouldDecreaseCounterOnEnglishVocabularyButton(
-                                messageId = notificationMessage.id,
+                                messageId = notificationMessage.getId(),
                                 newNumberToRevise = 1
                             )
-                            notificationMessageShouldRemainInSentMessagesDb(notificationMessage.id)
+                            notificationMessageShouldRemainInSentMessagesDb(notificationMessage.getId())
                             wineFlashCardShouldBeRecalled()
 
                             And("User Recalls Dota 2 Flash Card") {
                                 beforeTest {
                                     userTapsOnRecalled(
-                                        messageId = dota2FlashCard.id,
+                                        messageId = dota2FlashCard.getId(),
                                         notionPageId = englishVocabularyDataBaseFake.dota2.id
                                     )
                                 }
 
                                 shouldRemoveDota2FlashCardFromTelegram(dota2FlashCard)
-                                shouldEditNotificationMessageToAllDone(messageId = notificationMessage.id)
-                                notificationMessageShouldRemainInSentMessagesDb(notificationMessage.id)
+                                shouldEditNotificationMessageToAllDone(messageId = notificationMessage.getId())
+                                notificationMessageShouldRemainInSentMessagesDb(notificationMessage.getId())
                                 dota2FlashCardShouldBeRecalled()
                             }
                         }
@@ -195,15 +195,15 @@ class ButtonsListenersTest : BehaviorSpec() {
         val message = TelegramMessageFake.createTelegramNotification(
             messageId = -1,
             numberToRevise = numberToRevise,
-            tableName = englishVocabularyDataBaseFake.name,
-            dbId = englishVocabularyDataBaseFake.id
+            tableName = englishVocabularyDataBaseFake.getName(),
+            dbId = englishVocabularyDataBaseFake.getId()
         )
         val notificationMessage = telegramChat.sendTextMessage(
-            text = message.text,
-            nestedButtons = message.nestedButtons
+            text = message.getText(),
+            nestedButtons = message.getNestedButtons()
         )
         sentTelegramMessagesTypeFake.add(
-            id = notificationMessage.id,
+            id = notificationMessage.getId(),
             type = "NOTIFICATION"
         )
         return notificationMessage
@@ -259,8 +259,8 @@ class ButtonsListenersTest : BehaviorSpec() {
             val editedNotificationMessage = TelegramMessageFake.createTelegramNotification(
                 messageId = messageId,
                 numberToRevise = newNumberToRevise,
-                tableName = englishVocabularyDataBaseFake.name,
-                dbId = englishVocabularyDataBaseFake.id
+                tableName = englishVocabularyDataBaseFake.getName(),
+                dbId = englishVocabularyDataBaseFake.getId()
             )
             telegramChat.assertThat().isInChat(editedNotificationMessage)
         }

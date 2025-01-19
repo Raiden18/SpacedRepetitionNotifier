@@ -1,6 +1,6 @@
 package integrations.testdata.greek
 
-import org.danceofvalkyries.job.data.notion.pages.NotionPageFlashCard
+import org.danceofvalkyries.notion.pages.NotionPageFlashCard
 
 class RestfulGreekLetter1FlashCard(
     private val notionDbId: String
@@ -39,5 +39,5 @@ class RestfulGreekLetter1FlashCard(
             13 to false,
         )
 
-    override fun setKnowLevels(knowLevels: Map<Int, Boolean>) = Unit
+    override suspend fun setKnowLevels(knowLevels: Map<Int, Boolean>) = Unit
 }

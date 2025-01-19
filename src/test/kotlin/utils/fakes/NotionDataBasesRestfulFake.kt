@@ -1,18 +1,20 @@
 package utils.fakes
 
-import org.danceofvalkyries.job.data.notion.databases.NotionDataBase
-import org.danceofvalkyries.job.data.notion.databases.NotionDataBases
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import org.danceofvalkyries.notion.databases.NotionDataBase
+import org.danceofvalkyries.notion.databases.NotionDataBases
 
 class NotionDataBasesRestfulFake(
     private val dataBases: List<NotionDataBase>
 ) : NotionDataBases {
 
-    override suspend fun iterate(): Sequence<NotionDataBase> {
-        return dataBases.asSequence()
+    override suspend fun iterate(): Flow<NotionDataBase> {
+        return dataBases.asFlow()
     }
 
     override fun getBy(id: String): NotionDataBase {
-        return dataBases.first { it.id == id }
+        return dataBases.first { it.getId() == id }
     }
 
     override suspend fun add(notionDataBase: NotionDataBase): NotionDataBase {

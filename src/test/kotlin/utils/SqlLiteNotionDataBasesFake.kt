@@ -1,24 +1,27 @@
 package utils
 
-import org.danceofvalkyries.job.data.notion.databases.NotionDataBase
-import org.danceofvalkyries.job.data.notion.databases.NotionDataBases
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.toList
+import org.danceofvalkyries.notion.databases.NotionDataBase
+import org.danceofvalkyries.notion.databases.NotionDataBases
 
 data class SqlLiteNotionDataBasesFake(
     private var dataBases: List<NotionDataBase> = emptyList()
 ) : NotionDataBases {
-    override suspend fun iterate(): Sequence<NotionDataBase> {
-        return dataBases.asSequence()
+    override suspend fun iterate(): Flow<NotionDataBase> {
+        return dataBases.asFlow()
     }
 
     override fun getBy(id: String): NotionDataBase {
-        return dataBases.first { it.id == id }
+        return dataBases.first { it.getId() == id }
     }
 
     override suspend fun add(notionDataBase: NotionDataBase): NotionDataBase {
         val dataBase = NotionDataBaseFake(
-            id = notionDataBase.id,
-            name = notionDataBase.name,
-            pages = notionDataBase.iterate().toMutableList()
+            id = notionDataBase.getId(),
+            name = notionDataBase.getName(),
+            pages = notionDataBase.iterate().toList()
         )
         dataBases = dataBases + listOf(dataBase)
         return dataBase

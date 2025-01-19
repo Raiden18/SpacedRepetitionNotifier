@@ -3,9 +3,10 @@ package org.danceofvalkyries.job.data.telegram.message.local
 import integrations.testdata.english.vocabulary.Dota2EnglishVocabulary
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.job.data.dictionary.constant.ConstantOnlineDictionary
-import org.danceofvalkyries.job.data.telegram.message.ConstantTelegramMessageButton
-import org.danceofvalkyries.job.data.telegram.message.TelegramMessage
+import org.danceofvalkyries.dictionary.constant.ConstantOnlineDictionary
+import org.danceofvalkyries.telegram.message.ConstantTelegramMessageButton
+import org.danceofvalkyries.telegram.message.TelegramMessage
+import org.danceofvalkyries.telegram.message.local.FlashCardMessage
 import org.danceofvalkyries.utils.resources.EngStringResources
 
 class FlashCardMessageTest : FunSpec() {
@@ -19,7 +20,7 @@ class FlashCardMessageTest : FunSpec() {
             )
 
             test("Should return text") {
-                flashCardMessage.text shouldBe """
+                flashCardMessage.getText() shouldBe """
                     *Dota 2*
                     
                     _Dota 2 is the best game in the world_
@@ -31,7 +32,7 @@ class FlashCardMessageTest : FunSpec() {
             }
 
             test("Should return action buttons with dictionary button") {
-                flashCardMessage.nestedButtons shouldBe listOf(
+                flashCardMessage.getNestedButtons() shouldBe listOf(
                     listOf(
                         ConstantTelegramMessageButton(
                             "Forgot  ❌",

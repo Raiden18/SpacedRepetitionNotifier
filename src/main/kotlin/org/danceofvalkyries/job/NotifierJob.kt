@@ -2,17 +2,18 @@ package org.danceofvalkyries.job
 
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.count
+import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.launch
+import org.danceofvalkyries.bot.TelegramBot
+import org.danceofvalkyries.bot.TelegramBotImpl
+import org.danceofvalkyries.dictionary.constant.ConfigOnlineDictionaries
 import org.danceofvalkyries.environment.Environment
-import org.danceofvalkyries.job.data.dictionary.constant.ConfigOnlineDictionaries
-import org.danceofvalkyries.job.data.notion.databases.NotionDataBases
-import org.danceofvalkyries.job.data.notion.databases.restful.RestFulNotionDataBases
-import org.danceofvalkyries.job.data.notion.databases.sqlite.SqlLiteNotionDataBases
-import org.danceofvalkyries.job.data.telegram.bot.TelegramBot
-import org.danceofvalkyries.job.data.telegram.bot.TelegramBotImpl
-import org.danceofvalkyries.job.data.telegram.chat.restful.RestfulTelegramChat
-import org.danceofvalkyries.job.data.telegram.message.local.translator.TelegramTextTranslator
-import org.danceofvalkyries.job.data.telegram.message_types.sqlite.SqlLiteSentTelegramMessagesType
+import org.danceofvalkyries.notion.databases.NotionDataBases
+import org.danceofvalkyries.notion.databases.restful.RestFulNotionDataBases
+import org.danceofvalkyries.notion.databases.sqlite.SqlLiteNotionDataBases
+import org.danceofvalkyries.telegram.chat.restful.RestfulTelegramChat
+import org.danceofvalkyries.telegram.message_types.sqlite.SqlLiteSentTelegramMessagesType
 import org.danceofvalkyries.utils.Dispatchers
 import org.danceofvalkyries.utils.resources.EngStringResources
 import org.danceofvalkyries.utils.rest.clients.http.HttpClientImpl
@@ -81,5 +82,5 @@ class NotifierJob(
         }
     }
 
-    private suspend fun getAllFlashCardsNeedRevising() = sqlLiteNotionDataBases.iterate().flatMap { it.iterate() }
+    private suspend fun getAllFlashCardsNeedRevising() = sqlLiteNotionDataBases.iterate().flatMapConcat { it.iterate() }
 }
