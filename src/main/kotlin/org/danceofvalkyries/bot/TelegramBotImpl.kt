@@ -1,4 +1,4 @@
-package org.danceofvalkyries.telegram.bot
+package org.danceofvalkyries.bot
 
 import org.danceofvalkyries.dictionary.OnlineDictionaries
 import org.danceofvalkyries.notion.databases.NotionDataBases

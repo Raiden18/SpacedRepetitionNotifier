@@ -7,7 +7,6 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.danceofvalkyries.utils.rest.*
 import org.danceofvalkyries.utils.rest.clients.http.HttpClient.Response
 
-// TODO: Move to another package
 class HttpClientImpl(
     private val okHttpClient: OkHttpClient,
 ) : HttpClient {

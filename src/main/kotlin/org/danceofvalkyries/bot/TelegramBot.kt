@@ -1,4 +1,4 @@
-package org.danceofvalkyries.telegram.bot
+package org.danceofvalkyries.bot
 
 interface TelegramBot {
     suspend fun editOldNotificationMessageToDoneMessage()

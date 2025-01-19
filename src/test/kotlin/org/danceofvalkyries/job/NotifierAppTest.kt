@@ -3,7 +3,7 @@ package org.danceofvalkyries.job
 import integrations.testdata.greek.GreekLettersAndSoundsDataBaseDataBase
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
-import org.danceofvalkyries.telegram.bot.TelegramBotImpl
+import org.danceofvalkyries.bot.TelegramBotImpl
 import org.danceofvalkyries.telegram.message.TelegramMessage
 import org.danceofvalkyries.utils.resources.EngStringResources
 import utils.DispatchersFake

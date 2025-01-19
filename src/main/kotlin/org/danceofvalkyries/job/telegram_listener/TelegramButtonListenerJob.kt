@@ -9,8 +9,8 @@ import org.danceofvalkyries.job.Job
 import org.danceofvalkyries.dictionary.constant.ConfigOnlineDictionaries
 import org.danceofvalkyries.notion.databases.restful.RestFulNotionDataBases
 import org.danceofvalkyries.notion.databases.sqlite.SqlLiteNotionDataBases
-import org.danceofvalkyries.telegram.bot.TelegramBot
-import org.danceofvalkyries.telegram.bot.TelegramBotImpl
+import org.danceofvalkyries.bot.TelegramBot
+import org.danceofvalkyries.bot.TelegramBotImpl
 import org.danceofvalkyries.telegram.chat.TelegramChat
 import org.danceofvalkyries.telegram.chat.restful.RestfulTelegramChat
 import org.danceofvalkyries.telegram.message.TelegramMessage
