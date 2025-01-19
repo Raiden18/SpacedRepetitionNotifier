@@ -1,4 +1,4 @@
-package org.danceofvalkyries.notion.impl.client.models.request
+package org.danceofvalkyries.job.data.notion.pages.restful.jsonobjects
 
 import com.google.gson.Gson
 import org.danceofvalkyries.utils.rest.JsonObject

@@ -1,4 +1,4 @@
-package org.danceofvalkyries.notion.impl.client.models.response.properties
+package org.danceofvalkyries.job.data.notion.pages.restful.jsonobjects
 
 import com.google.gson.annotations.SerializedName
 

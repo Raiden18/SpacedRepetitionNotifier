@@ -1,4 +1,4 @@
-package org.danceofvalkyries.notion.impl.client.models.response
+package org.danceofvalkyries.job.data.notion.pages.restful.jsonobjects
 
 data class NotionDbResponse(
     private val title: List<Title>,

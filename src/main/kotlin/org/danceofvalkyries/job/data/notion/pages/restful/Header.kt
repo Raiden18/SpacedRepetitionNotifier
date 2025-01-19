@@ -1,4 +1,4 @@
-package org.danceofvalkyries.notion.impl.client.models.request
+package org.danceofvalkyries.job.data.notion.pages.restful
 
 import org.danceofvalkyries.utils.rest.Header
 

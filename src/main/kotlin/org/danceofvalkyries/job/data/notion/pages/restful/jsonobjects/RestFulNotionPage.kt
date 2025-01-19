@@ -1,9 +1,6 @@
-package org.danceofvalkyries.notion.impl.client.models
+package org.danceofvalkyries.job.data.notion.pages.restful.jsonobjects
 
 import com.google.gson.annotations.SerializedName
-import org.danceofvalkyries.notion.impl.client.models.response.CoverResponse
-import org.danceofvalkyries.notion.impl.client.models.response.ParentResponse
-import org.danceofvalkyries.notion.impl.client.models.response.UserResponse
 
 data class RestFulNotionPage(
     @SerializedName("object") val objectType: String? = null,

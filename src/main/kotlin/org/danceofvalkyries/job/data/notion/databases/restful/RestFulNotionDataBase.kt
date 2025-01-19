@@ -4,10 +4,10 @@ import com.google.gson.Gson
 import org.danceofvalkyries.job.data.notion.databases.NotionDataBase
 import org.danceofvalkyries.job.data.notion.pages.NotionPageFlashCard
 import org.danceofvalkyries.job.data.notion.pages.restful.RestfulNotionPageFlashCard
-import org.danceofvalkyries.notion.impl.client.models.RestFulNotionPage
-import org.danceofvalkyries.notion.impl.client.models.request.NotionApiVersionHeader
-import org.danceofvalkyries.notion.impl.client.models.request.SpacedRepetitionRequestBody
-import org.danceofvalkyries.notion.impl.client.models.response.NotionDbResponse
+import org.danceofvalkyries.job.data.notion.pages.restful.jsonobjects.RestFulNotionPage
+import org.danceofvalkyries.job.data.notion.pages.restful.NotionApiVersionHeader
+import org.danceofvalkyries.job.data.notion.pages.restful.jsonobjects.SpacedRepetitionRequestBody
+import org.danceofvalkyries.job.data.notion.pages.restful.jsonobjects.NotionDbResponse
 import org.danceofvalkyries.utils.rest.AuthorizationBearerHeader
 import org.danceofvalkyries.utils.rest.ContentType
 import org.danceofvalkyries.utils.rest.ContentTypes

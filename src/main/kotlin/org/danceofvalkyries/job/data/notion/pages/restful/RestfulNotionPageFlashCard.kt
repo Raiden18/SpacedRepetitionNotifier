@@ -2,9 +2,8 @@ package org.danceofvalkyries.job.data.notion.pages.restful
 
 import com.google.gson.Gson
 import org.danceofvalkyries.job.data.notion.pages.NotionPageFlashCard
-import org.danceofvalkyries.notion.impl.client.models.PropertyData
-import org.danceofvalkyries.notion.impl.client.models.RestFulNotionPage
-import org.danceofvalkyries.notion.impl.client.models.request.NotionApiVersionHeader
+import org.danceofvalkyries.job.data.notion.pages.restful.jsonobjects.PropertyData
+import org.danceofvalkyries.job.data.notion.pages.restful.jsonobjects.RestFulNotionPage
 import org.danceofvalkyries.utils.rest.AuthorizationBearerHeader
 import org.danceofvalkyries.utils.rest.ContentType
 import org.danceofvalkyries.utils.rest.ContentTypes

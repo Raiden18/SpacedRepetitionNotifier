@@ -1,8 +1,6 @@
-package org.danceofvalkyries.notion.impl.client.models
+package org.danceofvalkyries.job.data.notion.pages.restful.jsonobjects
 
 import com.google.gson.annotations.SerializedName
-import org.danceofvalkyries.notion.impl.client.models.response.properties.RichTextResponse
-import org.danceofvalkyries.notion.impl.client.models.response.properties.TextResponse
 
 data class PropertyData(
     @SerializedName("id") val id: String? = null,
