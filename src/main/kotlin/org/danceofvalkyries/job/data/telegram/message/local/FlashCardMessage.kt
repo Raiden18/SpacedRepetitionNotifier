@@ -4,13 +4,13 @@ import org.danceofvalkyries.job.data.dictionary.OnlineDictionary
 import org.danceofvalkyries.job.data.notion.pages.NotionPageFlashCard
 import org.danceofvalkyries.job.data.telegram.message.ConstantTelegramMessageButton
 import org.danceofvalkyries.job.data.telegram.message.TelegramMessage
+import org.danceofvalkyries.job.data.telegram.message.local.translator.TelegramTextTranslator
 import org.danceofvalkyries.job.data.telegram.message.local.translator.TextTranslator
 import org.danceofvalkyries.job.telegram_listener.ButtonAction
 import org.danceofvalkyries.utils.resources.StringResources
 
 class FlashCardMessage(
     private val flashCard: NotionPageFlashCard,
-    private val translator: TextTranslator,
     private val stringResources: StringResources,
     private val onlineDictionaries: List<OnlineDictionary>
 ) : LocalTelegramMessage() {
@@ -21,6 +21,7 @@ class FlashCardMessage(
 
     override val text: String
         get() {
+            val translator = TelegramTextTranslator()
             val memorizedInfo = translator.encode(flashCard.name)!!
             val example = translator.encode(flashCard.example)
             val answer = translator.encode(flashCard.explanation)

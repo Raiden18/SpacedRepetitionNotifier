@@ -14,7 +14,6 @@ import org.danceofvalkyries.job.data.telegram.bot.TelegramBotImpl
 import org.danceofvalkyries.job.data.telegram.chat.TelegramChat
 import org.danceofvalkyries.job.data.telegram.chat.restful.RestfulTelegramChat
 import org.danceofvalkyries.job.data.telegram.message.TelegramMessage.Button
-import org.danceofvalkyries.job.data.telegram.message.local.translator.TelegramTextTranslator
 import org.danceofvalkyries.job.data.telegram.message_types.sqlite.SqlLiteSentTelegramMessagesType
 import org.danceofvalkyries.job.telegram_listener.ButtonAction
 import org.danceofvalkyries.utils.Dispatchers
@@ -53,7 +52,6 @@ fun ListenToTelegramEvensJob(
         restfulNotionDataBases,
         sqlLiteTelegramMessages,
         onlineDictionaries,
-        TelegramTextTranslator(),
         EngStringResources(),
         dispatchers,
     )

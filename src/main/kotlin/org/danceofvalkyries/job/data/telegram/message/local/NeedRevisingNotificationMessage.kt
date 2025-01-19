@@ -7,7 +7,7 @@ import org.danceofvalkyries.job.data.telegram.message.TelegramMessage
 import org.danceofvalkyries.job.telegram_listener.ButtonAction
 import org.danceofvalkyries.utils.resources.StringResources
 
-class NeedRevisingFlashCardMessage(
+class NeedRevisingNotificationMessage(
     private val stringResources: StringResources,
     private val flashCards: List<NotionPageFlashCard>,
     private val notionDataBases: List<NotionDataBase>
