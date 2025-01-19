@@ -39,8 +39,7 @@ class TelegramBotUserImpl(
     }
 
     override suspend fun deleteOldNotificationMessage() {
-        sentTelegramMessagesType.iterate(NOTIFiCATION_TYPE_MESSAGE)
-            .forEach { it.deleteFrom(telegramChat) }
+        removedTelegramMessages(NOTIFiCATION_TYPE_MESSAGE)
         removedCachedMessages(NOTIFiCATION_TYPE_MESSAGE)
     }
 
@@ -71,18 +70,16 @@ class TelegramBotUserImpl(
 
     override suspend fun updateNotificationMessage() {
         val flashCards = getAllFlashCard()
-        if (flashCards.isEmpty()) {
-            editOldNotificationMessageToDoneMessage()
-            return
-        }
-        editNotificationMessageTo(
+        val newNotificationMessage = if (flashCards.isEmpty()) {
+            DoneTelegramMessage(stringResources)
+        } else {
             NeedRevisingFlashCardMessage(flashCards)
-        )
+        }
+        editNotificationMessageTo(newNotificationMessage)
     }
 
     override suspend fun deleteAllFlashCardsFromChat() {
-        sentTelegramMessagesType.iterate(FLASH_CARD_TYPE_MESSAGE)
-            .forEach { it.deleteFrom(telegramChat) }
+        removedTelegramMessages(FLASH_CARD_TYPE_MESSAGE)
     }
 
     override suspend fun sendNextFlashCardFrom(notionDbId: String) {
@@ -169,6 +166,11 @@ class TelegramBotUserImpl(
     private suspend fun removedCachedMessages(type: String) {
         sentTelegramMessagesType.iterate(type)
             .forEach { it.deleteFrom(sentTelegramMessagesType) }
+    }
+
+    private suspend fun removedTelegramMessages(type: String) {
+        sentTelegramMessagesType.iterate(type)
+            .forEach { it.deleteFrom(telegramChat) }
     }
 
     private suspend fun editNotificationMessageTo(newMessage: LocalTelegramMessage) {
