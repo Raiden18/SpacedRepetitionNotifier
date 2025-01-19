@@ -40,5 +40,5 @@ class RestfulGreekLetter2FlashCard(
             13 to false,
         )
 
-    override fun setKnowLevels(knowLevels: Map<Int, Boolean>) = Unit
+    override suspend fun setKnowLevels(knowLevels: Map<Int, Boolean>) = Unit
 }

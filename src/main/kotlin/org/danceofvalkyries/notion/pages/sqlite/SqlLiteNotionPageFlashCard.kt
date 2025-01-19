@@ -83,5 +83,5 @@ class SqlLiteNotionPageFlashCard(
                 }
         }
 
-    override fun setKnowLevels(knowLevels: Map<Int, Boolean>) = error("Updating levels in DB is not going to be supported")
+    override suspend fun setKnowLevels(knowLevels: Map<Int, Boolean>) = error("Updating levels in DB is not going to be supported")
 }

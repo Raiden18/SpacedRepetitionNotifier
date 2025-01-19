@@ -52,7 +52,7 @@ class NotionPageFlashCardKtTest : FunSpec() {
                     4 to false
                 )
 
-            override fun setKnowLevels(knowLevels: Map<Int, Boolean>) {
+            override suspend fun setKnowLevels(knowLevels: Map<Int, Boolean>) {
                 TODO("Not yet implemented")
             }
         }

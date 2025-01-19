@@ -18,7 +18,7 @@ class HttpClientFake(
         return postResponse
     }
 
-    override fun patch(url: String, body: String, headers: List<Header>): HttpClient.Response {
+    override suspend fun patch(url: String, body: String, headers: List<Header>): HttpClient.Response {
         TODO("Not yet implemented")
     }
 

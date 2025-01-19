@@ -40,7 +40,7 @@ class HttpClientImpl(
         )
     }
 
-    override fun patch(url: String, body: String, headers: List<Header>): Response {
+    override suspend fun patch(url: String, body: String, headers: List<Header>): Response {
         val applicationJson = ContentType(ContentTypes.ApplicationJson)
         val response = Request.Builder()
             .url(url)

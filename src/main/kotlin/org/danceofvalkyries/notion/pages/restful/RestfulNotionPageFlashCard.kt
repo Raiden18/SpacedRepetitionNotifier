@@ -33,7 +33,7 @@ class RestfulNotionPageFlashCard(
     override val knowLevels: Map<Int, Boolean>
         get() = responseData!!.knowLevels
 
-    override fun setKnowLevels(knowLevels: Map<Int, Boolean>) {
+    override suspend fun setKnowLevels(knowLevels: Map<Int, Boolean>) {
         val updatedNotionPage = RestFulNotionPage(
             id = null,
             properties = knowLevels

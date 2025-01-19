@@ -12,5 +12,5 @@ data class NotionPageFlashCardFake(
     override val knowLevels: Map<Int, Boolean> = emptyMap(),
 ) : NotionPageFlashCard {
 
-    override fun setKnowLevels(knowLevels: Map<Int, Boolean>) = Unit
+    override suspend fun setKnowLevels(knowLevels: Map<Int, Boolean>) = Unit
 }

@@ -75,7 +75,7 @@ class WineEnglishVocabulary(
             13 to false,
         )
 
-    override fun setKnowLevels(knowLevels: Map<Int, Boolean>) {
+    override suspend fun setKnowLevels(knowLevels: Map<Int, Boolean>) {
         updatedKnowLevels = knowLevels
     }
 
