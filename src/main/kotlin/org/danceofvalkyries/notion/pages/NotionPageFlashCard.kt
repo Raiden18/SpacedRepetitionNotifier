@@ -8,6 +8,8 @@ interface NotionPageFlashCard {
     val example: String?
     val explanation: String?
     val knowLevels: Map<Int, Boolean>
+
+    fun setKnowLevels(knowLevels: Map<Int, Boolean>)
 }
 
 fun NotionPageFlashCard.recall(): Map<Int, Boolean> {
