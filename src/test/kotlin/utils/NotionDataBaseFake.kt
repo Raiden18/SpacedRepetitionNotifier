@@ -4,10 +4,18 @@ import org.danceofvalkyries.notion.databases.NotionDataBase
 import org.danceofvalkyries.notion.pages.NotionPageFlashCard
 
 data class NotionDataBaseFake(
-    override val id: String,
-    override val name: String,
+    private val id: String,
+    private val name: String,
     private var pages: List<NotionPageFlashCard>
 ) : NotionDataBase {
+
+    override fun getId(): String {
+        return id
+    }
+
+    override fun getName(): String {
+        return name
+    }
 
     override fun iterate(): Sequence<NotionPageFlashCard> {
         return pages.asSequence()

@@ -20,9 +20,14 @@ class EnglishVocabularyDataBaseFake : NotionDataBase {
         pages = listOf(wine, dota2)
     )
 
-    override val id: String = ID
 
-    override val name: String = NAME
+    override fun getId(): String {
+        return ID
+    }
+
+    override fun getName(): String {
+        return NAME
+    }
 
     override fun iterate(): Sequence<NotionPageFlashCard> {
         return defaultNotionDataBaseFake.iterate()

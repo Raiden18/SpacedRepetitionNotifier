@@ -3,8 +3,8 @@ package org.danceofvalkyries.notion.databases
 import org.danceofvalkyries.notion.pages.NotionPageFlashCard
 
 interface NotionDataBase {
-    val id: String
-    val name: String
+    fun getId(): String
+    fun getName(): String
 
     fun iterate(): Sequence<NotionPageFlashCard>
 

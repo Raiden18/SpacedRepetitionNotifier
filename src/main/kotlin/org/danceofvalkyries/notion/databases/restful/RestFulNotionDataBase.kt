@@ -15,7 +15,7 @@ import org.danceofvalkyries.utils.rest.clients.http.HttpClient
 import org.danceofvalkyries.utils.rest.clients.http.parse
 
 class RestFulNotionDataBase(
-    override val id: String,
+    private val id: String,
     private val apiKey: String,
     private val httpClient: HttpClient,
     private val gson: Gson,
@@ -27,11 +27,16 @@ class RestFulNotionDataBase(
         ContentType(ContentTypes.ApplicationJson)
     )
 
-    override val name: String
-        get() = httpClient.get(
+    override fun getId(): String {
+        return id
+    }
+
+    override fun getName(): String {
+        return httpClient.get(
             url = "https://api.notion.com/v1/databases/$id",
             headers = headers
         ).parse<NotionDbResponse>(gson).name
+    }
 
 
     override fun iterate(): Sequence<NotionPageFlashCard> {

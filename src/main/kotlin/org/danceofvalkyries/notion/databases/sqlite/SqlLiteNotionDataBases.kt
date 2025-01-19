@@ -42,8 +42,8 @@ class SqlLiteNotionDataBases(
     }
 
     override suspend fun add(notionDataBase: NotionDataBase): NotionDataBase {
-        val id = notionDataBase.id
-        val name = notionDataBase.name
+        val id = notionDataBase.getId()
+        val name = notionDataBase.getName()
         createStatement().execute(
             SqlQuery {
                 insert(

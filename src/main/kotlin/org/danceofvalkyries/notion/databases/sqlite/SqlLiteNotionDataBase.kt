@@ -12,7 +12,7 @@ import java.sql.Statement
 import java.util.*
 
 class SqlLiteNotionDataBase(
-    override val id: String,
+    private val id: String,
     private val tableName: String,
     private val idColumn: TextTableColumn,
     private val nameColumn: TextTableColumn,
@@ -28,10 +28,16 @@ class SqlLiteNotionDataBase(
     private val pageImageUrlColumn = TextTableColumn("image_url")
     private val pageNameColumn = TextTableColumn("name")
     private val pageNotionDbIdColumn = TextTableColumn(idColumn.name)
-    private val pageKnowLevelsColumns = (1..13).associateWith { createKnowLevelColumn(it) }
+    private val pageKnowLevelsColumns = (1..13).associateWith {
+        createKnowLevelColumn(it)
+    }
 
-    override val name: String
-        get() = connection.createStatement()
+    override fun getId(): String {
+        return id
+    }
+
+    override fun getName(): String {
+        return connection.createStatement()
             .executeQuery(
                 SqlQuery {
                     select(nameColumn)
@@ -39,7 +45,7 @@ class SqlLiteNotionDataBase(
                     where(idColumn to id)
                 }
             )?.let(nameColumn::getValue)!!
-
+    }
 
     override fun iterate(): Sequence<NotionPageFlashCard> {
         return createStatement().let {
@@ -163,6 +169,6 @@ class SqlLiteNotionDataBase(
 
 
     private fun getPageTableName(): String {
-        return "flash_cards_to_revise_${name.lowercase(Locale.getDefault()).replace(" ", "_")} "
+        return "flash_cards_to_revise_${getName().lowercase(Locale.getDefault()).replace(" ", "_")} "
     }
 }

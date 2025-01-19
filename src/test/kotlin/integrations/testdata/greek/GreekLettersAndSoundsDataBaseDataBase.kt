@@ -21,11 +21,13 @@ class GreekLettersAndSoundsDataBaseDataBase : NotionDataBase {
         pages = listOf(restfulGreekLetter1FlashCard, restfulGreekLetter2FlashCard)
     )
 
-    override val id: String
-        get() = defaultNotionDataBaseFake.id
+    override fun getId(): String {
+        return defaultNotionDataBaseFake.getId()
+    }
 
-    override val name: String
-        get() = defaultNotionDataBaseFake.name
+    override fun getName(): String {
+        return  defaultNotionDataBaseFake.getName()
+    }
 
     fun createTelegramNotification(id: Long): TelegramMessageFake {
         return TelegramMessageFake.createTelegramNotification(

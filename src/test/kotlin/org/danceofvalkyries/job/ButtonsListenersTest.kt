@@ -125,7 +125,7 @@ class ButtonsListenersTest : BehaviorSpec() {
                     And("User taps on English Vocabulary buttons") {
                         beforeTest {
                             userTapsOnDbButton(
-                                dbId = englishVocabularyDataBaseFake.id,
+                                dbId = englishVocabularyDataBaseFake.getId(),
                                 notificationMessageId = notificationMessage.id
                             )
                         }
@@ -195,8 +195,8 @@ class ButtonsListenersTest : BehaviorSpec() {
         val message = TelegramMessageFake.createTelegramNotification(
             messageId = -1,
             numberToRevise = numberToRevise,
-            tableName = englishVocabularyDataBaseFake.name,
-            dbId = englishVocabularyDataBaseFake.id
+            tableName = englishVocabularyDataBaseFake.getName(),
+            dbId = englishVocabularyDataBaseFake.getId()
         )
         val notificationMessage = telegramChat.sendTextMessage(
             text = message.text,
@@ -259,8 +259,8 @@ class ButtonsListenersTest : BehaviorSpec() {
             val editedNotificationMessage = TelegramMessageFake.createTelegramNotification(
                 messageId = messageId,
                 numberToRevise = newNumberToRevise,
-                tableName = englishVocabularyDataBaseFake.name,
-                dbId = englishVocabularyDataBaseFake.id
+                tableName = englishVocabularyDataBaseFake.getName(),
+                dbId = englishVocabularyDataBaseFake.getId()
             )
             telegramChat.assertThat().isInChat(editedNotificationMessage)
         }

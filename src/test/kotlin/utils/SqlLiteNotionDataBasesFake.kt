@@ -11,13 +11,13 @@ data class SqlLiteNotionDataBasesFake(
     }
 
     override fun getBy(id: String): NotionDataBase {
-        return dataBases.first { it.id == id }
+        return dataBases.first { it.getId() == id }
     }
 
     override suspend fun add(notionDataBase: NotionDataBase): NotionDataBase {
         val dataBase = NotionDataBaseFake(
-            id = notionDataBase.id,
-            name = notionDataBase.name,
+            id = notionDataBase.getId(),
+            name = notionDataBase.getName(),
             pages = notionDataBase.iterate().toMutableList()
         )
         dataBases = dataBases + listOf(dataBase)

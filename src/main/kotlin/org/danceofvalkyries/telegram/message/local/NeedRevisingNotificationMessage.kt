@@ -20,10 +20,10 @@ class NeedRevisingNotificationMessage(
         get() = flashCards
             .groupBy { it.notionDbID }
             .map { (dbId, flashCards) ->
-                val db = notionDataBases.first { it.id == dbId }
+                val db = notionDataBases.first { it.getId() == dbId }
                 ConstantTelegramMessageButton(
-                    text = "${db.name}: ${flashCards.count()}",
-                    action = TelegramMessage.Button.Action.CallBackData(ButtonAction.DataBase(db.id).rawValue),
+                    text = "${db.getName()}: ${flashCards.count()}",
+                    action = TelegramMessage.Button.Action.CallBackData(ButtonAction.DataBase(db.getId()).rawValue),
                 )
             }.map { listOf(it) }
 }

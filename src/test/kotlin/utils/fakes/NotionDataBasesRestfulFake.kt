@@ -12,7 +12,7 @@ class NotionDataBasesRestfulFake(
     }
 
     override fun getBy(id: String): NotionDataBase {
-        return dataBases.first { it.id == id }
+        return dataBases.first { it.getId() == id }
     }
 
     override suspend fun add(notionDataBase: NotionDataBase): NotionDataBase {
