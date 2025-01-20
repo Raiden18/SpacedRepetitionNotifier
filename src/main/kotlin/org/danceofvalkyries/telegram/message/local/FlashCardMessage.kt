@@ -2,16 +2,19 @@ package org.danceofvalkyries.telegram.message.local
 
 import org.danceofvalkyries.dictionary.OnlineDictionary
 import org.danceofvalkyries.job.telegram_listener.ButtonAction
-import org.danceofvalkyries.notion.pages.NotionPageFlashCard
 import org.danceofvalkyries.telegram.message.ConstantTelegramMessageButton
 import org.danceofvalkyries.telegram.message.TelegramMessage
 import org.danceofvalkyries.telegram.message.local.translator.TelegramTextTranslator
 import org.danceofvalkyries.utils.resources.StringResources
 
 class FlashCardMessage(
-    private val flashCard: NotionPageFlashCard,
+    private val notionFlashCardId: String,
+    private val name: String,
+    private val example: String?,
+    private val answer: String?,
+    private val coverUrl: String?,
     private val stringResources: StringResources,
-    private val onlineDictionaries: List<OnlineDictionary>
+    private val onlineDictionaries: List<OnlineDictionary>,
 ) : LocalTelegramMessage() {
 
     override val type: String
@@ -20,9 +23,9 @@ class FlashCardMessage(
 
     override fun getText(): String {
         val translator = TelegramTextTranslator()
-        val memorizedInfo = translator.encode(flashCard.name)!!
-        val example = translator.encode(flashCard.example)
-        val answer = translator.encode(flashCard.explanation)
+        val memorizedInfo = translator.encode(name)!!
+        val example = translator.encode(example)
+        val answer = translator.encode(answer)
 
         val body = StringBuilder()
             .appendLine("*${memorizedInfo}*")
@@ -44,11 +47,11 @@ class FlashCardMessage(
         val recallActions = listOf(
             ConstantTelegramMessageButton(
                 "${stringResources.forgot()}  ❌",
-                TelegramMessage.Button.Action.CallBackData(ButtonAction.Forgotten(flashCard.id).rawValue)
+                TelegramMessage.Button.Action.CallBackData(ButtonAction.Forgotten(notionFlashCardId).rawValue)
             ),
             ConstantTelegramMessageButton(
                 "${stringResources.recalled()}  ✅",
-                TelegramMessage.Button.Action.CallBackData(ButtonAction.Recalled(flashCard.id).rawValue)
+                TelegramMessage.Button.Action.CallBackData(ButtonAction.Recalled(notionFlashCardId).rawValue)
             )
         )
 
@@ -56,7 +59,7 @@ class FlashCardMessage(
             .map {
                 ConstantTelegramMessageButton(
                     text = stringResources.lookUp(),
-                    action = TelegramMessage.Button.Action.Url(it.getUrlFor(flashCard.name)),
+                    action = TelegramMessage.Button.Action.Url(it.getUrlFor(name)),
                 )
             }
 
@@ -67,6 +70,6 @@ class FlashCardMessage(
     }
 
     override fun getImageUrl(): String? {
-        return flashCard.coverUrl
+        return coverUrl
     }
 }

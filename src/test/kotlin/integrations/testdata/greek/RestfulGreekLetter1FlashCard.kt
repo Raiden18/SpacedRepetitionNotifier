@@ -6,24 +6,32 @@ class RestfulGreekLetter1FlashCard(
     private val notionDbId: String
 ) : NotionPageFlashCard {
 
-    override val id: String
-        get() = "greek_letter_id_1"
+    override suspend fun getId(): String {
+        return "greek_letter_id_1"
+    }
 
-    override val coverUrl: String? = null
+    override suspend fun getCoverUrl(): String? {
+        return null
+    }
 
-    override val notionDbID: String
-        get() = notionDbId
+    override suspend fun getNotionDbId(): String {
+        return notionDbId
+    }
 
-    override val name: String
-        get() = "Αα"
+    override suspend fun getName(): String {
+        return "Αα"
+    }
 
-    override val example: String? = null
+    override suspend fun getExample(): String? {
+        return null
+    }
 
-    override val explanation: String
-        get() = "a as in raft"
+    override suspend fun getExplanation(): String? {
+        return "a as in raft"
+    }
 
-    override val knowLevels: Map<Int, Boolean>
-        get() = mapOf(
+    override suspend fun getKnowLevels(): Map<Int, Boolean> {
+        return mapOf(
             1 to true,
             2 to false,
             3 to false,
@@ -38,6 +46,7 @@ class RestfulGreekLetter1FlashCard(
             12 to false,
             13 to false,
         )
+    }
 
     override suspend fun setKnowLevels(knowLevels: Map<Int, Boolean>) = Unit
 }

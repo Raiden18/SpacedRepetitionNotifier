@@ -41,26 +41,33 @@ class Dota2EnglishVocabulary(
         13 to false,
     )
 
-    override val id: String
-        get() = "dota_2_english_vocabulary_1"
+    override suspend fun getId(): String {
+        return "dota_2_english_vocabulary_1"
+    }
 
-    override val coverUrl: String?
-        get() = "https://cdn.akamai.steamstatic.com/apps/dota2/images/dota2_social.jpg"
 
-    override val notionDbID: String
-        get() = notionDbId
+    override suspend fun getCoverUrl(): String? {
+        return "https://cdn.akamai.steamstatic.com/apps/dota2/images/dota2_social.jpg"
+    }
 
-    override val name: String
-        get() = "Dota 2"
+    override suspend fun getNotionDbId(): String {
+        return notionDbId
+    }
 
-    override val example: String?
-        get() = "Dota 2 is the best game in the world"
+    override suspend fun getName(): String {
+        return "Dota 2"
+    }
 
-    override val explanation: String
-        get() = "Mid or feed"
+    override suspend fun getExample(): String? {
+        return "Dota 2 is the best game in the world"
+    }
 
-    override val knowLevels: Map<Int, Boolean>
-        get() = mapOf(
+    override suspend fun getExplanation(): String {
+        return "Mid or feed"
+    }
+
+    override suspend fun getKnowLevels(): Map<Int, Boolean> {
+        return mapOf(
             1 to true,
             2 to true,
             3 to false,
@@ -75,6 +82,7 @@ class Dota2EnglishVocabulary(
             12 to false,
             13 to false,
         )
+    }
 
     override suspend fun setKnowLevels(knowLevels: Map<Int, Boolean>) {
         updatedKnowLevels = knowLevels
@@ -86,29 +94,10 @@ class Dota2EnglishVocabulary(
 
         other as Dota2EnglishVocabulary
 
-        if (notionDbId != other.notionDbId) return false
-        if (id != other.id) return false
-        if (coverUrl != other.coverUrl) return false
-        if (notionDbID != other.notionDbID) return false
-        if (name != other.name) return false
-        if (example != other.example) return false
-        if (explanation != other.explanation) return false
-        if (knowLevels != other.knowLevels) return false
-
-        return true
+        return notionDbId == other.notionDbId
     }
 
     override fun hashCode(): Int {
-        var result = notionDbId.hashCode()
-        result = 31 * result + id.hashCode()
-        result = 31 * result + (coverUrl?.hashCode() ?: 0)
-        result = 31 * result + notionDbID.hashCode()
-        result = 31 * result + name.hashCode()
-        result = 31 * result + (example?.hashCode() ?: 0)
-        result = 31 * result + explanation.hashCode()
-        result = 31 * result + knowLevels.hashCode()
-        return result
+        return notionDbId.hashCode()
     }
-
-
 }

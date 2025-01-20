@@ -32,29 +32,43 @@ class NotionPageFlashCardKtTest : FunSpec() {
 
     private fun NotionPageFlashCard(): NotionPageFlashCard {
         return object : NotionPageFlashCard {
-            override val id: String
-                get() = TODO("Not yet implemented")
-            override val coverUrl: String?
-                get() = TODO("Not yet implemented")
-            override val notionDbID: String
-                get() = TODO("Not yet implemented")
-            override val name: String
-                get() = TODO("Not yet implemented")
-            override val example: String?
-                get() = TODO("Not yet implemented")
-            override val explanation: String?
-                get() = TODO("Not yet implemented")
-            override val knowLevels: Map<Int, Boolean>
-                get() = mapOf(
+            override suspend fun getId(): String {
+                TODO("Not yet implemented")
+            }
+
+            override suspend fun getCoverUrl(): String? {
+                TODO("Not yet implemented")
+            }
+
+            override suspend fun getNotionDbId(): String {
+                TODO("Not yet implemented")
+            }
+
+            override suspend fun getName(): String {
+                TODO("Not yet implemented")
+            }
+
+            override suspend fun getExample(): String? {
+                TODO("Not yet implemented")
+            }
+
+            override suspend fun getExplanation(): String? {
+                TODO("Not yet implemented")
+            }
+
+            override suspend fun getKnowLevels(): Map<Int, Boolean> {
+                return mapOf(
                     1 to true,
                     2 to true,
                     3 to false,
                     4 to false
                 )
+            }
 
             override suspend fun setKnowLevels(knowLevels: Map<Int, Boolean>) {
-                TODO("Not yet implemented")
+
             }
+
         }
     }
 }

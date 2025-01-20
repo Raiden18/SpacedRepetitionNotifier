@@ -103,22 +103,22 @@ class ButtonsListenersTest : BehaviorSpec() {
 
                     val wineFlashCard = TelegramMessageFake.createEnglishVocabularyFlashCard(
                         messageId = 2,
-                        text = englishVocabularyDataBaseFake.wine.name,
-                        example = englishVocabularyDataBaseFake.wine.example!!,
-                        answer = englishVocabularyDataBaseFake.wine.explanation!!,
-                        flashCardId = englishVocabularyDataBaseFake.wine.id,
-                        dictionaryUrl = cambridgeDictionary.getUrlFor(englishVocabularyDataBaseFake.wine.name),
-                        imageUrl = englishVocabularyDataBaseFake.wine.coverUrl
+                        text = englishVocabularyDataBaseFake.wine.getName(),
+                        example = englishVocabularyDataBaseFake.wine.getExample()!!,
+                        answer = englishVocabularyDataBaseFake.wine.getExplanation()!!,
+                        flashCardId = englishVocabularyDataBaseFake.wine.getId(),
+                        dictionaryUrl = cambridgeDictionary.getUrlFor(englishVocabularyDataBaseFake.wine.getName()),
+                        imageUrl = englishVocabularyDataBaseFake.wine.getCoverUrl()
                     )
 
                     val dota2FlashCard = TelegramMessageFake.createEnglishVocabularyFlashCard(
                         messageId = 3,
-                        text = englishVocabularyDataBaseFake.dota2.name,
-                        example = englishVocabularyDataBaseFake.dota2.example!!,
-                        answer = englishVocabularyDataBaseFake.dota2.explanation!!,
-                        flashCardId = englishVocabularyDataBaseFake.dota2.id,
-                        dictionaryUrl = cambridgeDictionary.getUrlFor(englishVocabularyDataBaseFake.dota2.name),
-                        imageUrl = englishVocabularyDataBaseFake.dota2.coverUrl
+                        text = englishVocabularyDataBaseFake.dota2.getName(),
+                        example = englishVocabularyDataBaseFake.dota2.getExample()!!,
+                        answer = englishVocabularyDataBaseFake.dota2.getExplanation()!!,
+                        flashCardId = englishVocabularyDataBaseFake.dota2.getId(),
+                        dictionaryUrl = cambridgeDictionary.getUrlFor(englishVocabularyDataBaseFake.dota2.getName()),
+                        imageUrl = englishVocabularyDataBaseFake.dota2.getCoverUrl()
                     )
 
                     beforeTest {
@@ -141,7 +141,7 @@ class ButtonsListenersTest : BehaviorSpec() {
                             beforeTest {
                                 userTapsOnForgot(
                                     messageId = wineFlashCard.getId(),
-                                    notionPageId = englishVocabularyDataBaseFake.wine.id
+                                    notionPageId = englishVocabularyDataBaseFake.wine.getId()
                                 )
                             }
 
@@ -159,7 +159,7 @@ class ButtonsListenersTest : BehaviorSpec() {
                             beforeTest {
                                 userTapsOnRecalled(
                                     messageId = wineFlashCard.getId(),
-                                    notionPageId = englishVocabularyDataBaseFake.wine.id,
+                                    notionPageId = englishVocabularyDataBaseFake.wine.getId(),
                                 )
                             }
 
@@ -176,7 +176,7 @@ class ButtonsListenersTest : BehaviorSpec() {
                                 beforeTest {
                                     userTapsOnRecalled(
                                         messageId = dota2FlashCard.getId(),
-                                        notionPageId = englishVocabularyDataBaseFake.dota2.id
+                                        notionPageId = englishVocabularyDataBaseFake.dota2.getId()
                                     )
                                 }
 

@@ -40,7 +40,7 @@ class EnglishVocabularyDataBaseFake : NotionDataBase {
     }
 
     override suspend fun getPageBy(pageId: String): NotionPageFlashCard {
-        return iterate().first { it.id == pageId }
+        return iterate().first { it.getId() == pageId }
     }
 
     override suspend fun clear() {

@@ -19,7 +19,7 @@ class NeedRevisingNotificationMessage(
 
     override suspend fun getNestedButtons(): List<List<TelegramMessage.Button>> {
         return flashCards
-            .groupBy { it.notionDbID }
+            .groupBy { it.getNotionDbId() }
             .map { (dbId, flashCards) ->
                 val db = notionDataBases.first { it.getId() == dbId }
                 ConstantTelegramMessageButton(

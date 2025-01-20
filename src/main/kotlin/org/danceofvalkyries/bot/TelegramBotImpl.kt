@@ -1,6 +1,9 @@
 package org.danceofvalkyries.bot
 
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.toList
 import org.danceofvalkyries.dictionary.OnlineDictionaries
 import org.danceofvalkyries.notion.databases.NotionDataBases
 import org.danceofvalkyries.notion.pages.NotionPageFlashCard
@@ -69,7 +72,7 @@ class TelegramBotImpl(
         telegramChat.delete(telegramMessageId)
     }
 
-    private suspend fun performAction(flashCardId: String, action: (NotionPageFlashCard) -> Map<Int, Boolean>) {
+    private suspend fun performAction(flashCardId: String, action: suspend (NotionPageFlashCard) -> Map<Int, Boolean>) {
         val restActionsScheduler = ActonsSchedulerImpl(dispatchers)
         val notionDb = localDbNotionDataBases.getBy(dbId)
         val flashCard = notionDb.getPageBy(flashCardId)
@@ -148,9 +151,13 @@ class TelegramBotImpl(
     private suspend fun sendFlashCardMessage(flashCard: NotionPageFlashCard) {
         sendMessageAndSave(
             FlashCardMessage(
-                flashCard,
-                stringResources,
-                onlineDictionaries.iterate(flashCard.notionDbID)
+                notionFlashCardId = flashCard.getId(),
+                name = flashCard.getName(),
+                example = flashCard.getExample(),
+                answer = flashCard.getExplanation(),
+                coverUrl = flashCard.getCoverUrl(),
+                stringResources = stringResources,
+                onlineDictionaries = onlineDictionaries.iterate(flashCard.getNotionDbId())
             )
         )
     }

@@ -73,16 +73,16 @@ class SqlLiteNotionDataBase(
                     connection = connection
                 )
             }
-            .filter { it.notionDbID == id }
+            .filter { it.getNotionDbId() == id }
     }
 
     override suspend fun add(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard {
-        val id = notionPageFlashCard.id
-        val coverUrl = notionPageFlashCard.coverUrl
-        val name = notionPageFlashCard.name
-        val example = notionPageFlashCard.example
-        val explanation = notionPageFlashCard.explanation
-        val knowLevels = notionPageFlashCard.knowLevels
+        val id = notionPageFlashCard.getId()
+        val coverUrl = notionPageFlashCard.getCoverUrl()
+        val name = notionPageFlashCard.getName()
+        val example = notionPageFlashCard.getExample()
+        val explanation = notionPageFlashCard.getExplanation()
+        val knowLevels = notionPageFlashCard.getKnowLevels()
         val knowLevelDbValues = knowLevels
             .keys
             .map { level ->

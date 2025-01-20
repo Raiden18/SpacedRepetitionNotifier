@@ -3,28 +3,35 @@ package integrations.testdata.greek
 import org.danceofvalkyries.notion.pages.NotionPageFlashCard
 
 class RestfulGreekLetter2FlashCard(
-    notionDbId: String
+    private val notionDbId: String
 ) : NotionPageFlashCard {
 
-    override val id: String
-        get() = "greek_letter_id_2"
+    override suspend fun getId(): String {
+        return "greek_letter_id_2"
+    }
 
-    override val coverUrl: String?
-        get() = null
+    override suspend fun getCoverUrl(): String? {
+        return null
+    }
 
-    override val notionDbID: String = notionDbId
+    override suspend fun getNotionDbId(): String {
+        return notionDbId
+    }
 
-    override val name: String
-        get() = "greek_letter_id_2"
+    override suspend fun getName(): String {
+        return "V"
+    }
 
-    override val example: String?
-        get() = null
+    override suspend fun getExample(): String? {
+        return null
+    }
 
-    override val explanation: String?
-        get() = "v as in vet"
+    override suspend fun getExplanation(): String? {
+        return "v as in vet"
+    }
 
-    override val knowLevels: Map<Int, Boolean>
-        get() = mapOf(
+    override suspend fun getKnowLevels(): Map<Int, Boolean> {
+        return mapOf(
             1 to true,
             2 to false,
             3 to false,
@@ -39,6 +46,7 @@ class RestfulGreekLetter2FlashCard(
             12 to false,
             13 to false,
         )
+    }
 
     override suspend fun setKnowLevels(knowLevels: Map<Int, Boolean>) = Unit
 }

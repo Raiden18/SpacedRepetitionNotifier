@@ -5,8 +5,8 @@ import org.danceofvalkyries.telegram.chat.sendMessage
 
 interface TelegramMessage {
     fun getId(): Long
-    fun getText(): String
     fun getImageUrl(): String?
+    fun getText(): String
     suspend fun getNestedButtons(): List<List<Button>>
 
     interface Button {
