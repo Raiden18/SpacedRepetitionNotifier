@@ -6,7 +6,7 @@ import org.danceofvalkyries.utils.db.tables.columns.TextTableColumn
 import java.sql.Connection
 
 class SqlLiteNotionPageFlashCard(
-    override val id: String,
+    private val id: String,
     private val connection: Connection,
     private val tableName: String,
     private val nameColumn: TextTableColumn,
@@ -18,8 +18,12 @@ class SqlLiteNotionPageFlashCard(
     private val knowLevelsColumns: Map<Int, TextTableColumn>,
 ) : NotionPageFlashCard {
 
-    override val coverUrl: String?
-        get() = connection.createStatement()
+    override suspend fun getId(): String {
+        return id
+    }
+
+    override suspend fun getCoverUrl(): String? {
+        return connection.createStatement()
             .executeQuery(
                 SqlQuery {
                     select(imageUrlColumn)
@@ -27,9 +31,10 @@ class SqlLiteNotionPageFlashCard(
                     where(idColumn to id)
                 }
             )?.let(imageUrlColumn::getValue)
+    }
 
-    override val notionDbID: String
-        get() = connection.createStatement()
+    override suspend fun getNotionDbId(): String {
+        return connection.createStatement()
             .executeQuery(
                 SqlQuery {
                     select(notionDbIdColumn)
@@ -37,9 +42,10 @@ class SqlLiteNotionPageFlashCard(
                     where(idColumn to id)
                 }
             )?.let(notionDbIdColumn::getValue)!!
+    }
 
-    override val name: String
-        get() = connection.createStatement()
+    override suspend fun getName(): String {
+        return connection.createStatement()
             .executeQuery(
                 SqlQuery {
                     select(nameColumn)
@@ -47,9 +53,10 @@ class SqlLiteNotionPageFlashCard(
                     where(idColumn to id)
                 }
             )?.let(nameColumn::getValue)!!
+    }
 
-    override val example: String?
-        get() = connection.createStatement()
+    override suspend fun getExample(): String? {
+        return connection.createStatement()
             .executeQuery(
                 SqlQuery {
                     select(exampleColumn)
@@ -57,9 +64,10 @@ class SqlLiteNotionPageFlashCard(
                     where(idColumn to id)
                 }
             )?.let(exampleColumn::getValue)
+    }
 
-    override val explanation: String?
-        get() = connection.createStatement()
+    override suspend fun getExplanation(): String? {
+        return connection.createStatement()
             .executeQuery(
                 SqlQuery {
                     select(answerColumn)
@@ -67,21 +75,21 @@ class SqlLiteNotionPageFlashCard(
                     where(idColumn to id)
                 }
             )?.let(answerColumn::getValue)
+    }
 
-    override val knowLevels: Map<Int, Boolean>
-        get() {
-            val sqlQuery = SqlQuery {
-                select(knowLevelsColumns.values)
-                from(tableName)
-                where(idColumn to id)
-            }
-            return connection.createStatement()
-                .executeQuery(sqlQuery).let { resultSet ->
-                    knowLevelsColumns.map { it.key to it.value.getValue(resultSet)?.toBoolean() }.toMap()
-                        .filterValues { it != null }
-                        .mapValues { it.value!! }
-                }
+    override suspend fun getKnowLevels(): Map<Int, Boolean> {
+        val sqlQuery = SqlQuery {
+            select(knowLevelsColumns.values)
+            from(tableName)
+            where(idColumn to id)
         }
+        return connection.createStatement()
+            .executeQuery(sqlQuery).let { resultSet ->
+                knowLevelsColumns.map { it.key to it.value.getValue(resultSet)?.toBoolean() }.toMap()
+                    .filterValues { it != null }
+                    .mapValues { it.value!! }
+            }
+    }
 
     override suspend fun setKnowLevels(knowLevels: Map<Int, Boolean>) = error("Updating levels in DB is not going to be supported")
 }

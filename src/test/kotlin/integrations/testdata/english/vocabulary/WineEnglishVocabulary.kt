@@ -40,26 +40,33 @@ class WineEnglishVocabulary(
         13 to false,
     )
 
-    override val id: String
-        get() = "wine_english_vocabulary_1"
+    override suspend fun getId(): String {
+        return "wine_english_vocabulary_1"
+    }
 
-    override val coverUrl: String?
-        get() = null
+    override suspend fun getCoverUrl(): String? {
+        return null
+    }
 
-    override val notionDbID: String
-        get() = notionDbId
+    override suspend fun getNotionDbId(): String {
+        return notionDbId
+    }
 
-    override val name: String
-        get() = "Wine"
+    override suspend fun getName(): String {
+        return "Wine"
+    }
 
-    override val example: String?
-        get() = "I do not like wine"
+    override suspend fun getExample(): String {
+        return "I do not like wine"
+    }
 
-    override val explanation: String?
-        get() = "alcoholic beverage made of grapes"
+    override suspend fun getExplanation(): String? {
+        return "alcoholic beverage made of grapes"
+    }
 
-    override val knowLevels: Map<Int, Boolean>
-        get() = mapOf(
+
+    override suspend fun getKnowLevels(): Map<Int, Boolean> {
+        return mapOf(
             1 to true,
             2 to false,
             3 to false,
@@ -74,6 +81,7 @@ class WineEnglishVocabulary(
             12 to false,
             13 to false,
         )
+    }
 
     override suspend fun setKnowLevels(knowLevels: Map<Int, Boolean>) {
         updatedKnowLevels = knowLevels
@@ -85,29 +93,11 @@ class WineEnglishVocabulary(
 
         other as WineEnglishVocabulary
 
-        if (notionDbId != other.notionDbId) return false
-        if (id != other.id) return false
-        if (coverUrl != other.coverUrl) return false
-        if (notionDbID != other.notionDbID) return false
-        if (name != other.name) return false
-        if (example != other.example) return false
-        if (explanation != other.explanation) return false
-        if (knowLevels != other.knowLevels) return false
-
-        return true
+        return notionDbId == other.notionDbId
     }
 
     override fun hashCode(): Int {
-        var result = notionDbId.hashCode()
-        result = 31 * result + id.hashCode()
-        result = 31 * result + (coverUrl?.hashCode() ?: 0)
-        result = 31 * result + notionDbID.hashCode()
-        result = 31 * result + name.hashCode()
-        result = 31 * result + (example?.hashCode() ?: 0)
-        result = 31 * result + (explanation?.hashCode() ?: 0)
-        result = 31 * result + knowLevels.hashCode()
-        return result
+        return notionDbId.hashCode()
     }
-
 
 }

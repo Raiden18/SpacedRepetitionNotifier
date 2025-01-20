@@ -8,30 +8,40 @@ import org.danceofvalkyries.utils.rest.Header
 import org.danceofvalkyries.utils.rest.clients.http.HttpClient
 
 class RestfulNotionPageFlashCard(
-    override val id: String,
+    private val id: String,
     private val responseData: RestFulNotionPage? = null,
     private val httpClient: HttpClient,
     private val gson: Gson,
     private val headers: List<Header>
 ) : NotionPageFlashCard {
 
-    override val coverUrl: String?
-        get() = responseData!!.coverUrl
+    override suspend fun getId(): String {
+        return id
+    }
 
-    override val notionDbID: String
-        get() = responseData!!.notionDbID
+    override suspend fun getCoverUrl(): String? {
+        return responseData!!.coverUrl
+    }
 
-    override val name: String
-        get() = responseData!!.name
+    override suspend fun getNotionDbId(): String {
+        return responseData!!.notionDbID
+    }
 
-    override val example: String?
-        get() = responseData!!.example
+    override suspend fun getName(): String {
+        return responseData!!.name
+    }
 
-    override val explanation: String?
-        get() = responseData!!.explanation
+    override suspend fun getExample(): String? {
+        return responseData!!.example
+    }
 
-    override val knowLevels: Map<Int, Boolean>
-        get() = responseData!!.knowLevels
+    override suspend fun getExplanation(): String? {
+        return responseData!!.explanation
+    }
+
+    override suspend fun getKnowLevels(): Map<Int, Boolean> {
+        return responseData!!.knowLevels
+    }
 
     override suspend fun setKnowLevels(knowLevels: Map<Int, Boolean>) {
         val updatedNotionPage = RestFulNotionPage(

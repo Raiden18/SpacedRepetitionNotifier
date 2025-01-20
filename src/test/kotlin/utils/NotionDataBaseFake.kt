@@ -25,12 +25,12 @@ data class NotionDataBaseFake(
 
     override suspend fun add(notionPageFlashCard: NotionPageFlashCard): NotionPageFlashCard {
         val notionPageFlashCardFake = NotionPageFlashCardFake(
-            id = notionPageFlashCard.id,
-            coverUrl = notionPageFlashCard.coverUrl,
-            name = notionPageFlashCard.name,
-            example = notionPageFlashCard.example,
-            explanation = notionPageFlashCard.explanation,
-            knowLevels = notionPageFlashCard.knowLevels,
+            id = notionPageFlashCard.getId(),
+            coverUrl = notionPageFlashCard.getCoverUrl(),
+            name = notionPageFlashCard.getName(),
+            example = notionPageFlashCard.getExample(),
+            explanation = notionPageFlashCard.getExplanation(),
+            knowLevels = notionPageFlashCard.getKnowLevels(),
             notionDbID = this@NotionDataBaseFake.id
         )
         pages = pages + listOf(notionPageFlashCardFake)
@@ -38,7 +38,7 @@ data class NotionDataBaseFake(
     }
 
     override suspend fun getPageBy(pageId: String): NotionPageFlashCard {
-        return pages.first { pageId == it.id }
+        return pages.first { pageId == it.getId() }
     }
 
     override suspend fun clear() {
@@ -46,6 +46,6 @@ data class NotionDataBaseFake(
     }
 
     override suspend fun delete(pageId: String) {
-        pages = pages.filter { it.id != pageId }
+        pages = pages.filter { it.getId() != pageId }
     }
 }

@@ -13,8 +13,13 @@ class FlashCardMessageTest : FunSpec() {
 
     init {
         context("Dota 2 Flash with online dictionary") {
+            val dota2 = Dota2EnglishVocabulary("1")
             val flashCardMessage = FlashCardMessage(
-                flashCard = Dota2EnglishVocabulary("1"),
+                name = dota2.getName(),
+                notionFlashCardId = dota2.getId(),
+                example = dota2.getExample(),
+                answer = dota2.getExplanation(),
+                coverUrl = dota2.getCoverUrl(),
                 stringResources = EngStringResources(),
                 onlineDictionaries = listOf(ConstantOnlineDictionary("https://dictionary.cambridge.org/dictionary/english"))
             )
